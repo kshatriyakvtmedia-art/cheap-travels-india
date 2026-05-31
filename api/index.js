@@ -317,6 +317,70 @@ app.get('/api/cities', async (req, res) => {
   }
 });
 
+// ═══════════════════════════════════════════════════════════════════
+//  SeatSeller worker integration
+// ═══════════════════════════════════════════════════════════════════
+// Calls the persistent Playwright worker running on a separate VPS
+// (see seatseller-worker/ folder). Skips silently if env not configured
+// or worker unreachable — the main search still returns Laxmi + RDLH.
+const SEATSELLER_WORKER_URL = (process.env.SEATSELLER_WORKER_URL || '').replace(/\/$/, '');
+const SEATSELLER_WORKER_TOKEN = process.env.SEATSELLER_WORKER_TOKEN || '';
+
+async function callSeatSellerWorker(path) {
+  if (!SEATSELLER_WORKER_URL) return null;
+  try {
+    const r = await fetch(SEATSELLER_WORKER_URL + path, {
+      headers: SEATSELLER_WORKER_TOKEN ? { 'X-Worker-Token': SEATSELLER_WORKER_TOKEN } : {},
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!r.ok) {
+      console.warn(`[seatseller] worker ${path} returned ${r.status}`);
+      return null;
+    }
+    return await r.json();
+  } catch (e) {
+    console.warn(`[seatseller] worker call failed:`, e.message);
+    return null;
+  }
+}
+
+async function searchSeatSellerBuses(fromName, toName, date) {
+  const data = await callSeatSellerWorker(`/search?from=${encodeURIComponent(fromName)}&to=${encodeURIComponent(toName)}&date=${encodeURIComponent(date)}`);
+  if (!data || !data.ok || !Array.isArray(data.buses)) return [];
+  // Normalise to the same shape as searchOperatorBuses output.
+  return data.buses.map(b => ({
+    resId: `ssr-${b.externalId}`,
+    routeId: b.externalId,
+    operator: b.operator || 'SeatSeller Partner',
+    routeName: `${fromName} to ${toName}`,
+    busType: b.busType || 'A/C Sleeper',
+    departure: b.departure || '',
+    arrival: b.arrival || '',
+    arrivalDate: '',
+    duration: b.duration || '',
+    seatsLeft: b.seatsLeft || 0,
+    fareString: String(b.fare || 0),
+    minFare: b.fare || 0,
+    maxFare: b.fare || 0,
+    boardingPoints: [],   // worker can be enhanced to return these too
+    droppingPoints: [],
+  }));
+}
+
+async function fetchSeatSellerLayout(realId) {
+  const data = await callSeatSellerWorker(`/layout/${encodeURIComponent(realId)}`);
+  if (!data || !data.ok) return null;
+  const { ok, ...rest } = data;
+  return rest;
+}
+
+async function checkSeatSellerWorkerHealth() {
+  if (!SEATSELLER_WORKER_URL) return { configured: false };
+  const data = await callSeatSellerWorker('/health');
+  if (!data) return { configured: true, reachable: false };
+  return { configured: true, reachable: true, ...data };
+}
+
 // Helper: search buses for a specific operator B2B portal
 async function searchOperatorBuses(opKey, fromId, toId, date) {
   const op = OPERATORS[opKey];
@@ -593,7 +657,18 @@ app.get('/api/search', async (req, res) => {
       searchPromises.push(Promise.resolve([]));
     }
 
-    const [lxmiBuses, rdlhBuses] = await Promise.all(searchPromises);
+    // Query SeatSeller worker (if configured). Always called by name (not ID)
+    // because the worker resolves its own city names against SeatSeller's
+    // autocomplete. Returns [] silently if env unset or worker offline.
+    searchPromises.push(
+      searchSeatSellerBuses(fromName, toName, date)
+        .catch(err => {
+          console.error("SeatSeller worker search failed:", err.message);
+          return [];
+        })
+    );
+
+    const [lxmiBuses, rdlhBuses, ssrBuses] = await Promise.all(searchPromises);
 
     // Merge and filter real operator buses to ensure they actually match the searched origin city name.
     // TicketSimply B2B portals sometimes return unrelated nearby routes (e.g. Azamgarh to Delhi for a Varanasi to Delhi search).
@@ -605,17 +680,20 @@ app.get('/api/search', async (req, res) => {
       return routeMatches || boardingMatches;
     });
 
-    let buses = [...realBuses];
+    // SeatSeller worker already filters by name on its side, so trust those rows as-is.
+    let buses = [...realBuses, ...(ssrBuses || [])];
 
-    // Only generate SeatSeller competitor simulation when real partner buses exist
-    // (if no real buses on this route, fake competitors make no sense — we can't book them)
-    if (realBuses.length > 0) {
+    // Only generate SeatSeller competitor simulation when:
+    //   - we have real partner buses (Laxmi/RDLH) on this route, AND
+    //   - the SeatSeller worker did NOT return any real rows (i.e. it's offline or has no inventory)
+    // This avoids polluting genuine SeatSeller results with simulated competitors.
+    if (realBuses.length > 0 && (!ssrBuses || ssrBuses.length === 0)) {
       const fares = realBuses.map(b => b.minFare).filter(f => f > 0);
       const baseFareValue = fares.length > 0
         ? Math.round(fares.reduce((a, b) => a + b, 0) / fares.length)
         : 1200;
       const ssBuses = generateSeatSellerBuses(fromName, toName, baseFareValue);
-      buses = [...realBuses, ...ssBuses];
+      buses = [...realBuses, ...(ssrBuses || []), ...ssBuses];
     }
 
     // Track search analytics
@@ -681,6 +759,15 @@ app.get('/api/layout/:resId', async (req, res) => {
   }
 
   try {
+    if (resId.startsWith('ssr-')) {
+      // Real SeatSeller bus — fetch layout from the worker
+      const realId = resId.replace('ssr-', '');
+      console.log(`Fetching real SeatSeller seat layout via worker for: ${realId}`);
+      const layoutData = await fetchSeatSellerLayout(realId);
+      if (!layoutData) return res.status(502).json({ success: false, error: 'SeatSeller worker unreachable' });
+      return res.json({ success: true, ...layoutData });
+    }
+
     if (resId.startsWith('ss-')) {
       console.log(`Generating simulated seat layout for SeatSeller competitor bus: ${resId}`);
       const layoutData = generateSimulatedLayout(resId);
@@ -1008,8 +1095,10 @@ app.get('/api/admin/health', requireAdmin, async (req, res) => {
   const uptime = Math.floor((Date.now() - analytics.startTime) / 1000);
   const now = Date.now();
   
-  // Perform background SeatSeller reachability check
+  // Perform background SeatSeller reachability checks (both the public portal
+  // and our own worker, if configured)
   const isSSReachable = await checkSeatSellerReachable();
+  const workerHealth = await checkSeatSellerWorkerHealth();
 
   res.json({
     success: true,
@@ -1031,12 +1120,18 @@ app.get('/api/admin/health', requireAdmin, async (req, res) => {
       },
       seatseller: {
         name: 'redBus SeatSeller B2B',
-        sessionActive: false,
-        lastLogin: null,
-        sessionAge: null,
+        sessionActive: !!(workerHealth.reachable && workerHealth.ok),
+        lastLogin: workerHealth.lastLoginAt ? new Date(workerHealth.lastLoginAt).toISOString() : null,
+        sessionAge: workerHealth.sessionAgeSec || null,
         citiesLoaded: 0,
-        status: isSSReachable ? 'Reachable (Akamai Protected)' : 'Offline/Blocked',
-        note: 'Requires Partner XML API Integration'
+        status: workerHealth.reachable
+          ? (workerHealth.ok ? 'Live via Playwright worker' : 'Worker reachable but session stale')
+          : (workerHealth.configured
+              ? 'Worker configured but unreachable'
+              : (isSSReachable ? 'Portal reachable, worker not configured' : 'Offline/Blocked')),
+        note: workerHealth.configured
+          ? `Worker: ${process.env.SEATSELLER_WORKER_URL || 'unset'}`
+          : 'Set SEATSELLER_WORKER_URL + SEATSELLER_WORKER_TOKEN to enable real fetch'
       }
     }
   });
