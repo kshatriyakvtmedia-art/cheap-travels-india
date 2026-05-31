@@ -42,8 +42,45 @@ header.top{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px so
 .nav a:hover{color:var(--teal)}
 .top-right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:13px}
 .support{display:flex;align-items:center;gap:6px;color:var(--teal-d);font-weight:600}
-.login-btn{padding:8px 16px;border:1.5px solid var(--teal);color:var(--teal);border-radius:10px;font-weight:600;font-size:13px}
-.login-btn:hover{background:var(--teal);color:#fff}
+.login-btn{padding:8px 18px;border:1.5px solid var(--teal);color:var(--teal);border-radius:10px;font-weight:600;font-size:13px;transition:all .15s}
+.login-btn:hover{background:var(--teal);color:#fff;transform:translateY(-1px);box-shadow:0 4px 12px rgba(14,123,79,.25)}
+.user-chip{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 6px;border-radius:999px;background:var(--green-s);border:1.5px solid rgba(22,163,74,.2);cursor:pointer;font-size:13px;font-weight:600;color:var(--teal-d);transition:all .15s;position:relative}
+.user-chip:hover{background:#c8f7dc;box-shadow:0 4px 10px rgba(14,123,79,.15)}
+.user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-l));color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.5px}
+.user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:#fff;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.14);border:1px solid var(--line);min-width:180px;overflow:hidden;display:none;z-index:200}
+.user-chip:focus-within .user-dropdown,.user-chip.open .user-dropdown{display:block;animation:fadeIn .15s}
+.user-dropdown a,.user-dropdown button{display:block;width:100%;text-align:left;padding:11px 16px;font-size:13.5px;color:var(--ink);border:none;background:none;cursor:pointer;border-bottom:1px solid var(--line);transition:background .1s}
+.user-dropdown a:last-child,.user-dropdown button:last-child{border-bottom:none}
+.user-dropdown a:hover,.user-dropdown button:hover{background:#F8FAFC}
+.user-dropdown .logout-row{color:var(--red);font-weight:600}
+
+/* Auth Modal */
+.auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.auth-overlay.open{display:flex;animation:fadeIn .2s}
+.auth-box{background:#fff;border-radius:22px;width:420px;max-width:calc(100vw - 32px);padding:36px 32px 28px;box-shadow:0 24px 72px rgba(0,0,0,.22);position:relative}
+.auth-close{position:absolute;top:16px;right:18px;font-size:22px;color:var(--ink2);cursor:pointer;line-height:1;background:none;border:none;transition:color .15s}
+.auth-close:hover{color:var(--ink)}
+.auth-logo{height:40px;display:block;margin:0 auto 20px}
+.auth-tabs{display:flex;gap:0;background:#F1F5F9;border-radius:12px;padding:4px;margin-bottom:24px}
+.auth-tab{flex:1;padding:9px 0;text-align:center;font-size:13.5px;font-weight:600;color:var(--ink2);border-radius:9px;cursor:pointer;transition:all .15s}
+.auth-tab.active{background:#fff;color:var(--teal);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.auth-panel{display:none}
+.auth-panel.active{display:block;animation:fadeIn .2s}
+.auth-field{margin-bottom:14px}
+.auth-field label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:5px;letter-spacing:.3px;text-transform:uppercase}
+.auth-field input{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit;color:var(--ink);outline:none;transition:border .15s}
+.auth-field input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(14,123,79,.1)}
+.auth-field input::placeholder{color:var(--ink3)}
+.auth-submit{width:100%;padding:13px;background:linear-gradient(135deg,var(--teal-d),var(--teal));color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;transition:all .15s;letter-spacing:.2px}
+.auth-submit:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(14,123,79,.3)}
+.auth-err{background:#FEE2E2;color:var(--red);border-radius:8px;padding:9px 12px;font-size:13px;margin-bottom:12px;display:none}
+.auth-divider{text-align:center;font-size:12px;color:var(--ink3);margin:14px 0;position:relative}
+.auth-divider::before,.auth-divider::after{content:"";position:absolute;top:50%;width:40%;height:1px;background:var(--line)}
+.auth-divider::before{left:0}
+.auth-divider::after{right:0}
+.auth-small{font-size:12.5px;text-align:center;color:var(--ink2);margin-top:14px}
+.auth-small span{color:var(--teal);font-weight:600;cursor:pointer}
+.auth-small span:hover{text-decoration:underline}
 
 /* Hero */
 .hero{background:linear-gradient(135deg,var(--teal-d) 0%,var(--teal) 60%,var(--teal-l) 100%);padding:36px 24px 120px;position:relative;overflow:hidden}
@@ -152,24 +189,25 @@ header.top{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px so
 .seat-tab{padding:8px 4px;border-bottom:2px solid transparent;cursor:pointer;color:var(--ink2);font-weight:500}
 .seat-tab.active{color:var(--teal);border-color:var(--teal);font-weight:700}
 .seat-content{display:grid;grid-template-columns:1.4fr 1fr;gap:24px}
-.seatmap{background:#F8FAFC;border:1px dashed var(--line);border-radius:12px;padding:16px;position:relative}
-.deck-label{font-size:11px;color:var(--ink2);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:10px;text-align:center}
-.driver{width:36px;height:18px;background:var(--ink3);border-radius:4px;margin:0 auto 14px;position:relative}
-.driver::after{content:"🚍";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px}
-.seat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:280px;margin:0 auto}
+.seatmap{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:16px;padding:20px 16px 16px;position:relative;display:flex;flex-direction:column;align-items:center}
+.deck-label{font-size:11px;color:var(--ink2);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:12px;text-align:center;width:100%}
+.driver{width:44px;height:24px;background:linear-gradient(135deg,#0F766E,#134E4A);border-radius:8px;margin:0 auto 18px;position:relative;box-shadow:0 2px 6px rgba(15,118,110,.25)}
+.driver::after{content:"🚍";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:14px}
+.seat-grid-container{width:100%;overflow-x:auto}
+.seat-grid{display:grid;gap:7px 5px;margin:0 auto;width:fit-content}
 .seat-grid .gap{visibility:hidden}
-.seat{aspect-ratio:1;background:#fff;border:1.5px solid var(--line);border-radius:6px;font-size:10.5px;color:var(--ink2);font-weight:600;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s}
-.seat:hover:not(.booked){border-color:var(--teal);transform:scale(1.05)}
-.seat.sleeper{aspect-ratio:1/2.2}
-.seat.booked{background:#E2E8F0;color:#94A3B8;cursor:not-allowed}
-.seat.ladies{border-color:#EC4899;color:#BE185D}
-.seat.selected{background:var(--teal);color:#fff;border-color:var(--teal);box-shadow:0 4px 10px rgba(15,118,110,.3)}
-.legend2{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:11.5px;color:var(--ink2);justify-content:center}
-.lg-item{display:flex;align-items:center;gap:5px}
-.lg-box{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--line);background:#fff}
-.lg-box.booked{background:#E2E8F0;border-color:#E2E8F0}
+.seat{width:44px;height:44px;background:#fff;border:1.5px solid #CBD5E1;border-radius:8px;font-size:10px;color:#475569;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,.06);letter-spacing:.3px}
+.seat:hover:not(.booked){border-color:var(--teal);transform:scale(1.08);box-shadow:0 4px 10px rgba(15,118,110,.2);color:var(--teal)}
+.seat.sleeper{width:44px;height:96px}
+.seat.booked{background:#F1F5F9;color:#CBD5E1;border-color:#E2E8F0;cursor:not-allowed;box-shadow:none}
+.seat.ladies{border-color:#EC4899;color:#DB2777;background:#FFF0F6}
+.seat.selected{background:var(--teal);color:#fff;border-color:var(--teal);box-shadow:0 4px 14px rgba(15,118,110,.35);transform:scale(1.05)}
+.legend2{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;padding-top:14px;border-top:1px solid #E2E8F0;font-size:11.5px;color:var(--ink2);justify-content:center;width:100%}
+.lg-item{display:flex;align-items:center;gap:6px;font-weight:500}
+.lg-box{width:16px;height:16px;border-radius:4px;border:1.5px solid #CBD5E1;background:#fff}
+.lg-box.booked{background:#F1F5F9;border-color:#E2E8F0}
 .lg-box.selected{background:var(--teal);border-color:var(--teal)}
-.lg-box.ladies{border-color:#EC4899}
+.lg-box.ladies{border-color:#EC4899;background:#FFF0F6}
 
 .booking-side h4{font-size:14px;color:var(--teal-d);margin-bottom:12px}
 .point-list{max-height:180px;overflow:auto;padding-right:4px;margin-bottom:14px}
@@ -297,11 +335,71 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
       <a href="#">Offers</a>
     </nav>
     <div class="top-right">
-      <div class="support">📞 1800-123-9999</div>
-      <button class="login-btn">Sign in</button>
+      <div class="support">📞 <a href="tel:8853391184" style="color:inherit">8853391184</a></div>
+      <button class="login-btn" id="auth-open-btn" onclick="openAuth('signin')">Sign In</button>
+      <div class="user-chip" id="user-chip" style="display:none" onclick="this.classList.toggle('open')">
+        <div class="user-avatar" id="user-avatar">U</div>
+        <span id="user-name-display">User</span>
+        <div class="user-dropdown">
+          <a href="#">👤 My Profile</a>
+          <a href="#">🎟 My Bookings</a>
+          <a href="#">💬 Help & Support</a>
+          <button class="logout-row" onclick="logoutUser()">🚪 Sign Out</button>
+        </div>
+      </div>
     </div>
   </div>
 </header>
+
+<!-- ════════════ AUTH MODAL ════════════ -->
+<div class="auth-overlay" id="auth-overlay">
+  <div class="auth-box">
+    <button class="auth-close" onclick="closeAuth()">✕</button>
+    <img src="Logo.png" alt="Cheap Travels India" class="auth-logo">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-signin" onclick="switchAuthTab('signin')">Sign In</div>
+      <div class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Create Account</div>
+    </div>
+
+    <!-- SIGN IN -->
+    <div class="auth-panel active" id="panel-signin">
+      <div class="auth-err" id="signin-err"></div>
+      <div class="auth-field">
+        <label>Email or Phone</label>
+        <input type="text" id="signin-email" placeholder="you@email.com or +91 98765 43210">
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input type="password" id="signin-pass" placeholder="Enter your password">
+      </div>
+      <button class="auth-submit" onclick="doSignIn()">Sign In →</button>
+      <div class="auth-small">Don't have an account? <span onclick="switchAuthTab('signup')">Create one free</span></div>
+    </div>
+
+    <!-- SIGN UP -->
+    <div class="auth-panel" id="panel-signup">
+      <div class="auth-err" id="signup-err"></div>
+      <div class="auth-field">
+        <label>Full Name</label>
+        <input type="text" id="signup-name" placeholder="Rakesh Sharma">
+      </div>
+      <div class="auth-field">
+        <label>Email</label>
+        <input type="email" id="signup-email" placeholder="you@email.com">
+      </div>
+      <div class="auth-field">
+        <label>Mobile Number</label>
+        <input type="tel" id="signup-phone" placeholder="+91 98765 43210">
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input type="password" id="signup-pass" placeholder="Min 6 characters">
+      </div>
+      <button class="auth-submit" onclick="doSignUp()">Create Account →</button>
+      <div class="auth-small">Already registered? <span onclick="switchAuthTab('signin')">Sign in here</span></div>
+    </div>
+  </div>
+</div>
 
 <!-- SEARCH/RESULTS VIEW -->
 <div class="view active" id="view-results">
@@ -769,7 +867,7 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
           <button class="tk-btn pdf">🗺 Live track</button>
         </div>
         <div class="tk-footer">
-          <div>Cheap Travels · 24×7 helpline 1800-123-9999 · support@cheaptravels.in</div>
+          <div>Cheap Travels · 24×7 helpline 8853391184 · support@cheaptravels.in</div>
           <div>Auto-refund SLA: 30 min · ID required at boarding</div>
         </div>
       </div>
@@ -791,7 +889,7 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
     </div>
     <div><h4>Company</h4><p><a href="/about.html">About us</a><br><a href="#">Careers</a><br><a href="#">Contact</a><br><a href="#">Press</a></p></div>
     <div><h4>Support</h4><p><a href="#">Help centre</a><br><a href="#">Cancellation</a><br><a href="#">Refund policy</a><br><a href="#">Terms</a></p></div>
-    <div><h4>Connect</h4><p>📞 1800-123-9999<br>✉️ support@cheaptravels.in<br>📲 WhatsApp: +91 99999 99999<br>📍 Mumbai · India</p></div>
+    <div><h4>Connect</h4><p>📞 <a href="tel:8853391184" style="color:inherit">8853391184</a><br>✉️ support@cheaptravels.in<br>📲 WhatsApp: +91 88533 91184<br>📍 India</p></div>
   </div>
   <div class="foot-bottom">
     <div>© 2026 Cheap Travels India Pvt Ltd · CIN: U63040MH2026PTC000000</div>
@@ -1022,8 +1120,8 @@ function renderBuses(buses, formattedDate) {
             <div class="seatmap">
               <div class="deck-label">Seat Layout</div>
               <div class="driver"></div>
-              <div class="seat-grid-container" style="overflow-x: auto; padding: 10px;">
-                <div class="seat-grid" id="grid-${bus.resId}" style="display: grid; gap: 8px; margin: 0 auto; max-width: 320px;">
+              <div class="seat-grid-container">
+                <div class="seat-grid" id="grid-${bus.resId}">
                   <!-- Dynamically generated seat layout -->
                 </div>
               </div>
@@ -1109,9 +1207,10 @@ function renderSeatMap(resId, layoutData) {
   const grid = document.getElementById(`grid-${resId}`);
   if (!grid) return;
   
-  // Configure CSS grid structure dynamically
+  // Configure CSS grid structure dynamically — use fixed seat width for clean alignment
   grid.style.gridTemplateRows = `repeat(${layoutData.maxRow}, auto)`;
-  grid.style.gridTemplateColumns = `repeat(${layoutData.maxCol}, 1fr)`;
+  grid.style.gridTemplateColumns = `repeat(${layoutData.maxCol}, 44px)`;
+  grid.style.gap = '7px 5px';
   
   // Find current bus details
   const bus = searchResultsBuses.find(b => b.resId == resId);
@@ -1143,8 +1242,8 @@ function renderSeatMap(resId, layoutData) {
     const discountAmount = baseFare - discountFare;
     
     html += `
-      <div class="${cls}" 
-           style="grid-row: ${s.row + 1} / span ${s.rowspan}; grid-column: ${s.col + 1} / span ${s.colspan}; font-size:9.5px; padding: 2px; text-align:center;"
+      <div class="${cls.trim()}" 
+           style="grid-row: ${s.row + 1} / span ${s.rowspan}; grid-column: ${s.col + 1} / span ${s.colspan};"
            data-seat="${s.seatNo}"
            data-fare="${baseFare}"
            data-discount="${discountAmount}"
@@ -1258,9 +1357,130 @@ function switchSeatTab(resId, tabName) {
   }
 }
 
-// Checkout flow
+// ═══════════ AUTH SYSTEM ═══════════
+let currentUser = null;
+let pendingCheckout = false;
+
+// Restore session on load
+(function restoreSession() {
+  const saved = localStorage.getItem('cti_user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    updateAuthUI();
+  }
+})();
+
+function openAuth(tab = 'signin') {
+  document.getElementById('auth-overlay').classList.add('open');
+  switchAuthTab(tab);
+}
+function closeAuth() {
+  document.getElementById('auth-overlay').classList.remove('open');
+  pendingCheckout = false;
+}
+function switchAuthTab(tab) {
+  ['signin','signup'].forEach(t => {
+    document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
+    document.getElementById(`panel-${t}`).classList.toggle('active', t === tab);
+  });
+}
+
+function doSignIn() {
+  const email = document.getElementById('signin-email').value.trim();
+  const pass  = document.getElementById('signin-pass').value;
+  const err   = document.getElementById('signin-err');
+  err.style.display = 'none';
+
+  if (!email || !pass) { showAuthErr('signin', 'Please fill in all fields.'); return; }
+
+  // Check localStorage users
+  const users = JSON.parse(localStorage.getItem('cti_users') || '[]');
+  const user  = users.find(u => (u.email === email || u.phone === email) && u.pass === pass);
+  if (!user) { showAuthErr('signin', 'Incorrect email/phone or password.'); return; }
+
+  loginUser(user);
+}
+
+function doSignUp() {
+  const name  = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const phone = document.getElementById('signup-phone').value.trim();
+  const pass  = document.getElementById('signup-pass').value;
+  const err   = document.getElementById('signup-err');
+  err.style.display = 'none';
+
+  if (!name || !email || !phone || !pass) { showAuthErr('signup', 'All fields are required.'); return; }
+  if (pass.length < 6) { showAuthErr('signup', 'Password must be at least 6 characters.'); return; }
+  if (!/\S+@\S+\.\S+/.test(email)) { showAuthErr('signup', 'Please enter a valid email address.'); return; }
+
+  const users = JSON.parse(localStorage.getItem('cti_users') || '[]');
+  if (users.find(u => u.email === email)) { showAuthErr('signup', 'This email is already registered. Sign in instead.'); return; }
+
+  const user = { name, email, phone, pass, joined: new Date().toISOString() };
+  users.push(user);
+  localStorage.setItem('cti_users', JSON.stringify(users));
+  loginUser(user);
+}
+
+function loginUser(user) {
+  currentUser = user;
+  localStorage.setItem('cti_user', JSON.stringify(user));
+  updateAuthUI();
+  closeAuth();
+  if (pendingCheckout) {
+    pendingCheckout = false;
+    continueToCheckout();
+  }
+}
+
+function logoutUser() {
+  currentUser = null;
+  localStorage.removeItem('cti_user');
+  updateAuthUI();
+  document.getElementById('user-chip').classList.remove('open');
+}
+
+function updateAuthUI() {
+  const chip = document.getElementById('user-chip');
+  const btn  = document.getElementById('auth-open-btn');
+  if (currentUser) {
+    chip.style.display = 'flex';
+    btn.style.display  = 'none';
+    const initials = currentUser.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    document.getElementById('user-avatar').textContent = initials;
+    document.getElementById('user-name-display').textContent = currentUser.name.split(' ')[0];
+  } else {
+    chip.style.display = 'none';
+    btn.style.display  = 'inline-block';
+  }
+}
+
+function showAuthErr(panel, msg) {
+  const el = document.getElementById(`${panel}-err`);
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+// Close modal when clicking overlay backdrop
+document.getElementById('auth-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeAuth();
+});
+
+// Allow Enter key in auth fields
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAuth();
+});
+
+// ═══════════ CHECKOUT FLOW ═══════════
 function continueToCheckout() {
   if (!selectedBus || !selectedSeat) return;
+
+  // 🔒 Auth gate — must be signed in to book
+  if (!currentUser) {
+    pendingCheckout = true;
+    openAuth('signin');
+    return;
+  }
   
   // Populate Checkout fields
   document.getElementById('view-results').classList.remove('active');
