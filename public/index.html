@@ -656,7 +656,7 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
 
         <div class="section qr-section">
           <h3><span class="step">2</span> Pay via UPI</h3>
-          <p>Scan the QR with any UPI app · Pay <b>₹1,424</b> to <b>cheaptravels@upi</b></p>
+          <p>Scan the QR with any UPI app · Pay <b class="qr-payable">₹1,424</b> to <b class="qr-upi-id">cheaptravel546@okhdfcbank</b></p>
           <div class="timer">⏱ Hold expires in 07:23</div>
           <div class="qr-box">
             <svg class="qr-svg" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
@@ -1311,10 +1311,14 @@ function continueToCheckout() {
     seatInput.value = `${selectedSeat.seatNo} (${selectedSeat.baseFare > 1200 ? 'Sleeper' : 'Seater'})`;
   }
   
-  // Update payment section price
-  const upiPrice = chView.querySelector('.qr-section b');
+  // Update payment section price and description VPA
+  const upiPrice = chView.querySelector('.qr-payable');
   if (upiPrice) {
     upiPrice.textContent = `₹${selectedSeat.payable}`;
+  }
+  const upiDescId = chView.querySelector('.qr-upi-id');
+  if (upiDescId) {
+    upiDescId.textContent = `cheaptravel546@okhdfcbank`;
   }
   
   // Update trip summary cards
@@ -1347,10 +1351,18 @@ function continueToCheckout() {
     `;
   }
   
-  // Regenerate dynamic QR text
+  // Update payment instruction VPA
   const upiText = chView.querySelector('.upi-id');
   if (upiText) {
-    upiText.textContent = `cheaptravels@upi`;
+    upiText.textContent = `cheaptravel546@okhdfcbank`;
+  }
+
+  // Generate dynamic QR Code Image using real UPI deep link
+  const qrContainer = chView.querySelector('.qr-box');
+  if (qrContainer) {
+    const upiUri = `upi://pay?pa=cheaptravel546@okhdfcbank&pn=CheapTravel-India&tn=LXM-${selectedSeat.seatNo}&am=${selectedSeat.payable}&cu=INR`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUri)}`;
+    qrContainer.innerHTML = `<img src="${qrUrl}" alt="Scan to pay" style="width:220px; height:220px; display:block; margin:0 auto; border-radius:10px;">`;
   }
   
   // Set hold timer

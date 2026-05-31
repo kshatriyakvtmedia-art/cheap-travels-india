@@ -10,8 +10,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Serve static frontend files from current directory
-app.use(express.static(path.join(__dirname, '..')));
+// Serve static frontend files from public directory
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // B2B Portal credentials (loaded from process.env with default fallbacks)
 const USERNAME = process.env.B2B_USERNAME || 'lxmi.cheap';
@@ -407,7 +407,7 @@ app.get('/api/layout/:resId', async (req, res) => {
 
 // Serve frontend fallback
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'index.html'));
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
 // Run server and login on startup (only if run directly, not as serverless function)
