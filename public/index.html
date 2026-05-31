@@ -297,11 +297,20 @@ header.top{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px so
 .tk-btn.pdf{background:#fff;color:var(--teal-d);border:1.5px solid var(--teal)}
 .tk-footer{padding:14px 24px;background:#0A4F4A;color:#D9F2EE;font-size:11.5px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
 
-footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
-.foot-inner{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px}
-.foot-inner h4{color:#fff;font-size:14px;margin-bottom:12px}
-.foot-inner a,.foot-inner p{font-size:13px;color:#A7E8DF;line-height:1.7}
-.foot-bottom{max-width:1240px;margin:24px auto 0;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:#A7E8DF;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;border-top:1px solid rgba(255,255,255,0.06)}
+.foot-inner{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px}
+.foot-brand-col .brand{margin-bottom:16px;display:inline-flex}
+.foot-logo-img{height:46px;display:block;filter:brightness(0) invert(1)}
+.foot-brand-desc{font-size:13.5px;color:#A7E8DF;line-height:1.6;margin-top:12px;max-width:320px}
+.foot-links-col h4,.foot-connect-col h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:16px;letter-spacing:0.5px;text-transform:uppercase}
+.foot-links-list{display:flex;flex-direction:column;gap:10px}
+.foot-links-list a{font-size:13.5px;color:#A7E8DF;transition:color 0.2s}
+.foot-links-list a:hover{color:#fff}
+.foot-contact-chips{display:flex;flex-direction:column;gap:12px}
+.contact-chip{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:#A7E8DF;transition:all 0.2s}
+.contact-chip:hover{color:#fff}
+.foot-bottom{max-width:1240px;margin:40px auto 0;padding-top:24px;border-top:1px solid rgba(255,255,255,0.08);font-size:12px;color:#A7E8DF;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+
 
 /* Hamburger / Mobile Nav */
 .ham-btn{display:none;flex-direction:column;gap:5px;padding:6px;cursor:pointer;margin-left:auto}
@@ -407,9 +416,23 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
   .tk-points{grid-template-columns:1fr}
   .tk-route .city{font-size:18px}
 
-  /* Footer */
-  .foot-inner{grid-template-columns:1fr}
-  footer.site{padding:24px 16px}
+  /* Footer - Sleek New Age Mobile design */
+  footer.site{padding:32px 16px 24px;background:#05221d}
+  .foot-inner{grid-template-columns:1fr;gap:24px;text-align:center}
+  .foot-brand-col{display:flex;flex-direction:column;align-items:center;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:20px}
+  .foot-brand-col .brand{margin-bottom:8px}
+  .foot-logo-img{height:38px}
+  .foot-brand-desc{font-size:12px;color:rgba(167,232,223,0.7);line-height:1.5;margin:4px 0 0;max-width:300px}
+  .foot-links-col{border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:16px}
+  .foot-links-col h4{font-size:12px;margin-bottom:10px;color:rgba(255,255,255,0.5)}
+  .foot-links-list{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:16px}
+  .foot-links-list a{font-size:12.5px;color:#A7E8DF}
+  .foot-connect-col{padding-bottom:8px}
+  .foot-connect-col h4{display:none}
+  .foot-contact-chips{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:10px}
+  .contact-chip{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:6px 14px;font-size:12px;color:#D9F2EE;font-weight:500}
+  .contact-chip:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15)}
+  .foot-bottom{margin-top:24px;padding-top:16px;flex-direction:column;align-items:center;gap:8px;font-size:11px;color:rgba(167,232,223,0.4);border-top:1px solid rgba(255,255,255,0.05);text-align:center}
 
   /* Auth modal */
   .auth-box{padding:28px 20px 22px}
@@ -1056,15 +1079,47 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
 
 <footer class="site">
   <div class="foot-inner">
-    <div>
-      <a href="index.html" class="brand" style="margin-bottom:14px;display:inline-flex">
-        <img src="Logo.png" alt="Cheap Travels India" style="height:46px;display:block;filter:brightness(0) invert(1)">
+    <div class="foot-brand-col">
+      <a href="index.html" class="brand" title="Cheap Travels India">
+        <img src="Logo.png" alt="Cheap Travels India" class="foot-logo-img">
       </a>
-      <p>India's affordable bus booking platform. Direct from operator. 5% extra discount. WhatsApp ticket in 90 seconds.</p>
+      <p class="foot-brand-desc">India's affordable bus booking platform. Direct from operator. 5% extra discount. WhatsApp ticket in 90 seconds.</p>
     </div>
-    <div><h4>Company</h4><p><a href="/about.html">About us</a><br><a href="#">Careers</a><br><a href="#">Contact</a><br><a href="#">Press</a></p></div>
-    <div><h4>Support</h4><p><a href="#">Help centre</a><br><a href="#">Cancellation</a><br><a href="#">Refund policy</a><br><a href="#">Terms</a></p></div>
-    <div><h4>Connect</h4><p>📞 <a href="tel:8853391184" style="color:inherit">8853391184</a><br>✉️ support@cheaptravels.in<br>📲 WhatsApp: +91 88533 91184<br>📍 India</p></div>
+    <div class="foot-links-col">
+      <h4>Company</h4>
+      <div class="foot-links-list">
+        <a href="/about.html">About us</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact</a>
+        <a href="#">Press</a>
+      </div>
+    </div>
+    <div class="foot-links-col">
+      <h4>Support</h4>
+      <div class="foot-links-list">
+        <a href="#">Help centre</a>
+        <a href="#">Cancellation</a>
+        <a href="#">Refund policy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+    <div class="foot-connect-col">
+      <h4>Connect</h4>
+      <div class="foot-contact-chips">
+        <a href="tel:8853391184" class="contact-chip">
+          <span class="chip-icon">📞</span>
+          <span class="chip-text">8853391184</span>
+        </a>
+        <a href="mailto:support@cheaptravels.in" class="contact-chip">
+          <span class="chip-icon">✉️</span>
+          <span class="chip-text">support@cheaptravels.in</span>
+        </a>
+        <a href="https://wa.me/918853391184" class="contact-chip" target="_blank">
+          <span class="chip-icon">📲</span>
+          <span class="chip-text">WhatsApp</span>
+        </a>
+      </div>
+    </div>
   </div>
   <div class="foot-bottom">
     <div>© 2026 Cheap Travels India Pvt Ltd · CIN: U63040MH2026PTC000000</div>
