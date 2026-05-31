@@ -381,8 +381,15 @@ app.get('/api/layout/:resId', async (req, res) => {
     let maxRow = 0;
     let maxCol = 0;
 
-    $('#seat_layout_table tr').each((rowIndex, tr) => {
-      $(tr).find('td').each((colIndex, td) => {
+    $('#seat_layout_table tr').each((trIndex, tr) => {
+      $(tr).find('td').each((tdIndex, td) => {
+        const id = $(td).attr('id') || '';
+        const match = id.match(/span_(\d+)_(\d+)/);
+        if (!match) return; // Skip if not a valid grid cell
+        
+        const row = parseInt(match[1]);
+        const col = parseInt(match[2]);
+
         const seatNo = $(td).attr('data-seatnumber');
         const title = $(td).attr('title') || '';
         const isGangway = title.toLowerCase() === 'gangway' || $(td).hasClass('ganway_col') || !seatNo;
@@ -390,8 +397,8 @@ app.get('/api/layout/:resId', async (req, res) => {
         if (isGangway) {
           seats.push({
             isGangway: true,
-            row: rowIndex,
-            col: colIndex
+            row: row,
+            col: col
           });
           return;
         }
@@ -407,8 +414,8 @@ app.get('/api/layout/:resId', async (req, res) => {
         const rowspan = parseInt($(td).attr('rowspan') || 1);
         const colspan = parseInt($(td).attr('colspan') || 1);
 
-        if (rowIndex > maxRow) maxRow = rowIndex;
-        if (colIndex > maxCol) maxCol = colIndex;
+        if (row > maxRow) maxRow = row;
+        if (col > maxCol) maxCol = col;
 
         seats.push({
           seatNo,
@@ -416,8 +423,8 @@ app.get('/api/layout/:resId', async (req, res) => {
           booked: isBooked,
           ladies: isLadies,
           sleeper: isSleeper,
-          row: rowIndex,
-          col: colIndex,
+          row: row,
+          col: col,
           rowspan,
           colspan,
           fare: parseFloat(seatwiseFareHash[seatNo] || 0)
