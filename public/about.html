@@ -310,6 +310,8 @@
       align-items: center;
       justify-content: center;
       gap: 28px;
+      overflow-y: auto;
+      padding: 60px 20px;
     }
 
     .mob-menu.open {
@@ -2771,8 +2773,7 @@
       }
     }
 
-    @media(max-width:640px) {
-
+    @media(max-width:1024px) {
       .nav-links,
       .nav-wa-wrap {
         display: none;
@@ -2781,6 +2782,18 @@
       .ham {
         display: flex;
       }
+
+      .cursor,
+      .cursor-ring {
+        display: none !important;
+      }
+
+      body {
+        cursor: auto !important;
+      }
+    }
+
+    @media(max-width:640px) {
 
       .foot-grid {
         grid-template-columns: 1fr;
@@ -2863,7 +2876,7 @@
 
   <!-- NAV -->
   <nav id="navbar">
-    <a href="#hero" class="nav-logo">
+    <a href="index.html" class="nav-logo">
       <img
         src="Logo.png"
         alt="Cheap Travels India">
@@ -4071,14 +4084,14 @@
   <footer>
     <div class="foot-grid">
       <div class="foot-brand">
-        <div class="brand-logo">
+        <a href="index.html" class="brand-logo" style="display:block;text-decoration:none;">
           <img
             src="Logo.png"
             alt="Cheap Travels India Logo">
           <div
             style="font-family:'Cinzel Decorative',serif;font-size:11px;color:rgba(238,240,230,.4);letter-spacing:3px;margin-top:4px;">
             INDIA</div>
-        </div>
+        </a>
         <p class="foot-desc">Varanasi's premier affordable luxury travel company. We bring the magic of India's
           spiritual heartland to everyone, at a price that feels like a blessing.</p>
         <div class="foot-socials">

@@ -338,6 +338,7 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
   .seat-content{grid-template-columns:1fr}
   .foot-inner{grid-template-columns:1fr 1fr}
   .nav{display:none}
+  .ham-btn{display:flex}
 }
 @media (max-width:700px){
   /* Header */
@@ -421,7 +422,7 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
 
 <header class="top">
   <div class="top-inner">
-    <a href="/about.html" class="brand" title="Cheap Travels India">
+    <a href="index.html" class="brand" title="Cheap Travels India">
       <img src="Logo.png" alt="Cheap Travels India" class="brand-logo">
     </a>
     <nav class="nav">
@@ -455,7 +456,9 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
 <div class="mobile-nav-drawer" id="mobile-nav-drawer">
   <div class="mobile-nav-overlay" onclick="toggleMobileNav()"></div>
   <div class="mobile-nav-panel">
-    <img src="Logo.png" alt="Cheap Travels India" class="mn-logo">
+    <a href="index.html" style="display:block;margin-bottom:14px;">
+      <img src="Logo.png" alt="Cheap Travels India" class="mn-logo" style="display:block;">
+    </a>
     <a href="/about.html">Cheap Travels India ↗</a>
     <a href="#" class="active">Bus Tickets</a>
     <a href="#">My Bookings</a>
@@ -1054,7 +1057,7 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
 <footer class="site">
   <div class="foot-inner">
     <div>
-      <a href="/about.html" class="brand" style="margin-bottom:14px;display:inline-flex">
+      <a href="index.html" class="brand" style="margin-bottom:14px;display:inline-flex">
         <img src="Logo.png" alt="Cheap Travels India" style="height:46px;display:block;filter:brightness(0) invert(1)">
       </a>
       <p>India's affordable bus booking platform. Direct from operator. 5% extra discount. WhatsApp ticket in 90 seconds.</p>
@@ -1251,11 +1254,13 @@ function renderBuses(buses, formattedDate) {
   }
   
   // Update live-compare prices based on first bus
-  const minFare = buses[0].minFare || 1200;
+  const firstBus = buses[0];
+  const isFirstBusSS = firstBus.resId.startsWith('ss-');
+  const minFare = firstBus.minFare || 1200;
   const redBusFare = minFare;
   const abhiBusFare = Math.round(minFare * 0.99);
   const mmtFare = Math.round(minFare * 1.01);
-  const cheapTravelsFare = Math.round(minFare * 0.95);
+  const cheapTravelsFare = isFirstBusSS ? minFare : Math.round(minFare * 0.95);
   
   const liveComp = document.querySelector('.live-compare');
   if (liveComp) {
@@ -1264,14 +1269,15 @@ function renderBuses(buses, formattedDate) {
       <div class="cmp"><b>RedBus</b>₹${redBusFare}</div>
       <div class="cmp"><b>AbhiBus</b>₹${abhiBusFare}</div>
       <div class="cmp"><b>MMT</b>₹${mmtFare}</div>
-      <div class="cmp us"><b>Cheap Travels</b>₹${cheapTravelsFare} <small style="opacity:.8">(5% extra discount)</small></div>
+      <div class="cmp us"><b>Cheap Travels</b>₹${cheapTravelsFare} ${isFirstBusSS ? '<small style="opacity:.8">(Best price guaranteed)</small>' : '<small style="opacity:.8">(5% extra discount)</small>'}</div>
     `;
   }
   
   buses.forEach((bus, index) => {
     const isFeatured = index === 0;
     const strikeFare = bus.minFare;
-    const cheapFare = Math.round(strikeFare * 0.95);
+    const isSeatSeller = bus.resId.startsWith('ss-');
+    const cheapFare = isSeatSeller ? strikeFare : Math.round(strikeFare * 0.95);
     const savings = strikeFare - cheapFare;
     
     // Boarding points options
@@ -1291,7 +1297,10 @@ function renderBuses(buses, formattedDate) {
     html += `
       <div class="bus ${isFeatured ? 'featured' : ''}" data-bus="${bus.resId}">
         <div class="bus-main">
-          <h3>${bus.operator}</h3>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <h3 style="margin:0;">${bus.operator}</h3>
+            ${!isSeatSeller ? '<span style="background:var(--green-s); color:var(--teal-d); padding:2px 8px; border-radius:6px; font-size:10.5px; font-weight:700;">Direct Partner 5% Off</span>' : ''}
+          </div>
           <div class="bus-meta">
             <span>${bus.busType}</span><span>Direct</span><span>Live tracking</span><span>Mineral water</span>
           </div>
@@ -1308,9 +1317,14 @@ function renderBuses(buses, formattedDate) {
         </div>
         <div class="bus-side">
           <div class="fare-block">
-            <div class="fare-strike">₹${strikeFare}</div>
-            <div class="fare">₹${cheapFare} <small>/seat</small></div>
-            <div class="save-pill">SAVE ₹${savings}</div>
+            ${isSeatSeller ? `
+              <div class="fare" style="margin-top:0;">₹${cheapFare} <small>/seat</small></div>
+              <div style="font-size:10.5px; color:var(--ink2); margin-top:4px; font-weight:500;">Competitive Rate</div>
+            ` : `
+              <div class="fare-strike">₹${strikeFare}</div>
+              <div class="fare">₹${cheapFare} <small>/seat</small></div>
+              <div class="save-pill">SAVE ₹${savings}</div>
+            `}
           </div>
           <button class="view-seats" onclick="toggleSeatLive('${bus.resId}', '${formattedDate}')">View Seats</button>
         </div>
@@ -1443,8 +1457,9 @@ function renderSeatMap(resId, layoutData) {
     if (s.booked) cls += 'booked ';
     else if (s.ladies) cls += 'ladies ';
     
+    const isSeatSeller = resId.startsWith('ss-');
     const baseFare = s.fare || bus.minFare || 1000;
-    const discountFare = Math.round(baseFare * 0.95);
+    const discountFare = isSeatSeller ? baseFare : Math.round(baseFare * 0.95);
     const discountAmount = baseFare - discountFare;
     
     html += `
@@ -1808,10 +1823,11 @@ function continueToCheckout() {
   
   const fareCard = chView.querySelectorAll('.sum-card')[1];
   if (fareCard) {
+    const discountRow = totalDiscount > 0 ? `<div class="sum-row disc"><span>Cheap Travels discount</span><span>− ₹${totalDiscount}</span></div>` : '';
     fareCard.innerHTML = `
       <h4>Fare breakup</h4>
       <div class="sum-row"><span class="lbl">Base fare (${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''})</span><span>₹${totalBase}</span></div>
-      <div class="sum-row disc"><span>Cheap Travels discount</span><span>− ₹${totalDiscount}</span></div>
+      ${discountRow}
       <div class="sum-row"><span class="lbl">GST</span><span>₹0</span></div>
       <div class="sum-row"><span class="lbl">Convenience</span><span>₹0</span></div>
       <div class="sum-row tot"><span>Total payable</span><span>₹${totalPayable}</span></div>
