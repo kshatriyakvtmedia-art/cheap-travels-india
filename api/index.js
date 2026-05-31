@@ -158,6 +158,18 @@ async function fetchCities(opKey) {
   }));
 }
 
+// Load static routes_data.json as a fallback database for city name lookup
+let staticRoutesData = null;
+try {
+  const routesPath = path.join(__dirname, '..', 'public', 'routes_data.json');
+  if (fs.existsSync(routesPath)) {
+    staticRoutesData = JSON.parse(fs.readFileSync(routesPath, 'utf8'));
+    console.log("Loaded static routes_data.json fallback successfully.");
+  }
+} catch (err) {
+  console.error("Failed to load static routes_data.json:", err.message);
+}
+
 // Helper to resolve generic city dropdown values to operator-specific names and IDs
 function resolveCityNamesAndIds(fromVal, toVal) {
   let fromName = '';
@@ -167,26 +179,52 @@ function resolveCityNamesAndIds(fromVal, toVal) {
   let rdlhFromId = null;
   let rdlhToId = null;
 
+  const getCityFromStatic = (id) => {
+    if (!staticRoutesData) return null;
+    const all = [...(staticRoutesData.origins || []), ...(staticRoutesData.destinations || [])];
+    return all.find(x => x.id === id);
+  };
+
   // Resolve Names and local IDs first
   if (fromVal.startsWith('rd-')) {
     const rdlhId = fromVal.replace('rd-', '');
     const c = (OPERATORS.rdlh.cities || []).find(x => x.id === rdlhId);
-    if (c) fromName = c.name;
+    if (c) {
+      fromName = c.name;
+    } else {
+      const fallback = getCityFromStatic(rdlhId);
+      if (fallback) fromName = fallback.name;
+    }
     rdlhFromId = rdlhId;
   } else {
     const c = (OPERATORS.lxmi.cities || []).find(x => x.id === fromVal);
-    if (c) fromName = c.name;
+    if (c) {
+      fromName = c.name;
+    } else {
+      const fallback = getCityFromStatic(fromVal);
+      if (fallback) fromName = fallback.name;
+    }
     lxmiFromId = fromVal;
   }
 
   if (toVal.startsWith('rd-')) {
     const rdlhId = toVal.replace('rd-', '');
     const c = (OPERATORS.rdlh.cities || []).find(x => x.id === rdlhId);
-    if (c) toName = c.name;
+    if (c) {
+      toName = c.name;
+    } else {
+      const fallback = getCityFromStatic(rdlhId);
+      if (fallback) toName = fallback.name;
+    }
     rdlhToId = rdlhId;
   } else {
     const c = (OPERATORS.lxmi.cities || []).find(x => x.id === toVal);
-    if (c) toName = c.name;
+    if (c) {
+      toName = c.name;
+    } else {
+      const fallback = getCityFromStatic(toVal);
+      if (fallback) toName = fallback.name;
+    }
     lxmiToId = toVal;
   }
 

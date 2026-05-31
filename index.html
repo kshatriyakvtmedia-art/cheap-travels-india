@@ -1369,13 +1369,24 @@ async function loadCities() {
   try {
     const res = await fetch('/api/cities');
     const data = await res.json();
-    if (data.success) {
+    if (data.success && data.cities && data.cities.length > 0) {
       citiesList = data.cities;
       populateCitiesDropdowns();
+      return;
     }
   } catch (err) {
     console.error("Failed to load cities list from backend:", err);
   }
+  // Robust fallback cities
+  citiesList = [
+    {id:'170',name:'Azamgarh'}, {id:'3',name:'Delhi'}, {id:'255',name:'Mumbai'},
+    {id:'31',name:'Varanasi'}, {id:'24',name:'Lucknow'}, {id:'30',name:'Allahabad'},
+    {id:'22',name:'Agra'}, {id:'29',name:'Kanpur'}, {id:'23',name:'Gorakhpur'},
+    {id:'91',name:'Meerut'}, {id:'11',name:'Ghaziabad'},
+    {id:'12',name:'Noida'}, {id:'15',name:'Gurgaon'}, {id:'80',name:'Shimla'},
+    {id:'67',name:'Haridwar'}, {id:'16',name:'Dehradun'}, {id:'20',name:'Chandigarh'},
+  ];
+  populateCitiesDropdowns();
 }
 
 function populateCitiesDropdowns() {
