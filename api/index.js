@@ -595,8 +595,15 @@ app.get('/api/search', async (req, res) => {
 
     const [lxmiBuses, rdlhBuses] = await Promise.all(searchPromises);
 
-    // Merge real operator buses
-    let realBuses = [...lxmiBuses, ...rdlhBuses];
+    // Merge and filter real operator buses to ensure they actually match the searched origin city name.
+    // TicketSimply B2B portals sometimes return unrelated nearby routes (e.g. Azamgarh to Delhi for a Varanasi to Delhi search).
+    let rawBuses = [...lxmiBuses, ...rdlhBuses];
+    let realBuses = rawBuses.filter(bus => {
+      const orig = fromName.toLowerCase();
+      const routeMatches = bus.routeName.toLowerCase().includes(orig);
+      const boardingMatches = bus.boardingPoints.some(bp => bp.name.toLowerCase().includes(orig));
+      return routeMatches || boardingMatches;
+    });
 
     let buses = [...realBuses];
 
@@ -964,10 +971,36 @@ app.get('/api/admin/users', requireAdmin, (req, res) => {
   res.json({ success: true, users: analytics.userSignups });
 });
 
+let seatsellerReachable = false;
+let seatsellerLastCheck = 0;
+
+async function checkSeatSellerReachable() {
+  const now = Date.now();
+  if (now - seatsellerLastCheck < 30 * 1000) return seatsellerReachable; // cache for 30s
+  try {
+    const res = await fetch("https://in3.seatseller.travel/", {
+      method: "GET",
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      },
+      signal: AbortSignal.timeout(5000)
+    });
+    seatsellerReachable = res.status === 200 || res.status === 403 || res.status === 302;
+  } catch (err) {
+    seatsellerReachable = false;
+  }
+  seatsellerLastCheck = now;
+  return seatsellerReachable;
+}
+
 // Admin: server & portal health
-app.get('/api/admin/health', requireAdmin, (req, res) => {
+app.get('/api/admin/health', requireAdmin, async (req, res) => {
   const uptime = Math.floor((Date.now() - analytics.startTime) / 1000);
   const now = Date.now();
+  
+  // Perform background SeatSeller reachability check
+  const isSSReachable = await checkSeatSellerReachable();
+
   res.json({
     success: true,
     health: {
@@ -985,6 +1018,15 @@ app.get('/api/admin/health', requireAdmin, (req, res) => {
         lastLogin: OPERATORS.rdlh.lastLoginTime ? new Date(OPERATORS.rdlh.lastLoginTime).toISOString() : null,
         sessionAge: OPERATORS.rdlh.lastLoginTime ? Math.floor((now - OPERATORS.rdlh.lastLoginTime) / 1000) : null,
         citiesLoaded: (OPERATORS.rdlh.cities || []).length
+      },
+      seatseller: {
+        name: 'redBus SeatSeller B2B',
+        sessionActive: false,
+        lastLogin: null,
+        sessionAge: null,
+        citiesLoaded: 0,
+        status: isSSReachable ? 'Reachable (Akamai Protected)' : 'Offline/Blocked',
+        note: 'Requires Partner XML API Integration'
       }
     }
   });

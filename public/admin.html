@@ -486,6 +486,27 @@ body::before {
 }
 .refresh-btn.spinning svg { animation: spin 1s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Filesystem Protocol Warning */
+.file-warning {
+  margin-top: 24px;
+  background: rgba(234, 179, 8, 0.08);
+  border: 1px solid #eab308;
+  border-radius: 12px;
+  padding: 16px 20px;
+  max-width: 400px;
+  width: 90%;
+  color: #fef08a;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+.file-warning a {
+  color: #06b6d4;
+  text-decoration: underline;
+  font-weight: 700;
+}
 </style>
 </head>
 <body>
@@ -506,6 +527,13 @@ body::before {
       <button type="submit">Authenticate</button>
     </form>
     <div class="login-err" id="login-err">Invalid password. Try again.</div>
+  </div>
+  
+  <!-- File Protocol CORS Warning -->
+  <div id="file-protocol-warning" class="file-warning" style="display:none;">
+    ⚠️ <b>CORS / Local File Warning:</b> You have opened the admin dashboard directly from your filesystem (<code>file://</code>). 
+    Due to browser security policies (CORS), requests to the local backend server (port 3000) will be blocked.<br><br>
+    Please open the page via: <a href="http://localhost:3000/admin.html" target="_blank"><b>http://localhost:3000/admin.html</b></a> instead!
   </div>
 </div>
 
@@ -854,24 +882,28 @@ function renderUsers(users) {
 
 function renderHealth(health) {
   const grid = document.getElementById('health-grid');
-  const serverH = Math.floor(health.serverUptime / 3600);
-  const serverM = Math.floor((health.serverUptime % 3600) / 60);
   
-  const portals = [health.lxmi, health.rdlh];
+  const portals = [health.lxmi, health.rdlh, health.seatseller];
   let html = '';
   
   portals.forEach(p => {
+    if (!p) return;
     const age = p.sessionAge !== null ? `${Math.floor(p.sessionAge / 60)}m ${p.sessionAge % 60}s` : 'N/A';
+    const statusText = p.status ? p.status : (p.sessionActive ? '✅ Active' : '❌ Expired');
+    const noteRow = p.note ? `<div class="h-row"><span class="h-label">Note</span><span class="h-val" style="color:#eab308;font-size:11px;font-weight:600;">${p.note}</span></div>` : '';
+    const activeClass = p.sessionActive || p.status?.includes('Reachable') ? 'active' : 'inactive';
+    
     html += `
       <div class="health-card">
         <div class="h-name">
-          <span class="status-dot ${p.sessionActive ? 'active' : 'inactive'}"></span>
+          <span class="status-dot ${activeClass}"></span>
           ${p.name}
         </div>
-        <div class="h-row"><span class="h-label">Session</span><span class="h-val">${p.sessionActive ? '✅ Active' : '❌ Expired'}</span></div>
+        <div class="h-row"><span class="h-label">Status</span><span class="h-val">${statusText}</span></div>
         <div class="h-row"><span class="h-label">Last Login</span><span class="h-val">${p.lastLogin ? new Date(p.lastLogin).toLocaleTimeString('en-IN') : 'Never'}</span></div>
         <div class="h-row"><span class="h-label">Session Age</span><span class="h-val">${age}</span></div>
         <div class="h-row"><span class="h-label">Cities Loaded</span><span class="h-val">${p.citiesLoaded}</span></div>
+        ${noteRow}
       </div>
     `;
   });
@@ -901,6 +933,10 @@ setInterval(() => {
 }, 30000); // every 30s
 
 // ─── INIT ───
+if (window.location.protocol === 'file:') {
+  document.getElementById('file-protocol-warning').style.display = 'block';
+}
+
 if (adminToken) {
   // Verify saved token
   fetch(`${API}/api/admin/stats`, { headers: authHeaders() })
