@@ -656,32 +656,8 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
           <h3><span class="step">2</span> Pay via UPI</h3>
           <p>Scan the QR with any UPI app · Pay <b class="qr-payable">₹1,424</b> to <b class="qr-upi-id">cheaptravel546@okhdfcbank</b></p>
           <div class="timer">⏱ Hold expires in 07:23</div>
-          <div class="qr-box">
-            <svg class="qr-svg" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-              <rect width="256" height="256" fill="#fff"/>
-              <!-- Decorative QR pattern (not a real QR) -->
-              <g fill="#0F766E">
-                <!-- finder patterns -->
-                <rect x="8" y="8" width="56" height="56"/>
-                <rect x="192" y="8" width="56" height="56"/>
-                <rect x="8" y="192" width="56" height="56"/>
-              </g>
-              <g fill="#fff">
-                <rect x="16" y="16" width="40" height="40"/>
-                <rect x="200" y="16" width="40" height="40"/>
-                <rect x="16" y="200" width="40" height="40"/>
-              </g>
-              <g fill="#0F766E">
-                <rect x="24" y="24" width="24" height="24"/>
-                <rect x="208" y="24" width="24" height="24"/>
-                <rect x="24" y="208" width="24" height="24"/>
-              </g>
-              <!-- random data dots -->
-              <g fill="#0F766E" id="qrdots"></g>
-              <!-- monogram center -->
-              <rect x="104" y="108" width="48" height="40" rx="8" fill="#fff" stroke="#0E7B4F" stroke-width="2"/>
-              <text x="128" y="132" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="18" font-weight="800" fill="#0E7B4F">CT<tspan fill="#EE8C2E">i</tspan></text>
-            </svg>
+          <div class="qr-box" style="display:inline-block; background:#fff; padding:6px; border-radius:14px; box-shadow:var(--shadow); margin:0 auto 14px; overflow:hidden; border: 1.5px solid var(--line);">
+            <img src="payment_qr.png" alt="Scan to pay" style="width:260px; height:auto; display:block; margin:0 auto; border-radius:10px;">
           </div>
           <div class="upi-id">cheaptravels@upi</div>
           <button class="copy-btn">📋 Copy UPI ID</button>
@@ -1355,12 +1331,10 @@ function continueToCheckout() {
     upiText.textContent = `cheaptravel546@okhdfcbank`;
   }
 
-  // Generate dynamic QR Code Image using real UPI deep link
-  const qrContainer = chView.querySelector('.qr-box');
-  if (qrContainer) {
-    const upiUri = `upi://pay?pa=cheaptravel546@okhdfcbank&pn=CheapTravel-India&tn=LXM-${selectedSeat.seatNo}&am=${selectedSeat.payable}&cu=INR`;
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUri)}`;
-    qrContainer.innerHTML = `<img src="${qrUrl}" alt="Scan to pay" style="width:220px; height:220px; display:block; margin:0 auto; border-radius:10px;">`;
+  // Ensure the static Google Pay QR image is shown
+  const qrImage = chView.querySelector('.qr-box img');
+  if (qrImage) {
+    qrImage.src = 'payment_qr.png';
   }
   
   // Set hold timer
