@@ -20,6 +20,7 @@
   --shadow:0 10px 28px rgba(14,123,79,.10);
   --shadow-lg:0 18px 50px rgba(14,123,79,.16);
   --radius:14px;
+  --seat-size: 44px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg)}
@@ -196,9 +197,9 @@ header.top{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px so
 .seat-grid-container{width:100%;overflow-x:auto}
 .seat-grid{display:grid;gap:7px 5px;margin:0 auto;width:fit-content}
 .seat-grid .gap{visibility:hidden}
-.seat{width:44px;height:44px;background:#fff;border:1.5px solid #CBD5E1;border-radius:8px;font-size:10px;color:#475569;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,.06);letter-spacing:.3px}
+.seat{width:var(--seat-size, 44px);height:100%;min-height:var(--seat-size, 44px);background:#fff;border:1.5px solid #CBD5E1;border-radius:8px;font-size:10px;color:#475569;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,.06);letter-spacing:.3px}
 .seat:hover:not(.booked){border-color:var(--teal);transform:scale(1.08);box-shadow:0 4px 10px rgba(15,118,110,.2);color:var(--teal)}
-.seat.sleeper{width:44px;height:auto}
+.seat.sleeper{width:var(--seat-size, 44px);height:100%}
 .seat.booked{background:#F1F5F9;color:#CBD5E1;border-color:#E2E8F0;cursor:not-allowed;box-shadow:none}
 .seat.ladies{border-color:#EC4899;color:#DB2777;background:#FFF0F6}
 .seat.selected{background:var(--teal);color:#fff;border-color:var(--teal);box-shadow:0 4px 14px rgba(15,118,110,.35);transform:scale(1.05)}
@@ -366,7 +367,10 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
   .field-box select{font-size:16px !important;font-weight:700;color:var(--ink)}
 
   /* Page */
-  .page{padding:0 12px;margin-top:-80px}
+  :root {
+    --seat-size: 40px;
+  }
+  .page{padding:0 16px;margin-top:-80px}
   .trust-strip{grid-template-columns:1fr 1fr;gap:12px;padding:14px}
   .ts-ico{width:36px;height:36px;font-size:18px}
   .ts b{font-size:12.5px}
@@ -387,8 +391,8 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
 
   /* Seat panel */
   .seat-content{grid-template-columns:1fr}
-  .seat{width:40px;height:40px;font-size:9px}
-  .seat.sleeper{height:auto}
+  .seat{font-size:9px}
+  .seat.sleeper{height:100%}
   .seat-grid{gap:5px 4px}
 
   /* Checkout */
@@ -558,6 +562,8 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
               <option value="2">2 Adults</option>
               <option value="3">3 Adults</option>
               <option value="4">4 Adults</option>
+              <option value="5">5 Adults</option>
+              <option value="6">6 Adults</option>
             </select>
             <div class="sv">General · Any</div>
           </div>
@@ -906,15 +912,14 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
     </div>
     <div class="checkout-wrap">
       <div>
-        <div class="section">
+        <div class="section" id="passenger-section">
           <h3><span class="step">1</span> Passenger details</h3>
-          <div class="form-grid">
-            <div class="input"><label>Full name (as on ID)</label><input type="text" placeholder="e.g. Rakesh Yadav"></div>
-            <div class="input"><label>Age</label><input type="number" placeholder="28"></div>
-            <div class="input"><label>Gender</label><select><option>Male</option><option>Female</option><option>Other</option></select></div>
-            <div class="input"><label>Seat</label><input type="text" value="L7 (Lower)" readonly></div>
-            <div class="input full"><label>Mobile (for WhatsApp ticket)</label><input type="tel" placeholder="+91 9XXXX XXXXX"></div>
-            <div class="input full"><label>Email</label><input type="email" placeholder="you@example.com"></div>
+          <div id="passenger-inputs-container" style="display:flex; flex-direction:column; gap:12px;">
+            <!-- Dynamically generated passenger cards will go here -->
+          </div>
+          <div class="form-grid" style="margin-top: 15px; border-top: 1px dashed var(--line); padding-top: 15px;">
+            <div class="input full"><label>Mobile (for WhatsApp ticket)</label><input type="tel" id="contact-phone" placeholder="+91 9XXXX XXXXX"></div>
+            <div class="input full"><label>Email</label><input type="email" id="contact-email" placeholder="you@example.com"></div>
           </div>
         </div>
 
@@ -1068,9 +1073,42 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
 let citiesList = [];
 let searchResultsBuses = [];
 let selectedBus = null;
-let selectedSeat = null;
+let selectedSeats = [];
 let selectedBoardingPoint = null;
 let selectedDroppingPoint = null;
+
+// Premium Toast Notification
+function showToast(message) {
+  let toast = document.getElementById('cti-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'cti-toast';
+    toast.style.position = 'fixed';
+    toast.style.bottom = '24px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%) translateY(100px)';
+    toast.style.background = 'var(--ink)';
+    toast.style.color = '#fff';
+    toast.style.padding = '12px 24px';
+    toast.style.borderRadius = '30px';
+    toast.style.boxShadow = 'var(--shadow-lg)';
+    toast.style.zIndex = '9999';
+    toast.style.fontSize = '13.5px';
+    toast.style.fontWeight = '600';
+    toast.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    toast.style.pointerEvents = 'none';
+    toast.style.display = 'flex';
+    toast.style.alignItems = 'center';
+    toast.style.gap = '8px';
+    toast.style.border = '1px solid rgba(255,255,255,0.1)';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<span>🔔</span> ${message}`;
+  toast.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => {
+    toast.style.transform = 'translateX(-50%) translateY(100px)';
+  }, 3200);
+}
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
@@ -1374,17 +1412,16 @@ function renderSeatMap(resId, layoutData) {
   const grid = document.getElementById(`grid-${resId}`);
   if (!grid) return;
   
-  // Fixed 44px rows — critical: keeps seater and sleeper columns perfectly aligned
-  // Sleeper (rowspan=2) = 44 + 7gap + 44 = 95px automatically
-  grid.style.gridTemplateRows = `repeat(${layoutData.maxRow}, 44px)`;
-  grid.style.gridTemplateColumns = `repeat(${layoutData.maxCol}, 44px)`;
+  // Dynamic CSS-variable driven sizing for perfect mobile/desktop responsiveness
+  grid.style.gridTemplateRows = `repeat(${layoutData.maxRow}, var(--seat-size, 44px))`;
+  grid.style.gridTemplateColumns = `repeat(${layoutData.maxCol}, var(--seat-size, 44px))`;
   grid.style.gap = '7px 5px';
   grid.style.alignItems = 'stretch';
   
   // Find current bus details
   const bus = searchResultsBuses.find(b => b.resId == resId);
   selectedBus = bus;
-  selectedSeat = null;
+  selectedSeats = [];
   
   // Set default boarding point
   if (bus && bus.boardingPoints.length > 0) {
@@ -1437,29 +1474,44 @@ function renderSeatMap(resId, layoutData) {
 function pickSeatLive(el, resId) {
   if (el.dataset.available === 'false') return;
   
-  // Highlight selected seat
-  const grid = document.getElementById(`grid-${resId}`);
-  grid.querySelectorAll('.seat').forEach(s => s.classList.remove('selected'));
-  el.classList.add('selected');
-  
   const seatNo = el.dataset.seat;
   const baseFare = parseFloat(el.dataset.fare);
   const discount = parseFloat(el.dataset.discount);
   const payable = parseFloat(el.dataset.payable);
   
-  selectedSeat = {
-    seatNo,
-    baseFare,
-    discount,
-    payable
-  };
+  const maxSeatsAllowed = parseInt(document.getElementById('passenger-count').value) || 6;
+  const isCurrentlySelected = el.classList.contains('selected');
+  
+  if (!isCurrentlySelected) {
+    if (selectedSeats.length >= maxSeatsAllowed) {
+      showToast(`You searched for ${maxSeatsAllowed} passenger(s). To book more seats, change the passenger count in the search bar.`);
+      return;
+    }
+    el.classList.add('selected');
+    selectedSeats.push({ seatNo, baseFare, discount, payable });
+  } else {
+    el.classList.remove('selected');
+    selectedSeats = selectedSeats.filter(s => s.seatNo !== seatNo);
+  }
   
   // Update summary UI
-  document.getElementById(`sel-seat-${resId}`).textContent = seatNo;
-  document.getElementById(`base-fare-${resId}`).textContent = `₹${baseFare}`;
-  document.getElementById(`discount-${resId}`).textContent = `− ₹${discount}`;
-  document.getElementById(`total-fare-${resId}`).textContent = `₹${payable}`;
-  document.getElementById(`continue-btn-${resId}`).disabled = false;
+  if (selectedSeats.length === 0) {
+    document.getElementById(`sel-seat-${resId}`).textContent = '— none —';
+    document.getElementById(`base-fare-${resId}`).textContent = '₹0';
+    document.getElementById(`discount-${resId}`).textContent = '− ₹0';
+    document.getElementById(`total-fare-${resId}`).textContent = '₹0';
+    document.getElementById(`continue-btn-${resId}`).disabled = true;
+  } else {
+    const totalBase = selectedSeats.reduce((sum, s) => sum + s.baseFare, 0);
+    const totalDiscount = selectedSeats.reduce((sum, s) => sum + s.discount, 0);
+    const totalPayable = selectedSeats.reduce((sum, s) => sum + s.payable, 0);
+    
+    document.getElementById(`sel-seat-${resId}`).textContent = selectedSeats.map(s => s.seatNo).join(', ');
+    document.getElementById(`base-fare-${resId}`).textContent = `₹${totalBase}`;
+    document.getElementById(`discount-${resId}`).textContent = `− ₹${totalDiscount}`;
+    document.getElementById(`total-fare-${resId}`).textContent = `₹${totalPayable}`;
+    document.getElementById(`continue-btn-${resId}`).disabled = false;
+  }
 }
 
 function pickPoint(el, type, name, time) {
@@ -1648,7 +1700,7 @@ document.addEventListener('keydown', e => {
 
 // ═══════════ CHECKOUT FLOW ═══════════
 function continueToCheckout() {
-  if (!selectedBus || !selectedSeat) return;
+  if (!selectedBus || selectedSeats.length === 0) return;
 
   // 🔒 Auth gate — must be signed in to book
   if (!currentUser) {
@@ -1663,8 +1715,13 @@ function continueToCheckout() {
   chView.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
   
+  const totalBase = selectedSeats.reduce((sum, s) => sum + s.baseFare, 0);
+  const totalDiscount = selectedSeats.reduce((sum, s) => sum + s.discount, 0);
+  const totalPayable = selectedSeats.reduce((sum, s) => sum + s.payable, 0);
+  const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
+  
   // Update header text in checkout
-  const tripHeader = chView.querySelector('div[style*="Anand Vihar"]');
+  const tripHeader = chView.querySelector('div[style*="Anand Vihar"]') || chView.querySelector('div[style*="Delhi"]');
   if (tripHeader) {
     const fromName = document.getElementById('from-select').options[document.getElementById('from-select').selectedIndex].text;
     const toName = document.getElementById('to-select').options[document.getElementById('to-select').selectedIndex].text;
@@ -1672,19 +1729,59 @@ function continueToCheckout() {
     const parts = dateInput.split('-');
     const formattedDate = `${parts[2]} ${getMonthName(parts[1])}`;
     
-    tripHeader.textContent = `${fromName} → ${toName} · ${formattedDate} · ${selectedBus.operator} · Seat ${selectedSeat.seatNo}`;
+    tripHeader.textContent = `${fromName} → ${toName} · ${formattedDate} · ${selectedBus.operator} · Seats ${seatNosStr}`;
   }
   
-  // Update form seat input
-  const seatInput = chView.querySelector('input[value*="Lower"]');
-  if (seatInput) {
-    seatInput.value = `${selectedSeat.seatNo} (${selectedSeat.baseFare > 1200 ? 'Sleeper' : 'Seater'})`;
+  // Dynamically generate passenger name/age/gender cards for each seat
+  const pContainer = document.getElementById('passenger-inputs-container');
+  if (pContainer) {
+    let pHtml = '';
+    selectedSeats.forEach((seat, idx) => {
+      const typeStr = seat.baseFare > 1200 ? 'Sleeper' : 'Seater';
+      pHtml += `
+        <div class="passenger-card" style="background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:16px; margin-bottom:10px;">
+          <h4 style="margin:0 0 12px; color:var(--teal); font-size:14px; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
+            <span>Passenger ${idx + 1}</span>
+            <span style="background:var(--gold-s); color:var(--teal-d); padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700;">Seat ${seat.seatNo} (${typeStr})</span>
+          </h4>
+          <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-top:0;">
+            <div class="input" style="display:flex; flex-direction:column; gap:4px;">
+              <label style="font-size:11px; color:var(--ink2); font-weight:600; text-transform:uppercase; letter-spacing:0.3px;">Full Name (on ID)</label>
+              <input type="text" class="passenger-name" data-seat="${seat.seatNo}" placeholder="e.g. Passenger ${idx + 1}" style="padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; outline:none; font-family:inherit; font-size:14px; font-weight:600; color:var(--ink);" required>
+            </div>
+            <div class="input" style="display:flex; flex-direction:column; gap:4px;">
+              <label style="font-size:11px; color:var(--ink2); font-weight:600; text-transform:uppercase; letter-spacing:0.3px;">Age</label>
+              <input type="number" class="passenger-age" placeholder="Age" min="1" max="120" style="padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; outline:none; font-family:inherit; font-size:14px; font-weight:600; color:var(--ink);" required>
+            </div>
+            <div class="input" style="display:flex; flex-direction:column; gap:4px;">
+              <label style="font-size:11px; color:var(--ink2); font-weight:600; text-transform:uppercase; letter-spacing:0.3px;">Gender</label>
+              <select class="passenger-gender" style="padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; outline:none; font-family:inherit; font-size:14px; font-weight:600; color:var(--ink); background:#fff; cursor:pointer;">
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    pContainer.innerHTML = pHtml;
+  }
+
+  // Pre-fill contact details with logged in user details if available
+  if (currentUser) {
+    if (document.getElementById('contact-phone')) {
+      document.getElementById('contact-phone').value = currentUser.phone || '';
+    }
+    if (document.getElementById('contact-email')) {
+      document.getElementById('contact-email').value = currentUser.email || '';
+    }
   }
   
   // Update payment section price and description VPA
   const upiPrice = chView.querySelector('.qr-payable');
   if (upiPrice) {
-    upiPrice.textContent = `₹${selectedSeat.payable}`;
+    upiPrice.textContent = `₹${totalPayable}`;
   }
   const upiDescId = chView.querySelector('.qr-upi-id');
   if (upiDescId) {
@@ -1705,7 +1802,7 @@ function continueToCheckout() {
       <div class="sum-row"><span class="lbl">Departure</span><span>${formattedDate}, ${selectedBus.departure}</span></div>
       <div class="sum-row"><span class="lbl">Arrival</span><span>${selectedBus.arrival}</span></div>
       <div class="sum-row"><span class="lbl">Boarding</span><span>${selectedBoardingPoint ? selectedBoardingPoint.name : 'Main Boarding Point'}</span></div>
-      <div class="sum-row"><span class="lbl">Seat</span><span>${selectedSeat.seatNo}</span></div>
+      <div class="sum-row"><span class="lbl">Seats</span><span>${seatNosStr} (${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''})</span></div>
     `;
   }
   
@@ -1713,11 +1810,11 @@ function continueToCheckout() {
   if (fareCard) {
     fareCard.innerHTML = `
       <h4>Fare breakup</h4>
-      <div class="sum-row"><span class="lbl">Base fare</span><span>₹${selectedSeat.baseFare}</span></div>
-      <div class="sum-row disc"><span>Cheap Travels discount</span><span>− ₹${selectedSeat.discount}</span></div>
+      <div class="sum-row"><span class="lbl">Base fare (${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''})</span><span>₹${totalBase}</span></div>
+      <div class="sum-row disc"><span>Cheap Travels discount</span><span>− ₹${totalDiscount}</span></div>
       <div class="sum-row"><span class="lbl">GST</span><span>₹0</span></div>
       <div class="sum-row"><span class="lbl">Convenience</span><span>₹0</span></div>
-      <div class="sum-row tot"><span>Total payable</span><span>₹${selectedSeat.payable}</span></div>
+      <div class="sum-row tot"><span>Total payable</span><span>₹${totalPayable}</span></div>
     `;
   }
   
@@ -1780,11 +1877,23 @@ function showTicket() {
   clearInterval(holdTimerInterval);
   
   // Get passenger details
-  const name = document.querySelector('input[placeholder="e.g. Rakesh Yadav"]').value || "Rakesh Yadav";
-  const age = document.querySelector('input[placeholder="28"]').value || "28";
-  const gender = document.querySelector('select').value || "Male";
-  const phone = document.querySelector('input[placeholder*="+91"]').value || "+91 99999 99999";
-  const email = document.querySelector('input[placeholder*="you@"]').value || "you@example.com";
+  const passengerCards = document.querySelectorAll('.passenger-card');
+  const passengers = [];
+  passengerCards.forEach((card, idx) => {
+    const nameInput = card.querySelector('.passenger-name');
+    const ageInput = card.querySelector('.passenger-age');
+    const genderSelect = card.querySelector('.passenger-gender');
+    
+    passengers.push({
+      seatNo: nameInput.dataset.seat,
+      name: nameInput.value.trim() || `Passenger ${idx + 1}`,
+      age: ageInput.value.trim() || '25',
+      gender: genderSelect.value || 'Male'
+    });
+  });
+  
+  const phone = document.getElementById('contact-phone').value.trim() || "+91 88533 91184";
+  const email = document.getElementById('contact-email').value.trim() || "support@cheaptravels.in";
   
   const pnr = `LXM-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
   
@@ -1797,7 +1906,7 @@ function showTicket() {
   // Update Success headers
   const successP = tView.querySelector('.ticket-success p');
   if (successP) {
-    successP.innerHTML = `Your e-ticket is on its way to your WhatsApp and email. PNR: <b>${pnr}</b>`;
+    successP.innerHTML = `Your e-ticket is on its way to your WhatsApp (<b>${phone}</b>) and email (<b>${email}</b>). PNR: <b>${pnr}</b>`;
   }
   
   const pnrBadge = tView.querySelector('.pnr');
@@ -1830,19 +1939,30 @@ function showTicket() {
   }
   
   const tkGrid = tView.querySelector('.tk-grid');
-  if (tkGrid && selectedBus && selectedSeat) {
+  if (tkGrid && selectedBus && selectedSeats.length > 0) {
     const now = new Date();
     const formattedBookedOn = `${now.getDate()} ${getMonthName(now.getMonth() + 1)} ${now.getFullYear()}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const totalPayable = selectedSeats.reduce((sum, s) => sum + s.payable, 0);
+    
+    // Generate HTML rows for passengers
+    let passengersHtml = '';
+    passengers.forEach(p => {
+      const seatDetails = selectedSeats.find(s => s.seatNo === p.seatNo);
+      const typeStr = seatDetails && seatDetails.baseFare > 1200 ? 'Sleeper' : 'Seater';
+      passengersHtml += `<div style="margin-bottom:6px; font-size:13px; line-height:1.4;">• <b>${p.name}</b> · Seat ${p.seatNo} (${typeStr}) · ${p.gender.substring(0, 1)} · ${p.age} yrs</div>`;
+    });
     
     tkGrid.innerHTML = `
-      <div class="tk-cell"><div class="lbl">Passenger</div><div class="v">${name} · ${gender.substring(0, 1)} · ${age}</div></div>
-      <div class="tk-cell"><div class="lbl">Seat</div><div class="v">${selectedSeat.seatNo} · ${selectedSeat.baseFare > 1200 ? 'Sleeper' : 'Seater'}</div></div>
+      <div class="tk-cell" style="grid-column: span 2; border-bottom: 1px dashed var(--line); padding-bottom: 10px; margin-bottom: 8px;">
+        <div class="lbl">Passengers & Seats</div>
+        <div class="v" style="margin-top:4px;">${passengersHtml}</div>
+      </div>
       <div class="tk-cell"><div class="lbl">Operator</div><div class="v">${selectedBus.operator}</div></div>
       <div class="tk-cell"><div class="lbl">Bus type</div><div class="v">${selectedBus.busType}</div></div>
       <div class="tk-cell"><div class="lbl">Bus number</div><div class="v">UP 50 BT ${Math.floor(1000 + Math.random() * 9000)}</div></div>
-      <div class="tk-cell"><div class="lbl">Driver contact</div><div class="v">+91 9${Math.floor(100000000 + Math.random() * 900000000)}</div></div>
+      <div class="tk-cell"><div class="lbl">Driver contact</div><div class="v">+91 88533 91184</div></div>
       <div class="tk-cell"><div class="lbl">Booked on</div><div class="v">${formattedBookedOn}</div></div>
-      <div class="tk-cell"><div class="lbl">Amount paid</div><div class="v" style="color:var(--green)">₹${selectedSeat.payable} (UPI)</div></div>
+      <div class="tk-cell"><div class="lbl">Amount paid</div><div class="v" style="color:var(--green)">₹${totalPayable} (UPI)</div></div>
     `;
   }
   

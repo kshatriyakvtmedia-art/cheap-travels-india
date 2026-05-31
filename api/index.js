@@ -305,6 +305,38 @@ app.get('/api/layout/:resId', async (req, res) => {
     await ensureSession();
     console.log(`Fetching seat layout for reservation ID ${resId}...`);
 
+    // Pre-initialize B2B session route by performing a quick search first
+    console.log(`Pre-initializing session route: From ID ${from} to ID ${to} on ${date}...`);
+    const initParams = new URLSearchParams();
+    initParams.append("searchbus[from]", from);
+    initParams.append("searchbus[to]", to);
+    initParams.append("searchbus[depart]", date);
+    initParams.append("searchbus[code]", "");
+    initParams.append("get_all_services", "false");
+    initParams.append("rountrip_return", "");
+    initParams.append("render_new_dates", "true");
+    initParams.append("prev_date_for_cal", "");
+    initParams.append("is_from_modify_org_dest_service_ac", "");
+    initParams.append("is_pickup_confirm_phone_block", "false");
+    initParams.append("old_passanger_data_arr", "");
+    initParams.append("old_pnr_for_pickup_phone", "");
+    initParams.append("is_progressively_loading", "false");
+    initParams.append("is_round_trip_parallel_booking", "false");
+    initParams.append("show_connecting_services", "false");
+    initParams.append("searchbus_allocation", "0");
+    initParams.append("can_block_or_unblock", "false");
+
+    const searchInitUrl = `${PORTAL_URL}/ibooking/bookings/search_service?${initParams.toString()}`;
+    await fetch(searchInitUrl, {
+      headers: {
+        "Cookie": sessionCookies.join("; "),
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Referer": `${PORTAL_URL}/bookings`,
+        "X-CSRF-Token": csrfToken,
+        "X-Requested-With": "XMLHttpRequest"
+      }
+    });
+
     const layoutUrl = `${PORTAL_URL}/ibooking/bookings/select_seat/${resId}?searchbus_params[from]=${from}&searchbus_params[to]=${to}&searchbus_params[depart]=${date}&searchbus_params[terminal]=0&searchbus_params[code]=&booking_return_date=`;
     
     const layoutRes = await fetch(layoutUrl, {
@@ -313,7 +345,9 @@ app.get('/api/layout/:resId', async (req, res) => {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Referer": `${PORTAL_URL}/bookings`,
         "X-CSRF-Token": csrfToken,
-        "X-Requested-With": "XMLHttpRequest"
+        "X-Requested-With": "XMLHttpRequest",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache"
       }
     });
 
