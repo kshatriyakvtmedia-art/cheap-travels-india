@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server.js"
+    },
+    {
+      "src": "/Logo.png",
+      "dest": "Logo.png"
+    },
+    {
+      "src": "/02-brain-map.html",
+      "dest": "02-brain-map.html"
+    },
+    {
+      "src": "/01-brand-and-logo.md",
+      "dest": "01-brand-and-logo.md"
+    },
+    {
+      "src": "/04-tech-architecture.md",
+      "dest": "04-tech-architecture.md"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "03-mockup-cheap-travels.html"
+    }
+  ]
+}

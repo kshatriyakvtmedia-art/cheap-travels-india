@@ -410,16 +410,20 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '03-mockup-cheap-travels.html'));
 });
 
-// Run server and login on startup
-app.listen(PORT, async () => {
-  console.log(`=========================================`);
-  console.log(`Cheap Travels India Live server listening on port ${PORT}`);
-  console.log(`Local URL: http://localhost:${PORT}`);
-  console.log(`=========================================`);
-  
-  try {
-    await performLogin();
-  } catch (err) {
-    console.error("Warning: Initial login during startup failed. Will retry on first client request.");
-  }
-});
+// Run server and login on startup (only if run directly, not as serverless function)
+if (require.main === module) {
+  app.listen(PORT, async () => {
+    console.log(`=========================================`);
+    console.log(`Cheap Travels India Live server listening on port ${PORT}`);
+    console.log(`Local URL: http://localhost:${PORT}`);
+    console.log(`=========================================`);
+    
+    try {
+      await performLogin();
+    } catch (err) {
+      console.error("Warning: Initial login during startup failed. Will retry on first client request.");
+    }
+  });
+}
+
+module.exports = app;
