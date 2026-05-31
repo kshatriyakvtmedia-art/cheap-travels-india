@@ -27,6 +27,8 @@
   --blue-glow: rgba(59,130,246,.12);
   --purple: #a855f7;
   --purple-glow: rgba(168,85,247,.12);
+  --green: #10b981;
+  --green-glow: rgba(16,185,129,.12);
   --radius: 14px;
   --shadow: 0 4px 24px rgba(0,0,0,.3);
 }
@@ -276,6 +278,25 @@ body::before {
 .stat-card.purple .stat-value { color: var(--purple); }
 .stat-card.red .icon-circle { background: var(--red-glow); }
 .stat-card.red .stat-value { color: var(--red); }
+.stat-card.green .icon-circle { background: var(--green-glow); }
+.stat-card.green .stat-value { color: var(--green); }
+.pnr-badge {
+  background: var(--green-glow);
+  color: var(--green);
+  font-family: monospace;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.seat-badge {
+  background: var(--surface3);
+  color: var(--ink);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 11px;
+}
 
 /* ─── PANELS ─── */
 .panels-grid {
@@ -361,6 +382,7 @@ body::before {
 .activity-item .ev-dot.view_seats { background: var(--gold-glow); color: var(--gold); }
 .activity-item .ev-dot.checkout { background: var(--purple-glow); color: var(--purple); }
 .activity-item .ev-dot.signup { background: var(--red-glow); color: var(--red); }
+.activity-item .ev-dot.booking { background: var(--green-glow); color: var(--green); }
 .activity-item .ev-text {
   flex: 1;
   font-size: 13px;
@@ -587,6 +609,11 @@ body::before {
         <div class="stat-value" id="stat-signups">0</div>
         <div class="stat-label">Signups</div>
       </div>
+      <div class="stat-card green">
+        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg></div>
+        <div class="stat-value" id="stat-bookings">0</div>
+        <div class="stat-label">Bookings</div>
+      </div>
     </div>
 
     <!-- PANELS ROW 1: Activity Feed + Popular Routes -->
@@ -632,6 +659,18 @@ body::before {
         <div class="panel-body" id="search-history">
           <div class="empty-state">No searches yet.</div>
         </div>
+      </div>
+    </div>
+
+    <!-- BOOKINGS -->
+    <div class="section-label">Ticket Bookings</div>
+    <div class="panel" style="margin-bottom:32px;">
+      <div class="panel-header">
+        <h3>🎫 Recent Bookings</h3>
+        <span class="badge" id="bookings-count">0 bookings</span>
+      </div>
+      <div class="panel-body" id="bookings-table">
+        <div class="empty-state">No bookings recorded yet.</div>
       </div>
     </div>
 
@@ -712,6 +751,7 @@ async function fetchStats() {
     document.getElementById('stat-seatviews').textContent = s.seatViews.toLocaleString();
     document.getElementById('stat-checkouts').textContent = s.checkouts.toLocaleString();
     document.getElementById('stat-signups').textContent = s.signups.toLocaleString();
+    document.getElementById('stat-bookings').textContent = s.bookings.toLocaleString();
     
     // Uptime
     const h = Math.floor(s.uptimeSeconds / 3600);
@@ -751,6 +791,16 @@ async function fetchUsers() {
     if (!data.success) return;
     renderUsers(data.users);
   } catch (err) { console.error('Users fetch error:', err); }
+}
+
+async function fetchBookings() {
+  try {
+    const res = await fetch(`${API}/api/admin/bookings`, { headers: authHeaders() });
+    if (res.status === 401) return;
+    const data = await res.json();
+    if (!data.success) return;
+    renderBookings(data.bookings);
+  } catch (err) { console.error('Bookings fetch error:', err); }
 }
 
 async function fetchHealth() {
@@ -813,6 +863,8 @@ function renderActivity(items) {
       detail = `<b>${item.data.bus || '?'}</b> · Seats: ${item.data.seats || '?'}`;
     } else if (item.event === 'signup' && item.data) {
       detail = `<b>${item.data.name || '?'}</b> (${item.data.phone || item.data.email || ''})`;
+    } else if (item.event === 'booking' && item.data) {
+      detail = `<b>${item.data.operator || '?'}</b> · ${item.data.route || '?'} · Seats: <b>${item.data.seats || '?'}</b> · PNR: <b>${item.data.pnr || '?'}</b> · <b>₹${item.data.amount || '0'}</b>`;
     } else if (item.event === 'visit' && item.data) {
       detail = `${item.data.page || '/'}`;
     }
@@ -880,6 +932,42 @@ function renderUsers(users) {
   container.innerHTML = html;
 }
 
+function renderBookings(bookings) {
+  const container = document.getElementById('bookings-table');
+  document.getElementById('bookings-count').textContent = `${bookings.length} bookings`;
+  
+  if (bookings.length === 0) {
+    container.innerHTML = '<div class="empty-state">No bookings recorded yet.</div>';
+    return;
+  }
+
+  let html = `<table class="admin-table">
+    <thead>
+      <tr>
+        <th>PNR</th>
+        <th>Operator</th>
+        <th>Route</th>
+        <th>Seats</th>
+        <th>Amount</th>
+        <th>Booked On</th>
+      </tr>
+    </thead>
+    <tbody>`;
+    
+  bookings.forEach(b => {
+    html += `<tr>
+      <td><span class="pnr-badge">${b.pnr || '-'}</span></td>
+      <td><b>${b.operator || '-'}</b></td>
+      <td>${b.route || '-'}</td>
+      <td><span class="seat-badge">${b.seats || '-'}</span></td>
+      <td><b style="color:var(--green)">₹${b.amount}</b></td>
+      <td style="color:var(--ink3)">${timeAgo(b.time)}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
 function renderHealth(health) {
   const grid = document.getElementById('health-grid');
   
@@ -921,6 +1009,7 @@ async function refreshAll() {
     fetchActivity(),
     fetchSearchHistory(),
     fetchUsers(),
+    fetchBookings(),
     fetchHealth()
   ]);
   

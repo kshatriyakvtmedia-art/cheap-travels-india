@@ -2009,6 +2009,25 @@ function showTicket() {
   document.getElementById('tk-amount').textContent = `₹${totalPayable} (UPI)`;
   document.getElementById('ticket-sub').textContent = `Ticket sent to WhatsApp (${phone})`;
 
+  // Track booking confirmation event to send details to the admin dashboard
+  if (selectedBus && selectedSeats.length > 0) {
+    const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'booking',
+        data: {
+          operator: selectedBus.operator,
+          route: `${selectedFromName} → ${selectedToName}`,
+          seats: seatNosStr,
+          amount: totalPayable,
+          pnr: pnr
+        }
+      })
+    }).catch(() => {});
+  }
+
   showScreen('ticket');
 }
 

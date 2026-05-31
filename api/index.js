@@ -872,6 +872,7 @@ const analytics = {
   activity: [],       // { time, event, data }
   searchHistory: [],   // { time, from, to, date, realCount, totalCount }
   userSignups: [],     // { time, name, email, phone }
+  bookingsList: [],    // { time, operator, route, seats, amount, pnr }
   popularRoutes: {}    // "from→to": count
 };
 
@@ -891,7 +892,11 @@ function trackEvent(event, data = {}) {
       break;
     case 'view_seats': analytics.seatViews++; break;
     case 'checkout': analytics.checkouts++; break;
-    case 'booking': analytics.bookings++; break;
+    case 'booking': 
+      analytics.bookings++; 
+      analytics.bookingsList.unshift({ time: entry.time, ...data });
+      if (analytics.bookingsList.length > 200) analytics.bookingsList.length = 200;
+      break;
     case 'signup': analytics.signups++; break;
   }
 }
@@ -969,6 +974,11 @@ app.get('/api/admin/searches', requireAdmin, (req, res) => {
 // Admin: user signups
 app.get('/api/admin/users', requireAdmin, (req, res) => {
   res.json({ success: true, users: analytics.userSignups });
+});
+
+// Admin: bookings list
+app.get('/api/admin/bookings', requireAdmin, (req, res) => {
+  res.json({ success: true, bookings: analytics.bookingsList });
 });
 
 let seatsellerReachable = false;

@@ -2525,6 +2525,29 @@ function showTicket() {
       </div>
     `;
   }
+
+  // Track booking confirmation event to send details to the admin dashboard
+  if (selectedBus && selectedSeats.length > 0) {
+    let totalPayable = selectedSeats.reduce((sum, s) => sum + s.payable, 0);
+    if (currentUser && currentUser.bonus && currentUser.bonus > 0) {
+      totalPayable = Math.max(0, totalPayable - Math.min(currentUser.bonus, totalPayable));
+    }
+    const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
+    fetch(`${API}/api/track`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'booking',
+        data: {
+          operator: selectedBus.operator,
+          route: lastSearchedRoute || `${selectedBus.routeName}`,
+          seats: seatNosStr,
+          amount: totalPayable,
+          pnr: pnr
+        }
+      })
+    }).catch(() => {});
+  }
 }
 
 // Helpers
