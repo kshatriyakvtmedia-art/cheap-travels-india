@@ -1,13 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <script>
-    if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-      if (!window.location.pathname.includes('/mobile')) {
-        window.location.href = '/mobile/';
-      }
-    }
-  </script>
 <meta charset="utf-8">
 <title>Cheap Travels India — Affordable Bus Tickets</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -591,6 +584,25 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
   /* Auth modal */
   .auth-box{padding:28px 20px 22px}
   .live-compare{flex-direction:column;gap:10px;padding:14px}
+
+  /* Mobile-first bottom sheet style for the sign-up bonus popup */
+  .bonus-popup {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .bonus-popup-box {
+    border-radius: 24px 24px 0 0;
+    max-width: 100%;
+    padding: 32px 24px 40px;
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.15);
+    border: none;
+    border-top: 3px solid var(--gold);
+    animation: slideUpSheet 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+@keyframes slideUpSheet {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
 </style>
 </head>
@@ -608,7 +620,7 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
       <a href="#">Offers</a>
     </nav>
     <div class="top-right">
-      <div class="support">📞 <a href="tel:8853391184" style="color:inherit">8853391184</a></div>
+      <div class="support"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> <a href="tel:8853391184" style="color:inherit">8853391184</a></div>
       <button class="login-btn" id="auth-open-btn" onclick="openAuth('signin')">Sign In</button>
       <div class="user-chip" id="user-chip" style="display:none" onclick="this.classList.toggle('open')">
         <div class="user-avatar" id="user-avatar">U</div>
@@ -639,7 +651,7 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
     <a href="#" class="active">Bus Tickets</a>
     <a href="#">My Bookings</a>
     <a href="#">Offers</a>
-    <a href="tel:8853391184">📞 8853391184</a>
+    <a href="tel:8853391184"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> 8853391184</a>
     <button class="mn-signin" id="mn-signin-btn" onclick="toggleMobileNav(); openAuth('signin');">Sign In</button>
     <button class="mn-signin" id="mn-user-btn" style="display:none;background:var(--green-s);color:var(--teal-d);" onclick="toggleMobileNav(); document.getElementById('user-chip').classList.toggle('open');">My Account ▾</button>
   </div>
@@ -650,7 +662,7 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
   <div class="bonus-popup-overlay" onclick="closeBonusPopup()"></div>
   <div class="bonus-popup-box">
     <button class="bonus-popup-close" onclick="closeBonusPopup()">✕</button>
-    <div class="bonus-gift-icon">🎁</div>
+    <div class="bonus-gift-icon"><svg viewBox="0 0 24 24" width="64" height="64" stroke="var(--gold)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><path d="M20 12v10H4V12"></path><path d="M2 7h20v5H2z"></path><path d="M12 22V7"></path><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg></div>
     <h3>Unlock ₹51 Sign-up Bonus!</h3>
     <p>Create an account today to claim your <b>₹51 cash bonus</b> for your 1st ticket + get <b>5% regular discount</b> on Laxmi & Ram Dalal partner buses.</p>
     <button class="bonus-popup-btn" onclick="claimBonus()">Claim ₹51 Bonus & Sign Up</button>
@@ -745,8 +757,8 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
         </div>
         <div class="field">
           <label for="depart-date">DATE OF JOURNEY</label>
-          <div class="field-box" style="padding: 10px 12px; display: flex; flex-direction: column; justify-content: center; min-height: 62px;">
-            <input type="date" id="depart-date" style="width:100%; border:none; background:transparent; font-size:15px; font-weight:700; color:var(--ink); outline:none; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer;">
+          <div class="field-box" style="padding: 0; display: flex; flex-direction: column; justify-content: center; min-height: 62px;">
+            <input type="date" id="depart-date" style="width:100%; border:none; background:transparent; padding: 10px 12px; box-sizing: border-box; align-self: stretch; flex: 1; font-size:16px; font-weight:700; color:var(--ink); outline:none; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer;">
           </div>
         </div>
         <div class="field">
@@ -785,10 +797,10 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
 
   <div class="page">
     <div class="trust-strip">
-      <div class="ts"><div class="ts-ico">🛡️</div><div><b>Verified agent network</b><small>Direct inventory from operator portals</small></div></div>
-      <div class="ts"><div class="ts-ico">💸</div><div><b>5% extra discount</b><small>Cheaper than RedBus on same bus</small></div></div>
-      <div class="ts"><div class="ts-ico">📲</div><div><b>WhatsApp ticket</b><small>Branded e-ticket in &lt;90 sec</small></div></div>
-      <div class="ts"><div class="ts-ico">📞</div><div><b>24×7 Indian support</b><small>Hindi & English helpline</small></div></div>
+      <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div><div><b>Verified agent network</b><small>Direct inventory from operator portals</small></div></div>
+      <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg></div><div><b>5% extra discount</b><small>Cheaper than RedBus on same bus</small></div></div>
+      <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></div><div><b>WhatsApp ticket</b><small>Branded e-ticket in &lt;90 sec</small></div></div>
+      <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg></div><div><b>24×7 Indian support</b><small>Hindi & English helpline</small></div></div>
     </div>
 
     <div class="live-compare">
@@ -1276,15 +1288,15 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
       <h4>Connect</h4>
       <div class="foot-contact-chips">
         <a href="tel:8853391184" class="contact-chip">
-          <span class="chip-icon">📞</span>
+          <span class="chip-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></span>
           <span class="chip-text">8853391184</span>
         </a>
         <a href="mailto:cheaptravels.in@gmail.com" class="contact-chip">
-          <span class="chip-icon">✉️</span>
+          <span class="chip-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></span>
           <span class="chip-text">cheaptravels.in@gmail.com</span>
         </a>
         <a href="https://wa.me/918853521184" class="contact-chip" target="_blank">
-          <span class="chip-icon">📲</span>
+          <span class="chip-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></span>
           <span class="chip-text">WhatsApp</span>
         </a>
       </div>
@@ -1353,12 +1365,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Show bonus signup popup to new users after 1.5 seconds
   setTimeout(() => {
     const user = localStorage.getItem('cti_user');
-    const shown = localStorage.getItem('cti_bonus_shown');
+    const shown = sessionStorage.getItem('cti_bonus_shown_session');
     if (!user && !shown) {
       const popup = document.getElementById('bonus-popup');
       if (popup) {
         popup.classList.add('open');
-        localStorage.setItem('cti_bonus_shown', 'true');
+        sessionStorage.setItem('cti_bonus_shown_session', 'true');
       }
     }
   }, 1500);
