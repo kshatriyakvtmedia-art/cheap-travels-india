@@ -60,7 +60,7 @@ export default function RootLayout({ children }) {
               <h4 className="text-white font-semibold mb-3">Connect</h4>
               <p className="text-sm space-y-1.5">
                 📞 1800-123-9999<br />
-                ✉️ support@cheaptravels.in<br />
+                ✉️ cheaptravels.in@gmail.com<br />
                 📲 WhatsApp: +91 99999 99999
               </p>
             </div>

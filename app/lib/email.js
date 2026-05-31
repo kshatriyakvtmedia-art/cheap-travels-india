@@ -5,7 +5,7 @@ const HOST = process.env.SMTP_HOST || '';
 const PORT = Number(process.env.SMTP_PORT || 587);
 const USER = process.env.SMTP_USER || '';
 const PASS = process.env.SMTP_PASS || '';
-const FROM = process.env.SMTP_FROM || 'Cheap Travels India <support@cheaptravels.in>';
+const FROM = process.env.SMTP_FROM || 'Cheap Travels India <cheaptravels.in@gmail.com>';
 
 let _t = null;
 function transporter() {

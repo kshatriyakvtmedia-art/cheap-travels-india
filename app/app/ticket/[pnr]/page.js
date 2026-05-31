@@ -75,7 +75,7 @@ export default function TicketPage({ params }) {
           </div>
 
           <div className="bg-brand-green-d text-emerald-100 px-5 py-3 text-xs flex justify-between flex-wrap gap-2">
-            <span>Cheap Travels India · 24×7 helpline 1800-123-9999 · support@cheaptravels.in</span>
+            <span>Cheap Travels India · 24×7 helpline 1800-123-9999 · cheaptravels.in@gmail.com</span>
             <span>Auto-refund SLA: 30 min · ID required at boarding</span>
           </div>
         </div>
