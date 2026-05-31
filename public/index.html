@@ -1200,8 +1200,10 @@ let minPriceLimit = 500;
 let maxPriceLimit = 3000;
 let activeSort = 'best';
 
+const API = window.location.protocol === 'file:' ? 'http://localhost:3000' : '';
+
 // Track page visit
-fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'visit', data: { page: location.pathname, ua: navigator.userAgent.substring(0, 80) } }) }).catch(() => {});
+fetch(`${API}/api/track`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'visit', data: { page: location.pathname, ua: navigator.userAgent.substring(0, 80) } }) }).catch(() => {});
 
 // Premium Toast Notification
 function showToast(message) {
@@ -1270,7 +1272,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Load cities from backend
 async function loadCities() {
   try {
-    const res = await fetch('/api/cities');
+    const res = await fetch(`${API}/api/cities`);
     const data = await res.json();
     if (data.success && data.cities && data.cities.length > 0) {
       citiesList = data.cities;
@@ -1373,7 +1375,7 @@ async function performSearch() {
   }
 
   // Track search event
-  fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'search', data: { from: fromName, to: toName, date: formattedDate } }) }).catch(() => {});
+  fetch(`${API}/api/track`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'search', data: { from: fromName, to: toName, date: formattedDate } }) }).catch(() => {});
 
   lastSearchedRoute = `${fromName} → ${toName}`;
   
@@ -1384,7 +1386,7 @@ async function performSearch() {
   listContainer.innerHTML = originalSortBar + `<div style="text-align:center; padding: 40px; font-size:16px; font-weight:600; color:var(--teal);"><span style="display:inline-block; animation: spin 1s linear infinite; margin-right: 10px;">⏳</span> Fetching live seats and schedules from operator portal...</div>`;
   
   try {
-    const res = await fetch(`/api/search?from=${fromId}&to=${toId}&date=${formattedDate}`);
+    const res = await fetch(`${API}/api/search?from=${fromId}&to=${toId}&date=${formattedDate}`);
     const data = await res.json();
     
     if (data.success) {
@@ -1885,7 +1887,7 @@ async function toggleSeatLive(resId, dateStr) {
   }
 
   // Track seat view event
-  fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'view_seats', data: { busId: resId } }) }).catch(() => {});
+  fetch(`${API}/api/track`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'view_seats', data: { busId: resId } }) }).catch(() => {});
   
   const grid = document.getElementById(`grid-${resId}`);
   if (!grid) return;
@@ -1897,7 +1899,7 @@ async function toggleSeatLive(resId, dateStr) {
   const toId = document.getElementById('to-select').value;
   
   try {
-    const res = await fetch(`/api/layout/${resId}?from=${fromId}&to=${toId}&date=${dateStr}`);
+    const res = await fetch(`${API}/api/layout/${resId}?from=${fromId}&to=${toId}&date=${dateStr}`);
     const data = await res.json();
     
     if (data.success) {
@@ -2146,7 +2148,7 @@ function doSignUp() {
   localStorage.setItem('cti_users', JSON.stringify(users));
 
   // Send details to owner's email
-  fetch('/api/signup', {
+  fetch(`${API}/api/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, email, phone })
@@ -2251,7 +2253,7 @@ function continueToCheckout() {
   }
 
   // Track checkout event
-  fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'checkout', data: { bus: selectedBus.operator, seats: seatNosStr } }) }).catch(() => {});
+  fetch(`${API}/api/track`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'checkout', data: { bus: selectedBus.operator, seats: seatNosStr } }) }).catch(() => {});
   
   // Dynamically generate passenger name/age/gender cards for each seat
   const pContainer = document.getElementById('passenger-inputs-container');
@@ -2676,7 +2678,7 @@ function startBgRefresh() {
     const parts = dateInput.split('-');
     const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
     try {
-      const res = await fetch(`/api/search?from=${fromId}&to=${toId}&date=${formattedDate}`);
+      const res = await fetch(`${API}/api/search?from=${fromId}&to=${toId}&date=${formattedDate}`);
       const data = await res.json();
       if (data.success && data.buses && data.buses.length > 0) {
         // Silent update: only refresh bus data without re-rendering entire list

@@ -623,7 +623,7 @@ body::before {
 
 <script>
 let adminToken = sessionStorage.getItem('cti_admin_token') || '';
-const API = '';
+const API = window.location.protocol === 'file:' ? 'http://localhost:3000' : '';
 
 // ─── AUTH ───
 async function loginAdmin(e) {
