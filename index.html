@@ -804,7 +804,7 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
     </div>
 
     <div class="live-compare">
-      <div class="lc-title"><span class="live-dot"></span> Live rate-compare · Azamgarh → Delhi · Same operator</div>
+      <div class="lc-title"><span class="live-dot"></span> Live rate-compare · Search a route to compare</div>
       <div class="cmp"><b>RedBus</b>₹1,499</div>
       <div class="cmp"><b>AbhiBus</b>₹1,480</div>
       <div class="cmp"><b>MMT</b>₹1,520</div>
@@ -826,27 +826,33 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
         <h3 style="font-size:16px;color:var(--teal-d);margin-bottom:16px;clear:both">Filters</h3>
         <div class="f-group">
           <h4>Bus Type</h4>
-          <div class="chips">
-            <div class="chip on">AC Sleeper</div>
-            <div class="chip">Non-AC</div>
-            <div class="chip on">Seater</div>
-            <div class="chip">Volvo</div>
+          <div class="chips" id="mobile-bus-type-chips">
+            <div class="chip" data-type="AC Sleeper">AC Sleeper</div>
+            <div class="chip" data-type="Non-AC">Non-AC</div>
+            <div class="chip" data-type="Seater">Seater</div>
+            <div class="chip" data-type="Volvo">Volvo</div>
           </div>
         </div>
         <div class="f-group">
           <h4>Departure Time</h4>
-          <div class="chips">
-            <div class="chip">Before 10 AM</div>
-            <div class="chip on">10 AM - 5 PM</div>
-            <div class="chip on">After 5 PM</div>
+          <div class="chips" id="mobile-dep-time-chips">
+            <div class="chip" data-time="before-10am">Before 10 AM</div>
+            <div class="chip" data-time="10am-5pm">10 AM - 5 PM</div>
+            <div class="chip" data-time="after-5pm">After 5 PM</div>
           </div>
         </div>
         <div class="f-group">
           <h4>Operator</h4>
-          <div class="f-row"><input type="checkbox" checked> UP State Roadways <span class="count">3</span></div>
-          <div class="f-row"><input type="checkbox" checked> Hans Travels <span class="count">2</span></div>
-          <div class="f-row"><input type="checkbox" checked> Laxmi Holidays <span class="count">4</span></div>
-          <div class="f-row"><input type="checkbox" checked> Shrinath Tourist <span class="count">1</span></div>
+          <div id="mobile-operator-list"></div>
+        </div>
+        <div class="f-group">
+          <h4>Boarding Point</h4>
+          <div id="mobile-boarding-list"></div>
+        </div>
+        <div class="f-group">
+          <h4>Price Range</h4>
+          <div style="font-size:12px;color:var(--ink2);margin-bottom:6px" id="mobile-price-label">₹500 — ₹3,000</div>
+          <input type="range" id="mobile-price-slider" min="500" max="3000" value="3000" style="width:100%;accent-color:var(--teal)" oninput="onPriceSliderInput(this.value)">
         </div>
         <button class="search-btn" style="width:100%;margin-top:10px" onclick="closeFilterDrawer()">Apply Filters</button>
       </div>
@@ -857,254 +863,47 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
         <h3>Filters</h3>
         <div class="f-group">
           <h4>Bus Type</h4>
-          <div class="chips">
-            <div class="chip on">AC Sleeper</div>
-            <div class="chip">Non-AC</div>
-            <div class="chip on">Seater</div>
-            <div class="chip">Volvo</div>
+          <div class="chips" id="desktop-bus-type-chips">
+            <div class="chip" data-type="AC Sleeper">AC Sleeper</div>
+            <div class="chip" data-type="Non-AC">Non-AC</div>
+            <div class="chip" data-type="Seater">Seater</div>
+            <div class="chip" data-type="Volvo">Volvo</div>
           </div>
         </div>
         <div class="f-group">
           <h4>Departure Time</h4>
-          <div class="chips">
-            <div class="chip">Before 10 AM</div>
-            <div class="chip on">10 AM - 5 PM</div>
-            <div class="chip on">After 5 PM</div>
+          <div class="chips" id="desktop-dep-time-chips">
+            <div class="chip" data-time="before-10am">Before 10 AM</div>
+            <div class="chip" data-time="10am-5pm">10 AM - 5 PM</div>
+            <div class="chip" data-time="after-5pm">After 5 PM</div>
           </div>
         </div>
         <div class="f-group">
           <h4>Operator</h4>
-          <div class="f-row"><input type="checkbox" checked> UP State Roadways <span class="count">3</span></div>
-          <div class="f-row"><input type="checkbox" checked> Hans Travels <span class="count">2</span></div>
-          <div class="f-row"><input type="checkbox" checked> Laxmi Holidays <span class="count">4</span></div>
-          <div class="f-row"><input type="checkbox" checked> Shrinath Tourist <span class="count">1</span></div>
-          <div class="f-row"><input type="checkbox"> Sahara Travels <span class="count">2</span></div>
+          <div id="desktop-operator-list"></div>
         </div>
         <div class="f-group">
           <h4>Boarding Point</h4>
-          <div class="f-row"><input type="checkbox" checked> Azamgarh Bus Stand <span class="count">6</span></div>
-          <div class="f-row"><input type="checkbox" checked> Mubarakpur Crossing <span class="count">3</span></div>
-          <div class="f-row"><input type="checkbox"> Phulpur <span class="count">2</span></div>
+          <div id="desktop-boarding-list"></div>
         </div>
         <div class="f-group">
           <h4>Price Range</h4>
-          <div style="font-size:12px;color:var(--ink2);margin-bottom:6px">₹800 — ₹2,200</div>
-          <input type="range" min="800" max="2200" value="1800" style="width:100%;accent-color:var(--teal)">
+          <div style="font-size:12px;color:var(--ink2);margin-bottom:6px" id="desktop-price-label">₹500 — ₹3,000</div>
+          <input type="range" id="desktop-price-slider" min="500" max="3000" value="3000" style="width:100%;accent-color:var(--teal)" oninput="onPriceSliderInput(this.value)">
         </div>
       </aside>
 
       <div class="results-list">
         <div class="sort-bar">
           <span class="label">Sort by:</span>
-          <div class="sort-tab active">Best Match</div>
-          <div class="sort-tab">Departure ↑</div>
-          <div class="sort-tab">Price ↑</div>
-          <div class="sort-tab">Duration ↑</div>
-          <div class="sort-tab">Rating ↓</div>
-          <span class="count-badge"><b>12</b> buses found</span>
+          <div class="sort-tab active" data-sort="best">Best Match</div>
+          <div class="sort-tab" data-sort="departure">Departure ↑</div>
+          <div class="sort-tab" data-sort="price">Price ↑</div>
+          <div class="sort-tab" data-sort="duration">Duration ↑</div>
+          <div class="sort-tab" data-sort="rating">Rating ↓</div>
+          <span class="count-badge"><b>0</b> buses found</span>
         </div>
-
-        <!-- Bus card 1 - featured -->
-        <div class="bus featured" data-bus="1">
-          <div class="bus-main">
-            <h3>Laxmi Holidays Pvt Ltd</h3>
-            <div class="bus-meta">
-              <span>NON-AC Sleeper (2+1)</span><span>Direct</span><span>Live tracking</span><span>Mineral water</span>
-            </div>
-            <div class="bus-times">
-              <div class="time-block"><div class="t">18:30</div><div class="c">Azamgarh Bus Stand</div></div>
-              <div class="time-line"><div class="dur">14h 30m</div><div class="line"></div></div>
-              <div class="time-block"><div class="t">09:00</div><div class="c">Anand Vihar, Delhi</div></div>
-            </div>
-            <div class="bus-bottom">
-              <span class="rating">★ 4.4</span>
-              <span>1,284 ratings</span>
-              <span class="seats">26 seats left</span>
-            </div>
-          </div>
-          <div class="bus-side">
-            <div class="fare-block">
-              <div class="fare-strike">₹1,499</div>
-              <div class="fare">₹1,424 <small>/seat</small></div>
-              <div class="save-pill">SAVE ₹75</div>
-            </div>
-            <button class="view-seats" onclick="toggleSeat(1)">View Seats</button>
-          </div>
-          <div class="seat-panel" id="panel-1">
-            <div class="seat-tabs">
-              <div class="seat-tab active">Seats</div>
-              <div class="seat-tab">Boarding Points</div>
-              <div class="seat-tab">Dropping Points</div>
-              <div class="seat-tab">Cancellation Policy</div>
-            </div>
-            <div class="seat-content">
-              <div class="seatmap">
-                <div class="deck-label">Lower Deck</div>
-                <div class="driver"></div>
-                <div class="seat-grid" id="grid-1">
-                  <!-- generated by JS -->
-                </div>
-                <div class="legend2">
-                  <div class="lg-item"><div class="lg-box"></div>Available</div>
-                  <div class="lg-item"><div class="lg-box ladies"></div>Ladies</div>
-                  <div class="lg-item"><div class="lg-box booked"></div>Booked</div>
-                  <div class="lg-item"><div class="lg-box selected"></div>Selected</div>
-                </div>
-              </div>
-              <div class="booking-side">
-                <h4>Pick boarding point</h4>
-                <div class="point-list">
-                  <div class="point on"><div><b>Azamgarh Bus Stand</b><small>Main bus stand, near LIC office</small></div><div class="pt-time">18:30</div></div>
-                  <div class="point"><div><b>Mubarakpur Crossing</b><small>Highway dhaba, opp HP pump</small></div><div class="pt-time">19:10</div></div>
-                  <div class="point"><div><b>Phulpur</b><small>Phulpur tiraha</small></div><div class="pt-time">20:25</div></div>
-                </div>
-                <div class="summary">
-                  <div class="row"><span>Selected seat</span><span id="sel-seat-1">— none —</span></div>
-                  <div class="row"><span>Base fare</span><span>₹1,499</span></div>
-                  <div class="row discount"><span>Cheap Travels discount (5%)</span><span>− ₹75</span></div>
-                  <div class="row"><span>Convenience fee</span><span>₹0</span></div>
-                  <div class="row total"><span>Payable</span><span>₹1,424</span></div>
-                </div>
-                <button class="continue-btn" onclick="showCheckout()">Continue to Payment →</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bus card 2 -->
-        <div class="bus" data-bus="2">
-          <div class="bus-main">
-            <h3>Hans Travels (India) Pvt Ltd</h3>
-            <div class="bus-meta">
-              <span>AC Sleeper (2+1)</span><span>Direct</span><span>Charging point</span><span>Blanket</span>
-            </div>
-            <div class="bus-times">
-              <div class="time-block"><div class="t">19:45</div><div class="c">Azamgarh Bus Stand</div></div>
-              <div class="time-line"><div class="dur">13h 45m</div><div class="line"></div></div>
-              <div class="time-block"><div class="t">09:30</div><div class="c">Kashmere Gate, Delhi</div></div>
-            </div>
-            <div class="bus-bottom">
-              <span class="rating">★ 4.6</span>
-              <span>2,140 ratings</span>
-              <span class="seats low">7 seats left</span>
-            </div>
-          </div>
-          <div class="bus-side">
-            <div class="fare-block">
-              <div class="fare-strike">₹1,799</div>
-              <div class="fare">₹1,709 <small>/seat</small></div>
-              <div class="save-pill">SAVE ₹90</div>
-            </div>
-            <button class="view-seats" onclick="toggleSeat(2)">View Seats</button>
-          </div>
-          <div class="seat-panel" id="panel-2">
-            <div class="seat-content">
-              <div class="seatmap">
-                <div class="deck-label">Lower Deck</div>
-                <div class="driver"></div>
-                <div class="seat-grid" id="grid-2"></div>
-                <div class="legend2">
-                  <div class="lg-item"><div class="lg-box"></div>Available</div>
-                  <div class="lg-item"><div class="lg-box ladies"></div>Ladies</div>
-                  <div class="lg-item"><div class="lg-box booked"></div>Booked</div>
-                </div>
-              </div>
-              <div class="booking-side">
-                <h4>Pick boarding point</h4>
-                <div class="point-list">
-                  <div class="point on"><div><b>Azamgarh Bus Stand</b><small>Main bus stand</small></div><div class="pt-time">19:45</div></div>
-                  <div class="point"><div><b>Mubarakpur</b><small>Main chowk</small></div><div class="pt-time">20:20</div></div>
-                </div>
-                <button class="continue-btn" onclick="showCheckout()">Continue to Payment →</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bus card 3 -->
-        <div class="bus" data-bus="3">
-          <div class="bus-main">
-            <h3>UP State Roadways (Volvo)</h3>
-            <div class="bus-meta">
-              <span>AC Seater 2+2</span><span>1 stop</span><span>Volvo 9400</span><span>Govt. operated</span>
-            </div>
-            <div class="bus-times">
-              <div class="time-block"><div class="t">21:00</div><div class="c">Azamgarh Bus Depot</div></div>
-              <div class="time-line"><div class="dur">12h 50m</div><div class="line"></div></div>
-              <div class="time-block"><div class="t">09:50</div><div class="c">ISBT Anand Vihar</div></div>
-            </div>
-            <div class="bus-bottom">
-              <span class="rating">★ 4.2</span>
-              <span>892 ratings</span>
-              <span class="seats">18 seats left</span>
-            </div>
-          </div>
-          <div class="bus-side">
-            <div class="fare-block">
-              <div class="fare-strike">₹1,250</div>
-              <div class="fare">₹1,188 <small>/seat</small></div>
-              <div class="save-pill">SAVE ₹62</div>
-            </div>
-            <button class="view-seats" onclick="toggleSeat(3)">View Seats</button>
-          </div>
-          <div class="seat-panel" id="panel-3">
-            <div class="seat-content">
-              <div class="seatmap">
-                <div class="deck-label">Single Deck (Seater)</div>
-                <div class="driver"></div>
-                <div class="seat-grid" id="grid-3"></div>
-              </div>
-              <div class="booking-side">
-                <h4>Boarding</h4>
-                <div class="point on" style="display:flex;justify-content:space-between"><div><b>Azamgarh Bus Depot</b><small>UPSRTC depot</small></div><div class="pt-time">21:00</div></div>
-                <button class="continue-btn" style="margin-top:14px" onclick="showCheckout()">Continue →</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bus card 4 -->
-        <div class="bus" data-bus="4">
-          <div class="bus-main">
-            <h3>Shrinath Tourist Agency</h3>
-            <div class="bus-meta">
-              <span>AC Sleeper (2+1)</span><span>Direct</span><span>WiFi</span><span>USB</span><span>CCTV</span>
-            </div>
-            <div class="bus-times">
-              <div class="time-block"><div class="t">17:00</div><div class="c">Azamgarh Bus Stand</div></div>
-              <div class="time-line"><div class="dur">15h 30m</div><div class="line"></div></div>
-              <div class="time-block"><div class="t">08:30</div><div class="c">Sarai Kale Khan</div></div>
-            </div>
-            <div class="bus-bottom">
-              <span class="rating">★ 4.7</span>
-              <span>3,420 ratings</span>
-              <span class="seats">12 seats left</span>
-            </div>
-          </div>
-          <div class="bus-side">
-            <div class="fare-block">
-              <div class="fare-strike">₹2,099</div>
-              <div class="fare">₹1,994 <small>/seat</small></div>
-              <div class="save-pill">SAVE ₹105</div>
-            </div>
-            <button class="view-seats" onclick="toggleSeat(4)">View Seats</button>
-          </div>
-          <div class="seat-panel" id="panel-4">
-            <div class="seat-content">
-              <div class="seatmap">
-                <div class="deck-label">Lower Deck</div>
-                <div class="driver"></div>
-                <div class="seat-grid" id="grid-4"></div>
-              </div>
-              <div class="booking-side">
-                <h4>Premium amenities</h4>
-                <div style="font-size:13px;color:var(--ink2);line-height:1.6">Mahindra Highspeed · GPS · Onboard staff · Bottled water · Snack pack · Pillow & blanket</div>
-                <button class="continue-btn" style="margin-top:14px" onclick="showCheckout()">Continue →</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
+        <div class="buses-cards-wrapper"></div>
       </div>
     </div>
   </div>
@@ -1115,7 +914,7 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
   <div class="page" style="margin-top:30px">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
       <button onclick="showResults()" style="font-size:13px;color:var(--teal);font-weight:600">← Back to bus list</button>
-      <div style="color:var(--ink3);font-size:13px">Azamgarh → Delhi · 30 May · Laxmi Holidays · Seat L7</div>
+      <div id="checkout-breadcrumb" style="color:var(--ink3);font-size:13px"></div>
     </div>
     <div class="checkout-wrap">
       <div>
@@ -1315,6 +1114,94 @@ let selectedBus = null;
 let selectedSeats = [];
 let selectedBoardingPoint = null;
 let selectedDroppingPoint = null;
+let lastSearchedRoute = '';
+
+const defaultBuses = [
+  {
+    resId: "def-1",
+    operator: "Laxmi Holidays Pvt Ltd",
+    busType: "NON-AC Sleeper (2+1)",
+    departure: "18:30",
+    arrival: "09:00",
+    duration: "14h 30m",
+    minFare: 1499,
+    maxFare: 1499,
+    seatsLeft: 26,
+    boardingPoints: [
+      { id: "bp-def-1-1", name: "Azamgarh Bus Stand", time: "18:30", landmark: "Main bus stand, near LIC office" },
+      { id: "bp-def-1-2", name: "Mubarakpur Crossing", time: "19:10", landmark: "Highway dhaba, opp HP pump" },
+      { id: "bp-def-1-3", name: "Phulpur", time: "20:25", landmark: "Phulpur tiraha" }
+    ],
+    droppingPoints: [
+      { id: "dp-def-1-1", name: "Anand Vihar, Delhi", time: "09:00", landmark: "Gate 4, Anand Vihar bus terminus" }
+    ]
+  },
+  {
+    resId: "def-2",
+    operator: "Hans Travels (India) Pvt Ltd",
+    busType: "AC Sleeper (2+1)",
+    departure: "19:45",
+    arrival: "09:30",
+    duration: "13h 45m",
+    minFare: 1799,
+    maxFare: 1799,
+    seatsLeft: 7,
+    boardingPoints: [
+      { id: "bp-def-2-1", name: "Azamgarh Bus Stand", time: "19:45", landmark: "Main bus stand" },
+      { id: "bp-def-2-2", name: "Mubarakpur", time: "20:20", landmark: "Main chowk" }
+    ],
+    droppingPoints: [
+      { id: "dp-def-2-1", name: "Kashmere Gate, Delhi", time: "09:30", landmark: "Metro Gate No. 1" }
+    ]
+  },
+  {
+    resId: "def-3",
+    operator: "UP State Roadways (Volvo)",
+    busType: "AC Seater 2+2",
+    departure: "21:00",
+    arrival: "09:50",
+    duration: "12h 50m",
+    minFare: 1250,
+    maxFare: 1250,
+    seatsLeft: 18,
+    boardingPoints: [
+      { id: "bp-def-3-1", name: "Azamgarh Bus Depot", time: "21:00", landmark: "UPSRTC depot" }
+    ],
+    droppingPoints: [
+      { id: "dp-def-3-1", name: "ISBT Anand Vihar", time: "09:50", landmark: "Metro station exit" }
+    ]
+  },
+  {
+    resId: "def-4",
+    operator: "Shrinath Tourist Agency",
+    busType: "AC Sleeper (2+1)",
+    departure: "17:00",
+    arrival: "08:30",
+    duration: "15h 30m",
+    minFare: 2099,
+    maxFare: 2099,
+    seatsLeft: 12,
+    boardingPoints: [
+      { id: "bp-def-4-1", name: "Azamgarh Bus Stand", time: "17:00", landmark: "Main bus stand" }
+    ],
+    droppingPoints: [
+      { id: "dp-def-4-1", name: "Sarai Kale Khan", time: "08:30", landmark: "Near ISBT" }
+    ]
+  }
+];
+
+// Dynamic Filter States
+let activeBusTypes = new Set();
+let activeDepTimes = new Set();
+let activeOperators = new Set();
+let activeBoardingPoints = new Set();
+let maxPriceFilter = 3000;
+let minPriceLimit = 500;
+let maxPriceLimit = 3000;
+let activeSort = 'best';
+
+// Track page visit
+fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'visit', data: { page: location.pathname, ua: navigator.userAgent.substring(0, 80) } }) }).catch(() => {});
 
 // Premium Toast Notification
 function showToast(message) {
@@ -1361,6 +1248,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadCities();
   setupQR();
+  
+  // Render default buses on load
+  searchResultsBuses = defaultBuses;
+  renderBuses(defaultBuses, '30 May');
   
   // Show bonus signup popup to new users after 1.5 seconds
   setTimeout(() => {
@@ -1478,8 +1369,13 @@ async function performSearch() {
   // Update UI headers
   const compareHeader = document.querySelector('.live-compare .lc-title');
   if (compareHeader) {
-    compareHeader.innerHTML = `<span class="live-dot"></span> Live rate-compare · Same operator`;
+    compareHeader.innerHTML = `<span class="live-dot"></span> Live rate-compare · ${fromName} → ${toName} · Same operator`;
   }
+
+  // Track search event
+  fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'search', data: { from: fromName, to: toName, date: formattedDate } }) }).catch(() => {});
+
+  lastSearchedRoute = `${fromName} → ${toName}`;
   
   // Show loading indicator in results-list
   const listContainer = document.querySelector('.results-list');
@@ -1505,25 +1401,323 @@ async function performSearch() {
 }
 
 function renderBuses(buses, formattedDate) {
-  const listContainer = document.querySelector('.results-list');
-  const countBadge = listContainer.querySelector('.sort-bar .count-badge');
+  searchResultsBuses = buses;
+  setupFilters(buses);
+  applyFilters();
+}
+
+function setupFilters(buses) {
+  if (!buses) return;
+  
+  // Extract unique operators
+  const operators = Array.from(new Set(buses.map(b => b.operator))).sort();
+  // Extract unique boarding points
+  const bps = Array.from(new Set(buses.flatMap(b => b.boardingPoints.map(bp => bp.name)))).sort();
+  // Extract prices
+  const prices = buses.map(b => b.minFare).filter(p => p > 0);
+  const minPrice = prices.length > 0 ? Math.min(...prices) : 500;
+  const maxPrice = prices.length > 0 ? Math.max(...prices) : 3000;
+  
+  minPriceLimit = minPrice;
+  maxPriceLimit = maxPrice;
+  maxPriceFilter = maxPrice;
+  
+  // Clear selection states when new search is loaded
+  activeOperators.clear();
+  activeBoardingPoints.clear();
+  // By default, check all operators and boarding points
+  operators.forEach(op => activeOperators.add(op));
+  bps.forEach(bp => activeBoardingPoints.add(bp));
+  
+  // Render Operator inputs
+  const renderOpList = (containerId, prefix) => {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    let html = '';
+    operators.forEach((op, idx) => {
+      const count = buses.filter(b => b.operator === op).length;
+      html += `
+        <div class="f-row">
+          <input type="checkbox" id="${prefix}-op-${idx}" value="${op}" checked onchange="toggleOperatorFilter(this)">
+          <label for="${prefix}-op-${idx}" style="cursor:pointer; font-size:12.5px; margin-left:6px; color:var(--ink);">${op} <span class="count" style="color:var(--ink3); font-size:11px;">(${count})</span></label>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  };
+  
+  renderOpList('desktop-operator-list', 'dt');
+  renderOpList('mobile-operator-list', 'mb');
+  
+  // Render Boarding Points inputs
+  const renderBpList = (containerId, prefix) => {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    let html = '';
+    bps.forEach((bp, idx) => {
+      const count = buses.filter(b => b.boardingPoints.some(x => x.name === bp)).length;
+      html += `
+        <div class="f-row">
+          <input type="checkbox" id="${prefix}-bp-${idx}" value="${bp}" checked onchange="toggleBpFilter(this)">
+          <label for="${prefix}-bp-${idx}" style="cursor:pointer; font-size:12.5px; margin-left:6px; color:var(--ink);">${bp} <span class="count" style="color:var(--ink3); font-size:11px;">(${count})</span></label>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  };
+  
+  renderBpList('desktop-boarding-list', 'dt');
+  renderBpList('mobile-boarding-list', 'mb');
+  
+  // Setup price sliders
+  const setupSlider = (sliderId, labelId) => {
+    const slider = document.getElementById(sliderId);
+    const label = document.getElementById(labelId);
+    if (!slider || !label) return;
+    slider.min = minPrice;
+    slider.max = maxPrice;
+    slider.value = maxPrice;
+    label.textContent = `₹${minPrice.toLocaleString()} — ₹${maxPrice.toLocaleString()}`;
+  };
+  
+  setupSlider('desktop-price-slider', 'desktop-price-label');
+  setupSlider('mobile-price-slider', 'mobile-price-label');
+  
+  // Setup click listeners for chips & sorts
+  setupChipListeners();
+  setupSortListeners();
+  syncChipsUI();
+}
+
+function setupChipListeners() {
+  document.querySelectorAll('.chips .chip').forEach(chip => {
+    chip.onclick = null;
+    chip.onclick = function() {
+      const type = this.dataset.type;
+      const time = this.dataset.time;
+      
+      if (type) {
+        if (activeBusTypes.has(type)) {
+          activeBusTypes.delete(type);
+        } else {
+          activeBusTypes.add(type);
+        }
+      } else if (time) {
+        if (activeDepTimes.has(time)) {
+          activeDepTimes.delete(time);
+        } else {
+          activeDepTimes.add(time);
+        }
+      }
+      
+      syncChipsUI();
+      applyFilters();
+    };
+  });
+}
+
+function setupSortListeners() {
+  document.querySelectorAll('.sort-bar .sort-tab').forEach(tab => {
+    tab.onclick = null;
+    tab.onclick = function() {
+      document.querySelectorAll('.sort-bar .sort-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      activeSort = this.dataset.sort;
+      applyFilters();
+    };
+  });
+}
+
+function toggleOperatorFilter(cb) {
+  const val = cb.value;
+  if (cb.checked) {
+    activeOperators.add(val);
+  } else {
+    activeOperators.delete(val);
+  }
+  
+  document.querySelectorAll(`input[value="${val}"]`).forEach(input => {
+    input.checked = cb.checked;
+  });
+  
+  applyFilters();
+}
+
+function toggleBpFilter(cb) {
+  const val = cb.value;
+  if (cb.checked) {
+    activeBoardingPoints.add(val);
+  } else {
+    activeBoardingPoints.delete(val);
+  }
+  
+  document.querySelectorAll(`input[value="${val}"]`).forEach(input => {
+    input.checked = cb.checked;
+  });
+  
+  applyFilters();
+}
+
+function onPriceSliderInput(val) {
+  maxPriceFilter = parseInt(val);
+  
+  const dtSlider = document.getElementById('desktop-price-slider');
+  const mbSlider = document.getElementById('mobile-price-slider');
+  if (dtSlider) dtSlider.value = val;
+  if (mbSlider) mbSlider.value = val;
+  
+  const labelText = `₹${minPriceLimit.toLocaleString()} — ₹${maxPriceFilter.toLocaleString()}`;
+  const dtLabel = document.getElementById('desktop-price-label');
+  const mbLabel = document.getElementById('mobile-price-label');
+  if (dtLabel) dtLabel.textContent = labelText;
+  if (mbLabel) mbLabel.textContent = labelText;
+  
+  applyFilters();
+}
+
+function syncChipsUI() {
+  document.querySelectorAll('.chips .chip').forEach(chip => {
+    const type = chip.dataset.type;
+    const time = chip.dataset.time;
+    if (type) {
+      if (activeBusTypes.has(type)) {
+        chip.classList.add('on');
+      } else {
+        chip.classList.remove('on');
+      }
+    } else if (time) {
+      if (activeDepTimes.has(time)) {
+        chip.classList.add('on');
+      } else {
+        chip.classList.remove('on');
+      }
+    }
+  });
+}
+
+function parseTime(timeStr) {
+  const parts = timeStr.split(' ');
+  const timeParts = parts[0].split(':');
+  let hour = parseInt(timeParts[0]);
+  const min = parseInt(timeParts[1]);
+  const isPM = parts[1].toLowerCase().includes('pm');
+  if (isPM && hour < 12) hour += 12;
+  if (!isPM && hour === 12) hour = 0;
+  return hour * 60 + min;
+}
+
+function parseDuration(durStr) {
+  const hParts = durStr.split('h');
+  const hours = parseInt(hParts[0].trim()) || 0;
+  const mParts = hParts[1] ? hParts[1].split('m') : [];
+  const mins = parseInt(mParts[0].trim()) || 0;
+  return hours * 60 + mins;
+}
+
+function applyFilters() {
+  const formattedDateInput = document.getElementById('depart-date').value;
+  const parts = formattedDateInput ? formattedDateInput.split('-') : [];
+  const formattedDate = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : '30 May';
+  
+  const filteredBuses = searchResultsBuses.filter(bus => {
+    // 1. Bus Type
+    if (activeBusTypes.size > 0) {
+      let matchesType = false;
+      activeBusTypes.forEach(type => {
+        const typeLower = type.toLowerCase();
+        const busTypeLower = bus.busType.toLowerCase();
+        const busOpLower = bus.operator.toLowerCase();
+        
+        if (typeLower === 'ac sleeper' && busTypeLower.includes('ac') && busTypeLower.includes('sleeper')) matchesType = true;
+        else if (typeLower === 'non-ac' && !busTypeLower.includes('ac')) matchesType = true;
+        else if (typeLower === 'seater' && busTypeLower.includes('seater')) matchesType = true;
+        else if (typeLower === 'volvo' && (busTypeLower.includes('volvo') || busOpLower.includes('volvo'))) matchesType = true;
+      });
+      if (!matchesType) return false;
+    }
+    
+    // 2. Departure Time
+    if (activeDepTimes.size > 0) {
+      let matchesTime = false;
+      const depHour = parseInt(bus.departure.split(':')[0]);
+      const isPM = bus.departure.toLowerCase().includes('pm');
+      let hour24 = depHour;
+      if (isPM && depHour < 12) hour24 += 12;
+      if (!isPM && depHour === 12) hour24 = 0;
+      
+      activeDepTimes.forEach(time => {
+        if (time === 'before-10am' && hour24 < 10) matchesTime = true;
+        else if (time === '10am-5pm' && hour24 >= 10 && hour24 < 17) matchesTime = true;
+        else if (time === 'after-5pm' && hour24 >= 17) matchesTime = true;
+      });
+      if (!matchesTime) return false;
+    }
+    
+    // 3. Operator
+    if (activeOperators.size > 0 && !activeOperators.has(bus.operator)) {
+      return false;
+    }
+    
+    // 4. Boarding Point
+    if (activeBoardingPoints.size > 0) {
+      const hasMatchingBp = bus.boardingPoints.some(bp => activeBoardingPoints.has(bp.name));
+      if (!hasMatchingBp) return false;
+    }
+    
+    // 5. Price
+    const StrikeFare = bus.minFare;
+    const cheapFare = bus.resId.startsWith('ss-') ? StrikeFare : Math.round(StrikeFare * 0.95);
+    if (cheapFare > maxPriceFilter) {
+      return false;
+    }
+    
+    return true;
+  });
+  
+  displayFilteredBuses(filteredBuses, formattedDate);
+}
+
+function displayFilteredBuses(buses, formattedDate) {
+  const container = document.querySelector('.results-list .buses-cards-wrapper');
+  const countBadge = document.querySelector('.sort-bar .count-badge');
+  
   if (countBadge) {
     countBadge.innerHTML = `<b>${buses.length}</b> buses found`;
   }
   
-  // Retain only sort bar
-  const sortBarEl = listContainer.querySelector('.sort-bar');
-  const sortBar = sortBarEl ? sortBarEl.outerHTML : '';
-  let html = sortBar;
+  if (!container) return;
   
   if (buses.length === 0) {
-    html += `<div style="text-align:center; padding: 40px; font-weight:600; color:var(--ink2);">No buses scheduled on this route for the selected date.</div>`;
-    listContainer.innerHTML = html;
+    container.innerHTML = `<div style="text-align:center; padding: 40px; font-weight:600; color:var(--ink2);">No buses scheduled on this route matching the active filters.</div>`;
     return;
   }
   
+  // Sort
+  let sortedBuses = [...buses];
+  if (activeSort === 'departure') {
+    sortedBuses.sort((a, b) => parseTime(a.departure) - parseTime(b.departure));
+  } else if (activeSort === 'price') {
+    sortedBuses.sort((a, b) => a.minFare - b.minFare);
+  } else if (activeSort === 'duration') {
+    sortedBuses.sort((a, b) => parseDuration(a.duration) - parseDuration(b.duration));
+  } else if (activeSort === 'rating') {
+    const getRating = b => {
+      if (b.operator.includes('Hans')) return 4.6;
+      if (b.operator.includes('Shrinath')) return 4.7;
+      return 4.4;
+    };
+    sortedBuses.sort((a, b) => getRating(b) - getRating(a));
+  } else {
+    // Best Match: Direct Partner first
+    sortedBuses.sort((a, b) => {
+      const isaSS = a.resId.startsWith('ss-') ? 1 : 0;
+      const isbSS = b.resId.startsWith('ss-') ? 1 : 0;
+      return isaSS - isbSS;
+    });
+  }
+  
   // Update live-compare prices based on first bus
-  const firstBus = buses[0];
+  const firstBus = sortedBuses[0];
   const isFirstBusSS = firstBus.resId.startsWith('ss-');
   const minFare = firstBus.minFare || 1200;
   const redBusFare = minFare;
@@ -1534,7 +1728,7 @@ function renderBuses(buses, formattedDate) {
   const liveComp = document.querySelector('.live-compare');
   if (liveComp) {
     liveComp.innerHTML = `
-      <div class="lc-title"><span class="live-dot"></span> Live rate-compare · Same operator</div>
+      <div class="lc-title"><span class="live-dot"></span> Live rate-compare · ${lastSearchedRoute || 'Azamgarh → Delhi'} · Same operator</div>
       <div class="cmp"><b>RedBus</b>₹${redBusFare}</div>
       <div class="cmp"><b>AbhiBus</b>₹${abhiBusFare}</div>
       <div class="cmp"><b>MMT</b>₹${mmtFare}</div>
@@ -1542,7 +1736,8 @@ function renderBuses(buses, formattedDate) {
     `;
   }
   
-  buses.forEach((bus, index) => {
+  let html = '';
+  sortedBuses.forEach((bus, index) => {
     const isFeatured = index === 0;
     const strikeFare = bus.minFare;
     const isSeatSeller = bus.resId.startsWith('ss-');
@@ -1641,7 +1836,7 @@ function renderBuses(buses, formattedDate) {
     `;
   });
   
-  listContainer.innerHTML = html;
+  container.innerHTML = html;
 }
 
 // Seat layout loading
@@ -1666,6 +1861,31 @@ async function toggleSeatLive(resId, dateStr) {
   btn.classList.add('active');
   btn.textContent = 'Hide Seats';
   busCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  if (resId.startsWith('ss-')) {
+    const seatContent = busCard.querySelector('.seat-content');
+    if (seatContent) {
+      const bus = searchResultsBuses.find(b => b.resId == resId);
+      const opName = bus ? bus.operator : 'this operator';
+      seatContent.innerHTML = `
+        <div style="width:100%; text-align:center; padding: 40px 20px; color:var(--ink);">
+          <div style="font-size:40px; margin-bottom:14px;">⚡ Compare Only</div>
+          <h4 style="color:var(--teal); font-size:17px; margin-bottom:10px; font-weight:700;">Price Comparison Operator</h4>
+          <p style="font-size:13.5px; color:var(--ink2); line-height:1.6; max-width:400px; margin:0 auto 20px; font-weight:500;">
+            We show rates for <b>${opName}</b> for price comparison. Direct booking for this operator is currently offline.
+          </p>
+          <div style="background:rgba(34,211,167,0.06); border:1.5px dashed var(--teal); border-radius:12px; padding:16px; font-size:13.5px; color:var(--ink); line-height:1.5; max-width:400px; margin:0 auto;">
+            🎉 <b>Save Extra 5% with Direct Partners!</b><br>
+            Please select one of our <b>Direct Partner</b> buses (Laxmi Holidays or Ram Dalal Holidays) to proceed with booking.
+          </div>
+        </div>
+      `;
+    }
+    return;
+  }
+
+  // Track seat view event
+  fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'view_seats', data: { busId: resId } }) }).catch(() => {});
   
   const grid = document.getElementById(`grid-${resId}`);
   if (!grid) return;
@@ -2018,8 +2238,8 @@ function continueToCheckout() {
   }
   const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
   
-  // Update header text in checkout
-  const tripHeader = chView.querySelector('div[style*="Anand Vihar"]') || chView.querySelector('div[style*="Delhi"]');
+  // Update breadcrumb text in checkout
+  const tripHeader = document.getElementById('checkout-breadcrumb');
   if (tripHeader) {
     const fromName = document.getElementById('from-select').options[document.getElementById('from-select').selectedIndex].text;
     const toName = document.getElementById('to-select').options[document.getElementById('to-select').selectedIndex].text;
@@ -2029,6 +2249,9 @@ function continueToCheckout() {
     
     tripHeader.textContent = `${fromName} → ${toName} · ${formattedDate} · ${selectedBus.operator} · Seats ${seatNosStr}`;
   }
+
+  // Track checkout event
+  fetch('/api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'checkout', data: { bus: selectedBus.operator, seats: seatNosStr } }) }).catch(() => {});
   
   // Dynamically generate passenger name/age/gender cards for each seat
   const pContainer = document.getElementById('passenger-inputs-container');

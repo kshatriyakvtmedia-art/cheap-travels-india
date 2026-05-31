@@ -598,20 +598,21 @@ app.get('/api/search', async (req, res) => {
     // Merge real operator buses
     let realBuses = [...lxmiBuses, ...rdlhBuses];
 
-    // Determine baseline fare for simulator
-    let baseFareValue = 1200;
+    let buses = [...realBuses];
+
+    // Only generate SeatSeller competitor simulation when real partner buses exist
+    // (if no real buses on this route, fake competitors make no sense — we can't book them)
     if (realBuses.length > 0) {
       const fares = realBuses.map(b => b.minFare).filter(f => f > 0);
-      if (fares.length > 0) {
-        baseFareValue = Math.round(fares.reduce((a, b) => a + b, 0) / fares.length);
-      }
+      const baseFareValue = fares.length > 0
+        ? Math.round(fares.reduce((a, b) => a + b, 0) / fares.length)
+        : 1200;
+      const ssBuses = generateSeatSellerBuses(fromName, toName, baseFareValue);
+      buses = [...realBuses, ...ssBuses];
     }
 
-    // Generate competitor buses (SeatSeller)
-    const ssBuses = generateSeatSellerBuses(fromName, toName, baseFareValue);
-
-    // Combine all buses (real ones first, simulator competitors last)
-    const buses = [...realBuses, ...ssBuses];
+    // Track search analytics
+    trackEvent('search', { from: fromName, to: toName, date, realCount: realBuses.length, totalCount: buses.length });
 
     res.json({ success: true, buses });
   } catch (error) {
@@ -845,11 +846,161 @@ app.get('/api/layout/:resId', async (req, res) => {
 });
 
 
+// ═══════════════════════════════════════════════
+//  ANALYTICS & ADMIN DASHBOARD
+// ═══════════════════════════════════════════════
+
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '[REDACTED]';
+const adminTokens = new Set();
+
+// In-memory analytics store
+const analytics = {
+  startTime: Date.now(),
+  visitors: 0,
+  searches: 0,
+  seatViews: 0,
+  checkouts: 0,
+  bookings: 0,
+  signups: 0,
+  activity: [],       // { time, event, data }
+  searchHistory: [],   // { time, from, to, date, realCount, totalCount }
+  userSignups: [],     // { time, name, email, phone }
+  popularRoutes: {}    // "from→to": count
+};
+
+function trackEvent(event, data = {}) {
+  const entry = { time: new Date().toISOString(), event, data };
+  analytics.activity.unshift(entry);
+  if (analytics.activity.length > 500) analytics.activity.length = 500;
+
+  switch (event) {
+    case 'visit': analytics.visitors++; break;
+    case 'search':
+      analytics.searches++;
+      const routeKey = `${data.from || '?'} → ${data.to || '?'}`;
+      analytics.popularRoutes[routeKey] = (analytics.popularRoutes[routeKey] || 0) + 1;
+      analytics.searchHistory.unshift({ time: entry.time, ...data });
+      if (analytics.searchHistory.length > 200) analytics.searchHistory.length = 200;
+      break;
+    case 'view_seats': analytics.seatViews++; break;
+    case 'checkout': analytics.checkouts++; break;
+    case 'booking': analytics.bookings++; break;
+    case 'signup': analytics.signups++; break;
+  }
+}
+
+// Public tracking endpoint (called by frontend)
+app.post('/api/track', (req, res) => {
+  const { event, data } = req.body;
+  if (!event) return res.status(400).json({ success: false });
+  trackEvent(event, data || {});
+  res.json({ success: true });
+});
+
+// Admin auth middleware
+function requireAdmin(req, res, next) {
+  const authHeader = req.headers['authorization'] || '';
+  const token = authHeader.replace('Bearer ', '');
+  if (!token || !adminTokens.has(token)) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+  next();
+}
+
+// Admin login
+app.post('/api/admin/login', (req, res) => {
+  const { password } = req.body;
+  if (password === ADMIN_PASSWORD) {
+    const token = 'cti_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 8);
+    adminTokens.add(token);
+    // Cleanup old tokens (keep last 10)
+    if (adminTokens.size > 10) {
+      const arr = Array.from(adminTokens);
+      arr.slice(0, arr.length - 10).forEach(t => adminTokens.delete(t));
+    }
+    res.json({ success: true, token });
+  } else {
+    res.status(403).json({ success: false, error: 'Invalid password' });
+  }
+});
+
+// Admin: aggregate stats
+app.get('/api/admin/stats', requireAdmin, (req, res) => {
+  const uptime = Math.floor((Date.now() - analytics.startTime) / 1000);
+  const topRoutes = Object.entries(analytics.popularRoutes)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([route, count]) => ({ route, count }));
+
+  res.json({
+    success: true,
+    stats: {
+      visitors: analytics.visitors,
+      searches: analytics.searches,
+      seatViews: analytics.seatViews,
+      checkouts: analytics.checkouts,
+      bookings: analytics.bookings,
+      signups: analytics.signups,
+      uptimeSeconds: uptime,
+      topRoutes
+    }
+  });
+});
+
+// Admin: recent activity feed
+app.get('/api/admin/activity', requireAdmin, (req, res) => {
+  const limit = parseInt(req.query.limit) || 50;
+  res.json({ success: true, activity: analytics.activity.slice(0, limit) });
+});
+
+// Admin: search history
+app.get('/api/admin/searches', requireAdmin, (req, res) => {
+  const limit = parseInt(req.query.limit) || 50;
+  res.json({ success: true, searches: analytics.searchHistory.slice(0, limit) });
+});
+
+// Admin: user signups
+app.get('/api/admin/users', requireAdmin, (req, res) => {
+  res.json({ success: true, users: analytics.userSignups });
+});
+
+// Admin: server & portal health
+app.get('/api/admin/health', requireAdmin, (req, res) => {
+  const uptime = Math.floor((Date.now() - analytics.startTime) / 1000);
+  const now = Date.now();
+  res.json({
+    success: true,
+    health: {
+      serverUptime: uptime,
+      lxmi: {
+        name: OPERATORS.lxmi.name,
+        sessionActive: OPERATORS.lxmi.sessionCookies.length > 0,
+        lastLogin: OPERATORS.lxmi.lastLoginTime ? new Date(OPERATORS.lxmi.lastLoginTime).toISOString() : null,
+        sessionAge: OPERATORS.lxmi.lastLoginTime ? Math.floor((now - OPERATORS.lxmi.lastLoginTime) / 1000) : null,
+        citiesLoaded: (OPERATORS.lxmi.cities || []).length
+      },
+      rdlh: {
+        name: OPERATORS.rdlh.name,
+        sessionActive: OPERATORS.rdlh.sessionCookies.length > 0,
+        lastLogin: OPERATORS.rdlh.lastLoginTime ? new Date(OPERATORS.rdlh.lastLoginTime).toISOString() : null,
+        sessionAge: OPERATORS.rdlh.lastLoginTime ? Math.floor((now - OPERATORS.rdlh.lastLoginTime) / 1000) : null,
+        citiesLoaded: (OPERATORS.rdlh.cities || []).length
+      }
+    }
+  });
+});
+
+
 // API: Send signup details to owner's email
 app.post('/api/signup', async (req, res) => {
   const { name, email, phone } = req.body;
   console.log(`New user signup notification request received: ${name} (${email}, ${phone})`);
   
+  // Track signup in analytics
+  trackEvent('signup', { name, email, phone });
+  analytics.userSignups.unshift({ time: new Date().toISOString(), name, email, phone });
+  if (analytics.userSignups.length > 200) analytics.userSignups.length = 200;
+
   const nodemailer = require('nodemailer');
   const smtpHost = process.env.SMTP_HOST;
   const smtpPort = Number(process.env.SMTP_PORT || 587);
