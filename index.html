@@ -94,7 +94,7 @@ header.top{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px so
 .hb{background:rgba(255,255,255,.12);backdrop-filter:blur(10px);color:#fff;padding:6px 12px;border-radius:999px;font-size:12px;border:1px solid rgba(212,175,55,.35);display:flex;align-items:center;gap:6px}
 
 /* Search card */
-.search-card{background:#fff;border-radius:18px;padding:18px;box-shadow:var(--shadow-lg);display:grid;grid-template-columns:1.3fr 1.3fr 1fr 1fr auto;gap:12px;align-items:end;border-top:3px solid var(--gold)}
+.search-card{background:#fff;border-radius:18px;padding:18px;box-shadow:var(--shadow-lg);display:grid;grid-template-columns:1.3fr 1.3fr 1fr 1fr 1fr auto;gap:12px;align-items:end;border-top:3px solid var(--gold)}
 .field{display:flex;flex-direction:column;gap:4px}
 .field label{font-size:11px;color:var(--ink2);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
 .field .v{font-size:18px;font-weight:700;color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;line-height:1.2}
@@ -302,6 +302,33 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
 .foot-inner a,.foot-inner p{font-size:13px;color:#A7E8DF;line-height:1.7}
 .foot-bottom{max-width:1240px;margin:24px auto 0;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:#A7E8DF;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 
+/* Hamburger / Mobile Nav */
+.ham-btn{display:none;flex-direction:column;gap:5px;padding:6px;cursor:pointer;margin-left:auto}
+.ham-btn span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px;transition:all .25s}
+.ham-btn.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.ham-btn.open span:nth-child(2){opacity:0}
+.ham-btn.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobile-nav-drawer{position:fixed;top:0;left:0;right:0;bottom:0;z-index:999;display:none}
+.mobile-nav-drawer.open{display:block}
+.mobile-nav-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+.mobile-nav-panel{position:absolute;top:0;right:0;bottom:0;width:80%;max-width:300px;background:#fff;padding:24px 20px;overflow-y:auto;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);box-shadow:-10px 0 40px rgba(0,0,0,.15)}
+.mobile-nav-drawer.open .mobile-nav-panel{transform:none}
+.mobile-nav-panel .mn-logo{height:36px;margin-bottom:24px}
+.mobile-nav-panel a,.mobile-nav-panel button.mn-link{display:block;padding:13px 0;font-size:16px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);background:none;border-left:none;border-right:none;border-top:none;text-align:left;width:100%;cursor:pointer;font-family:inherit}
+.mobile-nav-panel a:last-child{border-bottom:none}
+.mn-signin{margin-top:20px;width:100%;padding:13px;background:linear-gradient(135deg,var(--teal-d),var(--teal));color:#fff;border-radius:12px;font-size:15px;font-weight:700;border:none;cursor:pointer}
+
+/* Mobile filter drawer */
+.filter-fab{display:none;position:fixed;bottom:80px;right:18px;z-index:100;background:var(--teal);color:#fff;border:none;border-radius:999px;padding:12px 18px;font-size:13.5px;font-weight:700;box-shadow:0 6px 20px rgba(14,123,79,.4);gap:6px;align-items:center}
+.filter-fab svg{width:16px;height:16px;fill:#fff}
+.filter-drawer{position:fixed;inset:0;z-index:998;display:none}
+.filter-drawer.open{display:block}
+.filter-drawer-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+.filter-drawer-panel{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;padding:20px;max-height:80vh;overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.filter-drawer.open .filter-drawer-panel{transform:none}
+.filter-drawer-handle{width:40px;height:4px;background:#CBD5E1;border-radius:2px;margin:0 auto 16px}
+.filter-drawer-close{float:right;font-size:20px;color:var(--ink2);background:none;border:none;cursor:pointer;line-height:1}
+
 @media (max-width:1000px){
   .results,.checkout-wrap{grid-template-columns:1fr}
   .filters,.summary-side{position:static}
@@ -311,13 +338,78 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
   .foot-inner{grid-template-columns:1fr 1fr}
   .nav{display:none}
 }
-@media (max-width:600px){
-  .search-card{grid-template-columns:1fr}
-  .swap{right:auto;left:50%;bottom:-24px;top:auto;transform:translate(-50%,50%)}
-  .swap:hover{transform:translate(-50%,50%) scale(1.1)}
-  .hero h1{font-size:26px}
-  .bus{grid-template-columns:1fr}
-  .bus-side{border-left:none;border-top:1px dashed var(--line);padding-left:0;padding-top:12px;flex-direction:row;justify-content:space-between;align-items:center}
+@media (max-width:700px){
+  /* Header */
+  .ham-btn{display:flex}
+  .top-right .support{display:none}
+  .top-inner{padding:10px 16px;gap:10px}
+  .brand-logo{height:38px}
+
+  /* Hero */
+  .hero{padding:24px 16px 100px}
+  .hero h1{font-size:24px}
+  .hero p{font-size:13.5px}
+  .hero-badges{gap:6px}
+  .hb{font-size:11px;padding:5px 10px}
+
+  /* Search card — full stacked */
+  .search-card{grid-template-columns:1fr;gap:10px;padding:14px;border-radius:14px}
+  .field-box{min-height:54px}
+  .swap{position:static;margin:0 auto;transform:none;width:32px;height:32px;font-size:16px}
+  .swap:hover{transform:scale(1.1)}
+  .search-btn{padding:15px;font-size:15px;min-height:52px}
+
+  /* Prevent iOS input zoom — all inputs/selects must be ≥16px */
+  .field-box select,.field-box input[type=date],.auth-field input,.input input,.input select{
+    font-size:16px !important;
+  }
+  .field-box select{font-size:16px !important;font-weight:700;color:var(--ink)}
+
+  /* Page */
+  .page{padding:0 12px;margin-top:-80px}
+  .trust-strip{grid-template-columns:1fr 1fr;gap:12px;padding:14px}
+  .ts-ico{width:36px;height:36px;font-size:18px}
+  .ts b{font-size:12.5px}
+  .ts small{font-size:11px}
+
+  /* Filters — hide desktop sidebar, show FAB */
+  .filters{display:none}
+  .filter-fab{display:inline-flex}
+
+  /* Bus card */
+  .bus{grid-template-columns:1fr;padding:14px}
+  .bus-side{border-left:none;border-top:1px dashed var(--line);padding-left:0;padding-top:12px;flex-direction:row;justify-content:space-between;align-items:center;min-width:unset}
+  .fare{font-size:22px}
+  .view-seats{font-size:13px;padding:9px 14px}
+  .line{width:80px}
+  .time-block .t{font-size:17px}
+  .bus-times{gap:8px}
+
+  /* Seat panel */
+  .seat-content{grid-template-columns:1fr}
+  .seat{width:40px;height:40px;font-size:9px}
+  .seat.sleeper{height:88px}
+  .seat-grid{gap:5px 4px}
+
+  /* Checkout */
+  .form-grid{grid-template-columns:1fr}
+  .full{grid-column:1}
+  .checkout-wrap{gap:14px;margin-top:0}
+  .section{padding:16px}
+
+  /* Ticket */
+  .tk-grid{grid-template-columns:1fr 1fr}
+  .tk-points{grid-template-columns:1fr}
+  .tk-route .city{font-size:18px}
+
+  /* Footer */
+  .foot-inner{grid-template-columns:1fr}
+  footer.site{padding:24px 16px}
+
+  /* Auth modal */
+  .auth-box{padding:28px 20px 22px}
+  .live-compare{flex-direction:column;gap:10px;padding:14px}
+  .sort-bar{overflow-x:auto;flex-wrap:nowrap}
 }
 </style>
 </head>
@@ -343,13 +435,32 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
         <div class="user-dropdown">
           <a href="#">👤 My Profile</a>
           <a href="#">🎟 My Bookings</a>
-          <a href="#">💬 Help & Support</a>
+          <a href="#">💬 Help &amp; Support</a>
           <button class="logout-row" onclick="logoutUser()">🚪 Sign Out</button>
         </div>
       </div>
+      <!-- Hamburger (mobile only) -->
+      <button class="ham-btn" id="ham-btn" aria-label="Open menu" onclick="toggleMobileNav()">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
 </header>
+
+<!-- Mobile Nav Drawer -->
+<div class="mobile-nav-drawer" id="mobile-nav-drawer">
+  <div class="mobile-nav-overlay" onclick="toggleMobileNav()"></div>
+  <div class="mobile-nav-panel">
+    <img src="Logo.png" alt="Cheap Travels India" class="mn-logo">
+    <a href="/about.html">Cheap Travels India ↗</a>
+    <a href="#" class="active">Bus Tickets</a>
+    <a href="#">My Bookings</a>
+    <a href="#">Offers</a>
+    <a href="tel:8853391184">📞 8853391184</a>
+    <button class="mn-signin" id="mn-signin-btn" onclick="toggleMobileNav(); openAuth('signin');">Sign In</button>
+    <button class="mn-signin" id="mn-user-btn" style="display:none;background:var(--green-s);color:var(--teal-d);" onclick="toggleMobileNav(); document.getElementById('user-chip').classList.toggle('open');">My Account ▾</button>
+  </div>
+</div>
 
 <!-- ════════════ AUTH MODAL ════════════ -->
 <div class="auth-overlay" id="auth-overlay">
@@ -451,6 +562,21 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
             <div class="sv">General · Any</div>
           </div>
         </div>
+        <div class="field">
+          <label for="bus-type-select">BUS TYPE</label>
+          <div class="field-box" style="padding: 4px 12px; display: flex; flex-direction: column; justify-content: center; min-height: 62px;">
+            <select id="bus-type-select" style="width:100%; border:none; background:transparent; font-size:16px; font-weight:700; color:var(--ink); outline:none; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer;">
+              <option value="">Any Type</option>
+              <option value="AC Sleeper">AC Sleeper</option>
+              <option value="Non-AC Sleeper">Non-AC Sleeper</option>
+              <option value="AC Seater">AC Seater</option>
+              <option value="Non-AC Seater">Non-AC Seater</option>
+              <option value="Volvo">Volvo AC</option>
+              <option value="Semi Sleeper">Semi Sleeper</option>
+            </select>
+            <div class="sv">AC · Non-AC · Sleeper</div>
+          </div>
+        </div>
         <button class="search-btn" onclick="performSearch()">Search Buses →</button>
       </div>
     </div>
@@ -472,8 +598,49 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
       <div class="cmp us"><b>Cheap Travels</b>₹1,424 <small style="opacity:.8">(5% extra discount)</small></div>
     </div>
 
+    <!-- 📱 Mobile: Floating Filter Button -->
+    <button class="filter-fab" id="filter-fab" onclick="openFilterDrawer()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+      Filters
+    </button>
+
+    <!-- Mobile Filter Drawer -->
+    <div class="filter-drawer" id="filter-drawer">
+      <div class="filter-drawer-overlay" onclick="closeFilterDrawer()"></div>
+      <div class="filter-drawer-panel">
+        <div class="filter-drawer-handle"></div>
+        <button class="filter-drawer-close" onclick="closeFilterDrawer()">✕</button>
+        <h3 style="font-size:16px;color:var(--teal-d);margin-bottom:16px;clear:both">Filters</h3>
+        <div class="f-group">
+          <h4>Bus Type</h4>
+          <div class="chips">
+            <div class="chip on">AC Sleeper</div>
+            <div class="chip">Non-AC</div>
+            <div class="chip on">Seater</div>
+            <div class="chip">Volvo</div>
+          </div>
+        </div>
+        <div class="f-group">
+          <h4>Departure Time</h4>
+          <div class="chips">
+            <div class="chip">Before 10 AM</div>
+            <div class="chip on">10 AM - 5 PM</div>
+            <div class="chip on">After 5 PM</div>
+          </div>
+        </div>
+        <div class="f-group">
+          <h4>Operator</h4>
+          <div class="f-row"><input type="checkbox" checked> UP State Roadways <span class="count">3</span></div>
+          <div class="f-row"><input type="checkbox" checked> Hans Travels <span class="count">2</span></div>
+          <div class="f-row"><input type="checkbox" checked> Laxmi Holidays <span class="count">4</span></div>
+          <div class="f-row"><input type="checkbox" checked> Shrinath Tourist <span class="count">1</span></div>
+        </div>
+        <button class="search-btn" style="width:100%;margin-top:10px" onclick="closeFilterDrawer()">Apply Filters</button>
+      </div>
+    </div>
+
     <div class="results">
-      <aside class="filters">
+      <aside class="filters" id="desktop-filters">
         <h3>Filters</h3>
         <div class="f-group">
           <h4>Bus Type</h4>
@@ -1443,15 +1610,21 @@ function logoutUser() {
 function updateAuthUI() {
   const chip = document.getElementById('user-chip');
   const btn  = document.getElementById('auth-open-btn');
+  const mnSignIn = document.getElementById('mn-signin-btn');
+  const mnUser   = document.getElementById('mn-user-btn');
   if (currentUser) {
     chip.style.display = 'flex';
     btn.style.display  = 'none';
+    if (mnSignIn) mnSignIn.style.display = 'none';
+    if (mnUser)   { mnUser.style.display = 'block'; mnUser.textContent = currentUser.name.split(' ')[0] + ' ▾'; }
     const initials = currentUser.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
     document.getElementById('user-avatar').textContent = initials;
     document.getElementById('user-name-display').textContent = currentUser.name.split(' ')[0];
   } else {
     chip.style.display = 'none';
     btn.style.display  = 'inline-block';
+    if (mnSignIn) mnSignIn.style.display = 'block';
+    if (mnUser)   mnUser.style.display = 'none';
   }
 }
 
@@ -1698,6 +1871,26 @@ function showResults(){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-results').classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══════════ MOBILE NAV ═══════════
+function toggleMobileNav() {
+  const drawer = document.getElementById('mobile-nav-drawer');
+  const btn    = document.getElementById('ham-btn');
+  const isOpen = drawer.classList.contains('open');
+  drawer.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+}
+
+// ═══════════ MOBILE FILTER DRAWER ═══════════
+function openFilterDrawer() {
+  document.getElementById('filter-drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeFilterDrawer() {
+  document.getElementById('filter-drawer').classList.remove('open');
+  document.body.style.overflow = '';
 }
 </script>
 </body>
