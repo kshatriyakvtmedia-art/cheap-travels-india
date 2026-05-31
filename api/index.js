@@ -760,6 +760,53 @@ app.get('/api/layout/:resId', async (req, res) => {
   }
 });
 
+
+// API: Send signup details to owner's email
+app.post('/api/signup', async (req, res) => {
+  const { name, email, phone } = req.body;
+  console.log(`New user signup notification request received: ${name} (${email}, ${phone})`);
+  
+  const nodemailer = require('nodemailer');
+  const smtpHost = process.env.SMTP_HOST;
+  const smtpPort = Number(process.env.SMTP_PORT || 587);
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+  const smtpFrom = process.env.SMTP_FROM || 'Cheap Travels India <cheaptravels.in@gmail.com>';
+  
+  if (smtpHost && smtpUser && smtpPass) {
+    try {
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: { user: smtpUser, pass: smtpPass }
+      });
+      
+      const mailOptions = {
+        from: smtpFrom,
+        to: 'cheaptravels.in@gmail.com',
+        subject: `New User Registration: ${name}`,
+        html: `
+          <h3>New User Registration Details</h3>
+          <p><b>Name:</b> ${name}</p>
+          <p><b>Email:</b> ${email}</p>
+          <p><b>Mobile Number:</b> ${phone}</p>
+          <p><b>Registration Date:</b> ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</p>
+        `
+      };
+      
+      await transporter.sendMail(mailOptions);
+      console.log(`Successfully sent new user signup notification email to cheaptravels.in@gmail.com`);
+    } catch (err) {
+      console.error(`Failed to send signup notification email:`, err.message);
+    }
+  } else {
+    console.log(`SMTP environment variables not configured. Logging signup details locally:`, { name, email, phone });
+  }
+  
+  res.json({ success: true });
+});
+
 // Serve frontend fallback
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));

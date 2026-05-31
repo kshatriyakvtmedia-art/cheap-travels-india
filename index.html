@@ -351,8 +351,10 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
 }
 @media (max-width:700px){
   /* Header */
-  .ham-btn{display:flex}
-  .top-right{display:none !important}
+  .ham-btn{display:flex;margin-left:0}
+  .top-right{display:flex !important;margin-left:auto;align-items:center;gap:8px}
+  .top-right .support{display:none}
+  .signin-btn{font-size:12px;padding:6px 12px;border-radius:8px;margin-right:4px}
   .top-inner{padding:10px 16px;gap:10px}
   .brand-logo{height:38px}
 
@@ -439,136 +441,137 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
   .auth-box{padding:28px 20px 22px}
   .live-compare{flex-direction:column;gap:10px;padding:14px}
 
-  /* City selector modal CSS */
-  .city-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 2000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-  .city-modal.open {
-    display: flex;
-  }
-  .city-modal-overlay {
+  /* Autocomplete & Bonus popup styles */
+  .autocomplete-results {
     position: absolute;
-    inset: 0;
-    background: rgba(11, 18, 32, 0.4);
-    backdrop-filter: blur(4px);
-  }
-  .city-modal-panel {
-    position: relative;
+    top: 100%;
+    left: 0;
+    right: 0;
     background: #fff;
-    width: 100%;
-    max-width: 500px;
-    height: 100%;
-    max-height: 80vh;
-    border-radius: 20px 20px 0 0;
-    display: flex;
-    flex-direction: column;
-    box-shadow: var(--shadow-lg);
-    overflow: hidden;
-    z-index: 2001;
-    animation: slideUpModal 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  @media (min-width: 701px) {
-    .city-modal-panel {
-      border-radius: 20px;
-      height: 600px;
-      max-height: 90vh;
-    }
-  }
-  @keyframes slideUpModal {
-    from { transform: translateY(100%); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-  @media (min-width: 701px) {
-    @keyframes slideUpModal {
-      from { transform: translateY(30px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-  }
-  .city-modal-header {
-    padding: 16px;
-    border-bottom: 1px solid var(--line);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .city-modal-search-wrap {
-    flex: 1;
-    position: relative;
-    background: #F1F5F9;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    padding: 4px 12px;
-    border: 1.5px solid transparent;
-    transition: border-color 0.15s;
-  }
-  .city-modal-search-wrap:focus-within {
-    border-color: var(--teal);
-    background: #fff;
-  }
-  .city-modal-search-wrap .search-icon {
-    font-size: 16px;
-    color: var(--ink2);
-    margin-right: 8px;
-  }
-  .city-modal-search-wrap input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    padding: 8px 0;
-    font-size: 15px;
-    font-family: inherit;
-    color: var(--ink);
-    outline: none;
-  }
-  .clear-search-btn {
-    background: none;
-    border: none;
-    font-size: 14px;
-    color: var(--ink3);
-    cursor: pointer;
-    padding: 4px;
-    display: none;
-  }
-  .city-modal-close {
-    font-size: 14.5px;
-    font-weight: 600;
-    color: var(--ink2);
-    cursor: pointer;
-    background: none;
-    border: none;
-  }
-  .city-modal-results {
-    flex: 1;
+    border: 1.5px solid var(--line);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    box-shadow: var(--shadow);
+    max-height: 250px;
     overflow-y: auto;
-    padding: 8px 0;
+    z-index: 1000;
+    margin-top: 1px;
   }
-  .city-item {
-    padding: 12px 20px;
-    display: flex;
-    flex-direction: column;
+  .autocomplete-item {
+    padding: 12px 16px;
     cursor: pointer;
     border-bottom: 1px solid rgba(0,0,0,0.02);
-    transition: background 0.1s;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.15s;
     text-align: left;
   }
-  .city-item:hover {
-    background: #FAFAF7;
+  .autocomplete-item:hover {
+    background: rgba(14, 123, 79, 0.05); /* soft theme green */
   }
-  .city-item .c-name {
+  .autocomplete-item .ac-name {
     font-size: 15px;
     font-weight: 700;
     color: var(--ink);
   }
-  .city-item .c-state {
-    font-size: 12px;
+  .autocomplete-item .ac-state {
+    font-size: 11.5px;
     color: var(--ink2);
     margin-top: 2px;
+  }
+  
+  /* Bonus sign-up popup */
+  .bonus-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .bonus-popup.open {
+    display: flex;
+  }
+  .bonus-popup-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(11, 123, 79, 0.25);
+    backdrop-filter: blur(5px);
+  }
+  .bonus-popup-box {
+    position: relative;
+    background: #fff;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 400px;
+    padding: 36px 28px 28px;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    z-index: 3001;
+    border: 1px solid rgba(14, 123, 79, 0.1);
+    animation: bonusPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes bonusPop {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .bonus-popup-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 16px;
+    color: var(--ink3);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  .bonus-gift-icon {
+    font-size: 56px;
+    margin-bottom: 16px;
+    animation: bounceGift 2s infinite ease-in-out;
+  }
+  @keyframes bounceGift {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .bonus-popup-box h3 {
+    font-size: 22px;
+    color: var(--teal-d);
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .bonus-popup-box p {
+    font-size: 14px;
+    color: var(--ink2);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .bonus-popup-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--teal), var(--teal-d));
+    color: #fff;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(14, 123, 79, 0.3);
+    transition: transform 0.1s;
+  }
+  .bonus-popup-btn:active {
+    transform: scale(0.98);
+  }
+  .bonus-popup-link {
+    display: block;
+    margin: 14px auto 0;
+    font-size: 13px;
+    color: var(--ink3);
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: none;
   }
 }
 </style>
@@ -624,21 +627,16 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
   </div>
 </div>
 
-<!-- ════════════ CITY SELECTOR MODAL ════════════ -->
-<div class="city-modal" id="city-modal">
-  <div class="city-modal-overlay" onclick="closeCityModal()"></div>
-  <div class="city-modal-panel">
-    <div class="city-modal-header">
-      <div class="city-modal-search-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="city-search-input" placeholder="Search city..." oninput="filterCities(this.value)">
-        <button class="clear-search-btn" id="clear-city-search" onclick="clearCitySearch()">✕</button>
-      </div>
-      <button class="city-modal-close" onclick="closeCityModal()">Cancel</button>
-    </div>
-    <div class="city-modal-results" id="city-modal-results">
-      <!-- Mapped cities rendered dynamically -->
-    </div>
+<!-- ════════════ SIGN UP BONUS POPUP ════════════ -->
+<div class="bonus-popup" id="bonus-popup">
+  <div class="bonus-popup-overlay" onclick="closeBonusPopup()"></div>
+  <div class="bonus-popup-box">
+    <button class="bonus-popup-close" onclick="closeBonusPopup()">✕</button>
+    <div class="bonus-gift-icon">🎁</div>
+    <h3>Unlock ₹51 Sign-up Bonus!</h3>
+    <p>Create an account today to claim your <b>₹51 cash bonus</b> for your 1st ticket + get <b>5% regular discount</b> on Laxmi & Ram Dalal partner buses.</p>
+    <button class="bonus-popup-btn" onclick="claimBonus()">Claim ₹51 Bonus & Sign Up</button>
+    <button class="bonus-popup-link" onclick="closeBonusPopup()">Maybe Later</button>
   </div>
 </div>
 
@@ -704,25 +702,27 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
         <div class="hb">📲 WhatsApp ticket push</div>
         <div class="hb">↩️ Auto-refund if not issued in 30 min</div>
       <div class="search-card">
-        <div class="field" style="position: relative;">
-          <label for="from-select">FROM</label>
-          <div class="field-box" onclick="openCityModal('from')" style="padding: 4px 12px; display: flex; flex-direction: column; justify-content: center; min-height: 62px; cursor: pointer;">
-            <div class="field-value-city" id="from-val-city" style="font-size:18px; font-weight:700; color:var(--ink); font-family:'Plus Jakarta Sans',sans-serif;">Azamgarh</div>
-            <div class="sv" id="from-state">Uttar Pradesh</div>
+        <div class="field" style="position: relative;" id="field-from-container">
+          <label for="from-search">FROM</label>
+          <div class="field-box" style="padding: 4px 12px; display: flex; flex-direction: column; justify-content: center; min-height: 62px; position: relative;">
+            <input type="text" id="from-search" placeholder="Search origin..." value="Azamgarh" onfocus="showAutocomplete('from')" oninput="onAutocompleteInput('from')" style="width:100%; border:none; background:transparent; font-size:18px; font-weight:700; color:var(--ink); outline:none; font-family:'Plus Jakarta Sans',sans-serif;">
+            <div class="sv" id="from-state" style="pointer-events: none;">Uttar Pradesh</div>
             <select id="from-select" onchange="updateFromState(this)" style="display: none;">
               <option value="170" data-state="Uttar Pradesh">Azamgarh</option>
             </select>
+            <div class="autocomplete-results" id="from-autocomplete" style="display:none;"></div>
           </div>
           <div class="swap" style="cursor: pointer;" onclick="swapCities()">⇌</div>
         </div>
-        <div class="field">
-          <label for="to-select">TO</label>
-          <div class="field-box" onclick="openCityModal('to')" style="padding: 4px 12px; display: flex; flex-direction: column; justify-content: center; min-height: 62px; cursor: pointer;">
-            <div class="field-value-city" id="to-val-city" style="font-size:18px; font-weight:700; color:var(--ink); font-family:'Plus Jakarta Sans',sans-serif;">Delhi</div>
-            <div class="sv" id="to-state">Delhi</div>
+        <div class="field" style="position: relative;" id="field-to-container">
+          <label for="to-search">TO</label>
+          <div class="field-box" style="padding: 4px 12px; display: flex; flex-direction: column; justify-content: center; min-height: 62px; position: relative;">
+            <input type="text" id="to-search" placeholder="Search destination..." value="Delhi" onfocus="showAutocomplete('to')" oninput="onAutocompleteInput('to')" style="width:100%; border:none; background:transparent; font-size:18px; font-weight:700; color:var(--ink); outline:none; font-family:'Plus Jakarta Sans',sans-serif;">
+            <div class="sv" id="to-state" style="pointer-events: none;">Delhi</div>
             <select id="to-select" onchange="updateToState(this)" style="display: none;">
               <option value="3" data-state="Delhi">Delhi</option>
             </select>
+            <div class="autocomplete-results" id="to-autocomplete" style="display:none;"></div>
           </div>
         </div>
         <div class="field">
@@ -1265,7 +1265,7 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:48px 24px;margin-top:60px;b
           <span class="chip-icon">✉️</span>
           <span class="chip-text">cheaptravels.in@gmail.com</span>
         </a>
-        <a href="https://wa.me/918853391184" class="contact-chip" target="_blank">
+        <a href="https://wa.me/918853521184" class="contact-chip" target="_blank">
           <span class="chip-icon">📲</span>
           <span class="chip-text">WhatsApp</span>
         </a>
@@ -1331,6 +1331,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadCities();
   setupQR();
+  
+  // Show bonus signup popup to new users after 1.5 seconds
+  setTimeout(() => {
+    const user = localStorage.getItem('cti_user');
+    const shown = localStorage.getItem('cti_bonus_shown');
+    if (!user && !shown) {
+      const popup = document.getElementById('bonus-popup');
+      if (popup) {
+        popup.classList.add('open');
+        localStorage.setItem('cti_bonus_shown', 'true');
+      }
+    }
+  }, 1500);
 });
 
 // Load cities from backend
@@ -1382,8 +1395,8 @@ function updateFromState(el) {
   const opt = el.options[el.selectedIndex];
   if (opt) {
     document.getElementById('from-state').textContent = opt.dataset.state;
-    const valCityEl = document.getElementById('from-val-city');
-    if (valCityEl) valCityEl.textContent = opt.textContent.replace(/\s*\([^)]*\)/g, '');
+    const searchInput = document.getElementById('from-search');
+    if (searchInput) searchInput.value = opt.textContent.replace(/\s*\([^)]*\)/g, '');
   }
 }
 
@@ -1391,8 +1404,8 @@ function updateToState(el) {
   const opt = el.options[el.selectedIndex];
   if (opt) {
     document.getElementById('to-state').textContent = opt.dataset.state;
-    const valCityEl = document.getElementById('to-val-city');
-    if (valCityEl) valCityEl.textContent = opt.textContent.replace(/\s*\([^)]*\)/g, '');
+    const searchInput = document.getElementById('to-search');
+    if (searchInput) searchInput.value = opt.textContent.replace(/\s*\([^)]*\)/g, '');
   }
 }
 
@@ -1869,6 +1882,14 @@ function doSignUp() {
   const user = { name, email, phone, pass, joined: new Date().toISOString() };
   users.push(user);
   localStorage.setItem('cti_users', JSON.stringify(users));
+
+  // Send details to owner's email
+  fetch('/api/signup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, phone })
+  }).catch(e => console.error("Signup email notification failed:", e));
+
   loginUser(user);
 }
 
@@ -2244,56 +2265,48 @@ function closeFilterDrawer() {
   document.getElementById('filter-drawer').classList.remove('open');
   document.body.style.overflow = '';
 }
-// ═══════════ SEARCHABLE CITY SELECTOR MODAL LOGIC ═══════════
+// ═══════════ SEARCHABLE CITY INLINE AUTOCOMPLETE LOGIC ═══════════
 let activeCityType = null;
 
-function openCityModal(type) {
+function showAutocomplete(type) {
+  const otherType = type === 'from' ? 'to' : 'from';
+  hideAutocomplete(otherType);
+  
   activeCityType = type;
-  const modal = document.getElementById('city-modal');
-  const searchInput = document.getElementById('city-search-input');
+  const div = document.getElementById(`${type}-autocomplete`);
+  if (div) div.style.display = 'block';
   
-  searchInput.placeholder = type === 'from' ? 'Search departure city...' : 'Search destination city...';
-  searchInput.value = '';
-  document.getElementById('clear-city-search').style.display = 'none';
+  renderAutocompleteList(type, document.getElementById(`${type}-search`).value);
+}
+
+function hideAutocomplete(type) {
+  const div = document.getElementById(`${type}-autocomplete`);
+  if (div) div.style.display = 'none';
   
-  renderCitiesList('');
-  
-  modal.classList.add('open');
-  setTimeout(() => searchInput.focus(), 150);
+  // Restore city name if blurred and left empty
+  const searchInput = document.getElementById(`${type}-search`);
+  const selectVal = document.getElementById(`${type}-select`).value;
+  if (searchInput && !searchInput.value.trim()) {
+    const city = citiesList.find(c => c.id === selectVal);
+    if (city) {
+      searchInput.value = city.name.replace(/\s*\([^)]*\)/g, '');
+    }
+  }
 }
 
-function closeCityModal() {
-  const modal = document.getElementById('city-modal');
-  modal.classList.remove('open');
-  activeCityType = null;
+function onAutocompleteInput(type) {
+  renderAutocompleteList(type, document.getElementById(`${type}-search`).value);
 }
 
-function clearCitySearch() {
-  const searchInput = document.getElementById('city-search-input');
-  searchInput.value = '';
-  filterCities('');
-  searchInput.focus();
-}
-
-function filterCities(query) {
-  const clearBtn = document.getElementById('clear-city-search');
-  clearBtn.style.display = query ? 'block' : 'none';
-  renderCitiesList(query);
-}
-
-function renderCitiesList(query) {
-  const resultsContainer = document.getElementById('city-modal-results');
-  if (!resultsContainer) return;
+function renderAutocompleteList(type, query) {
+  const div = document.getElementById(`${type}-autocomplete`);
+  if (!div) return;
   
   const cleanQuery = query.toLowerCase().trim();
   const filtered = citiesList.filter(city => city.name.toLowerCase().includes(cleanQuery));
   
   if (filtered.length === 0) {
-    resultsContainer.innerHTML = `
-      <div style="padding: 40px 20px; text-align: center; color: var(--ink3); font-size: 14.5px;">
-        No cities found matching "${query}"
-      </div>
-    `;
+    div.innerHTML = `<div style="padding:12px; font-size:12.5px; color:var(--ink3); text-align:center;">No matches</div>`;
     return;
   }
   
@@ -2311,39 +2324,56 @@ function renderCitiesList(query) {
     const cleanName = city.name.replace(/\s*\([^)]*\)/g, '');
     
     html += `
-      <div class="city-item" onclick="selectCity('${city.id}', '${city.name}', '${state}')">
-        <span class="c-name">${cleanName}</span>
-        <span class="c-state">${state}</span>
+      <div class="autocomplete-item" onclick="selectAutocompleteCity('${type}', '${city.id}', '${city.name}', '${state}')">
+        <span class="ac-name">${cleanName}</span>
+        <span class="ac-state">${state}</span>
       </div>
     `;
   });
   
-  resultsContainer.innerHTML = html;
+  div.innerHTML = html;
 }
 
-function selectCity(id, name, state) {
-  if (!activeCityType) return;
+function selectAutocompleteCity(type, id, fullName, state) {
+  const selectVal = document.getElementById(`${type}-select`);
+  const searchInput = document.getElementById(`${type}-search`);
+  const stateDiv = document.getElementById(`${type}-state`);
   
-  const selectEl = document.getElementById(`${activeCityType}-select`);
-  const valCityEl = document.getElementById(`${activeCityType}-val-city`);
-  const stateEl = document.getElementById(`${activeCityType}-state`);
-  
-  if (selectEl) {
+  if (selectVal) {
     let opt = Array.from(selectEl.options).find(o => o.value === id);
     if (!opt) {
       opt = document.createElement('option');
       opt.value = id;
-      opt.textContent = name;
+      opt.textContent = fullName;
       opt.dataset.state = state;
       selectEl.appendChild(opt);
     }
-    selectEl.value = id;
+    selectVal.value = id;
   }
+  if (searchInput) searchInput.value = fullName.replace(/\s*\([^)]*\)/g, '');
+  if (stateDiv) stateDiv.textContent = state;
   
-  if (valCityEl) valCityEl.textContent = name.replace(/\s*\([^)]*\)/g, '');
-  if (stateEl) stateEl.textContent = state;
-  
-  closeCityModal();
+  hideAutocomplete(type);
+}
+
+// Click away listener to close autocompletes
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#field-from-container')) {
+    hideAutocomplete('from');
+  }
+  if (!e.target.closest('#field-to-container')) {
+    hideAutocomplete('to');
+  }
+});
+
+// ═══════════ NEW SIGN UP BONUS POPUP LOGIC ═══════════
+function claimBonus() {
+  closeBonusPopup();
+  openAuth('signup');
+}
+
+function closeBonusPopup() {
+  document.getElementById('bonus-popup').classList.remove('open');
 }
 </script>
 </body>
