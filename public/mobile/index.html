@@ -120,9 +120,10 @@ input, select { font-family: inherit; }
   color: var(--ink3);
   font-size: 10.5px; font-weight: 500;
 }
-.nav-item .nav-icon { font-size: 22px; line-height: 1; }
+.nav-item .nav-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+.nav-item .nav-icon svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .nav-item.active { color: var(--g); }
-.nav-item.active .nav-icon { transform: scale(1.1); }
+.nav-item.active .nav-icon svg { stroke-width: 2.2; }
 
 /* ═══════ HOME SCREEN ═══════ */
 #screen-home .screen-body {
@@ -196,11 +197,22 @@ input, select { font-family: inherit; }
   width: 38px; height: 38px;
   border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
+  flex-shrink: 0;
 }
+.sf-icon svg { width: 20px; height: 20px; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
 .sf-icon.from { background: #E8F5EE; }
+.sf-icon.from svg { stroke: #0E7B4F; }
 .sf-icon.to { background: #FEF3E2; }
+.sf-icon.to svg { stroke: #EE8C2E; }
 .sf-icon.date { background: #EEF2FF; }
+.sf-icon.date svg { stroke: #6366F1; }
+/* Date field overlay trick */
+.date-field-wrap { position: relative; display: flex; align-items: center; flex: 1; }
+.date-field-wrap input[type=date] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer;
+  z-index: 3; width: 100%; height: 100%; font-size: 16px;
+  border: none; background: transparent;
+}
 .sf-text { flex: 1; }
 .sf-label { font-size: 11px; color: var(--ink3); font-weight: 500; margin-bottom: 2px; }
 .sf-value {
@@ -299,7 +311,8 @@ input, select { font-family: inherit; }
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .search-btn-main:active { transform: scale(.98); }
-.search-btn-main .btn-arrow { font-size: 18px; }
+.search-btn-main:disabled { opacity: .7; cursor: not-allowed; transform: none; }
+.search-btn-main svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2.5; stroke-linecap: round; }
 
 /* Promo banners */
 .promo-section { padding: 20px 16px 4px; }
@@ -927,7 +940,9 @@ input, select { font-family: inherit; }
       <div class="search-fields" id="search-fields-wrap">
         <!-- FROM -->
         <div class="search-field" id="sf-from" onclick="openCityPicker('from')">
-          <div class="sf-icon from">🚌</div>
+          <div class="sf-icon from">
+            <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          </div>
           <div class="sf-text">
             <div class="sf-label">From</div>
             <div class="sf-value" id="from-display">Azamgarh</div>
@@ -935,26 +950,36 @@ input, select { font-family: inherit; }
         </div>
 
         <!-- SWAP -->
-        <button class="swap-btn" onclick="swapCities(); event.stopPropagation();">⇌</button>
+        <button class="swap-btn" onclick="swapCities(); event.stopPropagation();" style="display:flex;align-items:center;justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--g)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="3" x2="12" y2="21"/><polyline points="7 8 12 3 17 8"/><polyline points="7 16 12 21 17 16"/>
+          </svg>
+        </button>
 
         <!-- TO -->
         <div class="search-field" id="sf-to" onclick="openCityPicker('to')">
-          <div class="sf-icon to">📍</div>
+          <div class="sf-icon to">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
           <div class="sf-text">
             <div class="sf-label">To</div>
             <div class="sf-value" id="to-display">Delhi</div>
           </div>
         </div>
 
-        <!-- DATE -->
-        <div class="search-field" onclick="document.getElementById('date-input').click()">
-          <div class="sf-icon date">📅</div>
+        <!-- DATE — transparent overlay input covers the row so native picker fires on any tap -->
+        <div class="search-field" style="position:relative;">
+          <div class="sf-icon date">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
           <div class="sf-text">
             <div class="sf-label">Date of Journey</div>
             <div class="sf-value" id="date-display">—</div>
           </div>
+          <!-- Invisible date input stretched over the whole row -->
+          <input type="date" id="date-input" onchange="onDateChange(this)"
+            style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:5;font-size:16px;border:none;background:transparent;">
         </div>
-        <input type="date" id="date-input" onchange="onDateChange(this)">
       </div>
 
       <!-- Date quick chips -->
@@ -969,9 +994,9 @@ input, select { font-family: inherit; }
         </div>
       </div>
 
-      <button class="search-btn-main" onclick="doSearch()">
-        <span>Search Buses</span>
-        <span class="btn-arrow">→</span>
+      <button class="search-btn-main" id="search-main-btn" onclick="doSearch()">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span id="search-btn-text">Search Buses</span>
       </button>
     </div>
 
@@ -1028,16 +1053,16 @@ input, select { font-family: inherit; }
   <!-- Bottom nav -->
   <nav class="bottom-nav">
     <div class="nav-item active" onclick="goHome()">
-      <div class="nav-icon">🏠</div><div>Home</div>
+      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div>Home</div>
     </div>
     <div class="nav-item" onclick="showToast('My Bookings coming soon!')">
-      <div class="nav-icon">🎟</div><div>Bookings</div>
+      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/><line x1="9" y1="12" x2="15" y2="12"/></svg></div><div>Bookings</div>
     </div>
     <div class="nav-item" onclick="showToast('Dial +91 88535 21184 for help')">
-      <div class="nav-icon">❓</div><div>Help</div>
+      <div class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div>Help</div>
     </div>
     <div class="nav-item" id="nav-account" onclick="openAuth('signin')">
-      <div class="nav-icon">👤</div><div>Account</div>
+      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div id="nav-acc-label">Account</div>
     </div>
   </nav>
 </div>
@@ -1359,12 +1384,12 @@ document.addEventListener('DOMContentLoaded', () => {
   restoreSession();
   setupQR();
 
-  // Show bonus popup after 1.8s on fresh visit
-  const hasShown = localStorage.getItem('cti_m_bonus');
-  if (!hasShown && !localStorage.getItem('cti_user')) {
+  // Show bonus popup after 1.8s — use sessionStorage so it shows once per browser session
+  const hasShown = sessionStorage.getItem('cti_m_bonus_session');
+  if (!hasShown) {
     setTimeout(() => {
       document.getElementById('bonus-popup').classList.add('open');
-      localStorage.setItem('cti_m_bonus', '1');
+      sessionStorage.setItem('cti_m_bonus_session', '1');
     }, 1800);
   }
 });
@@ -1526,6 +1551,12 @@ async function doSearch() {
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const dateDisplay = `${parseInt(parts[2])} ${months[parseInt(parts[1])-1]}, ${parts[0]}`;
 
+  // Disable button while searching
+  const btn = document.getElementById('search-main-btn');
+  const btnText = document.getElementById('search-btn-text');
+  if (btn) { btn.disabled = true; }
+  if (btnText) btnText.textContent = 'Searching…';
+
   // Update results header
   document.getElementById('results-route-title').textContent = `${selectedFromName} → ${selectedToName}`;
   document.getElementById('results-date-title').textContent = dateDisplay;
@@ -1543,7 +1574,11 @@ async function doSearch() {
     </div>`;
 
   try {
-    const res = await fetch(`/api/search?from=${selectedFromId}&to=${selectedToId}&date=${formattedDate}`);
+    // 15-second timeout so the button doesn't hang forever
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
+    const res = await fetch(`/api/search?from=${selectedFromId}&to=${selectedToId}&date=${formattedDate}`, { signal: controller.signal });
+    clearTimeout(timer);
     const data = await res.json();
 
     if (data.success && data.buses && data.buses.length > 0) {
@@ -1556,18 +1591,23 @@ async function doSearch() {
       allBusesCache = [];
       searchResultsBuses = [];
       renderBusList([], formattedDate);
-      document.getElementById('bus-count-text').textContent = 'No buses found';
+      document.getElementById('bus-count-text').textContent = data.error || 'No buses found for this route/date';
     }
   } catch(e) {
+    const isTimeout = e.name === 'AbortError';
     console.error('Search failed:', e);
     document.getElementById('bus-list').innerHTML = `
       <div class="empty-state">
-        <div class="empty-ico">😕</div>
-        <div class="empty-title">Couldn't fetch buses</div>
-        <div class="empty-sub">Check your internet connection and try again.</div>
-        <button onclick="doSearch()" style="margin-top:16px;padding:12px 24px;background:var(--g);color:#fff;border-radius:12px;font-weight:700;border:none;cursor:pointer;">Retry</button>
+        <div style="font-size:48px;margin-bottom:16px;">${isTimeout ? '⏱' : '📡'}</div>
+        <div class="empty-title">${isTimeout ? 'Search timed out' : 'Connection error'}</div>
+        <div class="empty-sub">${isTimeout ? 'The operator portal is taking too long. Please try again.' : 'Check your internet and try again.'}</div>
+        <button onclick="doSearch()" style="margin-top:16px;padding:12px 24px;background:var(--g);color:#fff;border-radius:12px;font-weight:700;border:none;cursor:pointer;">Retry Search</button>
       </div>`;
     document.getElementById('bus-count-text').textContent = 'Error — tap Retry';
+  } finally {
+    // Always re-enable the button
+    if (btn) { btn.disabled = false; }
+    if (btnText) btnText.textContent = 'Search Buses';
   }
 }
 
@@ -1884,8 +1924,14 @@ function buildCheckout() {
 
   const totalBase = selectedSeats.reduce((s,x) => s + x.fare, 0);
   const totalDiscount = selectedSeats.reduce((s,x) => s + x.discount, 0);
-  const totalPayable = selectedSeats.reduce((s,x) => s + x.payable, 0);
+  let totalPayable = selectedSeats.reduce((s,x) => s + x.payable, 0);
   const seatNos = selectedSeats.map(s=>s.seatNo).join(', ');
+
+  let bonusApplied = 0;
+  if (currentUser && currentUser.bonus && currentUser.bonus > 0) {
+    bonusApplied = Math.min(currentUser.bonus, totalPayable);
+    totalPayable -= bonusApplied;
+  }
 
   document.getElementById('co-trip-summary').textContent =
     `${selectedFromName} → ${selectedToName} · ${selectedBus.operator} · Seats ${seatNos}`;
@@ -1912,15 +1958,38 @@ function buildCheckout() {
   // Fare breakup
   const isSS = selectedBus.resId && selectedBus.resId.startsWith('ss-');
   const discountRow = (!isSS && totalDiscount > 0) ? `<div class="fare-row disc"><span>Cheap Travels discount</span><span>− ₹${totalDiscount}</span></div>` : '';
+  const bonusRow = bonusApplied > 0 ? `<div class="fare-row disc" style="color:#166534;font-weight:600;"><span>₹51 Signup Bonus Applied</span><span>− ₹${bonusApplied}</span></div>` : '';
   document.getElementById('fare-breakup-rows').innerHTML = `
     <div class="fare-row"><span class="lbl">Base fare (${selectedSeats.length} seat${selectedSeats.length>1?'s':''})</span><span>₹${totalBase}</span></div>
     ${discountRow}
+    ${bonusRow}
     <div class="fare-row"><span class="lbl">GST & Convenience</span><span>₹0</span></div>
     <div class="fare-row total"><span>Total Payable</span><span>₹${totalPayable}</span></div>`;
 }
 
 function showTicket() {
-  const totalPayable = selectedSeats.reduce((s,x) => s + x.payable, 0);
+  const totalBase = selectedSeats.reduce((s,x) => s + x.fare, 0);
+  const totalDiscount = selectedSeats.reduce((s,x) => s + x.discount, 0);
+  let totalPayable = selectedSeats.reduce((s,x) => s + x.payable, 0);
+  
+  let bonusApplied = 0;
+  if (currentUser && currentUser.bonus && currentUser.bonus > 0) {
+    bonusApplied = Math.min(currentUser.bonus, totalPayable);
+    totalPayable -= bonusApplied;
+    
+    // Deduct bonus
+    currentUser.bonus = Math.max(0, currentUser.bonus - bonusApplied);
+    localStorage.setItem('cti_user', JSON.stringify(currentUser));
+    
+    const users = JSON.parse(localStorage.getItem('cti_users') || '[]');
+    const idx = users.findIndex(u => u.email === currentUser.email);
+    if (idx !== -1) {
+      users[idx].bonus = currentUser.bonus;
+      localStorage.setItem('cti_users', JSON.stringify(users));
+    }
+    updateAuthUI();
+  }
+
   const seatNos = selectedSeats.map(s=>s.seatNo).join(', ');
   const pnr = `CTI-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
   const phone = document.getElementById('contact-phone').value || '+91 88535 21184';

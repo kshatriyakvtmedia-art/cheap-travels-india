@@ -216,9 +216,18 @@ function resolveCityNamesAndIds(fromVal, toVal) {
   return { fromName, toName, lxmiFromId, lxmiToId, rdlhFromId, rdlhToId };
 }
 
+// Global cache for merged cities
+let cachedMergedCities = null;
+let lastCitiesFetchTime = 0;
+const CITIES_CACHE_TTL = 12 * 60 * 60 * 1000; // 12 hours cache
+
 // API: Get combined cities mapping
 app.get('/api/cities', async (req, res) => {
   try {
+    if (cachedMergedCities && (Date.now() - lastCitiesFetchTime) < CITIES_CACHE_TTL) {
+      return res.json({ success: true, cities: cachedMergedCities });
+    }
+
     let lxmiCities = [];
     let rdlhCities = [];
     
@@ -258,6 +267,10 @@ app.get('/api/cities', async (req, res) => {
         id: id
       };
     }).sort((a, b) => a.name.localeCompare(b.name));
+
+    // Update global cache
+    cachedMergedCities = mergedCities;
+    lastCitiesFetchTime = Date.now();
 
     res.json({ success: true, cities: mergedCities });
   } catch (error) {
@@ -303,13 +316,29 @@ async function searchOperatorBuses(opKey, fromId, toId, date) {
   });
 
   if (searchRes.status === 401) {
-    console.log(`Session expired for ${op.name} during search, re-authenticating...`);
+    console.log(`Session expired for ${op.name} during search (401), re-authenticating...`);
     await performLogin(opKey);
     return searchOperatorBuses(opKey, fromId, toId, date);
   }
 
   const searchText = await searchRes.text();
-  const searchJson = JSON.parse(searchText);
+  const trimmedText = searchText.trim();
+
+  // If the response is HTML, it means the session expired and we got redirected to signin page
+  if (trimmedText.startsWith('<!DOCTYPE') || trimmedText.startsWith('<html') || searchRes.status === 302 || trimmedText.includes('signin')) {
+    console.log(`Received login/redirect HTML from ${op.name} during search. Re-authenticating...`);
+    await performLogin(opKey);
+    return searchOperatorBuses(opKey, fromId, toId, date);
+  }
+
+  let searchJson;
+  try {
+    searchJson = JSON.parse(searchText);
+  } catch (err) {
+    console.warn(`JSON parse failed for ${op.name} search response. Re-authenticating...`);
+    await performLogin(opKey);
+    return searchOperatorBuses(opKey, fromId, toId, date);
+  }
 
   if (!searchJson.data) {
     return [];
@@ -478,10 +507,18 @@ app.get('/api/search', async (req, res) => {
   try {
     // Make sure we have dynamic cities loaded
     if (!OPERATORS.lxmi.cities || OPERATORS.lxmi.cities.length === 0) {
-      OPERATORS.lxmi.cities = await fetchCities('lxmi');
+      try {
+        OPERATORS.lxmi.cities = await fetchCities('lxmi');
+      } catch (err) {
+        console.error("Failed to load cities for Laxmi in search:", err.message);
+      }
     }
     if (!OPERATORS.rdlh.cities || OPERATORS.rdlh.cities.length === 0) {
-      OPERATORS.rdlh.cities = await fetchCities('rdlh');
+      try {
+        OPERATORS.rdlh.cities = await fetchCities('rdlh');
+      } catch (err) {
+        console.error("Failed to load cities for RDLH in search:", err.message);
+      }
     }
 
     const { fromName, toName, lxmiFromId, lxmiToId, rdlhFromId, rdlhToId } = resolveCityNamesAndIds(from, to);
@@ -666,12 +703,21 @@ app.get('/api/layout/:resId', async (req, res) => {
     });
 
     if (layoutRes.status === 401) {
-      console.log(`Session expired for ${op.name} during layout query, re-authenticating...`);
+      console.log(`Session expired for ${op.name} during layout query (401), re-authenticating...`);
       await performLogin(opKey);
       return res.redirect(req.originalUrl);
     }
 
     const jsText = await layoutRes.text();
+    const trimmedJs = jsText.trim();
+    
+    // If the response is HTML, it means the session expired and we got redirected to signin page
+    if (trimmedJs.startsWith('<!DOCTYPE') || trimmedJs.startsWith('<html') || layoutRes.status === 302 || trimmedJs.includes('signin') || !trimmedJs.includes('.html(')) {
+      console.log(`Received login/redirect HTML from ${op.name} during layout query. Re-authenticating...`);
+      await performLogin(opKey);
+      return res.redirect(req.originalUrl);
+    }
+
     const html = extractHtmlFromJs(jsText);
     const $ = cheerio.load(html);
 

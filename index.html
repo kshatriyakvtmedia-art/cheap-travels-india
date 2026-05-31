@@ -1,6 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <script>
+    if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      if (!window.location.pathname.includes('/mobile')) {
+        window.location.href = '/mobile/';
+      }
+    }
+  </script>
 <meta charset="utf-8">
 <title>Cheap Travels India — Affordable Bus Tickets</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -1891,7 +1898,7 @@ function doSignUp() {
   const users = JSON.parse(localStorage.getItem('cti_users') || '[]');
   if (users.find(u => u.email === email)) { showAuthErr('signup', 'This email is already registered. Sign in instead.'); return; }
 
-  const user = { name, email, phone, pass, joined: new Date().toISOString() };
+  const user = { name, email, phone, pass, joined: new Date().toISOString(), bonus: 51 };
   users.push(user);
   localStorage.setItem('cti_users', JSON.stringify(users));
 
@@ -1979,7 +1986,13 @@ function continueToCheckout() {
   
   const totalBase = selectedSeats.reduce((sum, s) => sum + s.baseFare, 0);
   const totalDiscount = selectedSeats.reduce((sum, s) => sum + s.discount, 0);
-  const totalPayable = selectedSeats.reduce((sum, s) => sum + s.payable, 0);
+  let totalPayable = selectedSeats.reduce((sum, s) => sum + s.payable, 0);
+  
+  let bonusApplied = 0;
+  if (currentUser && currentUser.bonus && currentUser.bonus > 0) {
+    bonusApplied = Math.min(currentUser.bonus, totalPayable);
+    totalPayable -= bonusApplied;
+  }
   const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
   
   // Update header text in checkout
@@ -2071,10 +2084,12 @@ function continueToCheckout() {
   const fareCard = chView.querySelectorAll('.sum-card')[1];
   if (fareCard) {
     const discountRow = totalDiscount > 0 ? `<div class="sum-row disc"><span>Cheap Travels discount</span><span>− ₹${totalDiscount}</span></div>` : '';
+    const bonusRow = bonusApplied > 0 ? `<div class="sum-row disc" style="color:#166534; font-weight:600;"><span>₹51 Signup Bonus Applied</span><span>− ₹${bonusApplied}</span></div>` : '';
     fareCard.innerHTML = `
       <h4>Fare breakup</h4>
       <div class="sum-row"><span class="lbl">Base fare (${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''})</span><span>₹${totalBase}</span></div>
       ${discountRow}
+      ${bonusRow}
       <div class="sum-row"><span class="lbl">GST</span><span>₹0</span></div>
       <div class="sum-row"><span class="lbl">Convenience</span><span>₹0</span></div>
       <div class="sum-row tot"><span>Total payable</span><span>₹${totalPayable}</span></div>
@@ -2205,8 +2220,26 @@ function showTicket() {
   if (tkGrid && selectedBus && selectedSeats.length > 0) {
     const now = new Date();
     const formattedBookedOn = `${now.getDate()} ${getMonthName(now.getMonth() + 1)} ${now.getFullYear()}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-    const totalPayable = selectedSeats.reduce((sum, s) => sum + s.payable, 0);
+    let totalPayable = selectedSeats.reduce((sum, s) => sum + s.payable, 0);
     
+    let bonusApplied = 0;
+    if (currentUser && currentUser.bonus && currentUser.bonus > 0) {
+      bonusApplied = Math.min(currentUser.bonus, totalPayable);
+      totalPayable -= bonusApplied;
+      
+      // Deduct bonus
+      currentUser.bonus = Math.max(0, currentUser.bonus - bonusApplied);
+      localStorage.setItem('cti_user', JSON.stringify(currentUser));
+      
+      const users = JSON.parse(localStorage.getItem('cti_users') || '[]');
+      const idx = users.findIndex(u => u.email === currentUser.email);
+      if (idx !== -1) {
+        users[idx].bonus = currentUser.bonus;
+        localStorage.setItem('cti_users', JSON.stringify(users));
+      }
+      updateAuthUI();
+    }
+
     // Generate HTML rows for passengers
     let passengersHtml = '';
     passengers.forEach(p => {
