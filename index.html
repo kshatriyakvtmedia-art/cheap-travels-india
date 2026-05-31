@@ -198,7 +198,7 @@ header.top{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px so
 .seat-grid .gap{visibility:hidden}
 .seat{width:44px;height:44px;background:#fff;border:1.5px solid #CBD5E1;border-radius:8px;font-size:10px;color:#475569;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,.06);letter-spacing:.3px}
 .seat:hover:not(.booked){border-color:var(--teal);transform:scale(1.08);box-shadow:0 4px 10px rgba(15,118,110,.2);color:var(--teal)}
-.seat.sleeper{width:44px;height:96px}
+.seat.sleeper{width:44px;height:auto}
 .seat.booked{background:#F1F5F9;color:#CBD5E1;border-color:#E2E8F0;cursor:not-allowed;box-shadow:none}
 .seat.ladies{border-color:#EC4899;color:#DB2777;background:#FFF0F6}
 .seat.selected{background:var(--teal);color:#fff;border-color:var(--teal);box-shadow:0 4px 14px rgba(15,118,110,.35);transform:scale(1.05)}
@@ -388,7 +388,7 @@ footer.site{background:#0A4F4A;color:#D9F2EE;padding:36px 24px;margin-top:60px}
   /* Seat panel */
   .seat-content{grid-template-columns:1fr}
   .seat{width:40px;height:40px;font-size:9px}
-  .seat.sleeper{height:88px}
+  .seat.sleeper{height:auto}
   .seat-grid{gap:5px 4px}
 
   /* Checkout */
@@ -1374,10 +1374,12 @@ function renderSeatMap(resId, layoutData) {
   const grid = document.getElementById(`grid-${resId}`);
   if (!grid) return;
   
-  // Configure CSS grid structure dynamically — use fixed seat width for clean alignment
-  grid.style.gridTemplateRows = `repeat(${layoutData.maxRow}, auto)`;
+  // Fixed 44px rows — critical: keeps seater and sleeper columns perfectly aligned
+  // Sleeper (rowspan=2) = 44 + 7gap + 44 = 95px automatically
+  grid.style.gridTemplateRows = `repeat(${layoutData.maxRow}, 44px)`;
   grid.style.gridTemplateColumns = `repeat(${layoutData.maxCol}, 44px)`;
   grid.style.gap = '7px 5px';
+  grid.style.alignItems = 'stretch';
   
   // Find current bus details
   const bus = searchResultsBuses.find(b => b.resId == resId);
@@ -1395,7 +1397,7 @@ function renderSeatMap(resId, layoutData) {
   let html = '';
   layoutData.seats.forEach(s => {
     if (s.isGangway) {
-      html += `<div style="grid-row: ${s.row + 1}; grid-column: ${s.col + 1}; visibility: hidden; min-height:30px;"></div>`;
+      html += `<div style="grid-row: ${s.row + 1} / span ${s.rowspan || 1}; grid-column: ${s.col + 1}; visibility: hidden;"></div>`;
       return;
     }
     
