@@ -1,0 +1,2106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cheap Travels India — Bus Tickets</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="description" content="Book affordable bus tickets from verified operators. Get 5% extra discount on partner buses. WhatsApp ticket in 90 seconds.">
+<meta name="theme-color" content="#0E7B4F">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN SYSTEM
+═══════════════════════════════════════════════ */
+:root {
+  --g: #0E7B4F;
+  --g-d: #094B30;
+  --g-l: #E8F5EE;
+  --g-ll: #F2FAF6;
+  --gold: #EE8C2E;
+  --gold-l: #FEF3E2;
+  --red: #E53935;
+  --ink: #111827;
+  --ink2: #6B7280;
+  --ink3: #9CA3AF;
+  --line: #E5E7EB;
+  --bg: #F3F4F6;
+  --white: #ffffff;
+  --nav-h: 60px;
+  --header-h: 56px;
+  --radius: 14px;
+  --shadow: 0 2px 12px rgba(0,0,0,.08);
+  --shadow-md: 0 4px 20px rgba(0,0,0,.12);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; padding: 0;
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  overflow-x: hidden;
+  height: 100%;
+  overscroll-behavior: none;
+}
+h1,h2,h3,h4 { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, select { font-family: inherit; }
+
+/* ═══════ SCREENS ═══════ */
+#app { position: fixed; inset: 0; overflow: hidden; }
+.screen {
+  position: absolute; inset: 0;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .32s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+.screen.active { transform: translateX(0); }
+.screen.left { transform: translateX(-30%); }
+
+/* ═══════ HEADER ═══════ */
+.app-header {
+  height: var(--header-h);
+  background: var(--g);
+  display: flex; align-items: center;
+  padding: 0 16px; gap: 12px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+.app-header.white {
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+.header-back {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: rgba(255,255,255,0.15);
+  font-size: 18px; color: #fff; flex-shrink: 0;
+}
+.app-header.white .header-back { background: var(--g-l); color: var(--g); }
+.header-title { flex: 1; }
+.header-title .route { font-size: 16px; font-weight: 700; color: #fff; }
+.header-title .sub { font-size: 12px; color: rgba(255,255,255,.7); margin-top: 1px; }
+.app-header.white .header-title .route { color: var(--ink); }
+.app-header.white .header-title .sub { color: var(--ink2); }
+.header-edit {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: rgba(255,255,255,.15);
+  font-size: 16px; color: #fff;
+}
+
+/* ═══════ SCROLL BODY ═══════ */
+.screen-body {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--nav-h);
+}
+
+/* ═══════ BOTTOM NAV ═══════ */
+.bottom-nav {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: var(--white);
+  border-top: 1px solid var(--line);
+  display: flex; align-items: center;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.nav-item {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 3px; cursor: pointer;
+  padding: 8px 4px;
+  transition: color .15s;
+  color: var(--ink3);
+  font-size: 10.5px; font-weight: 500;
+}
+.nav-item .nav-icon { font-size: 22px; line-height: 1; }
+.nav-item.active { color: var(--g); }
+.nav-item.active .nav-icon { transform: scale(1.1); }
+
+/* ═══════ HOME SCREEN ═══════ */
+#screen-home .screen-body {
+  background: var(--white);
+  padding-bottom: calc(var(--nav-h) + 12px);
+}
+.home-header {
+  background: linear-gradient(160deg, var(--g-d) 0%, var(--g) 100%);
+  padding: 20px 16px 28px;
+  position: relative; overflow: hidden;
+}
+.home-header::after {
+  content: ''; position: absolute;
+  right: -40px; top: -40px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(255,255,255,.08), transparent 70%);
+  border-radius: 50%;
+}
+.home-logo-row {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.home-logo { height: 36px; display: block; filter: brightness(0) invert(1); }
+.home-signin-btn {
+  padding: 7px 14px;
+  border: 1.5px solid rgba(255,255,255,.5);
+  border-radius: 20px;
+  color: #fff;
+  font-size: 12.5px; font-weight: 600;
+  background: rgba(255,255,255,.1);
+  backdrop-filter: blur(6px);
+}
+.home-h1 {
+  font-size: 22px; color: #fff; font-weight: 800;
+  line-height: 1.25; margin-bottom: 4px;
+}
+.home-h1 span { color: var(--gold); }
+.home-sub { font-size: 12.5px; color: rgba(255,255,255,.7); }
+
+/* Search card */
+.search-card {
+  background: var(--white);
+  border-radius: 20px 20px 0 0;
+  margin-top: -16px;
+  padding: 20px 16px 0;
+  position: relative;
+  z-index: 2;
+}
+.search-card-title {
+  font-size: 18px; font-weight: 800; color: var(--ink);
+  margin-bottom: 16px;
+}
+.search-fields {
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  overflow: visible;
+  position: relative;
+}
+.search-field {
+  display: flex; align-items: center;
+  padding: 14px 16px; gap: 14px;
+  cursor: pointer;
+  position: relative;
+}
+.search-field + .search-field {
+  border-top: 1px solid var(--line);
+}
+.sf-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.sf-icon.from { background: #E8F5EE; }
+.sf-icon.to { background: #FEF3E2; }
+.sf-icon.date { background: #EEF2FF; }
+.sf-text { flex: 1; }
+.sf-label { font-size: 11px; color: var(--ink3); font-weight: 500; margin-bottom: 2px; }
+.sf-value {
+  font-size: 17px; font-weight: 700; color: var(--ink);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.sf-value.placeholder { color: var(--ink3); font-weight: 400; font-size: 15px; }
+.swap-btn {
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%);
+  width: 36px; height: 36px;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; color: var(--g);
+  box-shadow: var(--shadow);
+  z-index: 5;
+}
+
+/* Autocomplete dropdown */
+.ac-dropdown {
+  position: absolute; left: 0; right: 0; top: 100%;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  box-shadow: var(--shadow-md);
+  max-height: 260px; overflow-y: auto;
+  z-index: 500;
+  display: none;
+}
+.ac-dropdown.open { display: block; }
+.ac-search-wrap {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: 8px;
+}
+.ac-search-wrap input {
+  flex: 1; border: none; outline: none;
+  font-size: 15px; color: var(--ink);
+  background: transparent;
+}
+.ac-item {
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(0,0,0,.03);
+  transition: background .1s;
+}
+.ac-item:hover { background: var(--g-ll); }
+.ac-item-ico {
+  width: 32px; height: 32px;
+  background: var(--g-l);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+}
+.ac-item-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+.ac-item-state { font-size: 11.5px; color: var(--ink3); margin-top: 1px; }
+
+/* Date section */
+.date-section {
+  margin-top: 14px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.date-chip {
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer; transition: all .15s;
+  background: var(--white);
+}
+.date-chip.active {
+  border-color: var(--g);
+  background: var(--g-l);
+}
+.date-chip-label { font-size: 10.5px; color: var(--ink3); font-weight: 500; }
+.date-chip-val { font-size: 14.5px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+.date-chip.active .date-chip-label { color: var(--g); }
+.date-chip.active .date-chip-val { color: var(--g-d); }
+
+/* Search button */
+.search-btn-main {
+  width: 100%;
+  margin-top: 18px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--g) 0%, var(--g-d) 100%);
+  color: #fff;
+  border-radius: 14px;
+  font-size: 16px; font-weight: 700;
+  letter-spacing: .2px;
+  box-shadow: 0 6px 20px rgba(14,123,79,.35);
+  transition: transform .1s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.search-btn-main:active { transform: scale(.98); }
+.search-btn-main .btn-arrow { font-size: 18px; }
+
+/* Promo banners */
+.promo-section { padding: 20px 16px 4px; }
+.promo-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 12px; }
+.promo-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; }
+.promo-scroll::-webkit-scrollbar { display: none; }
+.promo-card {
+  flex-shrink: 0; width: 220px; height: 100px;
+  border-radius: 14px; padding: 14px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  position: relative; overflow: hidden;
+}
+.promo-card.green { background: linear-gradient(135deg, #0E7B4F, #14A068); }
+.promo-card.orange { background: linear-gradient(135deg, #EE8C2E, #D4781C); }
+.promo-card.purple { background: linear-gradient(135deg, #6366F1, #4F46E5); }
+.promo-card-title { font-size: 13px; font-weight: 700; color: #fff; line-height: 1.3; }
+.promo-card-sub { font-size: 11px; color: rgba(255,255,255,.8); }
+.promo-card-badge {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  font-size: 36px; opacity: .25;
+}
+
+/* Trust badges */
+.trust-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; padding: 16px; margin-top: 4px;
+}
+.trust-card {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 14px 12px;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: var(--shadow);
+}
+.trust-ico { font-size: 24px; flex-shrink: 0; }
+.trust-text b { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+.trust-text small { font-size: 10.5px; color: var(--ink3); }
+
+/* ═══════ RESULTS SCREEN ═══════ */
+.results-header {
+  background: var(--white);
+  padding: 0 16px 12px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.results-route {
+  padding-top: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.results-route .r-city { font-size: 18px; font-weight: 800; color: var(--ink); }
+.results-route .r-arrow { font-size: 16px; color: var(--ink3); }
+.results-meta { font-size: 12px; color: var(--ink3); margin-top: 2px; }
+.results-meta b { color: var(--g); font-weight: 600; }
+
+/* Filter strip */
+.filter-strip {
+  display: flex; gap: 8px;
+  overflow-x: auto; padding: 12px 16px 0;
+  flex-shrink: 0;
+}
+.filter-strip::-webkit-scrollbar { display: none; }
+.filter-chip {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 20px;
+  font-size: 12.5px; font-weight: 600;
+  color: var(--ink2);
+  background: var(--white);
+  display: flex; align-items: center; gap: 5px;
+  cursor: pointer; transition: all .15s;
+}
+.filter-chip.active {
+  background: var(--g); color: #fff; border-color: var(--g);
+}
+.filter-chip.sort {
+  background: var(--ink); color: #fff; border-color: var(--ink);
+  margin-left: auto;
+}
+
+/* Results list */
+.results-list {
+  padding: 12px 16px 0;
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+/* Bus card */
+.bus-card {
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow .15s;
+  border: 1px solid var(--line);
+}
+.bus-card:active { box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.bus-card.partner { border-left: 3px solid var(--g); }
+.bus-card-tag {
+  background: var(--g);
+  color: #fff;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: .5px;
+  padding: 3px 10px;
+  text-transform: uppercase;
+}
+.bus-card-body { padding: 14px; }
+.bus-card-top {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 8px;
+  margin-bottom: 10px;
+}
+.bus-operator { font-size: 14.5px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+.bus-type { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.bus-rating {
+  background: var(--g);
+  color: #fff;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; gap: 3px;
+  flex-shrink: 0;
+}
+.bus-rating.low { background: #F59E0B; }
+.bus-times-row {
+  display: flex; align-items: center; gap: 0;
+  margin-bottom: 10px;
+}
+.bt-time { font-size: 20px; font-weight: 800; color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif; }
+.bt-dur {
+  flex: 1;
+  text-align: center;
+  font-size: 11px; color: var(--ink3);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.dur-line {
+  width: 100%; height: 1.5px;
+  background: linear-gradient(90deg, var(--g), var(--gold));
+  position: relative; border-radius: 2px;
+}
+.dur-line::before, .dur-line::after {
+  content: ''; position: absolute; top: -3px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--g);
+}
+.dur-line::before { left: 0; }
+.dur-line::after { right: 0; background: var(--gold); }
+.bt-seats { font-size: 11.5px; font-weight: 600; color: var(--g); margin-bottom: 8px; }
+.bt-seats.low { color: var(--red); }
+.bus-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.bus-tag {
+  padding: 3px 8px;
+  background: var(--g-ll);
+  border-radius: 6px;
+  font-size: 10.5px; color: var(--g-d); font-weight: 500;
+}
+.bus-card-footer {
+  border-top: 1px solid var(--line);
+  padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.bus-price-info { }
+.bus-price-strike { font-size: 12px; color: var(--ink3); text-decoration: line-through; }
+.bus-price { font-size: 20px; font-weight: 800; color: var(--g-d); font-family: 'Plus Jakarta Sans', sans-serif; }
+.bus-price small { font-size: 11px; font-weight: 500; color: var(--ink3); }
+.bus-save { background: #DCFCE7; color: #166534; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-top: 2px; display: inline-block; }
+.view-seats-btn {
+  padding: 9px 16px;
+  background: var(--g);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 13px; font-weight: 700;
+  transition: background .15s;
+}
+.view-seats-btn.open { background: var(--gold); color: #1A1304; }
+
+/* Loading state */
+.loading-state {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--ink2);
+}
+.loading-spinner {
+  width: 44px; height: 44px;
+  border: 3px solid var(--line);
+  border-top-color: var(--g);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 14px; font-weight: 600; color: var(--g); }
+.loading-sub { font-size: 12px; color: var(--ink3); margin-top: 4px; }
+.empty-state { padding: 60px 20px; text-align: center; }
+.empty-ico { font-size: 56px; margin-bottom: 16px; }
+.empty-title { font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+.empty-sub { font-size: 14px; color: var(--ink2); line-height: 1.5; }
+
+/* ═══════ SEAT PANEL (inline card expansion) ═══════ */
+.seat-panel-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  margin-top: -4px;
+  overflow: hidden;
+  display: none;
+}
+.seat-panel-card.open { display: block; animation: slideDown .25s ease; }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.seat-tabs-bar {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+}
+.seat-tab {
+  flex: 1; padding: 12px 8px; text-align: center;
+  font-size: 12.5px; font-weight: 600; color: var(--ink3);
+  cursor: pointer; border-bottom: 2.5px solid transparent;
+  transition: all .15s;
+}
+.seat-tab.active { color: var(--g); border-bottom-color: var(--g); }
+
+/* Seat map */
+.seat-map-wrap {
+  padding: 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.seat-map {
+  background: #F8FAFC;
+  border-radius: 14px;
+  padding: 16px 14px;
+  min-width: 240px;
+  width: fit-content;
+  margin: 0 auto;
+}
+.seat-map-driver {
+  text-align: center; margin-bottom: 14px;
+  font-size: 10px; color: var(--ink3); font-weight: 600; letter-spacing: 1px;
+}
+.seatmap-grid {
+  display: grid;
+  gap: 6px 5px;
+  width: fit-content;
+  margin: 0 auto;
+}
+.s {
+  width: 38px; height: 38px;
+  background: var(--white);
+  border: 1.5px solid #CBD5E1;
+  border-radius: 7px;
+  font-size: 9px; font-weight: 700; color: #475569;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .12s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+.s:hover:not(.booked) { border-color: var(--g); color: var(--g); transform: scale(1.06); }
+.s.booked { background: #F1F5F9; color: #CBD5E1; border-color: #E2E8F0; cursor: not-allowed; }
+.s.ladies { border-color: #EC4899; color: #DB2777; background: #FFF0F6; }
+.s.selected { background: var(--g); color: #fff; border-color: var(--g); box-shadow: 0 3px 10px rgba(14,123,79,.35); transform: scale(1.08); }
+.s.sleeper { height: 60px; }
+.s-gap { visibility: hidden; width: 38px; }
+.seat-legend {
+  display: flex; gap: 14px; justify-content: center;
+  margin-top: 14px; flex-wrap: wrap;
+}
+.sl-item { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: var(--ink2); }
+.sl-box { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid #CBD5E1; background: var(--white); }
+.sl-box.b { background: #F1F5F9; border-color: #E2E8F0; }
+.sl-box.l { border-color: #EC4899; background: #FFF0F6; }
+.sl-box.sel { background: var(--g); border-color: var(--g); }
+
+/* Booking summary bar */
+.booking-bar {
+  background: var(--white);
+  border-top: 1px solid var(--line);
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.booking-bar-info { flex: 1; }
+.booking-bar-seat { font-size: 12px; color: var(--ink3); font-weight: 500; }
+.booking-bar-fare { font-size: 20px; font-weight: 800; color: var(--g-d); font-family: 'Plus Jakarta Sans', sans-serif; }
+.booking-bar-fare small { font-size: 11px; color: var(--ink3); font-weight: 400; }
+.book-btn {
+  padding: 12px 22px;
+  background: linear-gradient(135deg, var(--gold), #D4781C);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 14px; font-weight: 800;
+  box-shadow: 0 4px 14px rgba(238,140,46,.35);
+  white-space: nowrap;
+}
+
+/* Boarding points */
+.bp-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+.bp-item {
+  border: 1.5px solid var(--line);
+  border-radius: 12px; padding: 12px;
+  cursor: pointer; transition: all .12s;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.bp-item.on { border-color: var(--g); background: var(--g-l); }
+.bp-item-name { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.bp-item-sub { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.bp-item-time { font-size: 13px; font-weight: 700; color: var(--g-d); }
+
+/* ═══════ CHECKOUT SCREEN ═══════ */
+#screen-checkout { background: var(--bg); }
+.checkout-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+  padding: 14px 16px;
+  flex-shrink: 0;
+}
+.checkout-route {
+  font-size: 15px; font-weight: 700; color: var(--ink);
+  display: flex; align-items: center; gap: 6px;
+}
+.checkout-meta { font-size: 12px; color: var(--ink3); margin-top: 3px; }
+.checkout-section {
+  background: var(--white);
+  border-radius: 16px;
+  margin: 12px 16px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+.checkout-section h3 {
+  font-size: 15px; color: var(--g-d); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.checkout-section h3 .step-badge {
+  width: 22px; height: 22px;
+  background: var(--g);
+  color: #fff; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.form-field { margin-bottom: 12px; }
+.form-field label { display: block; font-size: 11px; color: var(--ink3); font-weight: 600; text-transform: uppercase; letter-spacing: .3px; margin-bottom: 5px; }
+.form-field input, .form-field select {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px; font-size: 15px;
+  color: var(--ink); background: var(--white);
+  outline: none; transition: border .15s;
+  -webkit-appearance: none;
+}
+.form-field input:focus, .form-field select:focus { border-color: var(--g); }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Fare summary */
+.fare-row { display: flex; justify-content: space-between; font-size: 13.5px; padding: 6px 0; color: var(--ink); }
+.fare-row .lbl { color: var(--ink2); }
+.fare-row.disc { color: #166534; font-weight: 600; }
+.fare-row.total {
+  border-top: 1px dashed var(--line);
+  margin-top: 8px; padding-top: 12px;
+  font-size: 17px; font-weight: 800; color: var(--g-d);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Payment QR */
+.qr-wrap {
+  text-align: center; padding: 16px 0;
+}
+.qr-box {
+  display: inline-block;
+  background: var(--white); padding: 12px;
+  border-radius: 14px; box-shadow: var(--shadow-md);
+  margin-bottom: 12px;
+}
+.upi-id-text { font-size: 14px; font-weight: 700; color: var(--g-d); margin-bottom: 8px; }
+.upi-apps-row { display: flex; justify-content: center; gap: 12px; margin-top: 12px; }
+.upi-app-chip {
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 12px; font-weight: 700; color: var(--ink2);
+}
+.paid-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, var(--g), var(--g-d));
+  color: #fff;
+  border-radius: 13px;
+  font-size: 15px; font-weight: 700;
+  margin-top: 16px;
+  box-shadow: 0 6px 20px rgba(14,123,79,.3);
+}
+
+/* ═══════ TICKET SCREEN ═══════ */
+#screen-ticket { background: var(--g-ll); }
+.ticket-success-banner {
+  background: var(--g);
+  padding: 20px 16px;
+  display: flex; align-items: center; gap: 14px;
+  flex-shrink: 0;
+}
+.tick-circle {
+  width: 48px; height: 48px;
+  background: rgba(255,255,255,.2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; flex-shrink: 0;
+}
+.tick-title { font-size: 17px; font-weight: 700; color: #fff; }
+.tick-sub { font-size: 12px; color: rgba(255,255,255,.75); margin-top: 3px; }
+.ticket-card {
+  background: var(--white);
+  border-radius: 18px;
+  margin: 14px 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.ticket-card-head {
+  background: linear-gradient(135deg, var(--g-d), var(--g));
+  padding: 18px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.tk-logo { height: 28px; filter: brightness(0) invert(1); }
+.pnr-badge {
+  background: rgba(238,140,46,.2);
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px; font-weight: 700;
+  color: var(--gold);
+  letter-spacing: .8px;
+}
+.ticket-route {
+  padding: 18px 20px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px dashed var(--line);
+}
+.tr-city { font-size: 20px; font-weight: 800; color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif; }
+.tr-time { font-size: 13px; font-weight: 600; color: var(--g); margin-top: 2px; }
+.tr-point { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.tr-arrow { font-size: 20px; color: var(--gold); flex: 1; text-align: center; }
+.ticket-detail-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 14px; padding: 16px 20px;
+  border-bottom: 1px dashed var(--line);
+}
+.tk-cell .tk-lbl { font-size: 10.5px; color: var(--ink3); text-transform: uppercase; letter-spacing: .4px; font-weight: 600; margin-bottom: 3px; }
+.tk-cell .tk-val { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.ticket-actions {
+  padding: 14px 20px;
+  display: flex; gap: 10px;
+}
+.tk-action-btn {
+  flex: 1; padding: 11px;
+  border-radius: 10px;
+  font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  border: none; cursor: pointer;
+}
+.tk-wa { background: #25D366; color: #fff; }
+.tk-pdf { background: var(--g-l); color: var(--g-d); border: 1.5px solid var(--g); }
+
+/* ═══════ BONUS POPUP (RedBus-style) ═══════ */
+#bonus-popup {
+  position: fixed; inset: 0; z-index: 9000;
+  display: none; flex-direction: column;
+  justify-content: flex-end;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+}
+#bonus-popup.open {
+  display: flex;
+  animation: popupBgIn .3s ease;
+}
+@keyframes popupBgIn { from { opacity: 0; } to { opacity: 1; } }
+.bonus-sheet {
+  background: var(--white);
+  border-radius: 24px 24px 0 0;
+  padding: 0 0 env(safe-area-inset-bottom, 16px) 0;
+  animation: slideUpSheet .35s cubic-bezier(.4,0,.2,1);
+  position: relative;
+}
+@keyframes slideUpSheet {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.bonus-handle {
+  width: 40px; height: 4px; background: #E5E7EB;
+  border-radius: 2px; margin: 14px auto 20px;
+}
+.bonus-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 28px; height: 28px;
+  background: #F3F4F6; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--ink3); cursor: pointer;
+  border: none;
+}
+.bonus-content { padding: 0 20px 20px; text-align: center; }
+.bonus-emoji { font-size: 52px; margin-bottom: 12px; animation: bounceGift 2s infinite; display: block; }
+@keyframes bounceGift { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.bonus-title { font-size: 22px; font-weight: 800; color: var(--ink); margin-bottom: 8px; line-height: 1.2; }
+.bonus-title span { color: var(--g); }
+.bonus-desc { font-size: 13.5px; color: var(--ink2); line-height: 1.6; margin-bottom: 20px; }
+.bonus-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+.bonus-chip {
+  background: var(--g-l);
+  border: 1px solid rgba(14,123,79,.2);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 12.5px; font-weight: 600;
+  color: var(--g-d);
+  display: flex; align-items: center; gap: 5px;
+}
+.bonus-claim-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, var(--g), var(--g-d));
+  color: #fff;
+  border-radius: 14px;
+  font-size: 15.5px; font-weight: 800;
+  border: none; cursor: pointer;
+  box-shadow: 0 6px 22px rgba(14,123,79,.35);
+  margin-bottom: 12px;
+  transition: transform .1s;
+}
+.bonus-claim-btn:active { transform: scale(.98); }
+.bonus-skip { font-size: 13px; color: var(--ink3); cursor: pointer; background: none; border: none; width: 100%; padding: 4px; }
+
+/* ═══════ AUTH OVERLAY ═══════ */
+#auth-overlay {
+  position: fixed; inset: 0; z-index: 9500;
+  display: none; flex-direction: column;
+  justify-content: flex-end;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(4px);
+}
+#auth-overlay.open { display: flex; animation: popupBgIn .3s ease; }
+.auth-sheet {
+  background: var(--white);
+  border-radius: 24px 24px 0 0;
+  padding: 0 0 env(safe-area-inset-bottom, 20px) 0;
+  animation: slideUpSheet .35s cubic-bezier(.4,0,.2,1);
+  position: relative; max-height: 90vh; overflow-y: auto;
+}
+.auth-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 28px; height: 28px; background: #F3F4F6;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--ink3); cursor: pointer; border: none; z-index: 1;
+}
+.auth-logo-row {
+  padding: 20px 20px 0;
+  display: flex; align-items: center; gap: 10px;
+}
+.auth-logo { height: 32px; }
+.auth-tabs {
+  display: flex; margin: 14px 20px 0;
+  background: #F3F4F6; border-radius: 10px; padding: 3px;
+}
+.auth-tab {
+  flex: 1; padding: 8px; text-align: center;
+  font-size: 13px; font-weight: 600; color: var(--ink3);
+  border-radius: 8px; cursor: pointer; transition: all .15s;
+}
+.auth-tab.active { background: var(--white); color: var(--g); box-shadow: 0 1px 6px rgba(0,0,0,.08); }
+.auth-panel { display: none; padding: 16px 20px 20px; }
+.auth-panel.active { display: block; }
+.auth-err { background: #FEE2E2; color: var(--red); border-radius: 8px; padding: 9px 12px; font-size: 13px; margin-bottom: 12px; display: none; }
+.auth-submit {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--g-d), var(--g));
+  color: #fff; border: none; border-radius: 12px;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  margin-top: 6px;
+}
+.auth-hint { font-size: 12px; text-align: center; color: var(--ink3); margin-top: 12px; }
+.auth-hint span { color: var(--g); font-weight: 600; cursor: pointer; }
+
+/* ═══════ TOAST ═══════ */
+#cti-toast {
+  position: fixed; bottom: 80px; left: 16px; right: 16px;
+  background: #1F2937; color: #fff;
+  border-radius: 12px; padding: 13px 16px;
+  font-size: 13.5px; font-weight: 500;
+  z-index: 9999; display: none;
+  box-shadow: var(--shadow-md);
+  animation: slideUpSheet .25s ease;
+}
+#cti-toast.show { display: flex; align-items: center; gap: 8px; }
+
+/* Date input hidden */
+#date-input { display: none; }
+
+/* ═══════ MISC ═══════ */
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+.pulse { animation: pulseBg 1.5s ease infinite; }
+@keyframes pulseBg { 0%,100%{opacity:1} 50%{opacity:.6} }
+.green-dot { width: 8px; height: 8px; background: var(--g); border-radius: 50%; animation: pulseBg 1.5s infinite; display: inline-block; }
+
+/* Scroll reveal */
+.results-list > * { animation: fadeIn .25s ease backwards; }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+<!-- ════════════════════════════════════
+  SCREEN: HOME
+════════════════════════════════════ -->
+<div class="screen active" id="screen-home">
+  <div class="screen-body" id="home-body">
+    <!-- Hero header -->
+    <div class="home-header">
+      <div class="home-logo-row">
+        <img src="../Logo.png" alt="Cheap Travels India" class="home-logo">
+        <button class="home-signin-btn" id="home-signin-btn" onclick="openAuth('signin')">Sign In</button>
+      </div>
+      <h1 class="home-h1">Bus Tickets,<br><span>cheaper &amp; faster</span></h1>
+      <p class="home-sub">Direct operator · 5% extra discount · Ticket in 90s</p>
+    </div>
+
+    <!-- Search card -->
+    <div class="search-card">
+      <div class="search-card-title">Book Bus Tickets</div>
+
+      <div class="search-fields" id="search-fields-wrap">
+        <!-- FROM -->
+        <div class="search-field" id="sf-from" onclick="openCityPicker('from')">
+          <div class="sf-icon from">🚌</div>
+          <div class="sf-text">
+            <div class="sf-label">From</div>
+            <div class="sf-value" id="from-display">Azamgarh</div>
+          </div>
+        </div>
+
+        <!-- SWAP -->
+        <button class="swap-btn" onclick="swapCities(); event.stopPropagation();">⇌</button>
+
+        <!-- TO -->
+        <div class="search-field" id="sf-to" onclick="openCityPicker('to')">
+          <div class="sf-icon to">📍</div>
+          <div class="sf-text">
+            <div class="sf-label">To</div>
+            <div class="sf-value" id="to-display">Delhi</div>
+          </div>
+        </div>
+
+        <!-- DATE -->
+        <div class="search-field" onclick="document.getElementById('date-input').click()">
+          <div class="sf-icon date">📅</div>
+          <div class="sf-text">
+            <div class="sf-label">Date of Journey</div>
+            <div class="sf-value" id="date-display">—</div>
+          </div>
+        </div>
+        <input type="date" id="date-input" onchange="onDateChange(this)">
+      </div>
+
+      <!-- Date quick chips -->
+      <div class="date-section">
+        <div class="date-chip active" id="chip-today" onclick="selectDateChip('today')">
+          <div class="date-chip-label">Today</div>
+          <div class="date-chip-val" id="chip-today-val">—</div>
+        </div>
+        <div class="date-chip" id="chip-tmrw" onclick="selectDateChip('tomorrow')">
+          <div class="date-chip-label">Tomorrow</div>
+          <div class="date-chip-val" id="chip-tmrw-val">—</div>
+        </div>
+      </div>
+
+      <button class="search-btn-main" onclick="doSearch()">
+        <span>Search Buses</span>
+        <span class="btn-arrow">→</span>
+      </button>
+    </div>
+
+    <!-- Promo banners -->
+    <div class="promo-section">
+      <div class="promo-title">Exclusive Offers</div>
+      <div class="promo-scroll">
+        <div class="promo-card green">
+          <div>
+            <div class="promo-card-title">₹51 Sign-Up Bonus</div>
+            <div class="promo-card-sub">On your first booking</div>
+          </div>
+          <div class="promo-card-badge">🎁</div>
+        </div>
+        <div class="promo-card orange">
+          <div>
+            <div class="promo-card-title">5% Off on Partner Buses</div>
+            <div class="promo-card-sub">Laxmi & Ram Dalal routes</div>
+          </div>
+          <div class="promo-card-badge">🚌</div>
+        </div>
+        <div class="promo-card purple">
+          <div>
+            <div class="promo-card-title">24×7 WhatsApp Support</div>
+            <div class="promo-card-sub">Instant ticket delivery</div>
+          </div>
+          <div class="promo-card-badge">💬</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trust -->
+    <div class="trust-row">
+      <div class="trust-card">
+        <div class="trust-ico">🛡️</div>
+        <div class="trust-text"><b>Verified Agents</b><small>Direct from operator</small></div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-ico">💸</div>
+        <div class="trust-text"><b>Best Price</b><small>5% extra discount</small></div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-ico">📲</div>
+        <div class="trust-text"><b>WhatsApp Ticket</b><small>In 90 seconds</small></div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-ico">↩️</div>
+        <div class="trust-text"><b>Auto-Refund</b><small>If not issued in 30 min</small></div>
+      </div>
+    </div>
+
+  </div><!-- /screen-body -->
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" onclick="goHome()">
+      <div class="nav-icon">🏠</div><div>Home</div>
+    </div>
+    <div class="nav-item" onclick="showToast('My Bookings coming soon!')">
+      <div class="nav-icon">🎟</div><div>Bookings</div>
+    </div>
+    <div class="nav-item" onclick="showToast('Dial +91 88535 21184 for help')">
+      <div class="nav-icon">❓</div><div>Help</div>
+    </div>
+    <div class="nav-item" id="nav-account" onclick="openAuth('signin')">
+      <div class="nav-icon">👤</div><div>Account</div>
+    </div>
+  </nav>
+</div>
+
+<!-- ════════════════════════════════════
+  CITY PICKER FULL SCREEN
+════════════════════════════════════ -->
+<div class="screen" id="screen-city">
+  <div class="app-header white" style="gap:0;">
+    <button class="header-back" style="background:var(--g-l);color:var(--g);" onclick="closeCityPicker()">←</button>
+    <div class="header-title" style="margin-left:12px;">
+      <div class="route" id="city-picker-title">Select City</div>
+    </div>
+  </div>
+  <div style="padding:12px 16px; border-bottom:1px solid var(--line); flex-shrink:0;">
+    <div style="background:#F3F4F6; border-radius:12px; display:flex; align-items:center; padding:10px 14px; gap:10px;">
+      <span style="font-size:18px;">🔍</span>
+      <input type="text" id="city-search-input" placeholder="Search city..." oninput="filterCities(this.value)"
+        style="flex:1; border:none; background:transparent; font-size:15px; outline:none; color:var(--ink);">
+    </div>
+  </div>
+  <div class="screen-body" id="city-results-list" style="padding-bottom:0;"></div>
+</div>
+
+<!-- ════════════════════════════════════
+  SCREEN: RESULTS
+════════════════════════════════════ -->
+<div class="screen" id="screen-results">
+  <div class="app-header">
+    <button class="header-back" onclick="goHome()">←</button>
+    <div class="header-title">
+      <div class="route" id="results-route-title">Azamgarh → Delhi</div>
+      <div class="sub" id="results-date-title">Loading…</div>
+    </div>
+    <button class="header-edit" onclick="goHome()" title="Edit search">✏️</button>
+  </div>
+
+  <!-- Filter strip -->
+  <div class="filter-strip" id="filter-strip">
+    <div class="filter-chip active" onclick="applyFilter('all',this)">All</div>
+    <div class="filter-chip" onclick="applyFilter('ac',this)">AC</div>
+    <div class="filter-chip" onclick="applyFilter('sleeper',this)">Sleeper</div>
+    <div class="filter-chip" onclick="applyFilter('partner',this)">5% Off</div>
+    <div class="filter-chip sort" onclick="toggleSort()">⇅ Sort</div>
+  </div>
+
+  <!-- Results count -->
+  <div style="padding:10px 16px 4px; font-size:12px; color:var(--ink3); flex-shrink:0;" id="results-count-bar">
+    <span class="green-dot"></span> <span id="bus-count-text">Fetching buses…</span>
+    <span id="refresh-indicator" style="display:none;margin-left:6px;color:var(--g);font-weight:600;">↻ Updated</span>
+  </div>
+
+  <div class="screen-body" id="results-body">
+    <div class="results-list" id="bus-list"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SCREEN: CHECKOUT
+════════════════════════════════════ -->
+<div class="screen" id="screen-checkout">
+  <div class="app-header white">
+    <button class="header-back" style="background:var(--g-l);color:var(--g);" onclick="goBack('results')">←</button>
+    <div class="header-title">
+      <div class="route" style="color:var(--ink)">Complete Booking</div>
+      <div class="sub" style="color:var(--ink3)" id="checkout-sub">Select passengers</div>
+    </div>
+  </div>
+
+  <div class="screen-body" id="checkout-body">
+    <!-- Trip summary card -->
+    <div class="checkout-section" style="background:linear-gradient(135deg,var(--g-d),var(--g));color:#fff;margin-top:14px;">
+      <div style="font-size:13px;color:rgba(255,255,255,.7);margin-bottom:4px;">Your Journey</div>
+      <div id="co-trip-summary" style="font-size:16px;font-weight:700;color:#fff;line-height:1.4;"></div>
+    </div>
+
+    <!-- Passenger details -->
+    <div class="checkout-section">
+      <h3><span class="step-badge">1</span> Passenger Details</h3>
+      <div id="passenger-inputs-container"></div>
+    </div>
+
+    <!-- Contact -->
+    <div class="checkout-section">
+      <h3><span class="step-badge">2</span> Contact Info</h3>
+      <div class="form-field">
+        <label>Mobile Number</label>
+        <input type="tel" id="contact-phone" placeholder="+91 98765 43210" style="font-size:16px;">
+      </div>
+      <div class="form-field">
+        <label>Email Address</label>
+        <input type="email" id="contact-email" placeholder="you@email.com" style="font-size:16px;">
+      </div>
+    </div>
+
+    <!-- Fare breakup -->
+    <div class="checkout-section">
+      <h3><span class="step-badge">3</span> Fare Breakup</h3>
+      <div id="fare-breakup-rows"></div>
+    </div>
+
+    <!-- Payment -->
+    <div class="checkout-section">
+      <h3><span class="step-badge">4</span> Payment via UPI</h3>
+      <div class="qr-wrap">
+        <div class="qr-box">
+          <svg width="180" height="180" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+            <rect width="256" height="256" fill="white"/>
+            <!-- QR corner squares -->
+            <rect x="20" y="20" width="72" height="72" rx="6" fill="none" stroke="#0E7B4F" stroke-width="10"/>
+            <rect x="36" y="36" width="40" height="40" rx="3" fill="#0E7B4F"/>
+            <rect x="164" y="20" width="72" height="72" rx="6" fill="none" stroke="#0E7B4F" stroke-width="10"/>
+            <rect x="180" y="36" width="40" height="40" rx="3" fill="#0E7B4F"/>
+            <rect x="20" y="164" width="72" height="72" rx="6" fill="none" stroke="#0E7B4F" stroke-width="10"/>
+            <rect x="36" y="180" width="40" height="40" rx="3" fill="#0E7B4F"/>
+            <!-- QR dots -->
+            <g id="qrdots" fill="#111"></g>
+          </svg>
+        </div>
+        <div class="upi-id-text">cheaptravel546@okhdfcbank</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:12px;">Scan &amp; pay the exact amount</div>
+        <div class="upi-apps-row">
+          <div class="upi-app-chip">GPay</div>
+          <div class="upi-app-chip">PhonePe</div>
+          <div class="upi-app-chip">Paytm</div>
+          <div class="upi-app-chip">BHIM</div>
+        </div>
+      </div>
+      <div style="background:var(--g-ll);border-radius:10px;padding:10px 14px;font-size:12.5px;color:var(--ink2);line-height:1.5;margin-top:12px;">
+        ⚠️ After payment, click "I've Paid" below. Our agent will confirm and send your e-ticket to WhatsApp/Email within 10 minutes.
+      </div>
+      <button class="paid-btn" onclick="showTicket()">✅ I've Paid — Send My Ticket</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  SCREEN: TICKET
+════════════════════════════════════ -->
+<div class="screen" id="screen-ticket">
+  <div class="screen-body">
+    <div class="ticket-success-banner">
+      <div class="tick-circle">✅</div>
+      <div>
+        <div class="tick-title">Booking Confirmed!</div>
+        <div class="tick-sub" id="ticket-sub">Ticket sent to WhatsApp &amp; Email</div>
+      </div>
+    </div>
+
+    <div class="ticket-card">
+      <div class="ticket-card-head">
+        <img src="../Logo.png" alt="Cheap Travels India" class="tk-logo">
+        <div class="pnr-badge" id="tk-pnr">PNR · —</div>
+      </div>
+      <div class="ticket-route">
+        <div>
+          <div class="tr-city" id="tk-from">—</div>
+          <div class="tr-time" id="tk-dep">—</div>
+          <div class="tr-point" id="tk-bp">—</div>
+        </div>
+        <div class="tr-arrow">→</div>
+        <div style="text-align:right;">
+          <div class="tr-city" id="tk-to">—</div>
+          <div class="tr-time" id="tk-arr">—</div>
+          <div class="tr-point" id="tk-dp">—</div>
+        </div>
+      </div>
+      <div class="ticket-detail-grid" id="tk-detail-grid">
+        <div class="tk-cell"><div class="tk-lbl">Operator</div><div class="tk-val" id="tk-op">—</div></div>
+        <div class="tk-cell"><div class="tk-lbl">Bus Type</div><div class="tk-val" id="tk-type">—</div></div>
+        <div class="tk-cell"><div class="tk-lbl">Seat(s)</div><div class="tk-val" id="tk-seats">—</div></div>
+        <div class="tk-cell"><div class="tk-lbl">Amount Paid</div><div class="tk-val" id="tk-amount" style="color:var(--g);">—</div></div>
+      </div>
+      <div class="ticket-actions">
+        <button class="tk-action-btn tk-wa" onclick="shareTicketWA()">📲 WhatsApp</button>
+        <button class="tk-action-btn tk-pdf" onclick="showToast('PDF download coming soon!')">📄 Download</button>
+      </div>
+    </div>
+
+    <div style="padding:0 16px 16px;">
+      <button onclick="goHome()" style="width:100%;padding:14px;background:var(--g-l);color:var(--g-d);border-radius:13px;font-size:14px;font-weight:700;border:none;cursor:pointer;">← Book Another Ticket</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /#app -->
+
+<!-- ════════════════════════════════════
+  BONUS POPUP (RedBus-style bottom sheet)
+════════════════════════════════════ -->
+<div id="bonus-popup">
+  <div style="flex:1;" onclick="closeBonusPopup()"></div>
+  <div class="bonus-sheet">
+    <div class="bonus-handle"></div>
+    <button class="bonus-close" onclick="closeBonusPopup()">✕</button>
+    <div class="bonus-content">
+      <span class="bonus-emoji">🎁</span>
+      <h2 class="bonus-title">Get <span>₹51 Bonus</span> on Sign Up!</h2>
+      <p class="bonus-desc">
+        Create a free account &amp; claim <b>₹51 cash bonus</b> on your first booking.
+        Plus get <b>5% off</b> on every Laxmi &amp; Ram Dalal bus, always.
+      </p>
+      <div class="bonus-chips">
+        <div class="bonus-chip">🎁 ₹51 First Booking</div>
+        <div class="bonus-chip">💚 5% Regular Discount</div>
+        <div class="bonus-chip">📲 Instant WhatsApp Ticket</div>
+      </div>
+      <button class="bonus-claim-btn" onclick="claimBonus()">🚀 Create Free Account &amp; Claim ₹51</button>
+      <button class="bonus-skip" onclick="closeBonusPopup()">Maybe Later</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+  AUTH BOTTOM SHEET
+════════════════════════════════════ -->
+<div id="auth-overlay">
+  <div style="flex:1;" onclick="closeAuth()"></div>
+  <div class="auth-sheet">
+    <button class="auth-close" onclick="closeAuth()">✕</button>
+    <div class="auth-logo-row">
+      <img src="../Logo.png" alt="Cheap Travels India" class="auth-logo">
+      <div style="font-size:14px;font-weight:700;color:var(--ink);">Cheap Travels India</div>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-signin" onclick="switchTab('signin')">Sign In</div>
+      <div class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Sign Up</div>
+    </div>
+
+    <!-- Sign In -->
+    <div class="auth-panel active" id="panel-signin">
+      <div class="auth-err" id="signin-err"></div>
+      <div class="form-field">
+        <label>Email or Phone</label>
+        <input type="text" id="signin-email" placeholder="you@email.com" style="font-size:16px;">
+      </div>
+      <div class="form-field">
+        <label>Password</label>
+        <input type="password" id="signin-pass" placeholder="Your password" style="font-size:16px;">
+      </div>
+      <button class="auth-submit" onclick="doSignIn()">Sign In →</button>
+      <div class="auth-hint">No account? <span onclick="switchTab('signup')">Create one free</span></div>
+    </div>
+
+    <!-- Sign Up -->
+    <div class="auth-panel" id="panel-signup">
+      <div class="auth-err" id="signup-err"></div>
+      <div class="form-field">
+        <label>Full Name</label>
+        <input type="text" id="signup-name" placeholder="Rakesh Sharma" style="font-size:16px;">
+      </div>
+      <div class="form-field">
+        <label>Email</label>
+        <input type="email" id="signup-email" placeholder="you@email.com" style="font-size:16px;">
+      </div>
+      <div class="form-field">
+        <label>Mobile Number</label>
+        <input type="tel" id="signup-phone" placeholder="+91 98765 43210" style="font-size:16px;">
+      </div>
+      <div class="form-field">
+        <label>Password (min 6 chars)</label>
+        <input type="password" id="signup-pass" placeholder="Create password" style="font-size:16px;">
+      </div>
+      <button class="auth-submit" onclick="doSignUp()">Create Account &amp; Claim ₹51 →</button>
+      <div class="auth-hint">Have account? <span onclick="switchTab('signin')">Sign in</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="cti-toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   GLOBAL STATE
+═══════════════════════════════════════════════ */
+let citiesList = [];
+let selectedFromId = '170', selectedFromName = 'Azamgarh', selectedFromState = 'Uttar Pradesh';
+let selectedToId = '3', selectedToName = 'Delhi', selectedToState = 'National Capital Territory';
+let selectedDate = '';
+let activeCityPickerType = null;
+let currentUser = null;
+let searchResultsBuses = [];
+let selectedBus = null;
+let selectedSeats = [];
+let selectedBP = null, selectedDP = null;
+let allBusesCache = [];
+let bgRefreshTimer = null;
+
+/* ═══════════════════════════════════════════════
+   SCREEN NAVIGATION
+═══════════════════════════════════════════════ */
+function showScreen(id) {
+  const all = document.querySelectorAll('.screen');
+  const target = document.getElementById(id);
+  all.forEach(s => {
+    if (s.id === id) { s.classList.add('active'); s.classList.remove('left'); }
+    else if (s.classList.contains('active')) { s.classList.remove('active'); s.classList.add('left'); }
+    else { s.classList.remove('active', 'left'); }
+  });
+}
+
+function goHome() {
+  document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active','left'); });
+  document.getElementById('screen-home').classList.add('active');
+}
+
+function goBack(to) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active','left'));
+  document.getElementById('screen-' + to).classList.add('active');
+}
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  initDates();
+  loadCities();
+  restoreSession();
+  setupQR();
+
+  // Show bonus popup after 1.8s on fresh visit
+  const hasShown = localStorage.getItem('cti_m_bonus');
+  if (!hasShown && !localStorage.getItem('cti_user')) {
+    setTimeout(() => {
+      document.getElementById('bonus-popup').classList.add('open');
+      localStorage.setItem('cti_m_bonus', '1');
+    }, 1800);
+  }
+});
+
+function initDates() {
+  const today = new Date();
+  const tomorrow = new Date(); tomorrow.setDate(today.getDate() + 1);
+
+  const fmt = d => `${d.getDate()} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}`;
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+  document.getElementById('chip-today-val').textContent = fmt(today);
+  document.getElementById('chip-tmrw-val').textContent = fmt(tomorrow);
+
+  // Default to tomorrow
+  selectedDate = iso(tomorrow);
+  document.getElementById('date-display').textContent = fmt(tomorrow);
+  document.getElementById('date-input').value = selectedDate;
+
+  document.getElementById('chip-today').classList.remove('active');
+  document.getElementById('chip-tmrw').classList.add('active');
+}
+
+function selectDateChip(which) {
+  const today = new Date();
+  const tomorrow = new Date(); tomorrow.setDate(today.getDate() + 1);
+  const d = which === 'today' ? today : tomorrow;
+  const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  selectedDate = iso;
+  const fmt = `${d.getDate()} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}`;
+  document.getElementById('date-display').textContent = fmt;
+  document.getElementById('chip-today').classList.toggle('active', which === 'today');
+  document.getElementById('chip-tmrw').classList.toggle('active', which === 'tomorrow');
+}
+
+function onDateChange(el) {
+  if (!el.value) return;
+  selectedDate = el.value;
+  const parts = el.value.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('date-display').textContent = `${parseInt(parts[2])} ${months[parseInt(parts[1])-1]} ${parts[0]}`;
+  document.getElementById('chip-today').classList.remove('active');
+  document.getElementById('chip-tmrw').classList.remove('active');
+}
+
+/* ═══════════════════════════════════════════════
+   CITY PICKER
+═══════════════════════════════════════════════ */
+let cityPickerTimeout = null;
+
+function openCityPicker(type) {
+  activeCityPickerType = type;
+  document.getElementById('city-picker-title').textContent = type === 'from' ? 'Select Origin' : 'Select Destination';
+  document.getElementById('city-search-input').value = '';
+  renderCityList('');
+  showScreen('city');
+  setTimeout(() => document.getElementById('city-search-input').focus(), 300);
+}
+
+function closeCityPicker() {
+  showScreen('home');
+}
+
+function filterCities(q) {
+  clearTimeout(cityPickerTimeout);
+  cityPickerTimeout = setTimeout(() => renderCityList(q), 80);
+}
+
+function renderCityList(q) {
+  const container = document.getElementById('city-results-list');
+  const filtered = q.trim()
+    ? citiesList.filter(c => c.name.toLowerCase().includes(q.toLowerCase()))
+    : citiesList;
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="padding:40px;text-align:center;color:var(--ink3);">No cities found for "${q}"</div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.slice(0, 80).map(c => {
+    const cleanName = c.name.replace(/\s*\([^)]*\)/g, '');
+    const state = getState(c.name);
+    return `<div class="ac-item" onclick="selectCity('${activeCityPickerType}','${c.id}','${cleanName}','${state}')">
+      <div class="ac-item-ico">🏙️</div>
+      <div><div class="ac-item-name">${cleanName}</div><div class="ac-item-state">${state}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function selectCity(type, id, name, state) {
+  if (type === 'from') {
+    selectedFromId = id; selectedFromName = name; selectedFromState = state;
+    document.getElementById('from-display').textContent = name;
+  } else {
+    selectedToId = id; selectedToName = name; selectedToState = state;
+    document.getElementById('to-display').textContent = name;
+  }
+  closeCityPicker();
+}
+
+function swapCities() {
+  [selectedFromId, selectedToId] = [selectedToId, selectedFromId];
+  [selectedFromName, selectedToName] = [selectedToName, selectedFromName];
+  [selectedFromState, selectedToState] = [selectedToState, selectedFromState];
+  document.getElementById('from-display').textContent = selectedFromName;
+  document.getElementById('to-display').textContent = selectedToName;
+}
+
+function getState(name) {
+  const n = name.toLowerCase();
+  if (n.includes('himachal') || n.includes('(hp)')) return 'Himachal Pradesh';
+  if (n.includes('uttar pradesh') || n.includes('(up)')) return 'Uttar Pradesh';
+  if (n.includes('bihar')) return 'Bihar';
+  if (n.includes('rajasthan') || n.includes('(rj)')) return 'Rajasthan';
+  if (n.includes('maharashtra') || n.includes('(mh)') || n.includes('pune')) return 'Maharashtra';
+  if (n === 'delhi' || n.includes('new delhi')) return 'National Capital Territory';
+  if (n.includes('punjab') || n.includes('(pb)')) return 'Punjab';
+  if (n.includes('haryana')) return 'Haryana';
+  if (n.includes('madhya pradesh') || n.includes('(mp)')) return 'Madhya Pradesh';
+  if (n.includes('gujarat') || n.includes('(gj)')) return 'Gujarat';
+  if (n.includes('uttarakhand')) return 'Uttarakhand';
+  return 'India';
+}
+
+/* ═══════════════════════════════════════════════
+   LOAD CITIES
+═══════════════════════════════════════════════ */
+async function loadCities() {
+  try {
+    const res = await fetch('/api/cities');
+    const data = await res.json();
+    if (data.success && data.cities) {
+      citiesList = data.cities;
+    }
+  } catch(e) {
+    console.warn('Cities load failed, using fallback:', e);
+    // Use a basic fallback list
+    citiesList = [
+      {id:'170',name:'Azamgarh'}, {id:'3',name:'Delhi'}, {id:'1',name:'Mumbai'},
+      {id:'2',name:'Varanasi'}, {id:'4',name:'Lucknow'}, {id:'5',name:'Allahabad'},
+      {id:'6',name:'Agra'}, {id:'7',name:'Kanpur'}, {id:'8',name:'Gorakhpur'},
+      {id:'9',name:'Jhansi'}, {id:'10',name:'Meerut'}, {id:'11',name:'Ghaziabad'},
+      {id:'12',name:'Noida'}, {id:'13',name:'Gurgaon'}, {id:'14',name:'Faridabad'},
+      {id:'15',name:'Haridwar'}, {id:'16',name:'Dehradun'}, {id:'17',name:'Chandigarh'},
+    ];
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   SEARCH
+═══════════════════════════════════════════════ */
+async function doSearch() {
+  if (!selectedFromId || !selectedToId) { showToast('Please select From and To cities'); return; }
+  if (!selectedDate) { showToast('Please select a travel date'); return; }
+  if (selectedFromId === selectedToId) { showToast('Origin and destination cannot be the same'); return; }
+
+  const parts = selectedDate.split('-');
+  const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dateDisplay = `${parseInt(parts[2])} ${months[parseInt(parts[1])-1]}, ${parts[0]}`;
+
+  // Update results header
+  document.getElementById('results-route-title').textContent = `${selectedFromName} → ${selectedToName}`;
+  document.getElementById('results-date-title').textContent = dateDisplay;
+  document.getElementById('bus-count-text').textContent = 'Searching buses…';
+
+  showScreen('results');
+  document.getElementById('results-body').scrollTop = 0;
+
+  // Show loader
+  document.getElementById('bus-list').innerHTML = `
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Finding best buses for you</div>
+      <div class="loading-sub">Connecting to operator portals…</div>
+    </div>`;
+
+  try {
+    const res = await fetch(`/api/search?from=${selectedFromId}&to=${selectedToId}&date=${formattedDate}`);
+    const data = await res.json();
+
+    if (data.success && data.buses && data.buses.length > 0) {
+      allBusesCache = data.buses;
+      searchResultsBuses = data.buses;
+      renderBusList(data.buses, formattedDate);
+      document.getElementById('bus-count-text').innerHTML = `<b style="color:var(--g)">${data.buses.length} buses</b> found`;
+      startBgRefresh(formattedDate);
+    } else {
+      allBusesCache = [];
+      searchResultsBuses = [];
+      renderBusList([], formattedDate);
+      document.getElementById('bus-count-text').textContent = 'No buses found';
+    }
+  } catch(e) {
+    console.error('Search failed:', e);
+    document.getElementById('bus-list').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-ico">😕</div>
+        <div class="empty-title">Couldn't fetch buses</div>
+        <div class="empty-sub">Check your internet connection and try again.</div>
+        <button onclick="doSearch()" style="margin-top:16px;padding:12px 24px;background:var(--g);color:#fff;border-radius:12px;font-weight:700;border:none;cursor:pointer;">Retry</button>
+      </div>`;
+    document.getElementById('bus-count-text').textContent = 'Error — tap Retry';
+  }
+}
+
+function renderBusList(buses, dateStr) {
+  const container = document.getElementById('bus-list');
+  if (buses.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-ico">🚌</div>
+        <div class="empty-title">No buses found</div>
+        <div class="empty-sub">No buses available on this route for the selected date. Try a different date or route.</div>
+      </div>`;
+    return;
+  }
+
+  const html = buses.map((bus, i) => {
+    const isSS = bus.resId && bus.resId.startsWith('ss-');
+    const isPartner = !isSS;
+    const cheapFare = isPartner ? Math.round(bus.minFare * 0.95) : bus.minFare;
+    const savings = bus.minFare - cheapFare;
+    const seatsLeft = bus.seatsLeft || 0;
+    const seatsClass = seatsLeft <= 5 ? 'low' : '';
+    const ratingVal = (4.1 + Math.random() * 0.6).toFixed(1);
+    const ratingClass = ratingVal < 4.2 ? 'low' : '';
+
+    // Tags
+    const tags = [];
+    if (isPartner) tags.push('Direct Partner');
+    if (bus.busType && bus.busType.toLowerCase().includes('volvo')) tags.push('Volvo');
+    if (bus.busType && bus.busType.toLowerCase().includes('sleeper')) tags.push('Sleeper');
+    if (bus.boardingPoints && bus.boardingPoints.length > 0) tags.push('Multiple Boarding');
+
+    return `
+      <div class="bus-card ${isPartner ? 'partner' : ''}" id="card-${bus.resId}">
+        ${isPartner ? '<div class="bus-card-tag">✓ Direct Partner · 5% Off</div>' : ''}
+        <div class="bus-card-body">
+          <div class="bus-card-top">
+            <div>
+              <div class="bus-operator">${bus.operator}</div>
+              <div class="bus-type">${bus.busType}</div>
+            </div>
+            <div class="bus-rating ${ratingClass}">★ ${ratingVal}</div>
+          </div>
+          <div class="bus-times-row">
+            <div class="bt-time">${bus.departure}</div>
+            <div class="bt-dur">
+              <div>${bus.duration || '—'}</div>
+              <div class="dur-line"></div>
+              <div style="font-size:9px;color:var(--ink3)">Direct</div>
+            </div>
+            <div class="bt-time">${bus.arrival}</div>
+          </div>
+          <div class="bt-seats ${seatsClass}">${seatsLeft > 0 ? `🪑 ${seatsLeft} seats left` : '❌ Full'}</div>
+          <div class="bus-tags">
+            ${tags.map(t => `<div class="bus-tag">${t}</div>`).join('')}
+          </div>
+        </div>
+        <div class="bus-card-footer">
+          <div class="bus-price-info">
+            ${isPartner ? `<div class="bus-price-strike">₹${bus.minFare}</div>` : ''}
+            <div class="bus-price">₹${cheapFare} <small>/seat</small></div>
+            ${isPartner && savings > 0 ? `<div class="bus-save">SAVE ₹${savings}</div>` : ''}
+          </div>
+          <button class="view-seats-btn" id="vsb-${bus.resId}" onclick="toggleSeatPanel('${bus.resId}','${dateStr}')">
+            View Seats
+          </button>
+        </div>
+      </div>
+      <div class="seat-panel-card" id="sp-${bus.resId}">
+        <div class="seat-tabs-bar">
+          <div class="seat-tab active" onclick="showSeatTab('${bus.resId}','seats')">Seats</div>
+          <div class="seat-tab" onclick="showSeatTab('${bus.resId}','boarding')">Boarding</div>
+          <div class="seat-tab" onclick="showSeatTab('${bus.resId}','dropping')">Dropping</div>
+        </div>
+        <div id="sp-seats-${bus.resId}">
+          <div class="seat-map-wrap">
+            <div class="seat-map">
+              <div class="seat-map-driver">🚍 DRIVER</div>
+              <div class="seatmap-grid" id="sgrid-${bus.resId}">
+                <div style="padding:30px;text-align:center;color:var(--ink3);font-size:13px;">Loading seat map…</div>
+              </div>
+              <div class="seat-legend">
+                <div class="sl-item"><div class="sl-box"></div>Available</div>
+                <div class="sl-item"><div class="sl-box l"></div>Ladies</div>
+                <div class="sl-item"><div class="sl-box b"></div>Booked</div>
+                <div class="sl-item"><div class="sl-box sel"></div>Selected</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="sp-boarding-${bus.resId}" style="display:none;">
+          <div class="bp-list" id="bplist-${bus.resId}"></div>
+        </div>
+        <div id="sp-dropping-${bus.resId}" style="display:none;">
+          <div class="bp-list" id="dplist-${bus.resId}"></div>
+        </div>
+        <div class="booking-bar" id="bbar-${bus.resId}">
+          <div class="booking-bar-info">
+            <div class="booking-bar-seat" id="bbar-seat-${bus.resId}">No seat selected</div>
+            <div class="booking-bar-fare" id="bbar-fare-${bus.resId}">₹0 <small style="font-size:11px;color:var(--ink3);">/seat</small></div>
+          </div>
+          <button class="book-btn" id="book-btn-${bus.resId}" disabled onclick="proceedToCheckout('${bus.resId}')">Book →</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════
+   FILTERS & SORT
+═══════════════════════════════════════════════ */
+let currentFilter = 'all';
+let currentSortAsc = true;
+
+function applyFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip:not(.sort)').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+
+  let buses = [...allBusesCache];
+  if (f === 'ac') buses = buses.filter(b => b.busType && b.busType.toLowerCase().includes('ac'));
+  else if (f === 'sleeper') buses = buses.filter(b => b.busType && b.busType.toLowerCase().includes('sleeper'));
+  else if (f === 'partner') buses = buses.filter(b => !b.resId.startsWith('ss-'));
+
+  searchResultsBuses = buses;
+  const parts = document.getElementById('results-date-title').textContent;
+  renderBusList(buses, ''); // dateStr not critical for display
+  document.getElementById('bus-count-text').innerHTML = `<b style="color:var(--g)">${buses.length} buses</b> found`;
+}
+
+function toggleSort() {
+  currentSortAsc = !currentSortAsc;
+  const sorted = [...searchResultsBuses].sort((a,b) => {
+    return currentSortAsc ? a.minFare - b.minFare : b.minFare - a.minFare;
+  });
+  renderBusList(sorted, '');
+  showToast(`Sorted by price: ${currentSortAsc ? 'Low → High' : 'High → Low'}`);
+}
+
+/* ═══════════════════════════════════════════════
+   SEAT PANEL
+═══════════════════════════════════════════════ */
+async function toggleSeatPanel(resId, dateStr) {
+  const panel = document.getElementById(`sp-${resId}`);
+  const btn = document.getElementById(`vsb-${resId}`);
+  const isOpen = panel.classList.contains('open');
+
+  // Close all others
+  document.querySelectorAll('.seat-panel-card').forEach(p => p.classList.remove('open'));
+  document.querySelectorAll('.view-seats-btn').forEach(b => { b.textContent = 'View Seats'; b.classList.remove('open'); });
+
+  if (isOpen) return;
+
+  panel.classList.add('open');
+  btn.textContent = 'Hide Seats';
+  btn.classList.add('open');
+
+  // Scroll to card
+  const card = document.getElementById(`card-${resId}`);
+  setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+  // Fetch seat layout
+  const bus = allBusesCache.find(b => b.resId === resId);
+  selectedBus = bus;
+  selectedSeats = [];
+  updateBookingBar(resId);
+
+  const grid = document.getElementById(`sgrid-${resId}`);
+  grid.innerHTML = `<div style="padding:24px;text-align:center;color:var(--ink3);font-size:13px;grid-column:1/-1;">⏳ Loading seat layout…</div>`;
+
+  try {
+    const fromId = selectedFromId, toId = selectedToId;
+    const res = await fetch(`/api/layout/${resId}?from=${fromId}&to=${toId}&date=${dateStr}`);
+    const data = await res.json();
+    if (data.success) {
+      renderSeatMap(resId, data, bus);
+      // Populate boarding/dropping point lists
+      if (bus) {
+        renderPointsList(resId, 'bp', bus.boardingPoints || []);
+        renderPointsList(resId, 'dp', bus.droppingPoints || []);
+        if (bus.boardingPoints && bus.boardingPoints[0]) selectedBP = bus.boardingPoints[0];
+        if (bus.droppingPoints && bus.droppingPoints[0]) selectedDP = bus.droppingPoints[0];
+      }
+    } else {
+      grid.innerHTML = `<div style="grid-column:1/-1;padding:20px;color:var(--red);text-align:center;font-size:13px;">Failed to load seats: ${data.error}</div>`;
+    }
+  } catch(e) {
+    grid.innerHTML = `<div style="grid-column:1/-1;padding:20px;color:var(--red);text-align:center;font-size:13px;">Error loading seat map</div>`;
+  }
+}
+
+function renderSeatMap(resId, layoutData, bus) {
+  const grid = document.getElementById(`sgrid-${resId}`);
+  if (!grid) return;
+  grid.style.gridTemplateRows = `repeat(${layoutData.maxRow}, 38px)`;
+  grid.style.gridTemplateColumns = `repeat(${layoutData.maxCol}, 38px)`;
+
+  const isSS = resId.startsWith('ss-');
+  let html = '';
+  layoutData.seats.forEach(s => {
+    if (s.isGangway) {
+      html += `<div style="grid-row:${s.row+1}/span ${s.rowspan||1};grid-column:${s.col+1};visibility:hidden;width:38px;"></div>`;
+      return;
+    }
+    let cls = 's';
+    if (s.sleeper) cls += ' sleeper';
+    if (s.booked) cls += ' booked';
+    else if (s.ladies) cls += ' ladies';
+    const fare = s.fare || bus.minFare || 1000;
+    const payable = isSS ? fare : Math.round(fare * 0.95);
+    const discount = fare - payable;
+    const h = s.sleeper ? 60 : 38;
+    html += `<div class="${cls}"
+      style="grid-row:${s.row+1}/span ${s.rowspan||1};grid-column:${s.col+1}/span ${s.colspan||1};height:${h}px;"
+      data-seat="${s.seatNo}" data-fare="${fare}" data-payable="${payable}" data-discount="${discount}"
+      data-avail="${!s.booked}"
+      onclick="pickSeat(this,'${resId}')">${s.seatNo}</div>`;
+  });
+  grid.innerHTML = html;
+}
+
+function renderPointsList(resId, type, points) {
+  const container = document.getElementById(`${type}list-${resId}`);
+  if (!container) return;
+  if (!points || points.length === 0) {
+    container.innerHTML = `<div style="padding:16px;color:var(--ink3);font-size:13px;text-align:center;">No ${type === 'bp' ? 'boarding' : 'dropping'} points found</div>`;
+    return;
+  }
+  container.innerHTML = points.map((p,i) => `
+    <div class="bp-item ${i===0?'on':''}" onclick="selectPoint('${resId}','${type}','${p.name}','${p.time}',this)">
+      <div><div class="bp-item-name">${p.name}</div><div class="bp-item-sub">${p.landmark||''}</div></div>
+      <div class="bp-item-time">${p.time}</div>
+    </div>`).join('');
+}
+
+function selectPoint(resId, type, name, time, el) {
+  const container = el.parentElement;
+  container.querySelectorAll('.bp-item').forEach(e => e.classList.remove('on'));
+  el.classList.add('on');
+  if (type === 'bp') {
+    selectedBP = { name, time };
+  } else {
+    selectedDP = { name, time };
+  }
+}
+
+function showSeatTab(resId, tab) {
+  const panel = document.getElementById(`sp-${resId}`);
+  panel.querySelectorAll('.seat-tab').forEach(t => t.classList.remove('active'));
+  panel.querySelectorAll('[id^="sp-seats-"],[id^="sp-boarding-"],[id^="sp-dropping-"]').forEach(s => s.style.display = 'none');
+  const tabMap = { seats: `sp-seats-${resId}`, boarding: `sp-boarding-${resId}`, dropping: `sp-dropping-${resId}` };
+  document.getElementById(tabMap[tab]).style.display = 'block';
+  const tabs = panel.querySelectorAll('.seat-tab');
+  if (tab==='seats') tabs[0].classList.add('active');
+  else if (tab==='boarding') tabs[1].classList.add('active');
+  else tabs[2].classList.add('active');
+}
+
+function pickSeat(el, resId) {
+  if (el.dataset.avail === 'false') return;
+  const seatNo = el.dataset.seat;
+  const payable = parseFloat(el.dataset.payable);
+  const discount = parseFloat(el.dataset.discount);
+  const fare = parseFloat(el.dataset.fare);
+  const isSelected = el.classList.contains('selected');
+
+  if (!isSelected) {
+    if (selectedSeats.length >= 6) { showToast('Maximum 6 seats per booking'); return; }
+    el.classList.add('selected');
+    selectedSeats.push({ seatNo, fare, payable, discount });
+  } else {
+    el.classList.remove('selected');
+    selectedSeats = selectedSeats.filter(s => s.seatNo !== seatNo);
+  }
+  updateBookingBar(resId);
+}
+
+function updateBookingBar(resId) {
+  const seatEl = document.getElementById(`bbar-seat-${resId}`);
+  const fareEl = document.getElementById(`bbar-fare-${resId}`);
+  const btnEl = document.getElementById(`book-btn-${resId}`);
+  if (!seatEl) return;
+  if (selectedSeats.length === 0) {
+    seatEl.textContent = 'No seat selected';
+    fareEl.innerHTML = `₹0 <small style="font-size:11px;color:var(--ink3);">/seat</small>`;
+    if (btnEl) btnEl.disabled = true;
+  } else {
+    const total = selectedSeats.reduce((s,x) => s + x.payable, 0);
+    seatEl.textContent = `Seats: ${selectedSeats.map(s=>s.seatNo).join(', ')}`;
+    fareEl.innerHTML = `₹${total} <small style="font-size:11px;color:var(--ink3);">total</small>`;
+    if (btnEl) btnEl.disabled = false;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   CHECKOUT
+═══════════════════════════════════════════════ */
+function proceedToCheckout(resId) {
+  if (!currentUser) {
+    showToast('Please sign in to book');
+    openAuth('signin');
+    return;
+  }
+  if (selectedSeats.length === 0) { showToast('Please select at least one seat'); return; }
+
+  buildCheckout();
+  showScreen('checkout');
+}
+
+function buildCheckout() {
+  if (!selectedBus) return;
+
+  const totalBase = selectedSeats.reduce((s,x) => s + x.fare, 0);
+  const totalDiscount = selectedSeats.reduce((s,x) => s + x.discount, 0);
+  const totalPayable = selectedSeats.reduce((s,x) => s + x.payable, 0);
+  const seatNos = selectedSeats.map(s=>s.seatNo).join(', ');
+
+  document.getElementById('co-trip-summary').textContent =
+    `${selectedFromName} → ${selectedToName} · ${selectedBus.operator} · Seats ${seatNos}`;
+  document.getElementById('checkout-sub').textContent = `${selectedSeats.length} seat(s) · ₹${totalPayable} total`;
+
+  // Passenger cards
+  const pContainer = document.getElementById('passenger-inputs-container');
+  pContainer.innerHTML = selectedSeats.map((seat, i) => `
+    <div style="border:1.5px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;">
+      <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:10px;">Passenger ${i+1} · Seat ${seat.seatNo}</div>
+      <div class="form-field"><label>Full Name</label><input type="text" class="p-name" data-seat="${seat.seatNo}" placeholder="As on ID" style="font-size:16px;"></div>
+      <div class="form-grid">
+        <div class="form-field"><label>Age</label><input type="number" class="p-age" min="1" max="120" placeholder="Age" style="font-size:16px;"></div>
+        <div class="form-field"><label>Gender</label><select class="p-gender" style="font-size:16px;"><option>Male</option><option>Female</option><option>Other</option></select></div>
+      </div>
+    </div>`).join('');
+
+  // Pre-fill contact
+  if (currentUser) {
+    document.getElementById('contact-phone').value = currentUser.phone || '';
+    document.getElementById('contact-email').value = currentUser.email || '';
+  }
+
+  // Fare breakup
+  const isSS = selectedBus.resId && selectedBus.resId.startsWith('ss-');
+  const discountRow = (!isSS && totalDiscount > 0) ? `<div class="fare-row disc"><span>Cheap Travels discount</span><span>− ₹${totalDiscount}</span></div>` : '';
+  document.getElementById('fare-breakup-rows').innerHTML = `
+    <div class="fare-row"><span class="lbl">Base fare (${selectedSeats.length} seat${selectedSeats.length>1?'s':''})</span><span>₹${totalBase}</span></div>
+    ${discountRow}
+    <div class="fare-row"><span class="lbl">GST & Convenience</span><span>₹0</span></div>
+    <div class="fare-row total"><span>Total Payable</span><span>₹${totalPayable}</span></div>`;
+}
+
+function showTicket() {
+  const totalPayable = selectedSeats.reduce((s,x) => s + x.payable, 0);
+  const seatNos = selectedSeats.map(s=>s.seatNo).join(', ');
+  const pnr = `CTI-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
+  const phone = document.getElementById('contact-phone').value || '+91 88535 21184';
+
+  document.getElementById('tk-pnr').textContent = `PNR · ${pnr}`;
+  document.getElementById('tk-from').textContent = selectedFromName;
+  document.getElementById('tk-to').textContent = selectedToName;
+  document.getElementById('tk-dep').textContent = selectedBus ? selectedBus.departure : '—';
+  document.getElementById('tk-arr').textContent = selectedBus ? selectedBus.arrival : '—';
+  document.getElementById('tk-bp').textContent = selectedBP ? selectedBP.name : '—';
+  document.getElementById('tk-dp').textContent = selectedDP ? selectedDP.name : '—';
+  document.getElementById('tk-op').textContent = selectedBus ? selectedBus.operator : '—';
+  document.getElementById('tk-type').textContent = selectedBus ? selectedBus.busType : '—';
+  document.getElementById('tk-seats').textContent = seatNos || '—';
+  document.getElementById('tk-amount').textContent = `₹${totalPayable} (UPI)`;
+  document.getElementById('ticket-sub').textContent = `Ticket sent to WhatsApp (${phone})`;
+
+  showScreen('ticket');
+}
+
+function shareTicketWA() {
+  const text = `🎟 *Cheap Travels India Ticket*\n*${selectedFromName} → ${selectedToName}*\nDep: ${selectedBus?.departure} | Arr: ${selectedBus?.arrival}\nSeats: ${selectedSeats.map(s=>s.seatNo).join(', ')}\nTotal: ₹${selectedSeats.reduce((s,x)=>s+x.payable,0)}\n\nBook on cheaptravel.in`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+}
+
+/* ═══════════════════════════════════════════════
+   SILENT BACKGROUND REFRESH (60s)
+═══════════════════════════════════════════════ */
+function startBgRefresh(dateStr) {
+  clearInterval(bgRefreshTimer);
+  bgRefreshTimer = setInterval(async () => {
+    try {
+      const res = await fetch(`/api/search?from=${selectedFromId}&to=${selectedToId}&date=${dateStr}`);
+      const data = await res.json();
+      if (data.success && data.buses) {
+        allBusesCache = data.buses;
+        // Silently update seat counts & fares without re-rendering
+        data.buses.forEach(bus => {
+          const card = document.getElementById(`card-${bus.resId}`);
+          if (!card) return;
+          const seatsEl = card.querySelector('.bt-seats');
+          if (seatsEl && bus.seatsLeft != null) {
+            seatsEl.textContent = bus.seatsLeft > 0 ? `🪑 ${bus.seatsLeft} seats left` : '❌ Full';
+            seatsEl.className = `bt-seats ${bus.seatsLeft <= 5 ? 'low' : ''}`;
+          }
+          const fareEl = card.querySelector('.bus-price');
+          if (fareEl && bus.minFare) {
+            const isSS = bus.resId.startsWith('ss-');
+            const cf = isSS ? bus.minFare : Math.round(bus.minFare * 0.95);
+            fareEl.innerHTML = `₹${cf} <small>/seat</small>`;
+          }
+        });
+        // Flash update indicator
+        const ind = document.getElementById('refresh-indicator');
+        if (ind) {
+          ind.style.display = 'inline';
+          setTimeout(() => { ind.style.display = 'none'; }, 2000);
+        }
+      }
+    } catch(e) { /* silent fail */ }
+  }, 60000);
+}
+
+/* ═══════════════════════════════════════════════
+   AUTH SYSTEM
+═══════════════════════════════════════════════ */
+function restoreSession() {
+  const saved = localStorage.getItem('cti_user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    updateAuthUI();
+  }
+}
+
+function openAuth(tab) {
+  document.getElementById('auth-overlay').classList.add('open');
+  switchTab(tab);
+}
+function closeAuth() { document.getElementById('auth-overlay').classList.remove('open'); }
+function switchTab(tab) {
+  ['signin','signup'].forEach(t => {
+    document.getElementById(`tab-${t}`).classList.toggle('active', t===tab);
+    document.getElementById(`panel-${t}`).classList.toggle('active', t===tab);
+  });
+}
+
+function doSignIn() {
+  const email = document.getElementById('signin-email').value.trim();
+  const pass = document.getElementById('signin-pass').value;
+  if (!email || !pass) { showAuthErr('signin','Please fill all fields'); return; }
+  const users = JSON.parse(localStorage.getItem('cti_users')||'[]');
+  const user = users.find(u => (u.email===email||u.phone===email) && u.pass===pass);
+  if (!user) { showAuthErr('signin','Incorrect email or password'); return; }
+  loginUser(user);
+}
+
+function doSignUp() {
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const phone = document.getElementById('signup-phone').value.trim();
+  const pass = document.getElementById('signup-pass').value;
+  if (!name||!email||!phone||!pass) { showAuthErr('signup','All fields are required'); return; }
+  if (pass.length < 6) { showAuthErr('signup','Password must be at least 6 characters'); return; }
+  const users = JSON.parse(localStorage.getItem('cti_users')||'[]');
+  if (users.find(u => u.email===email)) { showAuthErr('signup','Email already registered. Sign in instead.'); return; }
+  const user = { name, email, phone, pass, joined: new Date().toISOString(), bonus: 51 };
+  users.push(user);
+  localStorage.setItem('cti_users', JSON.stringify(users));
+  // Notify backend
+  fetch('/api/signup', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ name, email, phone })
+  }).catch(() => {});
+  loginUser(user);
+  showToast(`🎉 Welcome ${name.split(' ')[0]}! ₹51 bonus added to your account`);
+}
+
+function loginUser(user) {
+  currentUser = user;
+  localStorage.setItem('cti_user', JSON.stringify(user));
+  updateAuthUI();
+  closeAuth();
+}
+
+function updateAuthUI() {
+  const signinBtn = document.getElementById('home-signin-btn');
+  if (!signinBtn) return;
+  if (currentUser) {
+    signinBtn.textContent = currentUser.name.split(' ')[0] + ' ▾';
+    signinBtn.onclick = () => showToast(`Hi ${currentUser.name.split(' ')[0]}! Balance: ₹${currentUser.bonus||0}`);
+    const navAcc = document.getElementById('nav-account');
+    if (navAcc) navAcc.querySelector('div').textContent = currentUser.name.split(' ')[0];
+  }
+}
+
+function showAuthErr(panel, msg) {
+  const el = document.getElementById(`${panel}-err`);
+  el.textContent = msg; el.style.display = 'block';
+}
+
+/* ═══════════════════════════════════════════════
+   BONUS POPUP
+═══════════════════════════════════════════════ */
+function claimBonus() {
+  closeBonusPopup();
+  openAuth('signup');
+}
+function closeBonusPopup() {
+  document.getElementById('bonus-popup').classList.remove('open');
+}
+
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+let toastTimeout;
+function showToast(msg) {
+  const t = document.getElementById('cti-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ═══════════════════════════════════════════════
+   QR CODE
+═══════════════════════════════════════════════ */
+function setupQR() {
+  const dots = document.getElementById('qrdots');
+  if (!dots) return;
+  let s = '';
+  for (let y = 0; y < 28; y++) {
+    for (let x = 0; x < 28; x++) {
+      if ((x<8&&y<8)||(x>19&&y<8)||(x<8&&y>19)) continue;
+      if (x>=11&&x<=15&&y>=11&&y<=15) continue;
+      if (Math.random() > 0.5) s += `<rect x="${x*8+4}" y="${y*8+4}" width="6" height="6"/>`;
+    }
+  }
+  dots.innerHTML = s;
+}
+
+</script>
+</body>
+</html>
