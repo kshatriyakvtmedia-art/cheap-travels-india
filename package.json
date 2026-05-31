@@ -1,0 +1,14 @@
+{
+  "name": "cheap-travels-india-server",
+  "version": "1.0.0",
+  "description": "Live B2B bus ticketing backend for Cheap Travels India",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}

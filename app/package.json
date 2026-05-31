@@ -1,0 +1,30 @@
+{
+  "name": "cheap-travels-india",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cheap Travels India — affordable bus ticketing portal",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "seed": "node scripts/seed.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "next": "14.2.15",
+    "nodemailer": "^6.9.15",
+    "playwright": "^1.48.0",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  }
+}
