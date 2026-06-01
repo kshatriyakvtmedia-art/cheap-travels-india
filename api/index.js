@@ -1509,51 +1509,60 @@ app.get('/api/admin/logs', requireAuth, requireRole(['super_admin']), async (req
   }
 });
 
-// Customer OTP Auth Routes
-app.post('/api/auth/otp/send', otpRateLimiter, async (req, res) => {
-  const { mobile } = req.body;
-  if (!mobile) {
-    return res.status(400).json({ success: false, error: 'Mobile number is required.' });
-  }
-  
-  try {
-    const { sendOtp } = require('../lib/auth');
-    const result = await sendOtp(mobile);
-    res.json(result);
-  } catch (err) {
-    console.error('OTP send failed:', err.message);
-    res.status(500).json({ success: false, error: 'Failed to send OTP.' });
-  }
+// Firebase Auth Endpoints
+app.get('/api/config/firebase', (req, res) => {
+  res.json({
+    apiKey: process.env.FIREBASE_API_KEY || '',
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN || '',
+    projectId: process.env.FIREBASE_PROJECT_ID || '',
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || '',
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || '',
+    appId: process.env.FIREBASE_APP_ID || ''
+  });
 });
 
-app.post('/api/auth/otp/verify', async (req, res) => {
-  const { mobile, code } = req.body;
-  if (!mobile || !code) {
-    return res.status(400).json({ success: false, error: 'Mobile number and code are required.' });
+app.post('/api/auth/firebase', async (req, res) => {
+  const { idToken } = req.body;
+  if (!idToken) {
+    return res.status(400).json({ success: false, error: 'Firebase ID Token is required.' });
   }
 
   try {
-    const { verifyOtp } = require('../lib/auth');
-    const result = await verifyOtp(mobile, code);
-    
+    const { verifyFirebaseIdToken } = require('../lib/auth');
+    const result = await verifyFirebaseIdToken(idToken);
+
     if (!result.success) {
-      return res.status(400).json(result);
+      return res.status(401).json(result);
     }
 
-    // Set secure HTTP-only cookies
+    // Set secure HTTP-only cookies (SameSite lax is cleaner for SSO/callback flows)
     res.cookie('cti_access', result.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 15 * 60 * 1000 // 15 mins
     });
 
     res.cookie('cti_refresh', result.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
+
+    // Log login/registration event
+    try {
+      const ipAddress = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      await prisma.auditLog.create({
+        data: {
+          action: result.isNewUser ? 'signup' : 'login',
+          userId: result.user.id,
+          entityType: 'customer',
+          metadataJson: { source: 'firebase' },
+          ipAddress
+        }
+      });
+    } catch (err) {}
 
     res.json({
       success: true,
@@ -1565,8 +1574,8 @@ app.post('/api/auth/otp/verify', async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('OTP verification failed:', err.message);
-    res.status(500).json({ success: false, error: 'Failed to verify OTP.' });
+    console.error('Firebase Auth endpoint failed:', err.message);
+    res.status(500).json({ success: false, error: 'Failed to verify Firebase authentication.' });
   }
 });
 

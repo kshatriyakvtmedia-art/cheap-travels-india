@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<!-- Firebase SDKs (Compat version) -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <!-- Core Web Vitals Telemetry (inspired by redBus performance monitoring) -->
 <script type="module">
   import { onCLS, onFID, onLCP, onINP, onTTFB } from 'https://unpkg.com/web-vitals@4/dist/web-vitals.attribution.js?module';
@@ -1107,6 +1110,8 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   <div class="auth-box" style="padding:40px 32px; max-width:380px;">
     <button class="auth-close" onclick="closeAuth()">✕</button>
     <img src="Logo.png" alt="Cheap Travels India" class="auth-logo" style="margin-bottom:24px;">
+    <!-- Firebase Invisible reCAPTCHA Container -->
+    <div id="recaptcha-container"></div>
     
     <div id="otp-phone-pane">
       <h3 style="font-size:18px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Verify Mobile Number</h3>
@@ -1676,6 +1681,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('depart-date').value = `${yyyy}-${mm}-${dd}`;
 
   await loadCities();
+  await initFirebase();
   setupQR();
   
   // Offline & connection state tracking
@@ -2640,6 +2646,29 @@ function resetOtpFlow() {
   document.getElementById('auth-otp-err').style.display = 'none';
 }
 
+async function initFirebase() {
+  try {
+    const res = await fetch(`${API}/api/config/firebase`);
+    const config = await res.json();
+    if (config.apiKey) {
+      firebase.initializeApp(config);
+      
+      // Setup invisible reCAPTCHA
+      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        size: 'invisible',
+        callback: (response) => {
+          // reCAPTCHA solved
+        }
+      });
+      console.log('Firebase App initialized successfully.');
+    } else {
+      console.warn('Firebase config empty. Phone auth may not work.');
+    }
+  } catch (err) {
+    console.error('Failed to initialize Firebase SDK:', err);
+  }
+}
+
 async function sendMobileOtp() {
   const mobileInput = document.getElementById('auth-mobile-input').value.trim();
   const errEl = document.getElementById('auth-mobile-err');
@@ -2654,23 +2683,28 @@ async function sendMobileOtp() {
   const formattedMobile = `+91${mobileInput}`;
 
   try {
-    const res = await fetch(`${API}/api/auth/otp/send`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mobile: formattedMobile })
-    });
-    const data = await res.json();
-    if (data.success) {
-      document.getElementById('otp-phone-pane').style.display = 'none';
-      document.getElementById('otp-code-pane').style.display = 'block';
-      document.getElementById('otp-sent-mobile').textContent = `+91 ${mobileInput.slice(0,5)} ${mobileInput.slice(5)}`;
-    } else {
-      errEl.textContent = data.error || 'Failed to send OTP. Please try again.';
+    const appVerifier = window.recaptchaVerifier;
+    if (!appVerifier) {
+      errEl.textContent = 'Firebase reCAPTCHA is not initialized yet. Please reload page.';
       errEl.style.display = 'block';
+      return;
     }
+    
+    const confirmationResult = await firebase.auth().signInWithPhoneNumber(formattedMobile, appVerifier);
+    window.confirmationResult = confirmationResult;
+    
+    document.getElementById('otp-phone-pane').style.display = 'none';
+    document.getElementById('otp-code-pane').style.display = 'block';
+    document.getElementById('otp-sent-mobile').textContent = `+91 ${mobileInput.slice(0,5)} ${mobileInput.slice(5)}`;
   } catch (err) {
-    errEl.textContent = 'Network error. Please make sure backend is running.';
+    console.error("Firebase SMS error:", err);
+    errEl.textContent = err.message || 'Failed to send OTP via Firebase.';
     errEl.style.display = 'block';
+    if (window.recaptchaVerifier) {
+      window.recaptchaVerifier.render().then(widgetId => {
+        grecaptcha.reset(widgetId);
+      }).catch(() => {});
+    }
   }
 }
 
@@ -2686,13 +2720,20 @@ async function verifyMobileOtp() {
     return;
   }
 
-  const formattedMobile = `+91${mobileInput}`;
-
   try {
-    const res = await fetch(`${API}/api/auth/otp/verify`, {
+    if (!window.confirmationResult) {
+      errEl.textContent = 'Verification session expired. Please start over.';
+      errEl.style.display = 'block';
+      return;
+    }
+    
+    const result = await window.confirmationResult.confirm(otpInput);
+    const idToken = await result.user.getIdToken();
+    
+    const res = await fetch(`${API}/api/auth/firebase`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mobile: formattedMobile, code: otpInput })
+      body: JSON.stringify({ idToken })
     });
     const data = await res.json();
     
@@ -2713,11 +2754,12 @@ async function verifyMobileOtp() {
         continueToCheckout();
       }
     } else {
-      errEl.textContent = data.error || 'Invalid OTP code. Please try again.';
+      errEl.textContent = data.error || 'Failed to verify session with server.';
       errEl.style.display = 'block';
     }
   } catch (err) {
-    errEl.textContent = 'Verification failed. Connection error.';
+    console.error("Verification error:", err);
+    errEl.textContent = 'Invalid verification code. Please try again.';
     errEl.style.display = 'block';
   }
 }
@@ -2725,6 +2767,7 @@ async function verifyMobileOtp() {
 function logoutUser() {
   currentUser = null;
   localStorage.removeItem('cti_user');
+  firebase.auth().signOut().catch(() => {});
   fetch(`${API}/api/auth/logout`, { method: 'POST' }).catch(() => {});
   updateAuthUI();
   document.getElementById('user-chip').classList.remove('open');
