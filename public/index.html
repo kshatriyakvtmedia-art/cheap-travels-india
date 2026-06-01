@@ -1668,7 +1668,7 @@ function applyFilters() {
     
     // 5. Price
     const StrikeFare = bus.minFare;
-    const cheapFare = bus.resId.startsWith('ss-') ? StrikeFare : Math.round(StrikeFare * 0.95);
+    const cheapFare = Math.round(StrikeFare * 0.95);
     if (cheapFare > maxPriceFilter) {
       return false;
     }
@@ -1710,22 +1710,16 @@ function displayFilteredBuses(buses, formattedDate) {
     };
     sortedBuses.sort((a, b) => getRating(b) - getRating(a));
   } else {
-    // Best Match: Direct Partner first
-    sortedBuses.sort((a, b) => {
-      const isaSS = a.resId.startsWith('ss-') ? 1 : 0;
-      const isbSS = b.resId.startsWith('ss-') ? 1 : 0;
-      return isaSS - isbSS;
-    });
+    // Best Match: Default order
   }
   
   // Update live-compare prices based on first bus
   const firstBus = sortedBuses[0];
-  const isFirstBusSS = firstBus.resId.startsWith('ss-');
   const minFare = firstBus.minFare || 1200;
   const redBusFare = minFare;
   const abhiBusFare = Math.round(minFare * 0.99);
   const mmtFare = Math.round(minFare * 1.01);
-  const cheapTravelsFare = isFirstBusSS ? minFare : Math.round(minFare * 0.95);
+  const cheapTravelsFare = Math.round(minFare * 0.95);
   
   const liveComp = document.querySelector('.live-compare');
   if (liveComp) {
@@ -1734,7 +1728,7 @@ function displayFilteredBuses(buses, formattedDate) {
       <div class="cmp"><b>RedBus</b>₹${redBusFare}</div>
       <div class="cmp"><b>AbhiBus</b>₹${abhiBusFare}</div>
       <div class="cmp"><b>MMT</b>₹${mmtFare}</div>
-      <div class="cmp us"><b>Cheap Travels</b>₹${cheapTravelsFare} ${isFirstBusSS ? '<small style="opacity:.8">(Best price guaranteed)</small>' : '<small style="opacity:.8">(5% extra discount)</small>'}</div>
+      <div class="cmp us"><b>Cheap Travels</b>₹${cheapTravelsFare} <small style="opacity:.8">(5% extra discount)</small></div>
     `;
   }
   
@@ -1742,8 +1736,7 @@ function displayFilteredBuses(buses, formattedDate) {
   sortedBuses.forEach((bus, index) => {
     const isFeatured = index === 0;
     const strikeFare = bus.minFare;
-    const isSeatSeller = bus.resId.startsWith('ss-');
-    const cheapFare = isSeatSeller ? strikeFare : Math.round(strikeFare * 0.95);
+    const cheapFare = Math.round(strikeFare * 0.95);
     const savings = strikeFare - cheapFare;
     
     // Boarding points options
@@ -1765,7 +1758,7 @@ function displayFilteredBuses(buses, formattedDate) {
         <div class="bus-main">
           <div style="display:flex; align-items:center; gap:8px;">
             <h3 style="margin:0;">${bus.operator}</h3>
-            ${!isSeatSeller ? '<span style="background:var(--green-s); color:var(--teal-d); padding:2px 8px; border-radius:6px; font-size:10.5px; font-weight:700;">Direct Partner 5% Off</span>' : ''}
+            <span style="background:var(--green-s); color:var(--teal-d); padding:2px 8px; border-radius:6px; font-size:10.5px; font-weight:700;">Direct Partner 5% Off</span>
           </div>
           <div class="bus-meta">
             <span>${bus.busType}</span><span>Direct</span><span>Live tracking</span><span>Mineral water</span>
@@ -1783,14 +1776,9 @@ function displayFilteredBuses(buses, formattedDate) {
         </div>
         <div class="bus-side">
           <div class="fare-block">
-            ${isSeatSeller ? `
-              <div class="fare" style="margin-top:0;">₹${cheapFare} <small>/seat</small></div>
-              <div style="font-size:10.5px; color:var(--ink2); margin-top:4px; font-weight:500;">Competitive Rate</div>
-            ` : `
-              <div class="fare-strike">₹${strikeFare}</div>
-              <div class="fare">₹${cheapFare} <small>/seat</small></div>
-              <div class="save-pill">SAVE ₹${savings}</div>
-            `}
+            <div class="fare-strike">₹${strikeFare}</div>
+            <div class="fare">₹${cheapFare} <small>/seat</small></div>
+            <div class="save-pill">SAVE ₹${savings}</div>
           </div>
           <button class="view-seats" onclick="toggleSeatLive('${bus.resId}', '${formattedDate}')">View Seats</button>
         </div>
@@ -1864,27 +1852,7 @@ async function toggleSeatLive(resId, dateStr) {
   btn.textContent = 'Hide Seats';
   busCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  if (resId.startsWith('ss-')) {
-    const seatContent = busCard.querySelector('.seat-content');
-    if (seatContent) {
-      const bus = searchResultsBuses.find(b => b.resId == resId);
-      const opName = bus ? bus.operator : 'this operator';
-      seatContent.innerHTML = `
-        <div style="width:100%; text-align:center; padding: 40px 20px; color:var(--ink);">
-          <div style="font-size:40px; margin-bottom:14px;">⚡ Compare Only</div>
-          <h4 style="color:var(--teal); font-size:17px; margin-bottom:10px; font-weight:700;">Price Comparison Operator</h4>
-          <p style="font-size:13.5px; color:var(--ink2); line-height:1.6; max-width:400px; margin:0 auto 20px; font-weight:500;">
-            We show rates for <b>${opName}</b> for price comparison. Direct booking for this operator is currently offline.
-          </p>
-          <div style="background:rgba(34,211,167,0.06); border:1.5px dashed var(--teal); border-radius:12px; padding:16px; font-size:13.5px; color:var(--ink); line-height:1.5; max-width:400px; margin:0 auto;">
-            🎉 <b>Save Extra 5% with Direct Partners!</b><br>
-            Please select one of our <b>Direct Partner</b> buses (Laxmi Holidays or Ram Dalal Holidays) to proceed with booking.
-          </div>
-        </div>
-      `;
-    }
-    return;
-  }
+  // Compare Only check removed
 
   // Track seat view event
   fetch(`${API}/api/track`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'view_seats', data: { busId: resId } }) }).catch(() => {});
@@ -1948,9 +1916,8 @@ function renderSeatMap(resId, layoutData) {
     if (s.booked) cls += 'booked ';
     else if (s.ladies) cls += 'ladies ';
     
-    const isSeatSeller = resId.startsWith('ss-');
     const baseFare = s.fare || bus.minFare || 1000;
-    const discountFare = isSeatSeller ? baseFare : Math.round(baseFare * 0.95);
+    const discountFare = Math.round(baseFare * 0.95);
     const discountAmount = baseFare - discountFare;
     
     html += `
@@ -2714,8 +2681,7 @@ function startBgRefresh() {
           if (seatEl) seatEl.textContent = `${bus.seatsLeft} seats left`;
           const fareEl = card.querySelector('.fare');
           if (fareEl) {
-            const isSS = bus.resId.startsWith('ss-');
-            const cheapFare = isSS ? bus.minFare : Math.round(bus.minFare * 0.95);
+            const cheapFare = Math.round(bus.minFare * 0.95);
             fareEl.innerHTML = `₹${cheapFare} <small>/seat</small>`;
           }
         });

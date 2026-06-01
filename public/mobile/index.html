@@ -1626,9 +1626,8 @@ function renderBusList(buses, dateStr) {
   }
 
   const html = buses.map((bus, i) => {
-    const isSS = bus.resId && bus.resId.startsWith('ss-');
-    const isPartner = !isSS;
-    const cheapFare = isPartner ? Math.round(bus.minFare * 0.95) : bus.minFare;
+    const isPartner = true;
+    const cheapFare = Math.round(bus.minFare * 0.95);
     const savings = bus.minFare - cheapFare;
     const seatsLeft = bus.seatsLeft || 0;
     const seatsClass = seatsLeft <= 5 ? 'low' : '';
@@ -1734,7 +1733,7 @@ function applyFilter(f, el) {
   let buses = [...allBusesCache];
   if (f === 'ac') buses = buses.filter(b => b.busType && b.busType.toLowerCase().includes('ac'));
   else if (f === 'sleeper') buses = buses.filter(b => b.busType && b.busType.toLowerCase().includes('sleeper'));
-  else if (f === 'partner') buses = buses.filter(b => !b.resId.startsWith('ss-'));
+  else if (f === 'partner') buses = buses;
 
   searchResultsBuses = buses;
   const parts = document.getElementById('results-date-title').textContent;
@@ -1809,7 +1808,7 @@ function renderSeatMap(resId, layoutData, bus) {
   grid.style.gridTemplateRows = `repeat(${layoutData.maxRow}, 38px)`;
   grid.style.gridTemplateColumns = `repeat(${layoutData.maxCol}, 38px)`;
 
-  const isSS = resId.startsWith('ss-');
+  const isSS = false;
   let html = '';
   layoutData.seats.forEach(s => {
     if (s.isGangway) {
@@ -1958,7 +1957,7 @@ function buildCheckout() {
   }
 
   // Fare breakup
-  const isSS = selectedBus.resId && selectedBus.resId.startsWith('ss-');
+  const isSS = false;
   const discountRow = (!isSS && totalDiscount > 0) ? `<div class="fare-row disc"><span>Cheap Travels discount</span><span>− ₹${totalDiscount}</span></div>` : '';
   const bonusRow = bonusApplied > 0 ? `<div class="fare-row disc" style="color:#166534;font-weight:600;"><span>₹51 Signup Bonus Applied</span><span>− ₹${bonusApplied}</span></div>` : '';
   document.getElementById('fare-breakup-rows').innerHTML = `
@@ -2058,8 +2057,7 @@ function startBgRefresh(dateStr) {
           }
           const fareEl = card.querySelector('.bus-price');
           if (fareEl && bus.minFare) {
-            const isSS = bus.resId.startsWith('ss-');
-            const cf = isSS ? bus.minFare : Math.round(bus.minFare * 0.95);
+            const cf = Math.round(bus.minFare * 0.95);
             fareEl.innerHTML = `₹${cf} <small>/seat</small>`;
           }
         });
