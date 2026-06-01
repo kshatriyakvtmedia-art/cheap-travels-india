@@ -5,14 +5,14 @@
 // session, then adjusted to match the real DOM. The structure of the code is
 // production-ready; the selectors are the part to refine once we map the portal.
 //
-// To activate: set LAXMI_USER and LAXMI_PASS in env. With them blank, the
+// To activate: set LXMI_USERNAME and LXMI_PASSWORD in env. With them blank, the
 // aggregator falls back to lib/scraper/mock.js.
 
 import { chromium } from 'playwright';
 
 const LOGIN_URL = process.env.LAXMI_LOGIN_URL || 'https://lxmi.laxmiholidays.com/';
-const USER = process.env.LAXMI_USER || '';
-const PASS = process.env.LAXMI_PASS || '';
+const USER = process.env.LXMI_USERNAME || '';
+const PASS = process.env.LXMI_PASSWORD || '';
 
 // Cache the browser context across requests so we don't re-login on every search.
 let _ctx = null;
@@ -50,7 +50,7 @@ async function login(ctx) {
 
 /** Search buses for a route+date. Returns canonical Bus[] shape (same as mock). */
 export async function fetchBuses({ from, to, date }) {
-  if (!USER || !PASS) throw new Error('LAXMI_USER / LAXMI_PASS not set');
+  if (!USER || !PASS) throw new Error('LXMI_USERNAME / LXMI_PASSWORD not set');
   const ctx = await getContext();
   const page = await ctx.newPage();
   try {
@@ -113,7 +113,7 @@ export async function fetchBuses({ from, to, date }) {
 
 /** Fetch the seat layout for one bus. */
 export async function fetchSeats(busExternalId) {
-  if (!USER || !PASS) throw new Error('LAXMI_USER / LAXMI_PASS not set');
+  if (!USER || !PASS) throw new Error('LXMI_USERNAME / LXMI_PASSWORD not set');
   const ctx = await getContext();
   const page = await ctx.newPage();
   try {
@@ -143,7 +143,7 @@ export async function fetchSeats(busExternalId) {
 
 /** Actually book a held seat on the provider portal. Called ONLY after payment is confirmed. */
 export async function placeProviderBooking(order) {
-  if (!USER || !PASS) throw new Error('LAXMI_USER / LAXMI_PASS not set');
+  if (!USER || !PASS) throw new Error('LXMI_USERNAME / LXMI_PASSWORD not set');
   const ctx = await getContext();
   const page = await ctx.newPage();
   try {

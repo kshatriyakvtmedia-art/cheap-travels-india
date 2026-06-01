@@ -107,8 +107,8 @@ setInterval(() => {
 // B2B Portal configurations for both Laxmi and Ram Dalal
 const OPERATORS = {
   lxmi: {
-    username: process.env.LXMI_USERNAME || 'lxmi.cheap',
-    password: process.env.LXMI_PASSWORD || '[REDACTED]',
+    username: process.env.LXMI_USERNAME,
+    password: process.env.LXMI_PASSWORD,
     url: process.env.LXMI_PORTAL_URL || 'https://lxmi.laxmiholidays.com',
     name: 'Laxmi Holidays Pvt Ltd',
     sessionCookies: [],
@@ -117,8 +117,8 @@ const OPERATORS = {
     cities: []
   },
   rdlh: {
-    username: process.env.RDLH_USERNAME || 'cheap',
-    password: process.env.RDLH_PASSWORD || '[REDACTED]',
+    username: process.env.RDLH_USERNAME,
+    password: process.env.RDLH_PASSWORD,
     url: process.env.RDLH_PORTAL_URL || 'https://rdlh.ticketsimply.com',
     name: 'Ram Dalal Holidays',
     sessionCookies: [],
@@ -132,6 +132,9 @@ const OPERATORS = {
 async function performLogin(opKey) {
   const op = OPERATORS[opKey];
   if (!op) throw new Error(`Unknown operator key: ${opKey}`);
+  if (!op.username || !op.password) {
+    throw new Error(`Credentials for ${op.name} (key: ${opKey}) are not configured in environment variables.`);
+  }
   console.log(`Starting B2B portal login sequence for ${op.name}...`);
   try {
     // 1. Fetch main page to get initial cookies and CSRF token
@@ -875,7 +878,7 @@ app.get('/api/layout/:resId', async (req, res) => {
 //  ANALYTICS & ADMIN DASHBOARD
 // ═══════════════════════════════════════════════
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '[REDACTED]';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const adminTokens = new Set();
 
 // In-memory analytics store
@@ -962,6 +965,9 @@ function requireAdmin(req, res, next) {
 // Admin login
 app.post('/api/admin/login', (req, res) => {
   const { password } = req.body;
+  if (!ADMIN_PASSWORD) {
+    return res.status(500).json({ success: false, error: 'Admin login is disabled: ADMIN_PASSWORD environment variable is not configured.' });
+  }
   if (password === ADMIN_PASSWORD) {
     const token = 'cti_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 8);
     adminTokens.add(token);
