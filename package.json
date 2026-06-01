@@ -4,7 +4,8 @@
   "description": "Live B2B bus ticketing backend for Cheap Travels India",
   "main": "api/index.js",
   "scripts": {
-    "start": "node api/index.js"
+    "start": "node api/index.js",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",
@@ -18,9 +19,7 @@
     "express-rate-limit": "^8.5.2",
     "helmet": "^8.2.0",
     "jsonwebtoken": "^9.0.3",
-    "nodemailer": "^8.0.10"
-  },
-  "devDependencies": {
+    "nodemailer": "^8.0.10",
     "prisma": "^6.2.1"
   }
 }
