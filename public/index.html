@@ -1391,6 +1391,7 @@ async function performSearch() {
     
     if (data.success) {
       searchResultsBuses = data.buses;
+      listContainer.innerHTML = originalSortBar + '<div class="buses-cards-wrapper"></div>';
       renderBuses(data.buses, formattedDate);
       startBgRefresh(); // silent 60s background refresh
     } else {
