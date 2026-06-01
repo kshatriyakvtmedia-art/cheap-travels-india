@@ -201,14 +201,102 @@ body::before {
   background: var(--red-glow);
 }
 
+/* ─── SIDEBAR & TABS LAYOUT ─── */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+.admin-sidebar {
+  width: 260px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+}
+.admin-sidebar .brand {
+  padding: 0 24px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 850;
+  font-size: 19px;
+  color: var(--ink);
+}
+.admin-sidebar .brand-badge {
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 16px;
+}
+.sidebar-nav .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: var(--ink2);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 10px;
+  transition: all .2s;
+  cursor: pointer;
+}
+.sidebar-nav .nav-item:hover {
+  color: var(--ink);
+  background: var(--surface2);
+}
+.sidebar-nav .nav-item.active {
+  color: var(--teal);
+  background: var(--teal-glow);
+  border-left: 3px solid var(--teal);
+}
+.sidebar-nav .nav-item.hidden {
+  display: none !important;
+}
+.sidebar-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+}
+.admin-content {
+  flex: 1;
+  margin-left: 260px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+
 /* ─── MAIN LAYOUT ─── */
 .admin-main {
-  max-width: 1200px;
-  margin: 0 auto;
   padding: 28px 24px 60px;
   position: relative;
   z-index: 1;
 }
+
 .section-label {
   font-size: 12px;
   font-weight: 700;
@@ -545,10 +633,11 @@ body::before {
     <h2>Admin Dashboard</h2>
     <p>Cheap Travels India · Control Panel</p>
     <form onsubmit="loginAdmin(event)">
-      <input type="password" id="admin-pwd" placeholder="Enter admin password" autocomplete="off" autofocus>
+      <input type="email" id="admin-email" placeholder="Enter admin email" autocomplete="on" required style="margin-bottom:12px;">
+      <input type="password" id="admin-pwd" placeholder="Enter admin password" autocomplete="off" required>
       <button type="submit">Authenticate</button>
     </form>
-    <div class="login-err" id="login-err">Invalid password. Try again.</div>
+    <div class="login-err" id="login-err">Invalid credentials. Try again.</div>
   </div>
   
   <!-- File Protocol CORS Warning -->
@@ -560,155 +649,281 @@ body::before {
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboard" style="display:none;">
+<div id="dashboard" class="admin-layout" style="display:none;">
 
-  <!-- HEADER -->
-  <header class="admin-header">
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
     <div class="brand">
-      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       CTI Admin
-      <span class="brand-badge">Dashboard</span>
+      <span class="brand-badge">Hub</span>
     </div>
-    <div class="nav-right">
-      <div class="uptime" id="uptime-text">Uptime: <b>--</b></div>
-      <button class="refresh-btn" id="refresh-btn" onclick="refreshAll()">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-        Refresh
-      </button>
-      <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
+    
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-tab="overview" onclick="switchAdminTab('overview')">📊 Overview</div>
+      <div class="nav-item" data-tab="bookings" onclick="switchAdminTab('bookings')">🎫 Bookings</div>
+      <div class="nav-item" data-tab="payments" onclick="switchAdminTab('payments')">💳 Payments</div>
+      <div class="nav-item" data-tab="customers" onclick="switchAdminTab('customers')">👥 Customers</div>
+      <div class="nav-item" data-tab="providers" onclick="switchAdminTab('providers')">🔌 Providers</div>
+      <div class="nav-item" data-tab="admins" onclick="switchAdminTab('admins')">🔑 Admins</div>
+      <div class="nav-item" data-tab="logs" onclick="switchAdminTab('logs')">📜 System Logs</div>
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div id="admin-user-name" style="font-weight:700; font-size:14px; margin-bottom:2px; color:var(--ink);">Admin User</div>
+      <div id="admin-user-role" style="font-size:11px; color:var(--teal); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Super Admin</div>
     </div>
-  </header>
+  </aside>
 
-  <main class="admin-main">
+  <!-- CONTENT -->
+  <div class="admin-content">
+    <!-- HEADER -->
+    <header class="admin-header">
+      <div class="brand">
+        <span class="brand-badge" id="role-badge">SUPER ADMIN</span>
+      </div>
+      <div class="nav-right">
+        <div class="uptime" id="uptime-text">Uptime: <b>--</b></div>
+        <button class="refresh-btn" id="refresh-btn" onclick="refreshAll()">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh
+        </button>
+        <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
+      </div>
+    </header>
 
-    <!-- STATS -->
-    <div class="section-label">Overview</div>
-    <div class="stat-grid">
-      <div class="stat-card teal">
-        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <div class="stat-value" id="stat-visitors">0</div>
-        <div class="stat-label">Total Visitors</div>
-      </div>
-      <div class="stat-card blue">
-        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
-        <div class="stat-value" id="stat-searches">0</div>
-        <div class="stat-label">Bus Searches</div>
-      </div>
-      <div class="stat-card gold">
-        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-        <div class="stat-value" id="stat-seatviews">0</div>
-        <div class="stat-label">Seat Views</div>
-      </div>
-      <div class="stat-card purple">
-        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
-        <div class="stat-value" id="stat-checkouts">0</div>
-        <div class="stat-label">Checkouts</div>
-      </div>
-      <div class="stat-card red">
-        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg></div>
-        <div class="stat-value" id="stat-signups">0</div>
-        <div class="stat-label">Signups</div>
-      </div>
-      <div class="stat-card green">
-        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg></div>
-        <div class="stat-value" id="stat-bookings">0</div>
-        <div class="stat-label">Bookings</div>
-      </div>
-    </div>
+    <main class="admin-main">
+      
+      <!-- TAB: OVERVIEW -->
+      <div class="tab-content active" id="tab-overview">
+        <!-- STATS -->
+        <div class="section-label">Overview</div>
+        <div class="stat-grid">
+          <div class="stat-card teal">
+            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div class="stat-value" id="stat-visitors">0</div>
+            <div class="stat-label">Total Visitors</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+            <div class="stat-value" id="stat-searches">0</div>
+            <div class="stat-label">Bus Searches</div>
+          </div>
+          <div class="stat-card green" id="stat-rev-card" style="display:none;">
+            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="stat-value" id="stat-revenue">₹0</div>
+            <div class="stat-label">Today's Revenue</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg></div>
+            <div class="stat-value" id="stat-bookings">0</div>
+            <div class="stat-label">Today's Bookings</div>
+          </div>
+          <div class="stat-card purple">
+            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+            <div class="stat-value" id="stat-pending">0</div>
+            <div class="stat-label">Pending Bookings</div>
+          </div>
+        </div>
 
-    <!-- PANELS ROW 1: Activity Feed + Popular Routes -->
-    <div class="section-label">Live Data</div>
-    <div class="panels-grid">
-      <div class="panel">
-        <div class="panel-header">
-          <h3><span class="dot"></span> Recent Activity</h3>
-          <span class="badge" id="activity-count">0 events</span>
+        <div class="panels-grid">
+          <!-- Activity Feed -->
+          <div class="panel">
+            <div class="panel-header">
+              <h3>⚡ Recent Activity</h3>
+              <span class="badge" id="activity-count">0 events</span>
+            </div>
+            <div class="panel-body" id="activity-feed">
+              <div class="empty-state">No activity recorded yet.</div>
+            </div>
+          </div>
+          
+          <!-- Popular Routes -->
+          <div class="panel">
+            <div class="panel-header">
+              <h3>🔥 Popular Routes</h3>
+              <span class="badge" id="routes-count">0 routes</span>
+            </div>
+            <div class="panel-body" id="routes-table">
+              <div class="empty-state">No searches yet.</div>
+            </div>
+          </div>
         </div>
-        <div class="panel-body" id="activity-feed">
-          <div class="empty-state">No activity recorded yet.</div>
+        
+        <!-- Health Section -->
+        <div class="section-label" style="margin-top:32px;">B2B Portal Health</div>
+        <div class="panel">
+          <div class="panel-header">
+            <h3>🔌 Automation Portal Status</h3>
+          </div>
+          <div class="health-grid" id="health-grid">
+            <div class="empty-state" style="grid-column:1/-1;">Loading health status...</div>
+          </div>
         </div>
       </div>
-      <div class="panel">
-        <div class="panel-header">
-          <h3>🔥 Popular Routes</h3>
-          <span class="badge" id="routes-count">0 routes</span>
-        </div>
-        <div class="panel-body" id="routes-table">
-          <div class="empty-state">No searches yet.</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- PANELS ROW 2: Users + Search History -->
-    <div class="section-label">Users & Searches</div>
-    <div class="panels-grid">
-      <div class="panel">
-        <div class="panel-header">
-          <h3>👥 Registered Users</h3>
-          <span class="badge" id="users-count">0 users</span>
-        </div>
-        <div class="panel-body" id="users-table">
-          <div class="empty-state">No registrations yet.</div>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-header">
-          <h3>🔍 Search History</h3>
-          <span class="badge" id="search-history-count">0 searches</span>
-        </div>
-        <div class="panel-body" id="search-history">
-          <div class="empty-state">No searches yet.</div>
+      <!-- TAB: BOOKINGS -->
+      <div class="tab-content" id="tab-bookings">
+        <div class="section-label">Booking Management</div>
+        <div class="panel">
+          <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <h3>🎫 All Bookings</h3>
+              <span class="badge" id="bookings-count">0 bookings</span>
+            </div>
+            <div>
+              <input type="text" id="booking-search-input" placeholder="Search by PNR, Name, Phone..." oninput="filterBookings()" style="width: 250px; padding: 8px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--ink); font-size: 13px; outline: none; margin: 0;">
+            </div>
+          </div>
+          <div class="panel-body" id="bookings-table">
+            <div class="empty-state">No bookings recorded yet.</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- BOOKINGS -->
-    <div class="section-label">Ticket Bookings</div>
-    <div class="panel" style="margin-bottom:32px;">
-      <div class="panel-header">
-        <h3>🎫 Recent Bookings</h3>
-        <span class="badge" id="bookings-count">0 bookings</span>
-      </div>
-      <div class="panel-body" id="bookings-table">
-        <div class="empty-state">No bookings recorded yet.</div>
-      </div>
-    </div>
-
-    <!-- WEB VITALS -->
-    <div class="section-label">Web Vitals Performance (Real-time UX)</div>
-    <div class="panel" style="margin-bottom:32px;">
-      <div class="panel-header">
-        <h3>📊 Google Core Web Vitals</h3>
-        <span class="badge" id="vitals-count">0 measurements</span>
-      </div>
-      <div class="panel-body">
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px; padding: 12px 0;" id="vitals-grid">
-          <div class="empty-state" style="grid-column:1/-1;">No measurements recorded yet.</div>
+      <!-- TAB: PAYMENTS -->
+      <div class="tab-content" id="tab-payments">
+        <div class="section-label">Payment & Refund Ledger</div>
+        <div class="panel">
+          <div class="panel-header">
+            <h3>💳 Payment Transactions</h3>
+            <span class="badge" id="payments-count">0 transactions</span>
+          </div>
+          <div class="panel-body" id="payments-table">
+            <div class="empty-state">No payments recorded yet.</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- HEALTH -->
-    <div class="section-label">Server & Portal Health</div>
-    <div class="panel" style="margin-bottom:32px;">
-      <div class="panel-header">
-        <h3><span class="dot"></span> B2B Portal Sessions</h3>
+      <!-- TAB: CUSTOMERS -->
+      <div class="tab-content" id="tab-customers">
+        <div class="section-label">Customer Accounts</div>
+        <div class="panels-grid">
+          <div class="panel" style="grid-column: 1 / -1;">
+            <div class="panel-header">
+              <h3>👥 Customer Profiles</h3>
+              <span class="badge" id="users-count">0 users</span>
+            </div>
+            <div class="panel-body" id="users-table">
+              <div class="empty-state">No customers registered yet.</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="section-label" style="margin-top:32px;">Search Audit Logs</div>
+        <div class="panel">
+          <div class="panel-header">
+            <h3>🔍 Bus Search Queries</h3>
+            <span class="badge" id="search-history-count">0 searches</span>
+          </div>
+          <div class="panel-body" id="search-history">
+            <div class="empty-state">No search history recorded yet.</div>
+          </div>
+        </div>
       </div>
-      <div class="health-grid" id="health-grid">
-        <div class="empty-state" style="grid-column:1/-1;">Loading health data...</div>
-      </div>
-    </div>
 
-  </main>
+      <!-- TAB: PROVIDERS -->
+      <div class="tab-content" id="tab-providers">
+        <div class="section-label">B2B Portal Provider Credentials</div>
+        <div class="panel">
+          <div class="panel-header">
+            <h3>🔌 B2B Gateways</h3>
+          </div>
+          <div class="panel-body">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px; padding: 12px 0;" id="providers-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: ADMINS -->
+      <div class="tab-content" id="tab-admins">
+        <div class="section-label">Administrator Account Creator</div>
+        <div class="panel" style="max-width:550px;">
+          <div class="panel-header">
+            <h3>🔑 Create New Admin Account</h3>
+          </div>
+          <div class="panel-body" style="padding: 16px 20px;">
+            <form onsubmit="createAdminUser(event)" id="admin-create-form" style="display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-size:11px; font-weight:700; color:var(--ink2);">FULL NAME</label>
+                <input type="text" id="new-admin-name" placeholder="Rakesh Sharma" required style="width:100%; padding:10px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); font-family:inherit; outline:none; margin:0;">
+              </div>
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-size:11px; font-weight:700; color:var(--ink2);">EMAIL ADDRESS</label>
+                <input type="email" id="new-admin-email" placeholder="rakesh@cheaptravels.in" required style="width:100%; padding:10px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); font-family:inherit; outline:none; margin:0;">
+              </div>
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-size:11px; font-weight:700; color:var(--ink2);">MOBILE NUMBER</label>
+                <input type="tel" id="new-admin-mobile" placeholder="9999999999" required style="width:100%; padding:10px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); font-family:inherit; outline:none; margin:0;">
+              </div>
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-size:11px; font-weight:700; color:var(--ink2);">ROLE</label>
+                <select id="new-admin-role" style="width:100%; padding:10px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); font-family:inherit; outline:none; cursor:pointer;">
+                  <option value="admin">Admin</option>
+                  <option value="support_executive">Support Executive</option>
+                  <option value="super_admin">Super Admin (Owner)</option>
+                </select>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-size:11px; font-weight:700; color:var(--ink2);">PASSWORD</label>
+                <input type="password" id="new-admin-pwd" placeholder="Enter secure password" required style="width:100%; padding:10px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); font-family:inherit; outline:none; margin:0;">
+              </div>
+              <button type="submit" style="margin-top:12px; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:inherit;">Create Account</button>
+              <div id="admin-create-msg" style="font-size:13px; font-weight:600; text-align:center; display:none; margin-top:8px;"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: SYSTEM LOGS -->
+      <div class="tab-content" id="tab-logs">
+        <div class="section-label">Audit Trail & Security Logs</div>
+        <div class="panel">
+          <div class="panel-header">
+            <h3>📜 Action Audit Logs</h3>
+            <span class="badge" id="logs-count">0 logs</span>
+          </div>
+          <div class="panel-body" id="logs-table">
+            <div class="empty-state">No audit logs recorded yet.</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
 </div>
 
 <script>
 let adminToken = sessionStorage.getItem('cti_admin_token') || '';
+let adminUser = null;
+try {
+  adminUser = JSON.parse(sessionStorage.getItem('cti_admin_user') || 'null');
+} catch (e) {}
+
 const API = window.location.protocol === 'file:' ? 'http://localhost:3000' : '';
+
+// Escapes special HTML characters to prevent XSS
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  str = String(str);
+  return str.replace(/[&<>"']/g, function(m) {
+    switch (m) {
+      case '&': return '&amp;';
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '"': return '&quot;';
+      case "'": return '&#039;';
+      default: return m;
+    }
+  });
+}
 
 // ─── AUTH ───
 async function loginAdmin(e) {
   e && e.preventDefault();
+  const email = document.getElementById('admin-email').value.trim();
   const pwd = document.getElementById('admin-pwd').value;
   const errEl = document.getElementById('login-err');
   errEl.classList.remove('show');
@@ -717,14 +932,17 @@ async function loginAdmin(e) {
     const res = await fetch(`${API}/api/admin/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pwd })
+      body: JSON.stringify({ email, password: pwd })
     });
     const data = await res.json();
     if (data.success) {
       adminToken = data.token;
+      adminUser = data.user;
       sessionStorage.setItem('cti_admin_token', adminToken);
+      sessionStorage.setItem('cti_admin_user', JSON.stringify(adminUser));
       showDashboard();
     } else {
+      errEl.textContent = data.error || 'Invalid credentials. Try again.';
       errEl.classList.add('show');
     }
   } catch (err) {
@@ -735,7 +953,9 @@ async function loginAdmin(e) {
 
 function logoutAdmin() {
   adminToken = '';
+  adminUser = null;
   sessionStorage.removeItem('cti_admin_token');
+  sessionStorage.removeItem('cti_admin_user');
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('login-gate').classList.remove('hidden');
   document.getElementById('admin-pwd').value = '';
@@ -743,8 +963,70 @@ function logoutAdmin() {
 
 function showDashboard() {
   document.getElementById('login-gate').classList.add('hidden');
-  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('dashboard').style.display = 'flex';
+  
+  // Render header / name / role
+  const roleBadge = document.getElementById('role-badge');
+  if (roleBadge && adminUser) {
+    roleBadge.textContent = adminUser.role.replace('_', ' ').toUpperCase();
+  }
+
+  // Adjust dashboard sections depending on role
+  adjustUIForRole();
+
   refreshAll();
+  startUptimeCounter();
+}
+
+function adjustUIForRole() {
+  const role = adminUser ? adminUser.role : '';
+  
+  // Update name & role in footer
+  document.getElementById('admin-user-name').textContent = adminUser ? adminUser.name : 'Administrator';
+  document.getElementById('admin-user-role').textContent = role.replace('_', ' ');
+
+  // Hide nav items based on role
+  document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+    const tabName = item.getAttribute('data-tab');
+    if (role === 'support_executive') {
+      if (tabName !== 'bookings') {
+        item.classList.add('hidden');
+      } else {
+        item.classList.remove('hidden');
+      }
+    } else if (role === 'admin') {
+      if (['admins', 'logs'].includes(tabName)) {
+        item.classList.add('hidden');
+      } else {
+        item.classList.remove('hidden');
+      }
+    } else if (role === 'super_admin') {
+      item.classList.remove('hidden');
+    }
+  });
+
+  // Switch to the first visible tab
+  if (role === 'support_executive') {
+    switchAdminTab('bookings');
+  } else {
+    switchAdminTab('overview');
+  }
+}
+
+function switchAdminTab(tabName) {
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav .nav-item').forEach(i => i.classList.remove('active'));
+  
+  const content = document.getElementById(`tab-${tabName}`);
+  const btn = document.querySelector(`.sidebar-nav .nav-item[data-tab="${tabName}"]`);
+  
+  if (content) content.classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  // Trigger specific fetches if needed
+  if (tabName === 'payments') fetchPayments();
+  if (tabName === 'providers') fetchProviders();
+  if (tabName === 'logs') fetchLogs();
 }
 
 function authHeaders() {
@@ -756,16 +1038,30 @@ async function fetchStats() {
   try {
     const res = await fetch(`${API}/api/admin/stats`, { headers: authHeaders() });
     if (res.status === 401) { logoutAdmin(); return; }
+    if (res.status === 403) {
+      // Support executive does not have stats access
+      return;
+    }
     const data = await res.json();
     if (!data.success) return;
     const s = data.stats;
     
     document.getElementById('stat-visitors').textContent = s.visitors.toLocaleString();
     document.getElementById('stat-searches').textContent = s.searches.toLocaleString();
-    document.getElementById('stat-seatviews').textContent = s.seatViews.toLocaleString();
-    document.getElementById('stat-checkouts').textContent = s.checkouts.toLocaleString();
-    document.getElementById('stat-signups').textContent = s.signups.toLocaleString();
-    document.getElementById('stat-bookings').textContent = s.bookings.toLocaleString();
+    document.getElementById('stat-bookings').textContent = s.todayBookings.toLocaleString();
+    document.getElementById('stat-pending').textContent = s.pendingBookings.toLocaleString();
+    
+    // Revenue
+    if (adminUser && adminUser.role === 'super_admin') {
+      const revCard = document.getElementById('stat-rev-card');
+      if (revCard) {
+        revCard.style.display = 'block';
+        document.getElementById('stat-revenue').textContent = `₹${s.todayRevenue ? s.todayRevenue.toLocaleString() : 0}`;
+      }
+    } else {
+      const revCard = document.getElementById('stat-rev-card');
+      if (revCard) revCard.style.display = 'none';
+    }
     
     // Uptime
     const h = Math.floor(s.uptimeSeconds / 3600);
@@ -773,68 +1069,14 @@ async function fetchStats() {
     document.getElementById('uptime-text').innerHTML = `Uptime: <b>${h}h ${m}m</b>`;
     
     // Popular routes
-    renderTopRoutes(s.topRoutes);
-
-    // Web Vitals rendering
-    const vitalsGrid = document.getElementById('vitals-grid');
-    if (vitalsGrid && s.webVitals) {
-      const keys = Object.keys(s.webVitals);
-      if (keys.length === 0) {
-        vitalsGrid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">No measurements recorded yet.</div>`;
-        document.getElementById('vitals-count').textContent = '0 measurements';
-      } else {
-        let html = '';
-        let totalCount = 0;
-        keys.forEach(name => {
-          const m = s.webVitals[name];
-          totalCount += m.count;
-          
-          let color = 'var(--green)';
-          let ratingText = 'GOOD';
-          
-          const poorCount = m.ratings['poor'] || 0;
-          const niCount = m.ratings['needs-improvement'] || 0;
-          const goodCount = m.ratings['good'] || 0;
-          
-          if (poorCount > goodCount && poorCount > niCount) {
-            color = 'var(--red)';
-            ratingText = 'POOR';
-          } else if (niCount > goodCount) {
-            color = 'var(--gold)';
-            ratingText = 'NEEDS IMP.';
-          }
-          
-          let valDisplay = m.avg;
-          if (name === 'CLS') valDisplay = m.avg.toFixed(3);
-          else if (name === 'LCP' || name === 'TTFB') valDisplay = `${(m.avg / 1000).toFixed(2)}s`;
-          else valDisplay = `${Math.round(m.avg)}ms`;
-
-          html += `
-            <div class="vital-card" style="border: 1.5px solid var(--line); border-radius: var(--radius-md); padding: 16px; background: #fff; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 8px;">
-              <div style="font-weight: 700; font-size: 15px; color: var(--ink2); display: flex; justify-content: space-between; align-items: center;">
-                <span>${name}</span>
-                <span style="font-size: 10px; background: var(--bg); border: 1.5px solid var(--line); padding: 2px 6px; border-radius: 4px; color: var(--ink3);">Average</span>
-              </div>
-              <div style="font-size: 28px; font-weight: 800; color: ${color};">${valDisplay}</div>
-              <div style="font-size: 11px; color: var(--ink2); font-weight: 600;">Rating: <span style="color:${color}; font-weight: 700;">${ratingText}</span></div>
-              <div style="font-size: 11px; color: var(--ink3); font-weight: 500; margin-top: auto; display: flex; justify-content: space-between;">
-                <span>${m.count} reports</span>
-                <span>Good: ${goodCount} / Poor: ${poorCount}</span>
-              </div>
-            </div>
-          `;
-        });
-        vitalsGrid.innerHTML = html;
-        document.getElementById('vitals-count').textContent = `${totalCount} measurements`;
-      }
-    }
+    renderTopRoutes(s.topRoutes || []);
   } catch (err) { console.error('Stats fetch error:', err); }
 }
 
 async function fetchActivity() {
   try {
     const res = await fetch(`${API}/api/admin/activity?limit=50`, { headers: authHeaders() });
-    if (res.status === 401) return;
+    if (res.status === 401 || res.status === 403) return;
     const data = await res.json();
     if (!data.success) return;
     renderActivity(data.activity);
@@ -844,7 +1086,7 @@ async function fetchActivity() {
 async function fetchSearchHistory() {
   try {
     const res = await fetch(`${API}/api/admin/searches?limit=30`, { headers: authHeaders() });
-    if (res.status === 401) return;
+    if (res.status === 401 || res.status === 403) return;
     const data = await res.json();
     if (!data.success) return;
     renderSearchHistory(data.searches);
@@ -854,19 +1096,21 @@ async function fetchSearchHistory() {
 async function fetchUsers() {
   try {
     const res = await fetch(`${API}/api/admin/users`, { headers: authHeaders() });
-    if (res.status === 401) return;
+    if (res.status === 401 || res.status === 403) return;
     const data = await res.json();
     if (!data.success) return;
     renderUsers(data.users);
   } catch (err) { console.error('Users fetch error:', err); }
 }
 
+let allBookingsCached = [];
 async function fetchBookings() {
   try {
     const res = await fetch(`${API}/api/admin/bookings`, { headers: authHeaders() });
     if (res.status === 401) return;
     const data = await res.json();
     if (!data.success) return;
+    allBookingsCached = data.bookings;
     renderBookings(data.bookings);
   } catch (err) { console.error('Bookings fetch error:', err); }
 }
@@ -874,11 +1118,35 @@ async function fetchBookings() {
 async function fetchHealth() {
   try {
     const res = await fetch(`${API}/api/admin/health`, { headers: authHeaders() });
-    if (res.status === 401) return;
+    if (res.status === 401 || res.status === 403) return;
     const data = await res.json();
     if (!data.success) return;
     renderHealth(data.health);
   } catch (err) { console.error('Health fetch error:', err); }
+}
+
+async function fetchPayments() {
+  try {
+    const res = await fetch(`${API}/api/admin/payments`, { headers: authHeaders() });
+    if (res.status === 401 || res.status === 403) return;
+    const data = await res.json();
+    if (!data.success) return;
+    renderPayments(data.payments);
+  } catch (err) {
+    console.error('Payments fetch failed:', err);
+  }
+}
+
+async function fetchLogs() {
+  try {
+    const res = await fetch(`${API}/api/admin/logs`, { headers: authHeaders() });
+    if (res.status === 401 || res.status === 403) return;
+    const data = await res.json();
+    if (!data.success) return;
+    renderLogs(data.logs);
+  } catch (err) {
+    console.error('Audit logs fetch failed:', err);
+  }
 }
 
 // ─── RENDERERS ───
@@ -896,7 +1164,12 @@ const eventIcons = {
   view_seats: '💺',
   checkout: '🛒',
   signup: '✨',
-  booking: '🎫'
+  booking: '🎫',
+  login: '🔐',
+  create_admin_user: '🔑',
+  update_provider_credentials: '🔌',
+  cancel_booking: '❌',
+  refund_booking: '💰'
 };
 
 const eventLabels = {
@@ -905,7 +1178,12 @@ const eventLabels = {
   view_seats: 'Viewed Seats',
   checkout: 'Checkout',
   signup: 'New Signup',
-  booking: 'Booking'
+  booking: 'Booking',
+  login: 'Admin Login',
+  create_admin_user: 'Created Admin User',
+  update_provider_credentials: 'Updated Provider credentials',
+  cancel_booking: 'Cancelled booking',
+  refund_booking: 'Refund processed'
 };
 
 function renderActivity(items) {
@@ -924,23 +1202,25 @@ function renderActivity(items) {
     let detail = '';
     
     if (item.event === 'search' && item.data) {
-      detail = `<b>${item.data.from || '?'} → ${item.data.to || '?'}</b> on ${item.data.date || '?'}`;
+      detail = `<b>${escapeHtml(item.data.from)} → ${escapeHtml(item.data.to)}</b> on ${escapeHtml(item.data.date)}`;
     } else if (item.event === 'view_seats' && item.data) {
-      detail = `Bus <b>${item.data.busId || '?'}</b>`;
+      detail = `Bus <b>${escapeHtml(item.data.busId)}</b>`;
     } else if (item.event === 'checkout' && item.data) {
-      detail = `<b>${item.data.bus || '?'}</b> · Seats: ${item.data.seats || '?'}`;
+      detail = `<b>${escapeHtml(item.data.bus)}</b> · Seats: ${escapeHtml(item.data.seats)}`;
     } else if (item.event === 'signup' && item.data) {
-      detail = `<b>${item.data.name || '?'}</b> (${item.data.phone || item.data.email || ''})`;
+      detail = `<b>${escapeHtml(item.data.name)}</b> (${escapeHtml(item.data.phone || item.data.email)})`;
     } else if (item.event === 'booking' && item.data) {
-      detail = `<b>${item.data.operator || '?'}</b> · ${item.data.route || '?'} · Seats: <b>${item.data.seats || '?'}</b> · PNR: <b>${item.data.pnr || '?'}</b> · <b>₹${item.data.amount || '0'}</b>`;
+      detail = `<b>${escapeHtml(item.data.operator)}</b> · ${escapeHtml(item.data.route)} · Seats: <b>${escapeHtml(item.data.seats)}</b> · PNR: <b>${escapeHtml(item.data.pnr)}</b> · <b>₹${escapeHtml(item.data.amount)}</b>`;
     } else if (item.event === 'visit' && item.data) {
-      detail = `${item.data.page || '/'}`;
+      detail = `${escapeHtml(item.data.page)}`;
+    } else if (item.data) {
+      detail = `${escapeHtml(JSON.stringify(item.data))}`;
     }
 
     html += `
       <div class="activity-item">
-        <div class="ev-dot ${item.event}">${icon}</div>
-        <div class="ev-text"><b>${label}</b> ${detail ? '· ' + detail : ''}</div>
+        <div class="ev-dot ${escapeHtml(item.event)}">${icon}</div>
+        <div class="ev-text"><b>${escapeHtml(label)}</b> ${detail ? '· ' + detail : ''}</div>
         <div class="ev-time">${timeAgo(item.time)}</div>
       </div>
     `;
@@ -959,7 +1239,7 @@ function renderTopRoutes(routes) {
 
   let html = `<table class="admin-table"><thead><tr><th>#</th><th>Route</th><th>Searches</th></tr></thead><tbody>`;
   routes.forEach((r, i) => {
-    html += `<tr><td>${i + 1}</td><td><b>${r.route}</b></td><td><span class="count-pill">${r.count}</span></td></tr>`;
+    html += `<tr><td>${i + 1}</td><td><b>${escapeHtml(r.route)}</b></td><td><span class="count-pill">${escapeHtml(r.count)}</span></td></tr>`;
   });
   html += '</tbody></table>';
   container.innerHTML = html;
@@ -976,8 +1256,8 @@ function renderSearchHistory(searches) {
 
   let html = `<table class="admin-table"><thead><tr><th>Route</th><th>Date</th><th>Buses Found</th><th>When</th></tr></thead><tbody>`;
   searches.forEach(s => {
-    const busInfo = s.realCount !== undefined ? `${s.realCount} real / ${s.totalCount} total` : '-';
-    html += `<tr><td><b>${s.from || '?'} → ${s.to || '?'}</b></td><td>${s.date || '-'}</td><td>${busInfo}</td><td style="color:var(--ink3)">${timeAgo(s.time)}</td></tr>`;
+    const busInfo = s.realCount !== undefined ? `${escapeHtml(s.realCount)} real / ${escapeHtml(s.totalCount)} total` : '-';
+    html += `<tr><td><b>${escapeHtml(s.from)} → ${escapeHtml(s.to)}</b></td><td>${escapeHtml(s.date)}</td><td>${busInfo}</td><td style="color:var(--ink3)">${timeAgo(s.time)}</td></tr>`;
   });
   html += '</tbody></table>';
   container.innerHTML = html;
@@ -994,10 +1274,28 @@ function renderUsers(users) {
 
   let html = `<table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Registered</th></tr></thead><tbody>`;
   users.forEach(u => {
-    html += `<tr><td><b>${u.name || '-'}</b></td><td>${u.email || '-'}</td><td>${u.phone || '-'}</td><td style="color:var(--ink3)">${timeAgo(u.time)}</td></tr>`;
+    html += `<tr><td><b>${escapeHtml(u.name)}</b></td><td>${escapeHtml(u.email)}</td><td>${escapeHtml(u.phone)}</td><td style="color:var(--ink3)">${timeAgo(u.time)}</td></tr>`;
   });
   html += '</tbody></table>';
   container.innerHTML = html;
+}
+
+function filterBookings() {
+  const query = document.getElementById('booking-search-input').value.toLowerCase().trim();
+  if (!query) {
+    renderBookings(allBookingsCached);
+    return;
+  }
+  const filtered = allBookingsCached.filter(b => {
+    return (b.pnr && b.pnr.toLowerCase().includes(query)) ||
+           (b.operator && b.operator.toLowerCase().includes(query)) ||
+           (b.route && b.route.toLowerCase().includes(query)) ||
+           (b.seats && b.seats.toLowerCase().includes(query)) ||
+           (b.passengerName && b.passengerName.toLowerCase().includes(query)) ||
+           (b.customerPhone && b.customerPhone.includes(query)) ||
+           (b.customerEmail && b.customerEmail.toLowerCase().includes(query));
+  });
+  renderBookings(filtered);
 }
 
 function renderBookings(bookings) {
@@ -1009,31 +1307,103 @@ function renderBookings(bookings) {
     return;
   }
 
+  const role = adminUser ? adminUser.role : '';
+
   let html = `<table class="admin-table">
     <thead>
       <tr>
         <th>PNR</th>
+        <th>Passenger</th>
         <th>Operator</th>
         <th>Route</th>
         <th>Seats</th>
         <th>Amount</th>
+        <th>Status</th>
         <th>Booked On</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>`;
     
   bookings.forEach(b => {
+    const statusClass = b.status === 'confirmed' ? 'green' : (b.status === 'cancelled' || b.status === 'failed' ? 'red' : 'gold');
+    
+    let actionsHtml = '';
+    actionsHtml += `<button onclick="resendTicket('${escapeHtml(b.id)}')" style="padding:4px 8px; font-size:11px; font-weight:700; background:var(--blue-glow); color:var(--blue); border:1px solid var(--border); border-radius:6px; cursor:pointer; margin-right:4px;">Resend</button>`;
+    
+    if (role === 'super_admin' || role === 'admin') {
+      if (b.status !== 'cancelled' && b.status !== 'refunded') {
+        actionsHtml += `<button onclick="cancelBooking('${escapeHtml(b.id)}')" style="padding:4px 8px; font-size:11px; font-weight:700; background:var(--red-glow); color:var(--red); border:1px solid var(--border); border-radius:6px; cursor:pointer; margin-right:4px;">Cancel</button>`;
+      }
+      if (b.status === 'cancelled') {
+        actionsHtml += `<button onclick="refundBooking('${escapeHtml(b.id)}')" style="padding:4px 8px; font-size:11px; font-weight:700; background:var(--gold-glow); color:var(--gold); border:1px solid var(--border); border-radius:6px; cursor:pointer;">Refund</button>`;
+      }
+    } else if (role === 'support_executive') {
+      if (b.status !== 'confirmed' && b.status !== 'cancelled' && b.status !== 'refunded' && b.status !== 'failed') {
+        actionsHtml += `<button onclick="cancelBooking('${escapeHtml(b.id)}')" style="padding:4px 8px; font-size:11px; font-weight:700; background:var(--red-glow); color:var(--red); border:1px solid var(--border); border-radius:6px; cursor:pointer;">Cancel</button>`;
+      }
+    }
+
     html += `<tr>
-      <td><span class="pnr-badge">${b.pnr || '-'}</span></td>
-      <td><b>${b.operator || '-'}</b></td>
-      <td>${b.route || '-'}</td>
-      <td><span class="seat-badge">${b.seats || '-'}</span></td>
-      <td><b style="color:var(--green)">₹${b.amount}</b></td>
+      <td><span class="pnr-badge">${escapeHtml(b.pnr)}</span></td>
+      <td><b>${escapeHtml(b.passengerName)}</b><br><span style="font-size:11px; color:var(--ink3);">${escapeHtml(b.customerPhone)}</span></td>
+      <td><b>${escapeHtml(b.operator)}</b></td>
+      <td>${escapeHtml(b.route)}</td>
+      <td><span class="seat-badge">${escapeHtml(b.seats)}</span></td>
+      <td><b style="color:var(--green)">₹${escapeHtml(b.amount)}</b></td>
+      <td><span class="badge ${statusClass}">${escapeHtml(b.status.toUpperCase())}</span></td>
       <td style="color:var(--ink3)">${timeAgo(b.time)}</td>
+      <td>${actionsHtml}</td>
     </tr>`;
   });
   html += '</tbody></table>';
   container.innerHTML = html;
+}
+
+async function resendTicket(bookingId) {
+  alert('Ticket resent request sent successfully.');
+  await fetch(`${API}/api/admin/bookings/${bookingId}/resend`, {
+    method: 'POST',
+    headers: authHeaders()
+  });
+}
+
+async function cancelBooking(bookingId) {
+  if (!confirm('Are you sure you want to cancel this booking?')) return;
+  try {
+    const res = await fetch(`${API}/api/admin/bookings/${bookingId}/cancel`, {
+      method: 'POST',
+      headers: authHeaders()
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('Booking cancelled successfully.');
+      refreshAll();
+    } else {
+      alert('Cancellation failed: ' + data.error);
+    }
+  } catch (err) {
+    alert('Failed to cancel booking.');
+  }
+}
+
+async function refundBooking(bookingId) {
+  if (!confirm('Are you sure you want to process refund for this booking?')) return;
+  try {
+    const res = await fetch(`${API}/api/admin/bookings/${bookingId}/refund`, {
+      method: 'POST',
+      headers: authHeaders()
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('Refund processed successfully.');
+      refreshAll();
+    } else {
+      alert('Refund failed: ' + data.error);
+    }
+  } catch (err) {
+    alert('Failed to process refund.');
+  }
 }
 
 function renderHealth(health) {
@@ -1046,19 +1416,19 @@ function renderHealth(health) {
     if (!p) return;
     const age = p.sessionAge !== null ? `${Math.floor(p.sessionAge / 60)}m ${p.sessionAge % 60}s` : 'N/A';
     const statusText = p.status ? p.status : (p.sessionActive ? '✅ Active' : '❌ Expired');
-    const noteRow = p.note ? `<div class="h-row"><span class="h-label">Note</span><span class="h-val" style="color:#eab308;font-size:11px;font-weight:600;">${p.note}</span></div>` : '';
+    const noteRow = p.note ? `<div class="h-row"><span class="h-label">Note</span><span class="h-val" style="color:#eab308;font-size:11px;font-weight:600;">${escapeHtml(p.note)}</span></div>` : '';
     const activeClass = p.sessionActive || p.status?.includes('Reachable') ? 'active' : 'inactive';
     
     html += `
       <div class="health-card">
         <div class="h-name">
           <span class="status-dot ${activeClass}"></span>
-          ${p.name}
+          ${escapeHtml(p.name)}
         </div>
-        <div class="h-row"><span class="h-label">Status</span><span class="h-val">${statusText}</span></div>
+        <div class="h-row"><span class="h-label">Status</span><span class="h-val">${escapeHtml(statusText)}</span></div>
         <div class="h-row"><span class="h-label">Last Login</span><span class="h-val">${p.lastLogin ? new Date(p.lastLogin).toLocaleTimeString('en-IN') : 'Never'}</span></div>
-        <div class="h-row"><span class="h-label">Session Age</span><span class="h-val">${age}</span></div>
-        <div class="h-row"><span class="h-label">Cities Loaded</span><span class="h-val">${p.citiesLoaded}</span></div>
+        <div class="h-row"><span class="h-label">Session Age</span><span class="h-val">${escapeHtml(age)}</span></div>
+        <div class="h-row"><span class="h-label">Cities Loaded</span><span class="h-val">${escapeHtml(p.citiesLoaded)}</span></div>
         ${noteRow}
       </div>
     `;
@@ -1067,21 +1437,263 @@ function renderHealth(health) {
   grid.innerHTML = html;
 }
 
+function renderPayments(payments) {
+  const container = document.getElementById('payments-table');
+  document.getElementById('payments-count').textContent = `${payments.length} transactions`;
+  
+  if (payments.length === 0) {
+    container.innerHTML = '<div class="empty-state">No payment logs recorded yet.</div>';
+    return;
+  }
+
+  let html = `<table class="admin-table">
+    <thead>
+      <tr>
+        <th>Payment ID</th>
+        <th>Customer Name</th>
+        <th>Gateway</th>
+        <th>Transaction ID</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
+    <tbody>`;
+    
+  payments.forEach(p => {
+    const statusClass = p.status === 'success' || p.status === 'captured' ? 'green' : (p.status === 'failed' ? 'red' : 'gold');
+    html += `<tr>
+      <td><code>${escapeHtml(p.id.slice(0, 8))}...</code></td>
+      <td><b>${escapeHtml(p.customerName)}</b></td>
+      <td>${escapeHtml(p.gateway)}</td>
+      <td><code>${escapeHtml(p.transactionId)}</code></td>
+      <td><b style="color:var(--green)">₹${escapeHtml(p.amount)}</b></td>
+      <td><span class="badge ${statusClass}">${escapeHtml(p.status.toUpperCase())}</span></td>
+      <td style="color:var(--ink3)">${new Date(p.createdAt).toLocaleString('en-IN')}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+async function fetchProviders() {
+  try {
+    const res = await fetch(`${API}/api/admin/providers`, { headers: authHeaders() });
+    if (res.status === 401) return;
+    const data = await res.json();
+    if (!data.success) return;
+    renderProviders(data.providers);
+  } catch (err) {
+    console.error('Providers fetch failed:', err);
+  }
+}
+
+function renderProviders(providers) {
+  const container = document.getElementById('providers-container');
+  const role = adminUser ? adminUser.role : '';
+
+  let html = '';
+  providers.forEach(p => {
+    const isOnline = p.status === 'active';
+    const statusClass = isOnline ? 'green' : 'red';
+    
+    let actionBtn = '';
+    if (role === 'super_admin') {
+      actionBtn = `<button onclick="openProviderModal('${escapeHtml(p.providerName)}', '${escapeHtml(p.portalUrl)}', '${escapeHtml(p.status)}')" style="margin-top:14px; width:100%; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); font-weight:700; cursor:pointer;">Edit Credentials</button>`;
+    }
+
+    html += `
+      <div class="health-card" style="background:var(--surface); border:1px solid var(--border); padding:20px; border-radius:var(--radius); display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div style="font-size:16px; font-weight:800; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+            <span class="status-dot ${isOnline ? 'active' : 'inactive'}"></span>
+            ${escapeHtml(p.providerName)}
+          </div>
+          <div class="h-row" style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;"><span class="h-label" style="color:var(--ink3)">Portal URL</span><span class="h-val" style="color:var(--ink2)">${escapeHtml(p.portalUrl)}</span></div>
+          <div class="h-row" style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;"><span class="h-label" style="color:var(--ink3)">Status</span><span class="h-val"><span class="badge ${statusClass}">${escapeHtml(p.status.toUpperCase())}</span></span></div>
+          <div class="h-row" style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;"><span class="h-label" style="color:var(--ink3)">Credentials Configured</span><span class="h-val">${p.hasCredentials ? '✅ Yes' : '❌ No (Using .env fallback)'}</span></div>
+        </div>
+        ${actionBtn}
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+function openProviderModal(name, url, status) {
+  document.getElementById('provider-modal-name').value = name;
+  document.getElementById('provider-modal-title').textContent = name;
+  document.getElementById('provider-modal-url').value = url;
+  document.getElementById('provider-modal-user').value = '';
+  document.getElementById('provider-modal-pass').value = '';
+  document.getElementById('provider-modal-status').value = status;
+  
+  const modal = document.getElementById('provider-modal');
+  modal.style.display = 'flex';
+  modal.classList.remove('hidden');
+}
+
+function closeProviderModal() {
+  const modal = document.getElementById('provider-modal');
+  modal.style.display = 'none';
+  modal.classList.add('hidden');
+}
+
+async function saveProviderCredentials(e) {
+  e.preventDefault();
+  const providerName = document.getElementById('provider-modal-name').value;
+  const portalUrl = document.getElementById('provider-modal-url').value;
+  const username = document.getElementById('provider-modal-user').value.trim();
+  const password = document.getElementById('provider-modal-pass').value;
+  const status = document.getElementById('provider-modal-status').value;
+  
+  try {
+    const res = await fetch(`${API}/api/admin/providers`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({
+        providerName,
+        portalUrl,
+        username: username || undefined,
+        password: password || undefined,
+        status
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('Provider credentials saved successfully.');
+      closeProviderModal();
+      fetchProviders();
+    } else {
+      alert('Save failed: ' + data.error);
+    }
+  } catch (err) {
+    alert('Save failed. Connection error.');
+  }
+}
+
+async function createAdminUser(e) {
+  e.preventDefault();
+  const name = document.getElementById('new-admin-name').value.trim();
+  const email = document.getElementById('new-admin-email').value.trim();
+  const mobile = document.getElementById('new-admin-mobile').value.trim();
+  const role = document.getElementById('new-admin-role').value;
+  const password = document.getElementById('new-admin-pwd').value;
+  const msgEl = document.getElementById('admin-create-msg');
+  
+  msgEl.style.display = 'none';
+  
+  try {
+    const res = await fetch(`${API}/api/admin/users/create`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ name, email, mobile, password, role })
+    });
+    const data = await res.json();
+    if (data.success) {
+      msgEl.textContent = `Administrator account created successfully!`;
+      msgEl.style.color = 'var(--green)';
+      msgEl.style.display = 'block';
+      document.getElementById('admin-create-form').reset();
+    } else {
+      msgEl.textContent = data.error || 'Failed to create account.';
+      msgEl.style.color = 'var(--red)';
+      msgEl.style.display = 'block';
+    }
+  } catch (err) {
+    msgEl.textContent = 'Connection error.';
+    msgEl.style.color = 'var(--red)';
+    msgEl.style.display = 'block';
+  }
+}
+
+function renderLogs(logs) {
+  const container = document.getElementById('logs-table');
+  document.getElementById('logs-count').textContent = `${logs.length} logs`;
+  
+  if (logs.length === 0) {
+    container.innerHTML = '<div class="empty-state">No audit logs recorded yet.</div>';
+    return;
+  }
+
+  let html = `<table class="admin-table">
+    <thead>
+      <tr>
+        <th>Admin Name</th>
+        <th>Role</th>
+        <th>Action performed</th>
+        <th>IP Address</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody>`;
+    
+  logs.forEach(l => {
+    let actionText = `<b>${escapeHtml(l.action)}</b>`;
+    if (l.metadata) {
+      actionText += ` <span style="font-size:11px; color:var(--ink3);">(${escapeHtml(JSON.stringify(l.metadata))})</span>`;
+    }
+    
+    html += `<tr>
+      <td><b>${escapeHtml(l.adminName)}</b></td>
+      <td><span class="badge ${l.role === 'super_admin' ? 'red' : 'blue'}">${escapeHtml(l.role.replace('_', ' ').toUpperCase())}</span></td>
+      <td>${actionText}</td>
+      <td><code style="color:var(--teal);">${escapeHtml(l.ip)}</code></td>
+      <td style="color:var(--ink3)">${new Date(l.time).toLocaleString('en-IN')}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
 // ─── REFRESH ───
 async function refreshAll() {
   const btn = document.getElementById('refresh-btn');
   btn.classList.add('spinning');
   
-  await Promise.all([
-    fetchStats(),
-    fetchActivity(),
-    fetchSearchHistory(),
-    fetchUsers(),
-    fetchBookings(),
-    fetchHealth()
-  ]);
+  const role = adminUser ? adminUser.role : '';
+  const promises = [];
   
+  if (role !== 'support_executive') {
+    promises.push(fetchStats());
+    promises.push(fetchActivity());
+    promises.push(fetchSearchHistory());
+    promises.push(fetchUsers());
+    promises.push(fetchHealth());
+  }
+  
+  promises.push(fetchBookings());
+  
+  await Promise.all(promises);
   setTimeout(() => btn.classList.remove('spinning'), 600);
+}
+
+// ─── UPTIME TIMER ───
+let uptimeTimer = null;
+function startUptimeCounter() {
+  clearInterval(uptimeTimer);
+  const display = document.getElementById('uptime-text');
+  if (!display) return;
+  
+  let totalSeconds = 0;
+  // Initialize timer
+  fetch(`${API}/api/admin/health`, { headers: authHeaders() })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        totalSeconds = data.health.serverUptime;
+      }
+    })
+    .catch(() => {});
+    
+  uptimeTimer = setInterval(() => {
+    totalSeconds++;
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    display.innerHTML = `Uptime: <b>${h}h ${m}m ${s}s</b>`;
+  }, 1000);
 }
 
 // ─── AUTO-REFRESH ───
@@ -1094,9 +1706,9 @@ if (window.location.protocol === 'file:') {
   document.getElementById('file-protocol-warning').style.display = 'block';
 }
 
-if (adminToken) {
+if (adminToken && adminUser) {
   // Verify saved token
-  fetch(`${API}/api/admin/stats`, { headers: authHeaders() })
+  fetch(`${API}/api/admin/health`, { headers: authHeaders() })
     .then(r => {
       if (r.status === 401) {
         logoutAdmin();
@@ -1111,5 +1723,40 @@ if (adminToken) {
   document.getElementById('login-gate').classList.remove('hidden');
 }
 </script>
+<!-- PROVIDER MODAL -->
+<div id="provider-modal" class="login-gate hidden" style="background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); display:none; justify-content:center; align-items:center; z-index:9999;">
+  <div class="login-box" style="text-align:left; max-width:450px; padding:32px 28px;">
+    <h3 style="font-size:18px; font-weight:800; margin-bottom:6px; color:var(--ink);">Edit B2B Credentials</h3>
+    <p style="color:var(--ink3); font-size:12px; margin-bottom:20px;">Provider: <span id="provider-modal-title" style="color:var(--teal); font-weight:700;">Laxmi Holidays</span></p>
+    
+    <form onsubmit="saveProviderCredentials(event)" style="display:flex; flex-direction:column; gap:12px;">
+      <input type="hidden" id="provider-modal-name">
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="font-size:11px; font-weight:700; color:var(--ink2);">PORTAL URL</label>
+        <input type="url" id="provider-modal-url" required style="width:100%; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); outline:none; margin:0;">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="font-size:11px; font-weight:700; color:var(--ink2);">PORTAL USERNAME</label>
+        <input type="text" id="provider-modal-user" placeholder="Enter B2B portal username" style="width:100%; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); outline:none; margin:0;">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="font-size:11px; font-weight:700; color:var(--ink2);">PORTAL PASSWORD (WRITE-ONLY)</label>
+        <input type="password" id="provider-modal-pass" placeholder="Enter secure password" style="width:100%; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); outline:none; margin:0;">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="font-size:11px; font-weight:700; color:var(--ink2);">GATEWAY STATUS</label>
+        <select id="provider-modal-status" style="width:100%; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); outline:none; cursor:pointer;">
+          <option value="active">Active (Online)</option>
+          <option value="inactive">Inactive (Offline)</option>
+        </select>
+      </div>
+      
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <button type="submit" style="flex:1; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer;">Save Config</button>
+        <button type="button" onclick="closeProviderModal()" style="flex:1; padding:12px; background:var(--surface3); color:var(--ink); border:1px solid var(--border); border-radius:8px; font-weight:700; cursor:pointer;">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
 </body>
 </html>

@@ -10,22 +10,33 @@ generator client {
 enum Role {
   super_admin
   admin
-  support_agent
+  support_executive
   customer
 }
 
 model User {
   id           String     @id @default(uuid())
   name         String?
-  email        String     @unique
-  mobile       String?
-  passwordHash String     @map("password_hash")
+  email        String?    @unique
+  mobile       String?    @unique
+  passwordHash String?    @map("password_hash")
   role         Role       @default(customer)
   createdAt    DateTime   @default(now()) @map("created_at")
   orders       Order[]
   auditLogs    AuditLog[]
 
   @@map("users")
+}
+
+model OtpVerification {
+  id        String   @id @default(uuid())
+  mobile    String
+  code      String
+  expiresAt DateTime @map("expires_at")
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("otp_verifications")
 }
 
 model Order {

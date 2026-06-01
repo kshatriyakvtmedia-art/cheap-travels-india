@@ -1104,50 +1104,43 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 
 <!-- ════════════ AUTH MODAL ════════════ -->
 <div class="auth-overlay" id="auth-overlay">
-  <div class="auth-box">
+  <div class="auth-box" style="padding:40px 32px; max-width:380px;">
     <button class="auth-close" onclick="closeAuth()">✕</button>
-    <img src="Logo.png" alt="Cheap Travels India" class="auth-logo">
-    <div class="auth-tabs">
-      <div class="auth-tab active" id="tab-signin" onclick="switchAuthTab('signin')">Sign In</div>
-      <div class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Create Account</div>
+    <img src="Logo.png" alt="Cheap Travels India" class="auth-logo" style="margin-bottom:24px;">
+    
+    <div id="otp-phone-pane">
+      <h3 style="font-size:18px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Verify Mobile Number</h3>
+      <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px;">Enter your mobile number to receive a 6-digit verification code. Register or login instantly!</p>
+      
+      <div class="auth-err" id="auth-mobile-err" style="display:none; color:var(--red); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
+      
+      <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:20px;">
+        <label style="font-size:11px; font-weight:700; color:var(--ink2);">MOBILE NUMBER</label>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span style="font-size:15px; font-weight:700; color:var(--ink); background:var(--line); padding:10px 12px; border-radius:8px; border:1.5px solid var(--line);">+91</span>
+          <input type="tel" id="auth-mobile-input" placeholder="9876543210" maxlength="10" style="flex:1; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; outline:none; font-size:15px; font-weight:700; color:var(--ink);">
+        </div>
+      </div>
+      
+      <button class="auth-submit" onclick="sendMobileOtp()" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:750; cursor:pointer; font-size:14px;">Send Verification OTP →</button>
     </div>
-
-    <!-- SIGN IN -->
-    <div class="auth-panel active" id="panel-signin">
-      <div class="auth-err" id="signin-err"></div>
-      <div class="auth-field">
-        <label>Email or Phone</label>
-        <input type="text" id="signin-email" placeholder="you@email.com or +91 98765 43210">
+    
+    <div id="otp-code-pane" style="display:none;">
+      <h3 style="font-size:18px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Enter Verification Code</h3>
+      <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px;">A 6-digit code has been sent to <b id="otp-sent-mobile" style="color:var(--ink);">+91 98765 43210</b>. Please enter it below.</p>
+      
+      <div class="auth-err" id="auth-otp-err" style="display:none; color:var(--red); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
+      
+      <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:20px;">
+        <label style="font-size:11px; font-weight:700; color:var(--ink2);">6-DIGIT OTP CODE</label>
+        <input type="text" id="auth-otp-input" placeholder="e.g. 123456" maxlength="6" style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; outline:none; font-size:16px; font-weight:800; text-align:center; letter-spacing:4px; color:var(--ink);">
       </div>
-      <div class="auth-field">
-        <label>Password</label>
-        <input type="password" id="signin-pass" placeholder="Enter your password">
+      
+      <button class="auth-submit" onclick="verifyMobileOtp()" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:750; cursor:pointer; font-size:14px; margin-bottom:12px;">Verify & Login →</button>
+      
+      <div style="text-align:center; font-size:12px; color:var(--ink3);">
+        Didn't receive code? <span onclick="resetOtpFlow()" style="color:var(--teal); font-weight:700; cursor:pointer;">Go back and retry</span>
       </div>
-      <button class="auth-submit" onclick="doSignIn()">Sign In →</button>
-      <div class="auth-small">Don't have an account? <span onclick="switchAuthTab('signup')">Create one free</span></div>
-    </div>
-
-    <!-- SIGN UP -->
-    <div class="auth-panel" id="panel-signup">
-      <div class="auth-err" id="signup-err"></div>
-      <div class="auth-field">
-        <label>Full Name</label>
-        <input type="text" id="signup-name" placeholder="Rakesh Sharma">
-      </div>
-      <div class="auth-field">
-        <label>Email</label>
-        <input type="email" id="signup-email" placeholder="you@email.com">
-      </div>
-      <div class="auth-field">
-        <label>Mobile Number</label>
-        <input type="tel" id="signup-phone" placeholder="+91 98765 43210">
-      </div>
-      <div class="auth-field">
-        <label>Password</label>
-        <input type="password" id="signup-pass" placeholder="Min 6 characters">
-      </div>
-      <button class="auth-submit" onclick="doSignUp()">Create Account →</button>
-      <div class="auth-small">Already registered? <span onclick="switchAuthTab('signin')">Sign in here</span></div>
     </div>
   </div>
 </div>
@@ -2629,79 +2622,110 @@ let pendingCheckout = false;
 })();
 
 function openAuth(tab = 'signin') {
+  resetOtpFlow();
   document.getElementById('auth-overlay').classList.add('open');
-  switchAuthTab(tab);
 }
+
 function closeAuth() {
   document.getElementById('auth-overlay').classList.remove('open');
   pendingCheckout = false;
 }
-function switchAuthTab(tab) {
-  ['signin','signup'].forEach(t => {
-    document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
-    document.getElementById(`panel-${t}`).classList.toggle('active', t === tab);
-  });
+
+function resetOtpFlow() {
+  document.getElementById('otp-phone-pane').style.display = 'block';
+  document.getElementById('otp-code-pane').style.display = 'none';
+  document.getElementById('auth-mobile-input').value = '';
+  document.getElementById('auth-otp-input').value = '';
+  document.getElementById('auth-mobile-err').style.display = 'none';
+  document.getElementById('auth-otp-err').style.display = 'none';
 }
 
-function doSignIn() {
-  const email = document.getElementById('signin-email').value.trim();
-  const pass  = document.getElementById('signin-pass').value;
-  const err   = document.getElementById('signin-err');
-  err.style.display = 'none';
+async function sendMobileOtp() {
+  const mobileInput = document.getElementById('auth-mobile-input').value.trim();
+  const errEl = document.getElementById('auth-mobile-err');
+  errEl.style.display = 'none';
 
-  if (!email || !pass) { showAuthErr('signin', 'Please fill in all fields.'); return; }
+  if (!mobileInput || mobileInput.length !== 10 || isNaN(mobileInput)) {
+    errEl.textContent = 'Please enter a valid 10-digit mobile number.';
+    errEl.style.display = 'block';
+    return;
+  }
 
-  // Check localStorage users
-  const users = JSON.parse(localStorage.getItem('cti_users') || '[]');
-  const user  = users.find(u => (u.email === email || u.phone === email) && u.pass === pass);
-  if (!user) { showAuthErr('signin', 'Incorrect email/phone or password.'); return; }
+  const formattedMobile = `+91${mobileInput}`;
 
-  loginUser(user);
+  try {
+    const res = await fetch(`${API}/api/auth/otp/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mobile: formattedMobile })
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('otp-phone-pane').style.display = 'none';
+      document.getElementById('otp-code-pane').style.display = 'block';
+      document.getElementById('otp-sent-mobile').textContent = `+91 ${mobileInput.slice(0,5)} ${mobileInput.slice(5)}`;
+    } else {
+      errEl.textContent = data.error || 'Failed to send OTP. Please try again.';
+      errEl.style.display = 'block';
+    }
+  } catch (err) {
+    errEl.textContent = 'Network error. Please make sure backend is running.';
+    errEl.style.display = 'block';
+  }
 }
 
-function doSignUp() {
-  const name  = document.getElementById('signup-name').value.trim();
-  const email = document.getElementById('signup-email').value.trim();
-  const phone = document.getElementById('signup-phone').value.trim();
-  const pass  = document.getElementById('signup-pass').value;
-  const err   = document.getElementById('signup-err');
-  err.style.display = 'none';
+async function verifyMobileOtp() {
+  const mobileInput = document.getElementById('auth-mobile-input').value.trim();
+  const otpInput = document.getElementById('auth-otp-input').value.trim();
+  const errEl = document.getElementById('auth-otp-err');
+  errEl.style.display = 'none';
 
-  if (!name || !email || !phone || !pass) { showAuthErr('signup', 'All fields are required.'); return; }
-  if (pass.length < 6) { showAuthErr('signup', 'Password must be at least 6 characters.'); return; }
-  if (!/\S+@\S+\.\S+/.test(email)) { showAuthErr('signup', 'Please enter a valid email address.'); return; }
+  if (!otpInput || otpInput.length !== 6 || isNaN(otpInput)) {
+    errEl.textContent = 'Please enter a valid 6-digit OTP code.';
+    errEl.style.display = 'block';
+    return;
+  }
 
-  const users = JSON.parse(localStorage.getItem('cti_users') || '[]');
-  if (users.find(u => u.email === email)) { showAuthErr('signup', 'This email is already registered. Sign in instead.'); return; }
+  const formattedMobile = `+91${mobileInput}`;
 
-  const user = { name, email, phone, pass, joined: new Date().toISOString(), bonus: 51 };
-  users.push(user);
-  localStorage.setItem('cti_users', JSON.stringify(users));
-
-  // Send details to owner's email
-  fetch(`${API}/api/signup`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, phone })
-  }).catch(e => console.error("Signup email notification failed:", e));
-
-  loginUser(user);
-}
-
-function loginUser(user) {
-  currentUser = user;
-  localStorage.setItem('cti_user', JSON.stringify(user));
-  updateAuthUI();
-  closeAuth();
-  if (pendingCheckout) {
-    pendingCheckout = false;
-    continueToCheckout();
+  try {
+    const res = await fetch(`${API}/api/auth/otp/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mobile: formattedMobile, code: otpInput })
+    });
+    const data = await res.json();
+    
+    if (data.success) {
+      const user = {
+        name: data.user.name,
+        phone: data.user.mobile,
+        id: data.user.id
+      };
+      
+      currentUser = user;
+      localStorage.setItem('cti_user', JSON.stringify(user));
+      updateAuthUI();
+      closeAuth();
+      
+      if (pendingCheckout) {
+        pendingCheckout = false;
+        continueToCheckout();
+      }
+    } else {
+      errEl.textContent = data.error || 'Invalid OTP code. Please try again.';
+      errEl.style.display = 'block';
+    }
+  } catch (err) {
+    errEl.textContent = 'Verification failed. Connection error.';
+    errEl.style.display = 'block';
   }
 }
 
 function logoutUser() {
   currentUser = null;
   localStorage.removeItem('cti_user');
+  fetch(`${API}/api/auth/logout`, { method: 'POST' }).catch(() => {});
   updateAuthUI();
   document.getElementById('user-chip').classList.remove('open');
 }
@@ -2725,12 +2749,6 @@ function updateAuthUI() {
     if (mnSignIn) mnSignIn.style.display = 'block';
     if (mnUser)   mnUser.style.display = 'none';
   }
-}
-
-function showAuthErr(panel, msg) {
-  const el = document.getElementById(`${panel}-err`);
-  el.textContent = msg;
-  el.style.display = 'block';
 }
 
 // Close modal when clicking overlay backdrop
