@@ -96,11 +96,13 @@ model Ticket {
 }
 
 model Provider {
-  id           String   @id @default(uuid())
-  providerName String   @map("provider_name")
-  portalUrl    String   @map("portal_url")
-  status       String   @default("active")
-  createdAt    DateTime @default(now()) @map("created_at")
+  id                String   @id @default(uuid())
+  providerName      String   @map("provider_name")
+  portalUrl         String   @map("portal_url")
+  encryptedUsername String?  @map("encrypted_username")
+  encryptedPassword String?  @map("encrypted_password")
+  status            String   @default("active")
+  createdAt         DateTime @default(now()) @map("created_at")
 
   @@map("providers")
 }
