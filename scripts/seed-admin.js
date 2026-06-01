@@ -28,6 +28,58 @@ async function seed() {
   });
 
   console.log(`Super Admin user seeded successfully:`, adminUser);
+
+  // Seed B2B Operator Providers
+  console.log(`Seeding B2B Operator Providers...`);
+  const { encrypt } = require('../lib/crypto');
+  
+  const providersToSeed = [
+    {
+      providerName: 'Laxmi Holidays',
+      portalUrl: 'https://lxmi.laxmiholidays.com',
+      username: 'lxmi.cheap',
+      password: 'lxmicheap546'
+    },
+    {
+      providerName: 'Ram Dalal',
+      portalUrl: 'https://rdlh.ticketsimply.com',
+      username: 'cheap',
+      password: 'cheapdalal546'
+    }
+  ];
+
+  for (const prov of providersToSeed) {
+    const existing = await prisma.provider.findFirst({
+      where: { providerName: prov.providerName }
+    });
+
+    const encUsername = encrypt(prov.username);
+    const encPassword = encrypt(prov.password);
+
+    if (existing) {
+      await prisma.provider.update({
+        where: { id: existing.id },
+        data: {
+          portalUrl: prov.portalUrl,
+          encryptedUsername: encUsername,
+          encryptedPassword: encPassword,
+          status: 'active'
+        }
+      });
+      console.log(`Updated provider: ${prov.providerName}`);
+    } else {
+      await prisma.provider.create({
+        data: {
+          providerName: prov.providerName,
+          portalUrl: prov.portalUrl,
+          encryptedUsername: encUsername,
+          encryptedPassword: encPassword,
+          status: 'active'
+        }
+      });
+      console.log(`Created provider: ${prov.providerName}`);
+    }
+  }
 }
 
 seed()
