@@ -3,15 +3,106 @@ const cors = require('cors');
 const cheerio = require('cheerio');
 const path = require('path');
 const fs = require('fs');
+const compression = require('compression');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Security and compression middleware
+app.use(helmet({
+  contentSecurityPolicy: false // Keep CSP disabled to prevent issues with loaded assets/scripts
+}));
+app.use(compression());
 app.use(cors());
 app.use(express.json());
 
-// Serve static frontend files from public directory
-app.use(express.static(path.join(__dirname, '..', 'public')));
+// Rate limiter for search and layout endpoints to prevent resource exhaustion
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: "Too many requests from this IP. Please try again after 15 minutes." }
+});
+
+// Serve static frontend files from public directory with proper caching headers
+app.use(express.static(path.join(__dirname, '..', 'public'), {
+  maxAge: '1d',
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+    } else {
+      res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache JS/CSS/Images for 1 day
+    }
+  }
+}));
+
+// Robust B2B fetch wrapper with Keep-Alive, timeouts, and exponential backoff retry logic
+async function fetchWithTimeoutAndRetry(url, options = {}, retries = 2, delay = 1000) {
+  const timeout = options.timeout || 15000; // 15s timeout
+  delete options.timeout;
+
+  if (!options.headers) options.headers = {};
+  options.headers['Connection'] = 'keep-alive';
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      
+      // Return response immediately for non-server errors (401 redirects, 404s, etc.)
+      if (response.status < 500) {
+        return response;
+      }
+      
+      throw new Error(`B2B portal returned server error status: ${response.status}`);
+    } catch (error) {
+      clearTimeout(timeoutId);
+      const isTimeout = error.name === 'AbortError';
+      const isLastAttempt = attempt === retries;
+
+      console.warn(`[fetch B2B] Failure on ${url} (Attempt ${attempt + 1}/${retries + 1}): ${error.message}${isTimeout ? ' (Timeout)' : ''}`);
+
+      if (isLastAttempt) {
+        throw error;
+      }
+
+      const backoffDelay = delay * Math.pow(2, attempt);
+      await new Promise(resolve => setTimeout(resolve, backoffDelay));
+    }
+  }
+}
+
+// Search result caching setup
+const searchCache = new Map();
+const SEARCH_CACHE_TTL = 90 * 1000; // 90 seconds cache TTL
+
+function getSearchCacheKey(from, to, date) {
+  return `${from}:${to}:${date}`;
+}
+
+function generateETag(data) {
+  return crypto.createHash('md5').update(JSON.stringify(data)).digest('base64');
+}
+
+// Clean up expired cache entries every minute
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, value] of searchCache.entries()) {
+    if (now - value.timestamp > SEARCH_CACHE_TTL) {
+      searchCache.delete(key);
+    }
+  }
+}, 60000);
 
 // B2B Portal configurations for both Laxmi and Ram Dalal
 const OPERATORS = {
@@ -44,7 +135,7 @@ async function performLogin(opKey) {
   console.log(`Starting B2B portal login sequence for ${op.name}...`);
   try {
     // 1. Fetch main page to get initial cookies and CSRF token
-    const initialRes = await fetch(op.url, {
+    const initialRes = await fetchWithTimeoutAndRetry(op.url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
       }
@@ -75,7 +166,7 @@ async function performLogin(opKey) {
     bodyParams.append("login_flag", "");
     bodyParams.append("authenticity_token", op.csrfToken);
 
-    const loginRes = await fetch(`${op.url}/account/signin`, {
+    const loginRes = await fetchWithTimeoutAndRetry(`${op.url}/account/signin`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -122,7 +213,7 @@ async function fetchCities(opKey) {
   await ensureSession(opKey);
   console.log(`Fetching dynamic B2B JS file for destinations of ${op.name}...`);
   
-  const jsRes = await fetch(`${op.url}/agent_dynamic_js_content.js`, {
+  const jsRes = await fetchWithTimeoutAndRetry(`${op.url}/agent_dynamic_js_content.js`, {
     headers: {
       "Cookie": op.sessionCookies.join("; "),
       "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -140,6 +231,25 @@ async function fetchCities(opKey) {
   
   const startIdx = jsText.indexOf('var destinations_map =');
   if (startIdx === -1) {
+    // Fallback: try searching without 'var ' prefix in case of whitespace variations
+    const altIdx = jsText.indexOf('destinations_map');
+    if (altIdx !== -1) {
+      // Found with different prefix, adjust
+      const adjustedIdx = jsText.lastIndexOf('var', altIdx);
+      if (adjustedIdx !== -1 && (altIdx - adjustedIdx) < 30) {
+        // Use the position of 'var' as the real start
+        const endIdx = jsText.indexOf(']]}', adjustedIdx) + 3;
+        const decl = jsText.substring(adjustedIdx, endIdx);
+        const jsonStr = decl.substring(decl.indexOf('{'), decl.lastIndexOf('}') + 1);
+        const dataMap = JSON.parse(jsonStr);
+        if (dataMap.destinations) {
+          return dataMap.destinations.map(d => ({
+            name: d[0],
+            id: String(d[1])
+          }));
+        }
+      }
+    }
     throw new Error(`Could not find destinations_map variable in ${op.name} B2B JS.`);
   }
   const endIdx = jsText.indexOf(']]}', startIdx) + 3;
@@ -345,7 +455,7 @@ async function searchOperatorBuses(opKey, fromId, toId, date) {
   queryParams.append("can_block_or_unblock", "false");
 
   const searchUrl = `${op.url}/ibooking/bookings/search_service?${queryParams.toString()}`;
-  const searchRes = await fetch(searchUrl, {
+  const searchRes = await fetchWithTimeoutAndRetry(searchUrl, {
     headers: {
       "Cookie": op.sessionCookies.join("; "),
       "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -428,10 +538,27 @@ async function searchOperatorBuses(opKey, fromId, toId, date) {
 // Simulator helpers removed
 
 // API: Search buses
-app.get('/api/search', async (req, res) => {
+app.get('/api/search', apiLimiter, async (req, res) => {
   const { from, to, date } = req.query; // date format: DD/MM/YYYY
   if (!from || !to || !date) {
     return res.status(400).json({ success: false, error: "Missing required query parameters: from, to, date" });
+  }
+
+  // 1. In-memory Cache lookup
+  const cacheKey = getSearchCacheKey(from, to, date);
+  const cached = searchCache.get(cacheKey);
+  const now = Date.now();
+
+  if (cached && (now - cached.timestamp) < SEARCH_CACHE_TTL) {
+    console.log(`[Cache Hit] Serving search results for ${cacheKey}`);
+    const etag = generateETag(cached.buses);
+    res.setHeader('ETag', etag);
+    res.setHeader('Cache-Control', 'public, max-age=15');
+
+    if (req.headers['if-none-match'] === etag) {
+      return res.status(304).end();
+    }
+    return res.json({ success: true, buses: cached.buses, fromCache: true });
   }
 
   try {
@@ -501,6 +628,20 @@ app.get('/api/search', async (req, res) => {
 
     // Track search analytics
     trackEvent('search', { from: fromName, to: toName, date, realCount: realBuses.length, totalCount: buses.length });
+
+    // Store in cache
+    searchCache.set(cacheKey, {
+      buses: buses,
+      timestamp: Date.now()
+    });
+
+    const etag = generateETag(buses);
+    res.setHeader('ETag', etag);
+    res.setHeader('Cache-Control', 'public, max-age=15');
+
+    if (req.headers['if-none-match'] === etag) {
+      return res.status(304).end();
+    }
 
     res.json({ success: true, buses });
   } catch (error) {
@@ -601,7 +742,7 @@ app.get('/api/layout/:resId', async (req, res) => {
     initParams.append("can_block_or_unblock", "false");
 
     const searchInitUrl = `${op.url}/ibooking/bookings/search_service?${initParams.toString()}`;
-    await fetch(searchInitUrl, {
+    await fetchWithTimeoutAndRetry(searchInitUrl, {
       headers: {
         "Cookie": op.sessionCookies.join("; "),
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -613,7 +754,7 @@ app.get('/api/layout/:resId', async (req, res) => {
 
     const layoutUrl = `${op.url}/ibooking/bookings/select_seat/${realResId}?searchbus_params[from]=${fromId}&searchbus_params[to]=${toId}&searchbus_params[depart]=${date}&searchbus_params[terminal]=0&searchbus_params[code]=&booking_return_date=`;
     
-    const layoutRes = await fetch(layoutUrl, {
+    const layoutRes = await fetchWithTimeoutAndRetry(layoutUrl, {
       headers: {
         "Cookie": op.sessionCookies.join("; "),
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -750,7 +891,8 @@ const analytics = {
   searchHistory: [],   // { time, from, to, date, realCount, totalCount }
   userSignups: [],     // { time, name, email, phone }
   bookingsList: [],    // { time, operator, route, seats, amount, pnr }
-  popularRoutes: {}    // "from→to": count
+  popularRoutes: {},   // "from→to": count
+  vitals: []           // In-memory Core Web Vitals telemetry
 };
 
 function trackEvent(event, data = {}) {
@@ -783,6 +925,27 @@ app.post('/api/track', (req, res) => {
   const { event, data } = req.body;
   if (!event) return res.status(400).json({ success: false });
   trackEvent(event, data || {});
+  res.json({ success: true });
+});
+
+// POST endpoint for Web Vitals tracking
+app.post('/api/vitals', (req, res) => {
+  const { id, name, value, rating, delta } = req.body;
+  if (!name) return res.status(400).json({ success: false, error: 'Missing name' });
+  
+  analytics.vitals.push({
+    id,
+    name,
+    value: parseFloat(value),
+    rating: rating || 'good',
+    delta: parseFloat(delta || 0),
+    time: new Date().toISOString()
+  });
+
+  if (analytics.vitals.length > 1000) {
+    analytics.vitals.shift();
+  }
+
   res.json({ success: true });
 });
 
@@ -821,6 +984,32 @@ app.get('/api/admin/stats', requireAdmin, (req, res) => {
     .slice(0, 10)
     .map(([route, count]) => ({ route, count }));
 
+  // Aggregate Web Vitals data
+  const vitalsSummary = {};
+  const vitalsByName = {};
+  
+  analytics.vitals.forEach(v => {
+    if (!vitalsByName[v.name]) {
+      vitalsByName[v.name] = [];
+    }
+    vitalsByName[v.name].push(v);
+  });
+
+  Object.entries(vitalsByName).forEach(([name, list]) => {
+    const total = list.reduce((sum, v) => sum + v.value, 0);
+    const avg = total / list.length;
+    const ratings = list.reduce((acc, v) => {
+      acc[v.rating] = (acc[v.rating] || 0) + 1;
+      return acc;
+    }, {});
+
+    vitalsSummary[name] = {
+      avg: parseFloat(avg.toFixed(2)),
+      count: list.length,
+      ratings
+    };
+  });
+
   res.json({
     success: true,
     stats: {
@@ -831,7 +1020,8 @@ app.get('/api/admin/stats', requireAdmin, (req, res) => {
       bookings: analytics.bookings,
       signups: analytics.signups,
       uptimeSeconds: uptime,
-      topRoutes
+      topRoutes,
+      webVitals: vitalsSummary
     }
   });
 });
@@ -959,6 +1149,29 @@ if (require.main === module) {
       await performLogin('rdlh');
     } catch (err) {
       console.error("Warning: Initial B2B login for Ram Dalal Holidays failed. Will retry on demand.");
+    }
+
+    // Pre-fetch and cache cities so the first user request is instant
+    try {
+      console.log('Pre-fetching cities from both operator portals...');
+      const [lxmiCities, rdlhCities] = await Promise.allSettled([
+        fetchCities('lxmi'),
+        fetchCities('rdlh')
+      ]);
+      if (lxmiCities.status === 'fulfilled') {
+        OPERATORS.lxmi.cities = lxmiCities.value;
+        console.log(`Cached ${lxmiCities.value.length} Laxmi Holidays cities.`);
+      } else {
+        console.error('Failed to pre-fetch Laxmi cities:', lxmiCities.reason?.message);
+      }
+      if (rdlhCities.status === 'fulfilled') {
+        OPERATORS.rdlh.cities = rdlhCities.value;
+        console.log(`Cached ${rdlhCities.value.length} Ram Dalal Holidays cities.`);
+      } else {
+        console.error('Failed to pre-fetch RDLH cities:', rdlhCities.reason?.message);
+      }
+    } catch (err) {
+      console.error('Warning: Cities pre-fetch failed. Will load on demand.');
     }
   });
 }

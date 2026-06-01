@@ -4,7 +4,41 @@
 <meta charset="utf-8">
 <title>Cheap Travels India — Affordable Bus Tickets</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet"><style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<!-- Core Web Vitals Telemetry (inspired by redBus performance monitoring) -->
+<script type="module">
+  import { onCLS, onFID, onLCP, onINP, onTTFB } from 'https://unpkg.com/web-vitals@4/dist/web-vitals.attribution.js?module';
+
+  function sendToAnalytics(metric) {
+    const body = JSON.stringify({
+      id: metric.id,
+      name: metric.name,
+      value: metric.value,
+      rating: metric.rating,
+      delta: metric.delta
+    });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/vitals', body);
+    } else {
+      fetch('/api/vitals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+        keepalive: true
+      }).catch(() => {});
+    }
+  }
+
+  // Monitor layout shifts, input delays, paint times, and load times
+  onCLS(sendToAnalytics);
+  onFID(sendToAnalytics);
+  onLCP(sendToAnalytics);
+  onINP(sendToAnalytics);
+  onTTFB(sendToAnalytics);
+</script>
+<style>
 :root {
   /* Brand color tokens from Logo.png */
   --teal: #0E7B4F;          /* primary forest green */
@@ -908,6 +942,11 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 </head>
 <body>
 
+<!-- Offline/Slow network banner -->
+<div id="offline-banner" style="display:none; position:fixed; top:0; left:0; width:100%; background:var(--red); color:#fff; text-align:center; padding:10px 16px; font-weight:700; font-size:14px; z-index:99999; box-shadow:0 4px 12px rgba(239,68,68,0.3); border-bottom: 2px solid #dc2626;">
+  ⚠️ Connection Lost: You are currently offline. Pages and searches may not load.
+</div>
+
 <header class="top">
   <div class="top-inner">
     <a href="index.html" class="brand" title="Cheap Travels India">
@@ -1234,7 +1273,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
           <p>Scan the QR with any UPI app · Pay <b class="qr-payable">₹1,424</b> to <b class="qr-upi-id">cheaptravel546@okhdfcbank</b></p>
           <div class="timer">⏱ Hold expires in 07:23</div>
           <div class="qr-box" style="display:inline-block; background:#fff; padding:6px; border-radius:14px; box-shadow:var(--shadow); margin:0 auto 14px; overflow:hidden; border: 1.5px solid var(--line);">
-            <img src="payment_qr.png" alt="Scan to pay" style="width:260px; height:auto; display:block; margin:0 auto; border-radius:10px;">
+            <img src="payment_qr.png" alt="Scan to pay" style="width:260px; height:auto; display:block; margin:0 auto; border-radius:10px;" loading="lazy">
           </div>
           <div class="upi-id">cheaptravel546@okhdfcbank</div>
           <button class="copy-btn" onclick="copyUPI()">📋 Copy UPI ID</button>
@@ -1362,7 +1401,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   <div class="foot-inner">
     <div class="foot-brand-col">
       <a href="index.html" class="brand" title="Cheap Travels India">
-        <img src="Logo.png" alt="Cheap Travels India" class="foot-logo-img">
+        <img src="Logo.png" alt="Cheap Travels India" class="foot-logo-img" loading="lazy">
       </a>
       <p class="foot-brand-desc">India's affordable bus booking platform. Direct from operator. 5% extra discount. WhatsApp ticket in 90 seconds.</p>
     </div>
@@ -1540,7 +1579,7 @@ function showToast(message) {
 }
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // Set date field to tomorrow
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -1549,12 +1588,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const dd = String(tomorrow.getDate()).padStart(2, '0');
   document.getElementById('depart-date').value = `${yyyy}-${mm}-${dd}`;
 
-  loadCities();
+  await loadCities();
   setupQR();
   
-  // Render default buses on load
-  searchResultsBuses = defaultBuses;
-  renderBuses(defaultBuses, '30 May');
+  // Offline & connection state tracking
+  window.addEventListener('offline', () => {
+    document.getElementById('offline-banner').style.display = 'block';
+  });
+  window.addEventListener('online', () => {
+    document.getElementById('offline-banner').style.display = 'none';
+  });
+  if (!navigator.onLine) {
+    document.getElementById('offline-banner').style.display = 'block';
+  }
+
+  // Restore cached search query from sessionStorage if available
+  const cachedFrom = sessionStorage.getItem('last_search_from');
+  const cachedTo = sessionStorage.getItem('last_search_to');
+  const cachedDate = sessionStorage.getItem('last_search_date');
+
+  if (cachedFrom && cachedTo && cachedDate) {
+    performSearch();
+  } else {
+    // Render default buses on load
+    searchResultsBuses = defaultBuses;
+    renderBuses(defaultBuses, '30 May');
+  }
   
   // Show bonus signup popup to new users after 1.5 seconds
   setTimeout(() => {
@@ -1618,9 +1677,26 @@ function populateCitiesDropdowns() {
   fromSelect.innerHTML = htmlOptions;
   toSelect.innerHTML = htmlOptions;
   
-  // Set defaults: Azamgarh (170) -> Delhi (3)
-  fromSelect.value = "170";
-  toSelect.value = "3";
+  // Set defaults: Azamgarh (170) -> Delhi (3) or load from cache
+  const cachedFrom = sessionStorage.getItem('last_search_from');
+  const cachedTo = sessionStorage.getItem('last_search_to');
+  const cachedDate = sessionStorage.getItem('last_search_date');
+
+  if (cachedFrom && Array.from(fromSelect.options).some(o => o.value === cachedFrom)) {
+    fromSelect.value = cachedFrom;
+  } else {
+    fromSelect.value = "170";
+  }
+
+  if (cachedTo && Array.from(toSelect.options).some(o => o.value === cachedTo)) {
+    toSelect.value = cachedTo;
+  } else {
+    toSelect.value = "3";
+  }
+
+  if (cachedDate) {
+    document.getElementById('depart-date').value = cachedDate;
+  }
   
   updateFromState(fromSelect);
   updateToState(toSelect);
@@ -1661,6 +1737,11 @@ async function performSearch() {
   const dateInput = document.getElementById('depart-date').value;
   
   if (!fromId || !toId || !dateInput) return;
+  
+  // Cache the search query in sessionStorage for persistence across reloads
+  sessionStorage.setItem('last_search_from', fromId);
+  sessionStorage.setItem('last_search_to', toId);
+  sessionStorage.setItem('last_search_date', dateInput);
   
   // Format YYYY-MM-DD -> DD/MM/YYYY
   const parts = dateInput.split('-');
@@ -1730,7 +1811,14 @@ async function performSearch() {
   `;
   
   try {
-    const res = await fetch(`${API}/api/search?from=${fromId}&to=${toId}&date=${formattedDate}`);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 seconds frontend timeout
+    
+    const res = await fetch(`${API}/api/search?from=${fromId}&to=${toId}&date=${formattedDate}`, {
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    
     const data = await res.json();
     
     if (data.success) {
@@ -1739,11 +1827,23 @@ async function performSearch() {
       renderBuses(data.buses, formattedDate);
       startBgRefresh(); // silent 60s background refresh
     } else {
-      listContainer.innerHTML = originalSortBar + `<div style="text-align:center; padding: 40px; color:var(--red); font-weight:600;">Error: ${data.error}</div>`;
+      listContainer.innerHTML = originalSortBar + `
+        <div style="text-align:center; padding: 40px; color:var(--red);">
+          <p style="font-weight:600; margin-bottom: 12px;">Error: ${data.error}</p>
+          <button onclick="performSearch()" style="background:var(--teal); color:#fff; padding:10px 20px; border-radius:var(--radius-md); font-weight:600; font-size:14px; box-shadow:var(--shadow-sm);">🔄 Retry Search</button>
+        </div>
+      `;
     }
   } catch (err) {
     console.error("Search failed:", err);
-    listContainer.innerHTML = originalSortBar + `<div style="text-align:center; padding: 40px; color:var(--red); font-weight:600;">Failed to fetch results. Please try again.</div>`;
+    const isTimeout = err.name === 'AbortError';
+    const msg = isTimeout ? "Search timed out. B2B Operator portal is responding too slowly." : "Failed to fetch results. Please check your network connection.";
+    listContainer.innerHTML = originalSortBar + `
+      <div style="text-align:center; padding: 40px; color:var(--red);">
+        <p style="font-weight:600; margin-bottom: 12px;">${msg}</p>
+        <button onclick="performSearch()" style="background:var(--teal); color:#fff; padding:10px 20px; border-radius:var(--radius-md); font-weight:600; font-size:14px; box-shadow:var(--shadow-sm);">🔄 Retry Search</button>
+      </div>
+    `;
   }
 }
 
@@ -2957,8 +3057,12 @@ function hideAutocomplete(type) {
   }
 }
 
+let autocompleteDebounceTimer = null;
 function onAutocompleteInput(type) {
-  renderAutocompleteList(type, document.getElementById(`${type}-search`).value);
+  clearTimeout(autocompleteDebounceTimer);
+  autocompleteDebounceTimer = setTimeout(() => {
+    renderAutocompleteList(type, document.getElementById(`${type}-search`).value);
+  }, 200);
 }
 
 function renderAutocompleteList(type, query) {

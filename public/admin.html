@@ -674,6 +674,20 @@ body::before {
       </div>
     </div>
 
+    <!-- WEB VITALS -->
+    <div class="section-label">Web Vitals Performance (Real-time UX)</div>
+    <div class="panel" style="margin-bottom:32px;">
+      <div class="panel-header">
+        <h3>📊 Google Core Web Vitals</h3>
+        <span class="badge" id="vitals-count">0 measurements</span>
+      </div>
+      <div class="panel-body">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px; padding: 12px 0;" id="vitals-grid">
+          <div class="empty-state" style="grid-column:1/-1;">No measurements recorded yet.</div>
+        </div>
+      </div>
+    </div>
+
     <!-- HEALTH -->
     <div class="section-label">Server & Portal Health</div>
     <div class="panel" style="margin-bottom:32px;">
@@ -760,6 +774,60 @@ async function fetchStats() {
     
     // Popular routes
     renderTopRoutes(s.topRoutes);
+
+    // Web Vitals rendering
+    const vitalsGrid = document.getElementById('vitals-grid');
+    if (vitalsGrid && s.webVitals) {
+      const keys = Object.keys(s.webVitals);
+      if (keys.length === 0) {
+        vitalsGrid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">No measurements recorded yet.</div>`;
+        document.getElementById('vitals-count').textContent = '0 measurements';
+      } else {
+        let html = '';
+        let totalCount = 0;
+        keys.forEach(name => {
+          const m = s.webVitals[name];
+          totalCount += m.count;
+          
+          let color = 'var(--green)';
+          let ratingText = 'GOOD';
+          
+          const poorCount = m.ratings['poor'] || 0;
+          const niCount = m.ratings['needs-improvement'] || 0;
+          const goodCount = m.ratings['good'] || 0;
+          
+          if (poorCount > goodCount && poorCount > niCount) {
+            color = 'var(--red)';
+            ratingText = 'POOR';
+          } else if (niCount > goodCount) {
+            color = 'var(--gold)';
+            ratingText = 'NEEDS IMP.';
+          }
+          
+          let valDisplay = m.avg;
+          if (name === 'CLS') valDisplay = m.avg.toFixed(3);
+          else if (name === 'LCP' || name === 'TTFB') valDisplay = `${(m.avg / 1000).toFixed(2)}s`;
+          else valDisplay = `${Math.round(m.avg)}ms`;
+
+          html += `
+            <div class="vital-card" style="border: 1.5px solid var(--line); border-radius: var(--radius-md); padding: 16px; background: #fff; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-weight: 700; font-size: 15px; color: var(--ink2); display: flex; justify-content: space-between; align-items: center;">
+                <span>${name}</span>
+                <span style="font-size: 10px; background: var(--bg); border: 1.5px solid var(--line); padding: 2px 6px; border-radius: 4px; color: var(--ink3);">Average</span>
+              </div>
+              <div style="font-size: 28px; font-weight: 800; color: ${color};">${valDisplay}</div>
+              <div style="font-size: 11px; color: var(--ink2); font-weight: 600;">Rating: <span style="color:${color}; font-weight: 700;">${ratingText}</span></div>
+              <div style="font-size: 11px; color: var(--ink3); font-weight: 500; margin-top: auto; display: flex; justify-content: space-between;">
+                <span>${m.count} reports</span>
+                <span>Good: ${goodCount} / Poor: ${poorCount}</span>
+              </div>
+            </div>
+          `;
+        });
+        vitalsGrid.innerHTML = html;
+        document.getElementById('vitals-count').textContent = `${totalCount} measurements`;
+      }
+    }
   } catch (err) { console.error('Stats fetch error:', err); }
 }
 
