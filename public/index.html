@@ -294,6 +294,7 @@ header.top {
   padding: 40px 24px 120px;
   position: relative;
   overflow: hidden;
+  z-index: 12;
 }
 .hero::before {
   content: ""; position: absolute; right: -120px; top: -120px;
@@ -745,6 +746,99 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 .mobile-nav-panel a:last-child { border-bottom: none; }
 .mn-signin { margin-top: 24px; width: 100%; padding: 14px; background: linear-gradient(135deg, var(--teal-d), var(--teal)); color: #ffffff; border-radius: var(--radius-md); font-size: 15px; font-weight: 700; border: none; }
 
+/* Mobile Filter Drawer styling */
+.filter-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+}
+.filter-drawer.open {
+  display: block;
+}
+.filter-drawer-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.filter-drawer-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+  padding: 24px 24px 32px;
+  max-height: 80%;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+}
+.filter-drawer.open .filter-drawer-panel {
+  transform: translateY(0);
+}
+.filter-drawer-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--line);
+  border-radius: var(--radius-full);
+  margin: -12px auto 16px;
+}
+.filter-drawer-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--ink2);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--line);
+}
+.filter-drawer-close:hover {
+  background: var(--line);
+}
+
+/* Floating Action Button for Filters on Mobile */
+.filter-fab {
+  display: none; /* hidden on desktop */
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  background: var(--teal);
+  color: #ffffff;
+  border-radius: var(--radius-full);
+  padding: 12px 24px;
+  font-weight: 700;
+  font-size: 14px;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 20px rgba(14, 123, 79, 0.35);
+  border: none;
+  cursor: pointer;
+}
+.filter-fab:hover {
+  background: var(--teal-d);
+  box-shadow: 0 6px 24px rgba(14, 123, 79, 0.45);
+}
+.filter-fab svg {
+  width: 16px;
+  height: 16px;
+}
+
 /* Autocomplete suggestions */
 .autocomplete-results {
   position: absolute; top: 100%; left: 0; right: 0;
@@ -836,7 +930,9 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 
 @media (max-width: 1000px) {
   .results, .checkout-wrap { grid-template-columns: 1fr; }
-  .filters, .summary-side { position: static; }
+  .filters { display: none; }
+  .filter-fab { display: inline-flex; }
+  .summary-side { position: static; }
   .search-card { grid-template-columns: 1fr 1fr; }
   .trust-strip { grid-template-columns: 1fr 1fr; }
   .seat-content { grid-template-columns: 1fr; }
@@ -876,9 +972,6 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .ts-ico { width: 36px; height: 36px; font-size: 18px; }
   .ts b { font-size: 12.5px; }
   .ts small { font-size: 11px; }
-
-  .filters { display: none; }
-  .filter-fab { display: inline-flex; }
 
   .bus { grid-template-columns: 1fr; padding: 14px; }
   .bus-side { border-left: none; border-top: 1px dashed var(--line); padding-left: 0; padding-top: 14px; flex-direction: row; justify-content: space-between; align-items: center; min-width: unset; }
@@ -1070,6 +1163,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
         <div class="hb">💰 Up to 5% extra discount</div>
         <div class="hb">📲 WhatsApp ticket push</div>
         <div class="hb">↩️ Auto-refund if not issued in 30 min</div>
+      </div>
       <div class="search-card">
         <div class="field" style="position: relative;" id="field-from-container">
           <label for="from-search">FROM</label>
