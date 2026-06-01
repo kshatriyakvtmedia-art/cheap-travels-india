@@ -275,6 +275,13 @@ async function fetchCities(opKey) {
   }
 
   const jsText = await jsRes.text();
+  const trimmedText = jsText.trim();
+  
+  if (trimmedText.startsWith('<!DOCTYPE') || trimmedText.startsWith('<html') || jsRes.status === 302 || trimmedText.includes('signin')) {
+    console.log(`Session expired/redirected to login HTML for ${op.name} while fetching cities, re-authenticating...`);
+    await performLogin(opKey);
+    return fetchCities(opKey);
+  }
   
   const startIdx = jsText.indexOf('var destinations_map =');
   if (startIdx === -1) {
@@ -559,8 +566,8 @@ async function searchOperatorBuses(opKey, fromId, toId, date) {
       routeName: summary.number || details.number || `${op.name} Service`,
       busType: summary.bus_type || details.bus_type || "AC Sleeper 2+1",
       departure: summary.depature || details.departure_time || "00:00 AM",
-      arrival: summary.arrival ? summary.arrival.split('T')[1].substring(0, 5) : "00:00",
-      arrivalDate: summary.arrival ? summary.arrival.split('T')[0] : "",
+      arrival: summary.arrival ? (summary.arrival.includes('T') ? summary.arrival.split('T')[1].substring(0, 5) : summary.arrival.substring(0, 5)) : "00:00",
+      arrivalDate: summary.arrival ? (summary.arrival.includes('T') ? summary.arrival.split('T')[0] : "") : "",
       duration: summary.duration || details.duration || "0h",
       seatsLeft: summary.available_seats || details.total_seats || 0,
       fareString: fareStr,
