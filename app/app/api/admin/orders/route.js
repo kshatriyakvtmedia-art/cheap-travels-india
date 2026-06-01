@@ -15,5 +15,5 @@ function checkAuth(req) {
 export async function GET(req) {
   if (!checkAuth(req)) return unauthorized();
   const status = new URL(req.url).searchParams.get('status') || '';
-  return NextResponse.json({ orders: listOrders(status || undefined) });
+  return NextResponse.json({ orders: await listOrders(status || undefined) });
 }

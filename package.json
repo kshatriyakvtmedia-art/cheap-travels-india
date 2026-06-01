@@ -7,6 +7,7 @@
     "start": "node api/index.js"
   },
   "dependencies": {
+    "@prisma/client": "^6.2.1",
     "cheerio": "^1.0.0-rc.12",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
@@ -14,5 +15,8 @@
     "express-rate-limit": "^8.5.2",
     "helmet": "^8.2.0",
     "nodemailer": "^8.0.10"
+  },
+  "devDependencies": {
+    "prisma": "^6.2.1"
   }
 }

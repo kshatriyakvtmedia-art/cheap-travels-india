@@ -15,7 +15,7 @@ export async function POST(req, { params }) {
   const token = req.headers.get('x-admin-token');
   if (!token || token !== process.env.ADMIN_TOKEN) return unauth();
 
-  const o = getOrder(params.id);
+  const o = await getOrder(params.id);
   if (!o) return NextResponse.json({ error: 'not found' }, { status: 404 });
   if (o.status !== 'paid_pending') {
     return NextResponse.json({ error: `cannot reconcile from ${o.status}` }, { status: 409 });
@@ -24,10 +24,10 @@ export async function POST(req, { params }) {
   // 1. Book on provider portal
   const booking = await bookOnProvider(o);
   if (!booking.ok) {
-    markFailed(o.id);
+    await markFailed(o.id);
     return NextResponse.json({ ok: false, error: booking.error }, { status: 502 });
   }
-  markConfirmed(o.id, booking.pnr);
+  await markConfirmed(o.id, booking.pnr);
 
   // 2. Send WhatsApp + email (non-blocking — errors logged but don't fail the request)
   const route = `${o.from_city} → ${o.to_city}`;

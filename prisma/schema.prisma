@@ -1,0 +1,120 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  super_admin
+  admin
+  support_agent
+  customer
+}
+
+model User {
+  id           String     @id @default(uuid())
+  name         String?
+  email        String     @unique
+  mobile       String?
+  passwordHash String     @map("password_hash")
+  role         Role       @default(customer)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  orders       Order[]
+  auditLogs    AuditLog[]
+
+  @@map("users")
+}
+
+model Order {
+  id               String    @id
+  userId           String?   @map("user_id")
+  user             User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  bookingReference String?   @map("booking_reference")
+  provider         String
+  busExternalId    String    @map("bus_external_id")
+  operator         String
+  busType          String    @map("bus_type")
+  fromCity         String    @map("from_city")
+  toCity           String    @map("to_city")
+  journeyDate      String    @map("journey_date")
+  departure        String
+  arrival          String
+  seatNo           String    @map("seat_no")
+  boardingPoint    String    @map("boarding_point")
+  droppingPoint    String    @map("dropping_point")
+  passengerName    String?   @map("passenger_name")
+  passengerAge     Int?      @map("passenger_age")
+  passengerGender  String?   @map("passenger_gender")
+  customerPhone    String?   @map("customer_phone")
+  customerEmail    String?   @map("customer_email")
+  baseFare         Float     @map("base_fare")
+  ourMargin        Float     @map("our_margin")
+  customerDiscount Float     @map("customer_discount")
+  totalPayable     Float     @map("total_payable")
+  status           String    @default("held")
+  upiUtr           String?   @map("upi_utr")
+  providerPnr      String?   @map("provider_pnr")
+  heldUntil        String    @map("held_until")
+  confirmedAt      DateTime? @map("confirmed_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  payments         Payment[]
+  tickets          Ticket[]
+
+  @@map("orders")
+}
+
+model Payment {
+  id                   String   @id @default(uuid())
+  orderId              String   @map("order_id")
+  order                Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  gateway              String
+  gatewayTransactionId String?  @map("gateway_transaction_id")
+  gatewayOrderId       String?  @map("gateway_order_id")
+  amount               Float
+  currency             String   @default("INR")
+  paymentStatus        String   @map("payment_status")
+  webhookPayload       Json?    @map("webhook_payload")
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  @@map("payments")
+}
+
+model Ticket {
+  id                   String   @id @default(uuid())
+  orderId              String   @map("order_id")
+  order                Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  pnr                  String
+  seatNumbers          String   @map("seat_numbers")
+  passengerDetailsJson Json?    @map("passenger_details_json")
+  ticketPdfUrl         String?  @map("ticket_pdf_url")
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  @@map("tickets")
+}
+
+model Provider {
+  id           String   @id @default(uuid())
+  providerName String   @map("provider_name")
+  portalUrl    String   @map("portal_url")
+  status       String   @default("active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("providers")
+}
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  action       String
+  userId       String?  @map("user_id")
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  entityType   String   @map("entity_type")
+  entityId     String?  @map("entity_id")
+  metadataJson Json?    @map("metadata_json")
+  ipAddress    String?  @map("ip_address")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("audit_logs")
+}

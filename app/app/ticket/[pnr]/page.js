@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default function TicketPage({ params }) {
-  const order = getOrderByPnr(params.pnr);
+export default async function TicketPage({ params }) {
+  const order = await getOrderByPnr(params.pnr);
   if (!order) notFound();
   const route = `${order.from_city} → ${order.to_city}`;
 

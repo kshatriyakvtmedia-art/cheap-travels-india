@@ -48,7 +48,7 @@ export async function POST(req) {
   };
 
   try {
-    createOrder(order);
+    await createOrder(order);
     return NextResponse.json({ id, total: p.displayedFare, heldUntil: held_until });
   } catch (e) {
     return NextResponse.json({ error: String(e?.message || e) }, { status: 500 });
