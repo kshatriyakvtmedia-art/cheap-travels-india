@@ -1034,13 +1034,330 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   STORY · SERVICES · FLEET sections  (added 2026-06-02)
+   ════════════════════════════════════════════════════════════════ */
+.story-section, .services-section, .fleet-section {
+  max-width: 1200px;
+  margin: 56px auto 0;
+  padding: 0 24px;
+}
+.story-inner, .services-inner, .fleet-inner {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 48px 40px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+.story-eyebrow {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11.5px;
+  letter-spacing: 3px;
+  font-weight: 800;
+  color: var(--gold-d);
+  margin-bottom: 12px;
+}
+.story-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(24px, 4vw, 38px);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+  margin: 0 0 24px;
+  font-weight: 800;
+  max-width: 720px;
+}
+.story-title span { color: var(--teal); }
+.story-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+.story-copy p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink2);
+  margin: 0 0 14px;
+}
+.story-copy b { color: var(--ink); font-weight: 700; }
+.story-illustration {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.story-illustration img {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  display: block;
+  animation: float 4s ease-in-out infinite;
+}
+.story-stat-pill {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: var(--gold);
+  color: var(--teal-d);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 24px rgba(238,140,46,.3);
+  text-align: center;
+  transform: rotate(-4deg);
+}
+.story-stat-pill .stat-num {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1;
+}
+.story-stat-pill .stat-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+/* Services grid (9 mascot cards) */
+.services-header { text-align: center; max-width: 720px; margin: 0 auto 32px; }
+.services-header .story-title { margin: 0 auto 12px; }
+.services-sub { color: var(--ink2); font-size: 14.5px; }
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.svc-card {
+  background: linear-gradient(180deg, #fff 0%, #FAFBF9 100%);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 18px 16px 22px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--ink);
+  transition: transform .25s cubic-bezier(.4,0,.2,1), box-shadow .25s, border-color .25s;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+.svc-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 32px rgba(14,123,79,.12);
+  border-color: var(--teal-l);
+}
+.svc-img-wrap {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.svc-img-wrap img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.svc-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+.svc-tag { font-size: 11.5px; color: var(--ink2); line-height: 1.4; }
+.float-1 .svc-img-wrap img { animation: float 5s ease-in-out infinite; }
+.float-2 .svc-img-wrap img { animation: float 6s ease-in-out -1.5s infinite; }
+.float-3 .svc-img-wrap img { animation: float 4.5s ease-in-out -2.8s infinite; }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Fleet section with bus line-art */
+.fleet-inner {
+  background: linear-gradient(135deg, #0A4F4A 0%, #0E7B4F 60%, #14B58C 100%);
+  color: #fff;
+  padding: 48px 40px;
+}
+.fleet-inner .story-eyebrow { color: var(--gold); }
+.fleet-inner .story-title { color: #fff; }
+.fleet-inner .story-title span { color: var(--gold-s); }
+.fleet-inner p { color: rgba(255,255,255,.85); font-size: 15px; line-height: 1.6; margin: 0 0 22px; max-width: 480px; }
+.fleet-inner { display: block; }
+.fleet-inner .fleet-copy, .fleet-inner .fleet-art {}
+.fleet-inner > div.fleet-copy, .fleet-inner > div.fleet-art { padding: 0; }
+.fleet-inner { display: grid; grid-template-columns: 1fr 1.2fr; gap: 36px; align-items: center; }
+.fleet-points { display: flex; flex-direction: column; gap: 12px; }
+.fp {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.12);
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(4px);
+}
+.fp span {
+  background: var(--gold);
+  color: var(--teal-d);
+  padding: 4px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  flex-shrink: 0;
+}
+.fp b { display: block; font-size: 14.5px; font-weight: 700; color: #fff; }
+.fp small { display: block; color: rgba(255,255,255,.7); font-size: 12px; margin-top: 2px; }
+.bus-line-art { width: 100%; height: auto; max-height: 320px; display: block; }
+.bus-wheels { animation: spin 6s linear infinite; transform-origin: center; transform-box: fill-box; }
+.bus-wheels circle:nth-child(1), .bus-wheels circle:nth-child(3) { animation: spin 4s linear infinite; transform-origin: center; transform-box: fill-box; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.speed-lines line { animation: speedDash 1.2s ease-in-out infinite; }
+.speed-lines line:nth-child(2) { animation-delay: -0.4s; }
+.speed-lines line:nth-child(3) { animation-delay: -0.8s; }
+@keyframes speedDash {
+  0% { opacity: 0; transform: translateX(20px); }
+  40% { opacity: .8; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(-20px); }
+}
+
+/* Scroll reveal */
+.reveal-on-scroll { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+.reveal-on-scroll.in-view { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .float-1 img, .float-2 img, .float-3 img, .bus-wheels, .speed-lines line, .story-illustration img { animation: none !important; }
+  .reveal-on-scroll { opacity: 1; transform: none; transition: none; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE BREAKPOINTS — 480px (small phones) and 380px (iPhone SE)
+   ════════════════════════════════════════════════════════════════ */
+@media (max-width: 700px) {
+  .story-section, .services-section, .fleet-section { margin: 36px auto 0; padding: 0 14px; }
+  .story-inner, .services-inner, .fleet-inner { padding: 28px 20px; border-radius: var(--radius-lg); }
+  .story-grid { grid-template-columns: 1fr; gap: 28px; }
+  .story-illustration img { max-width: 240px; }
+  .story-stat-pill { bottom: 0; right: 0; padding: 10px 14px; }
+  .story-stat-pill .stat-num { font-size: 22px; }
+  .services-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .svc-card { padding: 14px 10px 16px; }
+  .svc-img-wrap { width: 90px; height: 90px; }
+  .svc-label { font-size: 13.5px; }
+  .svc-tag { font-size: 11px; }
+  .fleet-inner { grid-template-columns: 1fr; gap: 18px; padding: 26px 18px; }
+  .fp { padding: 10px 12px; }
+  .fp b { font-size: 13px; }
+  .fp small { font-size: 11px; }
+}
+
+@media (max-width: 480px) {
+  /* Header tightening */
+  .top-inner { gap: 6px; padding: 0 10px; }
+  .brand-logo { height: 30px; }
+  .login-btn { font-size: 10.5px; padding: 5px 9px; }
+  .top-right .support { font-size: 11.5px; }
+
+  /* Hero */
+  .hero { padding: 18px 14px 92px; }
+  .hero h1 { font-size: 22px; line-height: 1.2; }
+  .hero p { font-size: 12.5px; margin-top: 6px; }
+  .hero-badges { gap: 5px; margin-top: 10px; }
+  .hb { font-size: 10.5px; padding: 4px 9px; line-height: 1.3; }
+
+  /* Search card */
+  .search-card { padding: 10px; gap: 8px; }
+  .field-box { min-height: 50px; padding: 6px 10px !important; }
+  .field label { font-size: 10px; }
+  .field-box input, .field-box select { font-size: 16px !important; font-weight: 700; }
+  .field-box .sv { font-size: 11px; }
+  .swap { width: 28px; height: 28px; font-size: 14px; }
+  .search-btn { padding: 13px; font-size: 14px; min-height: 48px; }
+
+  /* Page padding */
+  .page { padding: 0 12px; margin-top: -76px; }
+
+  /* Trust strip → single column on tiny phones */
+  .trust-strip { grid-template-columns: 1fr; gap: 8px; padding: 12px; border-radius: var(--radius-md); }
+  .ts { gap: 10px; }
+  .ts-ico { width: 32px; height: 32px; }
+  .ts b { font-size: 12px; }
+  .ts small { font-size: 10.5px; }
+
+  /* Live compare → vertical stack */
+  .live-compare { padding: 12px; gap: 8px; border-radius: var(--radius-md); }
+  .lc-title { font-size: 12.5px; }
+  .cmp { font-size: 11.5px; padding: 6px 10px; }
+
+  /* Bus result card */
+  .bus { padding: 12px; border-radius: var(--radius-md); }
+  .bus-main h3 { font-size: 14.5px; }
+  .bus-meta span { font-size: 10.5px; padding: 2px 6px; }
+  .time-block .t { font-size: 16px; }
+  .time-block .c { font-size: 10.5px; max-width: 84px; }
+  .line { width: 60px; }
+  .fare { font-size: 20px; }
+  .fare-strike { font-size: 11.5px; }
+  .save-pill { font-size: 10px; padding: 2px 6px; }
+  .view-seats { font-size: 12px; padding: 8px 14px; }
+  .bus-bottom { font-size: 11.5px; }
+
+  /* Sort tabs scroll horizontally */
+  .sort-bar { overflow-x: auto; padding: 8px 12px; gap: 8px; flex-wrap: nowrap; }
+  .sort-bar::-webkit-scrollbar { display: none; }
+  .sort-tab { white-space: nowrap; font-size: 12px; padding: 5px 11px; }
+  .label { font-size: 10.5px; }
+
+  /* Story / services / fleet finer tuning */
+  .story-section, .services-section, .fleet-section { margin: 30px auto 0; padding: 0 12px; }
+  .story-inner, .services-inner, .fleet-inner { padding: 22px 16px; }
+  .story-title { font-size: 22px; }
+  .story-copy p { font-size: 14.5px; line-height: 1.6; }
+  .story-eyebrow { font-size: 10.5px; letter-spacing: 2.5px; }
+  .services-sub { font-size: 13px; }
+  .svc-img-wrap { width: 78px; height: 78px; }
+  .svc-label { font-size: 12.5px; }
+  .svc-tag { font-size: 10.5px; }
+  .fleet-points { gap: 8px; }
+  .fp { padding: 9px 11px; gap: 9px; }
+  .fp span { font-size: 10px; padding: 3px 7px; }
+  .bus-line-art { max-height: 200px; }
+
+  /* Checkout / ticket compaction */
+  .section h3 { font-size: 14.5px; }
+  .qr-svg { width: 180px !important; height: 180px !important; }
+  .upi-id { font-size: 14px; }
+  .upi-app { width: 36px; height: 36px; font-size: 10px; }
+  .paid-btn { padding: 11px 22px; font-size: 13px; }
+  .timer { font-size: 11px; padding: 5px 10px; }
+
+  /* Footer */
+  footer.site { padding: 30px 14px 22px; }
+  .foot-logo-img { height: 32px; }
+}
+
+@media (max-width: 380px) {
+  .hero h1 { font-size: 20px; }
+  .hb { font-size: 10px; padding: 3px 7px; }
+  .services-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .svc-img-wrap { width: 70px; height: 70px; }
+  .svc-label { font-size: 12px; }
+  .svc-tag { font-size: 10px; }
+  .time-block .c { max-width: 72px; font-size: 10px; }
+  .line { width: 46px; }
+  .fare { font-size: 18px; }
+  .view-seats { font-size: 11.5px; padding: 7px 12px; }
+  .lc-title { font-size: 12px; }
+}
 </style>
 </head>
 <body>
 
 <!-- Offline/Slow network banner -->
 <div id="offline-banner" style="display:none; position:fixed; top:0; left:0; width:100%; background:var(--red); color:#fff; text-align:center; padding:10px 16px; font-weight:700; font-size:14px; z-index:99999; box-shadow:0 4px 12px rgba(239,68,68,0.3); border-bottom: 2px solid #dc2626;">
-  ⚠️ Connection Lost: You are currently offline. Pages and searches may not load.
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Connection lost: you are currently offline. Pages and searches may not load.
 </div>
 
 <header class="top">
@@ -1255,10 +1572,10 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
       <h1>Affordable bus tickets, <span>delivered with trust</span></h1>
       <p>Verified agent inventory · live rate-compare · ticket pushed in 90 seconds.</p>
       <div class="hero-badges">
-        <div class="hb">🛡️ Direct from operator</div>
-        <div class="hb">💰 Up to 5% extra discount</div>
-        <div class="hb">📲 WhatsApp ticket push</div>
-        <div class="hb">↩️ Auto-refund if not issued in 30 min</div>
+        <div class="hb"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Direct from operator</div>
+        <div class="hb"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Up to 5% extra discount</div>
+        <div class="hb"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> WhatsApp ticket push</div>
+        <div class="hb"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Auto-refund if not issued in 30 min</div>
       </div>
       <div class="search-card">
         <div class="field" style="position: relative;" id="field-from-container">
@@ -1436,6 +1753,163 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
       </div>
     </div>
   </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+       OUR STORY — Parrot metaphor (added 2026-06-02)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="story-section reveal-on-scroll" id="our-story">
+    <div class="story-inner">
+      <div class="story-eyebrow">OUR STORY · हमारी कहानी</div>
+      <h2 class="story-title">A parrot doesn't need a feast to fly the length of <span>India</span>.</h2>
+      <div class="story-grid">
+        <div class="story-copy">
+          <p>The Indian parrot — <i>tota</i> — flies hundreds of kilometres on a handful of seeds. It doesn't wait for a full plate. It just goes.</p>
+          <p>That bird is our quiet hero. Because the traveller in our country deserves the same — to go far without paying for a feast.</p>
+          <p>So we built <b>Cheap Travels India</b>. We don't make travel basic. We make it <b>affordable on purpose</b>. The bus is the same one selling for ₹1,499 elsewhere — with us it's ₹1,424, the operator's logo is still on your ticket, and the WhatsApp confirmation lands in ninety seconds.</p>
+          <p>The name <i>"Cheap"</i> isn't an apology. It's a promise: <b>fair fare, full journey.</b> <i>Sasti booking, pakka ticket.</i></p>
+        </div>
+        <div class="story-illustration">
+          <img src="images/mascots/all_india_travel.png" alt="Cheap Travels India mascot — affordable journeys across India" loading="lazy">
+          <div class="story-stat-pill">
+            <div class="stat-num">5%</div>
+            <div class="stat-label">cheaper than RedBus<br>on the same bus</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       WHY CHEAP TRAVELS — 9 mascot service grid
+       ════════════════════════════════════════════════════════════ -->
+  <section class="services-section reveal-on-scroll" id="services">
+    <div class="services-inner">
+      <div class="services-header">
+        <div class="story-eyebrow">WHY TRAVELLERS CHOOSE US</div>
+        <h2 class="story-title">Built around the <span>Indian journey.</span></h2>
+        <p class="services-sub">Nine things our travellers depend on. Tap any to read more.</p>
+      </div>
+      <div class="services-grid">
+        <a class="svc-card float-1" href="#" aria-label="Booking Tickets">
+          <div class="svc-img-wrap"><img src="images/mascots/booking_tickets.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Booking Tickets</div>
+          <div class="svc-tag">90-second WhatsApp ticket</div>
+        </a>
+        <a class="svc-card float-2" href="#" aria-label="Bus Travel">
+          <div class="svc-img-wrap"><img src="images/mascots/bus_travel.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Bus Travel</div>
+          <div class="svc-tag">3 partner networks, 600+ routes</div>
+        </a>
+        <a class="svc-card float-3" href="#" aria-label="Cab Service">
+          <div class="svc-img-wrap"><img src="images/mascots/cab_service.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Cab Service</div>
+          <div class="svc-tag">Outstation & local · coming soon</div>
+        </a>
+        <a class="svc-card float-2" href="#" aria-label="Pilgrimage Travel">
+          <div class="svc-img-wrap"><img src="images/mascots/pilgrimage_travel.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Pilgrimage Travel</div>
+          <div class="svc-tag">Kashi · Ayodhya · Prayagraj</div>
+        </a>
+        <a class="svc-card float-1" href="#" aria-label="24x7 Support">
+          <div class="svc-img-wrap"><img src="images/mascots/customer_support.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Customer Support</div>
+          <div class="svc-tag">Hindi · 24×7 · real humans</div>
+        </a>
+        <a class="svc-card float-3" href="#" aria-label="Safe Travel">
+          <div class="svc-img-wrap"><img src="images/mascots/safe_travel.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Safe Travel</div>
+          <div class="svc-tag">Verified operators, refund SLA</div>
+        </a>
+        <a class="svc-card float-1" href="#" aria-label="Holiday Planning">
+          <div class="svc-img-wrap"><img src="images/mascots/holiday_planning.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Holiday Planning</div>
+          <div class="svc-tag">Custom itineraries on call</div>
+        </a>
+        <a class="svc-card float-2" href="#" aria-label="Happy Traveler">
+          <div class="svc-img-wrap"><img src="images/mascots/happy_traveler.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Happy Traveller</div>
+          <div class="svc-tag">10,000+ pin-codes served</div>
+        </a>
+        <a class="svc-card float-3" href="#" aria-label="All India Travel">
+          <div class="svc-img-wrap"><img src="images/mascots/all_india_travel.png" alt="" loading="lazy"></div>
+          <div class="svc-label">All India Travel</div>
+          <div class="svc-tag">From Kashmir to Kanyakumari</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       OUR FLEET — luxury bus line-art SVG
+       ════════════════════════════════════════════════════════════ -->
+  <section class="fleet-section reveal-on-scroll" id="fleet">
+    <div class="fleet-inner">
+      <div class="fleet-copy">
+        <div class="story-eyebrow">OUR FLEET</div>
+        <h2 class="story-title">Premium coaches, <span>everyday prices.</span></h2>
+        <p>We aggregate buses from verified operator partners — Volvo multi-axles, Mercedes B9s, AC and non-AC sleepers. The bus is the same. The fare is just fairer.</p>
+        <div class="fleet-points">
+          <div class="fp"><span>AC</span><div><b>AC Sleeper 2+1</b><small>Reclining bunks, charging point, blanket</small></div></div>
+          <div class="fp"><span>VOLVO</span><div><b>Volvo Multi-Axle</b><small>9400 / 9600 series, premium suspension</small></div></div>
+          <div class="fp"><span>SEMI</span><div><b>Semi-Sleeper Seater</b><small>For day journeys under 8 hours</small></div></div>
+        </div>
+      </div>
+      <div class="fleet-art">
+        <svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" class="bus-line-art" aria-hidden="true">
+          <defs>
+            <linearGradient id="busBody" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0" stop-color="#14B58C"/>
+              <stop offset="1" stop-color="#0E7B4F"/>
+            </linearGradient>
+            <linearGradient id="busAccent" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" stop-color="#EE8C2E"/>
+              <stop offset="1" stop-color="#FBE2C3"/>
+            </linearGradient>
+          </defs>
+          <!-- road -->
+          <line x1="20" y1="280" x2="700" y2="280" stroke="#94A3B8" stroke-width="2" stroke-dasharray="14 10" opacity=".5"/>
+          <!-- bus body -->
+          <path d="M60 260 L60 130 Q60 100 90 100 L600 100 Q640 100 660 140 L680 200 L680 260 Z"
+                fill="url(#busBody)" stroke="#064B2F" stroke-width="2.5"/>
+          <!-- orange accent stripe -->
+          <path d="M60 200 L680 200" stroke="url(#busAccent)" stroke-width="8" opacity=".9"/>
+          <!-- windshield -->
+          <path d="M580 110 Q620 110 640 145 L660 195 L580 195 Z" fill="#E8F5EE" stroke="#064B2F" stroke-width="2"/>
+          <!-- side windows -->
+          <g fill="#E8F5EE" stroke="#064B2F" stroke-width="2">
+            <rect x="90"  y="120" width="70" height="60" rx="6"/>
+            <rect x="170" y="120" width="70" height="60" rx="6"/>
+            <rect x="250" y="120" width="70" height="60" rx="6"/>
+            <rect x="330" y="120" width="70" height="60" rx="6"/>
+            <rect x="410" y="120" width="70" height="60" rx="6"/>
+            <rect x="490" y="120" width="70" height="60" rx="6"/>
+          </g>
+          <!-- door -->
+          <rect x="540" y="200" width="36" height="60" fill="#0A4F4A" stroke="#064B2F" stroke-width="2" rx="3"/>
+          <line x1="558" y1="208" x2="558" y2="252" stroke="#EE8C2E" stroke-width="2"/>
+          <!-- headlights -->
+          <circle cx="666" cy="220" r="6" fill="#FBE2C3" stroke="#064B2F" stroke-width="1.5"/>
+          <circle cx="666" cy="240" r="4" fill="#EE8C2E" stroke="#064B2F" stroke-width="1.5"/>
+          <!-- wheels -->
+          <g class="bus-wheels">
+            <circle cx="160" cy="280" r="28" fill="#0F172A" stroke="#EE8C2E" stroke-width="3"/>
+            <circle cx="160" cy="280" r="10" fill="#94A3B8"/>
+            <circle cx="560" cy="280" r="28" fill="#0F172A" stroke="#EE8C2E" stroke-width="3"/>
+            <circle cx="560" cy="280" r="10" fill="#94A3B8"/>
+          </g>
+          <!-- side branding panel -->
+          <rect x="200" y="208" width="280" height="42" rx="6" fill="#0A4F4A" stroke="#EE8C2E" stroke-width="1.5"/>
+          <text x="340" y="236" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="22" font-weight="800" fill="#fff">CHEAP <tspan fill="#EE8C2E">TRAVELS</tspan> INDIA</text>
+          <!-- speed lines -->
+          <g stroke="#14B58C" stroke-width="3" stroke-linecap="round" opacity=".5" class="speed-lines">
+            <line x1="20"  y1="150" x2="50"  y2="150"/>
+            <line x1="10"  y1="180" x2="50"  y2="180"/>
+            <line x1="25"  y1="210" x2="50"  y2="210"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
 </div>
 
 <!-- CHECKOUT VIEW -->
@@ -1461,12 +1935,12 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
         <div class="section qr-section">
           <h3><span class="step">2</span> Pay via UPI</h3>
           <p>Scan the QR with any UPI app · Pay <b class="qr-payable">₹1,424</b> to <b class="qr-upi-id">cheaptravel546@okhdfcbank</b></p>
-          <div class="timer">⏱ Hold expires in 07:23</div>
+          <div class="timer"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Hold expires in 07:23</div>
           <div class="qr-box" style="display:inline-block; background:#fff; padding:6px; border-radius:14px; box-shadow:var(--shadow); margin:0 auto 14px; overflow:hidden; border: 1.5px solid var(--line);">
             <img src="payment_qr.png" alt="Scan to pay" style="width:260px; height:auto; display:block; margin:0 auto; border-radius:10px;" loading="lazy">
           </div>
           <div class="upi-id">cheaptravel546@okhdfcbank</div>
-          <button class="copy-btn" onclick="copyUPI()">📋 Copy UPI ID</button>
+          <button class="copy-btn" onclick="copyUPI()"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy UPI ID</button>
           <div class="upi-apps">
             <div class="upi-app" style="color:#4285F4">GPay</div>
             <div class="upi-app" style="color:#5F259F">PhonePe</div>
@@ -1497,7 +1971,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
           <div class="sum-row tot"><span>Total payable</span><span>₹1,424</span></div>
         </div>
         <div class="sum-card" style="background:linear-gradient(135deg,#0F766E,#0A4F4A);color:#fff">
-          <h4 style="color:#fff;border-color:rgba(255,255,255,.2)">🛡️ Cheap Travels Promise</h4>
+          <h4 style="color:#fff;border-color:rgba(255,255,255,.2)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Cheap Travels Promise</h4>
           <div style="font-size:12.5px;line-height:1.6;color:#D9F2EE">If your ticket isn't issued by the operator within 30 minutes, your full payment is auto-refunded. No questions asked.</div>
         </div>
       </aside>
@@ -1569,10 +2043,10 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
           </div>
         </div>
         <div class="tk-actions">
-          <button class="tk-btn wa">📲 Send to WhatsApp</button>
-          <button class="tk-btn email">✉️ Email me</button>
-          <button class="tk-btn pdf">⬇ Download PDF</button>
-          <button class="tk-btn pdf">🗺 Live track</button>
+          <button class="tk-btn wa"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:5px"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>Send to WhatsApp</button>
+          <button class="tk-btn email"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:5px"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Email me</button>
+          <button class="tk-btn pdf"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download PDF</button>
+          <button class="tk-btn pdf"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:5px"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Live track</button>
         </div>
         <div class="tk-footer">
           <div>Cheap Travels · 24×7 helpline 8853391184 · cheaptravels.in@gmail.com</div>
@@ -3664,6 +4138,23 @@ function claimBonus() {
 function closeBonusPopup() {
   document.getElementById('bonus-popup').classList.remove('open');
 }
+
+// Scroll-reveal for story/services/fleet sections
+(function () {
+  if (typeof IntersectionObserver === 'undefined') {
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('in-view'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in-view');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('.reveal-on-scroll').forEach(el => io.observe(el));
+})();
 </script>
 </body>
 </html>
