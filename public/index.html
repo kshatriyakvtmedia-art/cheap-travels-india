@@ -512,6 +512,9 @@ header.top {
   font-size: 11px; background: var(--bg); color: var(--ink2);
   padding: 4px 10px; border-radius: var(--radius-sm); font-weight: 600;
   border: 1px solid rgba(0, 0, 0, 0.03);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 .bus-times { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; margin-bottom: 14px; }
 .time-block { display: flex; flex-direction: column; }
@@ -519,7 +522,7 @@ header.top {
 .time-block .c { font-size: 12.5px; color: var(--ink2); margin-top: 4px; font-weight: 500; }
 .time-line { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .time-line .dur { font-size: 11px; color: var(--ink2); font-weight: 700; background: var(--bg); padding: 3px 10px; border-radius: var(--radius-full); border: 1.5px solid var(--line); }
-.line { width: 140px; height: 2px; background: linear-gradient(90deg, var(--teal) 0%, var(--gold) 50%, var(--teal) 100%); position: relative; }
+.line { width: 100%; max-width: 140px; min-width: 30px; height: 2px; background: linear-gradient(90deg, var(--teal) 0%, var(--gold) 50%, var(--teal) 100%); position: relative; }
 .line::before, .line::after { content:""; position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--teal); top: -3px; }
 .line::before { left: -2px; } .line::after { right: -2px; background: var(--gold); }
 .bus-bottom { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--ink2); font-weight: 500; }
@@ -960,7 +963,17 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 
   .search-card { grid-template-columns: 1fr; gap: 10px; padding: 14px; border-radius: var(--radius-lg); }
   .field-box { min-height: 56px; }
-  .swap { position: static; margin: 0 auto; transform: none; width: 32px; height: 32px; font-size: 16px; }
+  .swap {
+    position: absolute;
+    right: 16px;
+    top: calc(100% - 5px);
+    transform: translateY(-50%);
+    margin: 0;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    z-index: 10;
+  }
   .search-btn { padding: 15px; font-size: 15px; min-height: 52px; }
 
   /* Prevent iOS input zoom - font size must be >= 16px */
@@ -980,7 +993,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .bus-side { border-left: none; border-top: 1px dashed var(--line); padding-left: 0; padding-top: 14px; flex-direction: row; justify-content: space-between; align-items: center; min-width: unset; }
   .fare { font-size: 24px; }
   .view-seats { font-size: 13px; padding: 9px 16px; }
-  .line { width: 80px; }
+  .line { width: 100%; max-width: 80px; }
   .time-block .t { font-size: 18px; }
   .time-block .c { max-width: 95px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .bus-times { gap: 8px; }
@@ -1295,7 +1308,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .bus-meta span { font-size: 10.5px; padding: 2px 6px; }
   .time-block .t { font-size: 16px; }
   .time-block .c { font-size: 10.5px; max-width: 84px; }
-  .line { width: 60px; }
+  .line { width: 100%; max-width: 60px; }
   .fare { font-size: 20px; }
   .fare-strike { font-size: 11.5px; }
   .save-pill { font-size: 10px; padding: 2px 6px; }
@@ -1344,7 +1357,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .svc-label { font-size: 12px; }
   .svc-tag { font-size: 10px; }
   .time-block .c { max-width: 72px; font-size: 10px; }
-  .line { width: 46px; }
+  .line { width: 100%; max-width: 46px; }
   .fare { font-size: 18px; }
   .view-seats { font-size: 11.5px; padding: 7px 12px; }
   .lc-title { font-size: 12px; }
@@ -2809,9 +2822,9 @@ function displayFilteredBuses(buses, formattedDate) {
     html += `
       <div class="bus ${isFeatured ? 'featured' : ''}" data-bus="${bus.resId}">
         <div class="bus-main">
-          <div style="display:flex; align-items:center; gap:8px;">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
             <h3 style="margin:0;">${bus.operator}</h3>
-            <span style="background:var(--green-s); color:var(--teal-d); padding:2px 8px; border-radius:6px; font-size:10.5px; font-weight:700;">Direct Partner 5% Off</span>
+            <span style="background:var(--green-s); color:var(--teal-d); padding:2px 8px; border-radius:6px; font-size:10.5px; font-weight:700; white-space:nowrap;">Direct Partner 5% Off</span>
           </div>
           <div class="bus-meta">
             <span>${bus.busType}</span><span>Direct</span><span>Live tracking</span><span>Mineral water</span>
