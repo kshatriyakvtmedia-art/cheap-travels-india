@@ -987,7 +987,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .ts small { font-size: 11px; }
 
   .bus {
-    grid-template-columns: 1fr 108px;
+    grid-template-columns: minmax(0, 1fr) 108px !important;
     padding: 12px;
     gap: 10px;
     align-items: stretch;
@@ -1008,8 +1008,8 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     min-width: 0;
   }
   .bus-side {
-    border-left: 1px dashed var(--line);
-    border-top: none;
+    border-left: 1px dashed var(--line) !important;
+    border-top: none !important;
     padding-left: 10px;
     padding-top: 0;
     flex-direction: column;
@@ -1027,6 +1027,14 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .fare-strike { font-size: 11px; color: var(--ink3); text-decoration: line-through; }
   .save-pill { font-size: 9.5px; padding: 2px 5px; margin-top: 2px; }
   .view-seats { font-size: 11px; padding: 7px 10px; width: 100%; text-align: center; white-space: nowrap; }
+  .bus-bottom {
+    display: flex;
+    flex-wrap: wrap !important;
+    gap: 4px 8px;
+    font-size: 11px;
+    color: var(--ink2);
+    font-weight: 500;
+  }
   
   .bus-times {
     display: flex;
@@ -1052,7 +1060,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   }
 
   .skeleton-card {
-    grid-template-columns: 1fr 108px;
+    grid-template-columns: minmax(0, 1fr) 108px !important;
     padding: 12px;
     gap: 10px;
     min-height: unset;
@@ -1060,7 +1068,8 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .skeleton-right {
     width: 100%;
     padding-left: 10px;
-    border-left: 1px dashed var(--line);
+    border-left: 1px dashed var(--line) !important;
+    border-top: none !important;
     align-items: flex-end;
   }
   .skeleton-times {
