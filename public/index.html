@@ -1061,9 +1061,9 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
         <div class="user-avatar" id="user-avatar">U</div>
         <span id="user-name-display">User</span>
         <div class="user-dropdown">
-          <a href="#">👤 My Profile</a>
-          <a href="#">🎟 My Bookings</a>
-          <a href="#">💬 Help &amp; Support</a>
+          <a href="#" onclick="event.preventDefault(); openProfileModal();">👤 My Profile</a>
+          <a href="#" onclick="event.preventDefault(); openBookingsModal();">🎟 My Bookings</a>
+          <a href="#" onclick="event.preventDefault(); openHelpModal();">💬 Help &amp; Support</a>
           <button class="logout-row" onclick="logoutUser()">🚪 Sign Out</button>
         </div>
       </div>
@@ -1084,8 +1084,9 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     </a>
     <a href="/about.html">Cheap Travels India ↗</a>
     <a href="#" class="active">Bus Tickets</a>
-    <a href="#">My Bookings</a>
-    <a href="#">Offers</a>
+    <a href="#" onclick="event.preventDefault(); toggleMobileNav(); openBookingsModal();">My Bookings</a>
+    <a href="#" onclick="event.preventDefault(); toggleMobileNav(); openHelpModal();">Help &amp; Support</a>
+
     <a href="tel:8853391184"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> 8853391184</a>
     <button class="mn-signin" id="mn-signin-btn" onclick="toggleMobileNav(); openAuth('signin');">Sign In</button>
     <button class="mn-signin" id="mn-user-btn" style="display:none;background:var(--green-s);color:var(--teal-d);" onclick="toggleMobileNav(); document.getElementById('user-chip').classList.toggle('open');">My Account ▾</button>
@@ -1149,6 +1150,103 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     </div>
   </div>
 </div>
+
+<!-- ════════════ PROFILE MODAL ════════════ -->
+<div class="auth-overlay" id="profile-overlay">
+  <div class="auth-box" style="padding:40px 32px; max-width:400px;">
+    <button class="auth-close" onclick="closeProfileModal()">✕</button>
+    <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d); text-align:center;">My Profile</h3>
+    <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px; text-align:center;">Manage your contact and passenger details for quick bookings.</p>
+    
+    <div class="auth-err" id="profile-err" style="display:none; color:var(--red); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
+    <div class="auth-err" id="profile-success" style="display:none; color:var(--teal); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
+    
+    <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:14px;">
+      <label style="font-size:11px; font-weight:700; color:var(--ink2);">MOBILE NUMBER</label>
+      <input type="text" id="profile-phone-input" readonly style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:14px; font-weight:700; color:var(--ink3); background:var(--bg);">
+    </div>
+
+    <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:14px;">
+      <label style="font-size:11px; font-weight:700; color:var(--ink2);">FULL NAME</label>
+      <input type="text" id="profile-name-input" placeholder="Enter your full name" style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:14px; font-weight:700; color:var(--ink);">
+    </div>
+
+    <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:20px;">
+      <label style="font-size:11px; font-weight:700; color:var(--ink2);">EMAIL ADDRESS</label>
+      <input type="email" id="profile-email-input" placeholder="e.g. name@domain.com" style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:14px; font-weight:700; color:var(--ink);">
+    </div>
+
+    <button class="auth-submit" onclick="saveProfileData()" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:750; cursor:pointer; font-size:14px;">Save Profile Changes</button>
+  </div>
+</div>
+
+<!-- ════════════ COMPLETE PROFILE MODAL (Post-Login) ════════════ -->
+<div class="auth-overlay" id="complete-profile-overlay">
+  <div class="auth-box" style="padding:40px 32px; max-width:400px; border-top: 5px solid var(--gold);">
+    <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d); text-align:center;">Complete Your Profile</h3>
+    <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px; text-align:center;">Please provide your details to complete setup. This helps us dispatch your tickets securely to your correct email.</p>
+    
+    <div class="auth-err" id="complete-profile-err" style="display:none; color:var(--red); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
+    
+    <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:14px;">
+      <label style="font-size:11px; font-weight:700; color:var(--ink2);">FULL NAME</label>
+      <input type="text" id="complete-name-input" placeholder="Enter your full name" style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:14px; font-weight:700; color:var(--ink);">
+    </div>
+
+    <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:20px;">
+      <label style="font-size:11px; font-weight:700; color:var(--ink2);">EMAIL ADDRESS</label>
+      <input type="email" id="complete-email-input" placeholder="e.g. name@domain.com" style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:14px; font-weight:700; color:var(--ink);">
+    </div>
+
+    <button class="auth-submit" onclick="submitCompleteProfile()" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:750; cursor:pointer; font-size:14px;">Complete Setup →</button>
+  </div>
+</div>
+
+<!-- ════════════ BOOKINGS HISTORY MODAL ════════════ -->
+<div class="auth-overlay" id="bookings-overlay">
+  <div class="auth-box" style="padding:40px 32px; max-width:550px; width: 95%;">
+    <button class="auth-close" onclick="closeBookingsModal()">✕</button>
+    <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d); text-align:center;">My Booking History</h3>
+    <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:15px; text-align:center;">View your ticket bookings, PNR status, and journey details.</p>
+    
+    <div id="bookings-loading" style="text-align:center; padding: 30px 0; display:none;">
+      <span style="display:inline-block; width:24px; height:24px; border:3px solid var(--teal); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:10px;"></span>
+      <div style="font-size:13px; color:var(--ink2); font-weight:600;">Loading your bookings...</div>
+    </div>
+    
+    <div id="bookings-container" style="max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap:12px; padding-right:4px;">
+      <!-- Bookings list will be rendered dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ HELP & SUPPORT MODAL ════════════ -->
+<div class="auth-overlay" id="help-overlay">
+  <div class="auth-box" style="padding:40px 32px; max-width:400px; text-align:center;">
+    <button class="auth-close" onclick="closeHelpModal()">✕</button>
+    <div style="width:50px; height:50px; border-radius:50%; background:var(--green-s); color:var(--teal); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:24px;">💬</div>
+    <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Help & Support</h3>
+    <p style="color:var(--ink2); font-size:13px; line-height:1.5; margin-bottom:24px;">Have questions or need help with a refund or booking? Get in touch with us directly.</p>
+    
+    <div style="background:var(--bg); padding:16px; border-radius:12px; display:flex; flex-direction:column; gap:12px; text-align:left; border:1px solid var(--line); margin-bottom:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:13px; font-weight:700; color:var(--ink2);">WHATSAPP CHAT</span>
+        <a href="https://wa.me/918853391184" target="_blank" style="font-size:14px; font-weight:800; color:var(--teal); text-decoration:none;">+91 88533 91184 ↗</a>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line); padding-top:12px;">
+        <span style="font-size:13px; font-weight:700; color:var(--ink2);">CALL HELPLINE</span>
+        <a href="tel:8853391184" style="font-size:14px; font-weight:800; color:var(--teal); text-decoration:none;">+91 88533 91184</a>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line); padding-top:12px;">
+        <span style="font-size:13px; font-weight:700; color:var(--ink2);">EMAIL SUPPORT</span>
+        <a href="mailto:support@cheaptravels.in" style="font-size:14px; font-weight:800; color:var(--teal); text-decoration:none;">support@cheaptravels.in</a>
+      </div>
+    </div>
+    
+    <div style="font-size:11px; color:var(--ink3); font-weight:600;">OPERATIONAL HOURS: 24/7 SUPPORT AVAILABLE</div>
+  </div>
+</div>
+
 
 <!-- SEARCH/RESULTS VIEW -->
 <div class="view active" id="view-results">
@@ -2741,6 +2839,7 @@ async function verifyMobileOtp() {
       const user = {
         name: data.user.name,
         phone: data.user.mobile,
+        email: data.user.email || '',
         id: data.user.id
       };
       
@@ -2749,7 +2848,12 @@ async function verifyMobileOtp() {
       updateAuthUI();
       closeAuth();
       
-      if (pendingCheckout) {
+      // Check if profile needs completion
+      const isGuest = user.name && user.name.startsWith('Guest User');
+      const isEmailMissing = !user.email;
+      if (isGuest || isEmailMissing) {
+        triggerCompleteProfileCheck();
+      } else if (pendingCheckout) {
         pendingCheckout = false;
         continueToCheckout();
       }
@@ -2794,10 +2898,230 @@ function updateAuthUI() {
   }
 }
 
+// ═══════════ CUSTOM CUSTOMER PROFILE & BOOKINGS JS ═══════════
+function openProfileModal() {
+  if (!currentUser) return;
+  document.getElementById('profile-err').style.display = 'none';
+  document.getElementById('profile-success').style.display = 'none';
+  
+  document.getElementById('profile-phone-input').value = currentUser.phone || '';
+  document.getElementById('profile-name-input').value = currentUser.name || '';
+  document.getElementById('profile-email-input').value = currentUser.email || '';
+  
+  document.getElementById('profile-overlay').classList.add('open');
+}
+
+function closeProfileModal() {
+  document.getElementById('profile-overlay').classList.remove('open');
+}
+
+async function saveProfileData() {
+  const name = document.getElementById('profile-name-input').value.trim();
+  const email = document.getElementById('profile-email-input').value.trim();
+  const errEl = document.getElementById('profile-err');
+  const successEl = document.getElementById('profile-success');
+  
+  errEl.style.display = 'none';
+  successEl.style.display = 'none';
+  
+  if (!name) {
+    errEl.textContent = 'Name is required.';
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API}/api/auth/profile`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email })
+    });
+    const data = await res.json();
+    
+    if (data.success) {
+      currentUser.name = data.user.name;
+      currentUser.email = data.user.email || '';
+      localStorage.setItem('cti_user', JSON.stringify(currentUser));
+      updateAuthUI();
+      successEl.textContent = 'Profile updated successfully!';
+      successEl.style.display = 'block';
+      setTimeout(closeProfileModal, 1200);
+    } else {
+      errEl.textContent = data.error || 'Failed to save changes.';
+      errEl.style.display = 'block';
+    }
+  } catch (err) {
+    console.error('Failed to update profile:', err);
+    errEl.textContent = 'Network error. Please try again.';
+    errEl.style.display = 'block';
+  }
+}
+
+// Complete profile flow (post-login)
+function triggerCompleteProfileCheck() {
+  if (!currentUser) return;
+  
+  const isGuest = currentUser.name && currentUser.name.startsWith('Guest User');
+  const isEmailMissing = !currentUser.email;
+  
+  if (isGuest || isEmailMissing) {
+    document.getElementById('complete-profile-err').style.display = 'none';
+    document.getElementById('complete-name-input').value = isGuest ? '' : currentUser.name;
+    document.getElementById('complete-email-input').value = currentUser.email || '';
+    document.getElementById('complete-profile-overlay').classList.add('open');
+  }
+}
+
+async function submitCompleteProfile() {
+  const name = document.getElementById('complete-name-input').value.trim();
+  const email = document.getElementById('complete-email-input').value.trim();
+  const errEl = document.getElementById('complete-profile-err');
+  
+  errEl.style.display = 'none';
+  
+  if (!name) {
+    errEl.textContent = 'Please enter your full name.';
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  if (!email || !email.includes('@')) {
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API}/api/auth/profile`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email })
+    });
+    const data = await res.json();
+    
+    if (data.success) {
+      currentUser.name = data.user.name;
+      currentUser.email = data.user.email || '';
+      localStorage.setItem('cti_user', JSON.stringify(currentUser));
+      updateAuthUI();
+      document.getElementById('complete-profile-overlay').classList.remove('open');
+      
+      if (pendingCheckout) {
+        pendingCheckout = false;
+        continueToCheckout();
+      }
+    } else {
+      errEl.textContent = data.error || 'Failed to update details.';
+      errEl.style.display = 'block';
+    }
+  } catch (err) {
+    console.error('Failed to complete profile:', err);
+    errEl.textContent = 'Network error. Please try again.';
+    errEl.style.display = 'block';
+  }
+}
+
+// Help modal functions
+function openHelpModal() {
+  document.getElementById('help-overlay').classList.add('open');
+}
+function closeHelpModal() {
+  document.getElementById('help-overlay').classList.remove('open');
+}
+
+// Bookings modal functions
+function openBookingsModal() {
+  document.getElementById('bookings-overlay').classList.add('open');
+  loadUserBookings();
+}
+function closeBookingsModal() {
+  document.getElementById('bookings-overlay').classList.remove('open');
+}
+
+async function loadUserBookings() {
+  const container = document.getElementById('bookings-container');
+  const loader = document.getElementById('bookings-loading');
+  
+  container.innerHTML = '';
+  loader.style.display = 'block';
+  
+  try {
+    const res = await fetch(`${API}/api/auth/bookings`);
+    const data = await res.json();
+    loader.style.display = 'none';
+    
+    if (data.success) {
+      if (data.bookings.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:40px 20px; color:var(--ink3);">
+            <div style="font-size:32px; margin-bottom:12px;">🎟</div>
+            <div style="font-weight:700; font-size:14px; color:var(--ink);">No bookings found</div>
+            <p style="font-size:12px; margin:4px 0 0; line-height:1.4;">Your tickets will appear here once booked.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      let html = '';
+      data.bookings.forEach(b => {
+        let statusBadgeCls = 'background: #f3f4f6; color: #374151;';
+        if (b.status === 'confirmed') statusBadgeCls = 'background: #d1fae5; color: #065f46;';
+        else if (b.status === 'paid_pending') statusBadgeCls = 'background: #fef3c7; color: #92400e;';
+        else if (b.status === 'held') statusBadgeCls = 'background: #f3f4f6; color: #374151;';
+        else if (b.status === 'failed' || b.status === 'cancelled' || b.status === 'refunded') statusBadgeCls = 'background: #fee2e2; color: #991b1b;';
+        
+        const dateParts = b.journeyDate.split('-');
+        const journeyDateStr = dateParts[2] && dateParts[1] ? `${dateParts[2]} ${getMonthName(dateParts[1])}` : b.journeyDate;
+        
+        html += `
+          <div style="background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px; text-align:left;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:10px; font-weight:750; color:var(--ink3); text-transform:uppercase; letter-spacing:0.5px;">ORDER: ${b.id.slice(0, 18)}</span>
+              <span style="${statusBadgeCls} font-size:10px; font-weight:800; padding:3px 8px; border-radius:6px; text-transform:uppercase; letter-spacing:0.5px;">${b.status}</span>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed var(--line); border-bottom:1px dashed var(--line); padding:10px 0;">
+              <div>
+                <div style="font-size:14px; font-weight:800; color:var(--ink);">${b.fromCity} ➔ ${b.toCity}</div>
+                <div style="font-size:11px; color:var(--ink2); font-weight:600; margin-top:2px;">${journeyDateStr} · ${b.departure}</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:14px; font-weight:800; color:var(--teal);">₹${b.totalPayable}</div>
+                <div style="font-size:11px; color:var(--ink3); font-weight:600; margin-top:2px;">Seat ${b.seatNo}</div>
+              </div>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+              <div style="color:var(--ink2); font-weight:600;">Passenger: <b style="color:var(--ink);">${b.passengerName || 'Guest'}</b></div>
+              ${b.providerPnr ? `<div style="color:var(--ink2); font-weight:600;">PNR: <b style="color:var(--teal); font-size:12px; font-weight:800;">${b.providerPnr}</b></div>` : `<div style="color:var(--ink3); font-style:italic;">PNR Pending</div>`}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    } else {
+      container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--red); font-weight:600;">Error: ${data.error || 'Failed to fetch bookings'}</div>`;
+    }
+  } catch (err) {
+    console.error('Failed to load bookings:', err);
+    container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--red); font-weight:600;">Failed to load bookings due to connection issues.</div>`;
+  }
+}
+
 // Close modal when clicking overlay backdrop
 document.getElementById('auth-overlay').addEventListener('click', function(e) {
   if (e.target === this) closeAuth();
 });
+document.getElementById('profile-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeProfileModal();
+});
+document.getElementById('bookings-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeBookingsModal();
+});
+document.getElementById('help-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeHelpModal();
+});
+
 
 // Allow Enter key in auth fields
 document.addEventListener('keydown', e => {

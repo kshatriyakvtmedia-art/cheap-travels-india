@@ -1577,6 +1577,7 @@ app.post('/api/auth/firebase', async (req, res) => {
         id: result.user.id,
         name: result.user.name,
         mobile: result.user.mobile,
+        email: result.user.email,
         role: result.user.role
       }
     });
@@ -1604,6 +1605,91 @@ app.get('/api/auth/me', requireAuth, (req, res) => {
     }
   });
 });
+
+// Customer: Update Profile (Name & Email)
+app.put('/api/auth/profile', requireAuth, async (req, res) => {
+  const { name, email } = req.body;
+  
+  if (!name || !name.trim()) {
+    return res.status(400).json({ success: false, error: 'Name is required.' });
+  }
+
+  try {
+    // Check if email is already taken by another user (case-insensitive)
+    if (email && email.trim()) {
+      const existing = await prisma.user.findFirst({
+        where: {
+          email: {
+            equals: email.trim(),
+            mode: 'insensitive'
+          },
+          NOT: { id: req.user.id }
+        }
+      });
+      if (existing) {
+        return res.status(400).json({ success: false, error: 'This email is already registered with another account.' });
+      }
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.id },
+      data: {
+        name: name.trim(),
+        email: email && email.trim() ? email.trim() : null
+      }
+    });
+
+    res.json({
+      success: true,
+      user: {
+        id: updatedUser.id,
+        name: updatedUser.name,
+        mobile: updatedUser.mobile,
+        email: updatedUser.email,
+        role: updatedUser.role
+      }
+    });
+  } catch (err) {
+    console.error('Failed to update user profile:', err.message);
+    res.status(500).json({ success: false, error: 'Failed to save profile changes. Please try again.' });
+  }
+});
+
+// Customer: Fetch Bookings list
+app.get('/api/auth/bookings', requireAuth, async (req, res) => {
+  try {
+    const orders = await prisma.order.findMany({
+      where: { userId: req.user.id },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.json({
+      success: true,
+      bookings: orders.map(o => ({
+        id: o.id,
+        operator: o.operator,
+        busType: o.busType,
+        fromCity: o.fromCity,
+        toCity: o.toCity,
+        journeyDate: o.journeyDate,
+        departure: o.departure,
+        arrival: o.arrival,
+        seatNo: o.seatNo,
+        boardingPoint: o.boardingPoint,
+        droppingPoint: o.droppingPoint,
+        passengerName: o.passengerName,
+        totalPayable: o.totalPayable,
+        status: o.status,
+        providerPnr: o.providerPnr,
+        createdAt: o.createdAt.toISOString()
+      }))
+    });
+  } catch (err) {
+    console.error('Failed to retrieve customer bookings:', err.message);
+    res.status(500).json({ success: false, error: 'Failed to retrieve bookings list.' });
+  }
+});
+
 
 // API: Send signup details to owner's email
 app.post('/api/signup', async (req, res) => {
