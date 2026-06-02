@@ -986,14 +986,97 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .ts b { font-size: 12.5px; }
   .ts small { font-size: 11px; }
 
-  .bus { grid-template-columns: 1fr; padding: 14px; }
-  .bus-side { border-left: none; border-top: 1px dashed var(--line); padding-left: 0; padding-top: 14px; flex-direction: row; justify-content: space-between; align-items: center; min-width: unset; }
-  .fare { font-size: 24px; }
-  .view-seats { font-size: 13px; padding: 9px 16px; }
-  .line { width: 100%; max-width: 80px; }
-  .time-block .t { font-size: 18px; }
-  .time-block .c { max-width: 95px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .bus-times { gap: 8px; }
+  .bus {
+    grid-template-columns: 1fr 108px;
+    padding: 12px;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .bus.featured {
+    padding-top: 26px;
+  }
+  .bus.featured::before {
+    left: 0;
+    right: auto;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: var(--radius-md);
+  }
+  .bus-main {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .bus-side {
+    border-left: 1px dashed var(--line);
+    border-top: none;
+    padding-left: 10px;
+    padding-top: 0;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    min-width: unset;
+    gap: 8px;
+  }
+  .fare-block {
+    text-align: right;
+    width: 100%;
+  }
+  .fare { font-size: 20px; font-weight: 800; color: var(--teal-d); }
+  .fare small { font-size: 10px; }
+  .fare-strike { font-size: 11px; color: var(--ink3); text-decoration: line-through; }
+  .save-pill { font-size: 9.5px; padding: 2px 5px; margin-top: 2px; }
+  .view-seats { font-size: 11px; padding: 7px 10px; width: 100%; text-align: center; white-space: nowrap; }
+  
+  .bus-times {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    margin-bottom: 8px;
+  }
+  .time-block { display: flex; flex-direction: column; }
+  .time-block .t { font-size: 14px; font-weight: 800; }
+  .time-block .c { font-size: 10.5px; max-width: 84px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .time-line { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .time-line .line { display: none; }
+  .time-line .dur {
+    font-size: 10px;
+    padding: 2px 6px;
+    background: var(--teal-light);
+    color: var(--teal-d);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .skeleton-card {
+    grid-template-columns: 1fr 108px;
+    padding: 12px;
+    gap: 10px;
+    min-height: unset;
+  }
+  .skeleton-right {
+    width: 100%;
+    padding-left: 10px;
+    border-left: 1px dashed var(--line);
+    align-items: flex-end;
+  }
+  .skeleton-times {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 6px 0;
+  }
+  .skeleton-line {
+    display: none;
+  }
+  .skeleton-dur {
+    width: 60px;
+    height: 16px;
+    margin: 0;
+  }
 
   .seat-content { grid-template-columns: 1fr; }
   .seat { font-size: 10px; }
@@ -1030,7 +1113,33 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .foot-bottom { margin-top: 30px; padding-top: 20px; flex-direction: column; align-items: center; gap: 8px; font-size: 11px; color: rgba(164, 219, 211, 0.4); text-align: center; }
 
   .auth-box { padding: 28px 20px 24px; }
-  .live-compare { flex-direction: column; gap: 10px; padding: 14px; }
+  .live-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    padding: 12px;
+    border-radius: var(--radius-md);
+  }
+  .lc-title {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+  .cmp {
+    font-size: 11px;
+    padding: 6px 4px;
+    margin: 0;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+  .cmp.us {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
 
   .bonus-popup { align-items: flex-end; padding: 0; }
   .bonus-popup-box {
@@ -1078,22 +1187,20 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .ts small { font-size: 10.5px; }
 
   /* Live compare → vertical stack */
-  .live-compare { padding: 12px; gap: 8px; border-radius: var(--radius-md); }
-  .lc-title { font-size: 12.5px; }
-  .cmp { font-size: 11.5px; padding: 6px 10px; }
+  .live-compare { padding: 10px; gap: 6px; }
+  .cmp { font-size: 10.5px; padding: 4.5px 2px; }
+  .cmp.us { font-size: 12px; padding: 6px 10px; }
 
   /* Bus result card */
-  .bus { padding: 12px; border-radius: var(--radius-md); }
-  .bus-main h3 { font-size: 14.5px; }
-  .bus-meta span { font-size: 10.5px; padding: 2px 6px; }
-  .time-block .t { font-size: 16px; }
-  .time-block .c { font-size: 10.5px; max-width: 84px; }
-  .line { width: 100%; max-width: 60px; }
-  .fare { font-size: 20px; }
-  .fare-strike { font-size: 11.5px; }
-  .save-pill { font-size: 10px; padding: 2px 6px; }
-  .view-seats { font-size: 12px; padding: 8px 14px; }
-  .bus-bottom { font-size: 11.5px; }
+  .bus { padding: 10px; border-radius: var(--radius-md); }
+  .bus-main h3 { font-size: 13.5px; }
+  .bus-meta span { font-size: 9.5px; padding: 2px 4px; }
+  .time-block .t { font-size: 13.5px; }
+  .time-block .c { font-size: 10px; max-width: 70px; }
+  .fare { font-size: 18px; }
+  .fare-strike { font-size: 10px; }
+  .save-pill { font-size: 9px; padding: 1.5px 4px; }
+  .bus-bottom { font-size: 10.5px; }
 
   /* Sort tabs scroll horizontally */
   .sort-bar { overflow-x: auto; padding: 8px 12px; gap: 8px; flex-wrap: nowrap; }
@@ -1136,11 +1243,9 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .svc-img-wrap { width: 70px; height: 70px; }
   .svc-label { font-size: 12px; }
   .svc-tag { font-size: 10px; }
-  .time-block .c { max-width: 72px; font-size: 10px; }
-  .line { width: 100%; max-width: 46px; }
-  .fare { font-size: 18px; }
-  .view-seats { font-size: 11.5px; padding: 7px 12px; }
-  .lc-title { font-size: 12px; }
+  .time-block .c { max-width: 55px; font-size: 9.5px; }
+  .fare { font-size: 17px; }
+  .lc-title { font-size: 11px; }
 }
 </style>
 </head>
