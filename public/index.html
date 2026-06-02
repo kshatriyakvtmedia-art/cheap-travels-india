@@ -1116,6 +1116,26 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .seat.sleeper { height: 100%; }
   .seat-grid { gap: 5px 4px; }
 
+  /* Mobile Tab Toggle for Seat Selection */
+  .seat-panel[data-active-tab="seats"] .seatmap {
+    display: flex !important;
+  }
+  .seat-panel[data-active-tab="seats"] .booking-side h4,
+  .seat-panel[data-active-tab="seats"] .booking-side .point-list {
+    display: none !important;
+  }
+  
+  .seat-panel[data-active-tab="boarding"] .seatmap,
+  .seat-panel[data-active-tab="dropping"] .seatmap {
+    display: none !important;
+  }
+  .seat-panel[data-active-tab="boarding"] .booking-side h4,
+  .seat-panel[data-active-tab="boarding"] .booking-side .point-list,
+  .seat-panel[data-active-tab="dropping"] .booking-side h4,
+  .seat-panel[data-active-tab="dropping"] .booking-side .point-list {
+    display: block !important;
+  }
+
   .form-grid { grid-template-columns: 1fr; }
   .full { grid-column: 1; }
   .checkout-wrap { gap: 14px; margin-top: 0; }
@@ -3001,7 +3021,7 @@ function displayFilteredBuses(buses, formattedDate) {
           <button class="view-seats" onclick="toggleSeatLive('${bus.resId}', '${formattedDate}')">View Seats</button>
         </div>
         
-        <div class="seat-panel" id="panel-${bus.resId}">
+        <div class="seat-panel" id="panel-${bus.resId}" data-active-tab="seats">
           <div class="seat-tabs">
             <div class="seat-tab active" onclick="switchSeatTab('${bus.resId}', 'seats')">Seats</div>
             <div class="seat-tab" onclick="switchSeatTab('${bus.resId}', 'boarding')">Boarding Points</div>
@@ -3069,6 +3089,14 @@ async function toggleSeatLive(resId, dateStr) {
   btn.classList.add('active');
   btn.textContent = 'Hide Seats';
   busCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  
+  const panel = document.getElementById(`panel-${resId}`);
+  if (panel) {
+    panel.setAttribute('data-active-tab', 'seats');
+    panel.querySelectorAll('.seat-tab').forEach(t => t.classList.remove('active'));
+    const tabList = panel.querySelectorAll('.seat-tab');
+    if (tabList.length > 0) tabList[0].classList.add('active');
+  }
 
   // Compare Only check removed
 
@@ -3246,6 +3274,8 @@ function pickPoint(el, type, name, time) {
 function switchSeatTab(resId, tabName) {
   const panel = document.getElementById(`panel-${resId}`);
   if (!panel) return;
+  
+  panel.setAttribute('data-active-tab', tabName);
   
   // Update tabs active state
   panel.querySelectorAll('.seat-tab').forEach(t => t.classList.remove('active'));
