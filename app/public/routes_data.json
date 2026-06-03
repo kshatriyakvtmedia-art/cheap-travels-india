@@ -1,0 +1,2194 @@
+{
+  "origins": [
+    {
+      "id": "183",
+      "name": "53 mile"
+    },
+    {
+      "id": "22",
+      "name": "Agra"
+    },
+    {
+      "id": "446",
+      "name": "Ahmadpur"
+    },
+    {
+      "id": "418",
+      "name": "Ahmednagar"
+    },
+    {
+      "id": "190",
+      "name": "Akbarpur"
+    },
+    {
+      "id": "469",
+      "name": "Akbarpur (kanpur dehat)"
+    },
+    {
+      "id": "572",
+      "name": "Al-hilal"
+    },
+    {
+      "id": "234",
+      "name": "Alampur (himachal pradesh)"
+    },
+    {
+      "id": "30",
+      "name": "Allahabad"
+    },
+    {
+      "id": "117",
+      "name": "Amb (Himachal Pradesh)"
+    },
+    {
+      "id": "450",
+      "name": "Ambajogai"
+    },
+    {
+      "id": "45",
+      "name": "Ambala"
+    },
+    {
+      "id": "8",
+      "name": "Amritsar"
+    },
+    {
+      "id": "116",
+      "name": "Anandpur Sahib"
+    },
+    {
+      "id": "306",
+      "name": "Ananthnag"
+    },
+    {
+      "id": "472",
+      "name": "Arrah (bihar)"
+    },
+    {
+      "id": "168",
+      "name": "Atraulia"
+    },
+    {
+      "id": "356",
+      "name": "Aurai (up)"
+    },
+    {
+      "id": "34",
+      "name": "Auraiya"
+    },
+    {
+      "id": "419",
+      "name": "Aurangabad"
+    },
+    {
+      "id": "427",
+      "name": "Ausa"
+    },
+    {
+      "id": "76",
+      "name": "Aut"
+    },
+    {
+      "id": "134",
+      "name": "Ayodhya"
+    },
+    {
+      "id": "170",
+      "name": "Azamgarh"
+    },
+    {
+      "id": "507",
+      "name": "Babatpur"
+    },
+    {
+      "id": "505",
+      "name": "Badlapur (uttar pradesh)"
+    },
+    {
+      "id": "561",
+      "name": "Baglamukhi"
+    },
+    {
+      "id": "37",
+      "name": "Baijnath"
+    },
+    {
+      "id": "473",
+      "name": "Baitalpur"
+    },
+    {
+      "id": "288",
+      "name": "Balachaur"
+    },
+    {
+      "id": "353",
+      "name": "Banda(mh)"
+    },
+    {
+      "id": "488",
+      "name": "Bandanwara"
+    },
+    {
+      "id": "408",
+      "name": "Bangalore"
+    },
+    {
+      "id": "232",
+      "name": "Bangana"
+    },
+    {
+      "id": "310",
+      "name": "Bangarmau (uttar pradesh)"
+    },
+    {
+      "id": "304",
+      "name": "Banihal"
+    },
+    {
+      "id": "25",
+      "name": "Barabanki"
+    },
+    {
+      "id": "231",
+      "name": "Barsar(himachal pradesh)"
+    },
+    {
+      "id": "167",
+      "name": "Baskhari"
+    },
+    {
+      "id": "26",
+      "name": "Basti"
+    },
+    {
+      "id": "90",
+      "name": "Beas"
+    },
+    {
+      "id": "359",
+      "name": "Bhager"
+    },
+    {
+      "id": "467",
+      "name": "Bharatpur"
+    },
+    {
+      "id": "113",
+      "name": "Bhawarna"
+    },
+    {
+      "id": "562",
+      "name": "Bhigwan"
+    },
+    {
+      "id": "481",
+      "name": "Bhilwara"
+    },
+    {
+      "id": "534",
+      "name": "Bhiwani"
+    },
+    {
+      "id": "233",
+      "name": "Bhota"
+    },
+    {
+      "id": "62",
+      "name": "Bhuntar"
+    },
+    {
+      "id": "498",
+      "name": "Bihta"
+    },
+    {
+      "id": "489",
+      "name": "Bijainagar"
+    },
+    {
+      "id": "63",
+      "name": "Bilaspur (Himachal Pradesh"
+    },
+    {
+      "id": "513",
+      "name": "Bilaspur (u.p)"
+    },
+    {
+      "id": "38",
+      "name": "Bir (Himachal Pradesh)"
+    },
+    {
+      "id": "499",
+      "name": "Brahmpur"
+    },
+    {
+      "id": "228",
+      "name": "Budhanpur"
+    },
+    {
+      "id": "471",
+      "name": "Buxar"
+    },
+    {
+      "id": "213",
+      "name": "Chamunda devi"
+    },
+    {
+      "id": "20",
+      "name": "Chandigarh"
+    },
+    {
+      "id": "118",
+      "name": "Chauntra"
+    },
+    {
+      "id": "415",
+      "name": "Chitradurga"
+    },
+    {
+      "id": "229",
+      "name": "Daroh"
+    },
+    {
+      "id": "157",
+      "name": "Dasuya"
+    },
+    {
+      "id": "370",
+      "name": "Dausa"
+    },
+    {
+      "id": "414",
+      "name": "Davanagere"
+    },
+    {
+      "id": "66",
+      "name": "Dehra"
+    },
+    {
+      "id": "16",
+      "name": "Dehradun"
+    },
+    {
+      "id": "3",
+      "name": "Delhi"
+    },
+    {
+      "id": "106",
+      "name": "Deoria (Uttar Pradesh)"
+    },
+    {
+      "id": "217",
+      "name": "Dhaliara"
+    },
+    {
+      "id": "396",
+      "name": "Dhamnod"
+    },
+    {
+      "id": "206",
+      "name": "Dharampur (himachal pradesh)"
+    },
+    {
+      "id": "9",
+      "name": "Dharmshala"
+    },
+    {
+      "id": "400",
+      "name": "Dhule"
+    },
+    {
+      "id": "301",
+      "name": "Domel jammu"
+    },
+    {
+      "id": "443",
+      "name": "Erandol"
+    },
+    {
+      "id": "35",
+      "name": "Etawah"
+    },
+    {
+      "id": "27",
+      "name": "Faizabad"
+    },
+    {
+      "id": "11",
+      "name": "Gagal"
+    },
+    {
+      "id": "160",
+      "name": "Garhshankar"
+    },
+    {
+      "id": "474",
+      "name": "Gauri bazar"
+    },
+    {
+      "id": "470",
+      "name": "Ghazipur"
+    },
+    {
+      "id": "358",
+      "name": "Ghumarwin"
+    },
+    {
+      "id": "236",
+      "name": "Goa"
+    },
+    {
+      "id": "155",
+      "name": "Gonda"
+    },
+    {
+      "id": "355",
+      "name": "Gopiganj"
+    },
+    {
+      "id": "23",
+      "name": "Gorakhpur"
+    },
+    {
+      "id": "490",
+      "name": "Gulabpura (rajasthan)"
+    },
+    {
+      "id": "15",
+      "name": "Gurgaon"
+    },
+    {
+      "id": "188",
+      "name": "Haidargarh"
+    },
+    {
+      "id": "108",
+      "name": "Haldwani"
+    },
+    {
+      "id": "230",
+      "name": "Hamirpur (himachal pradesh)"
+    },
+    {
+      "id": "575",
+      "name": "Hapur"
+    },
+    {
+      "id": "67",
+      "name": "Haridwar"
+    },
+    {
+      "id": "192",
+      "name": "Harraiya"
+    },
+    {
+      "id": "573",
+      "name": "Hata"
+    },
+    {
+      "id": "93",
+      "name": "Herbertpur"
+    },
+    {
+      "id": "60",
+      "name": "Hoshiarpur"
+    },
+    {
+      "id": "455",
+      "name": "Humnabad"
+    },
+    {
+      "id": "453",
+      "name": "Hyderabad"
+    },
+    {
+      "id": "459",
+      "name": "Indapur (pune)"
+    },
+    {
+      "id": "142",
+      "name": "Indore"
+    },
+    {
+      "id": "515",
+      "name": "Inhauna"
+    },
+    {
+      "id": "516",
+      "name": "Jagdishpur (uttar pradesh)"
+    },
+    {
+      "id": "13",
+      "name": "Jaipur"
+    },
+    {
+      "id": "74",
+      "name": "Jalandhar"
+    },
+    {
+      "id": "444",
+      "name": "Jalgaon"
+    },
+    {
+      "id": "61",
+      "name": "Jammu"
+    },
+    {
+      "id": "568",
+      "name": "Jangal"
+    },
+    {
+      "id": "506",
+      "name": "Jaunpur"
+    },
+    {
+      "id": "39",
+      "name": "Jawala Ji"
+    },
+    {
+      "id": "189",
+      "name": "Jewar"
+    },
+    {
+      "id": "533",
+      "name": "Jind"
+    },
+    {
+      "id": "40",
+      "name": "Joginder Nagar"
+    },
+    {
+      "id": "398",
+      "name": "Julwania"
+    },
+    {
+      "id": "508",
+      "name": "Kadipur (uttar pradesh)"
+    },
+    {
+      "id": "289",
+      "name": "Kainchi dham"
+    },
+    {
+      "id": "532",
+      "name": "Kaithal"
+    },
+    {
+      "id": "81",
+      "name": "Kalka"
+    },
+    {
+      "id": "216",
+      "name": "Kaloha"
+    },
+    {
+      "id": "205",
+      "name": "Kandaghat"
+    },
+    {
+      "id": "19",
+      "name": "Kangra"
+    },
+    {
+      "id": "346",
+      "name": "Kankavli"
+    },
+    {
+      "id": "485",
+      "name": "Kankroli (rajasthan)"
+    },
+    {
+      "id": "311",
+      "name": "Kannauj"
+    },
+    {
+      "id": "29",
+      "name": "Kanpur"
+    },
+    {
+      "id": "287",
+      "name": "Kaptanganj (basti)"
+    },
+    {
+      "id": "191",
+      "name": "Kaptanganj(azamgarh)"
+    },
+    {
+      "id": "344",
+      "name": "Karad"
+    },
+    {
+      "id": "421",
+      "name": "Karanja lad"
+    },
+    {
+      "id": "46",
+      "name": "Karnal"
+    },
+    {
+      "id": "348",
+      "name": "Kasal"
+    },
+    {
+      "id": "574",
+      "name": "Kasia bazaar"
+    },
+    {
+      "id": "85",
+      "name": "Kasol (Himachal Pradesh)"
+    },
+    {
+      "id": "111",
+      "name": "Kathgodam"
+    },
+    {
+      "id": "88",
+      "name": "Kathua"
+    },
+    {
+      "id": "58",
+      "name": "Katra"
+    },
+    {
+      "id": "227",
+      "name": "Khaga"
+    },
+    {
+      "id": "397",
+      "name": "Khalghat"
+    },
+    {
+      "id": "28",
+      "name": "Khalilabad"
+    },
+    {
+      "id": "295",
+      "name": "Khamanon"
+    },
+    {
+      "id": "175",
+      "name": "Khanna"
+    },
+    {
+      "id": "186",
+      "name": "Kharar"
+    },
+    {
+      "id": "521",
+      "name": "Khatushyamji"
+    },
+    {
+      "id": "487",
+      "name": "Kishangarh"
+    },
+    {
+      "id": "497",
+      "name": "Koilwar"
+    },
+    {
+      "id": "281",
+      "name": "Kolhapur"
+    },
+    {
+      "id": "350",
+      "name": "Kudal"
+    },
+    {
+      "id": "52",
+      "name": "Kullu"
+    },
+    {
+      "id": "208",
+      "name": "Kumarhatti"
+    },
+    {
+      "id": "483",
+      "name": "Kunwariya (rajasthan)"
+    },
+    {
+      "id": "563",
+      "name": "Kurkumb"
+    },
+    {
+      "id": "47",
+      "name": "Kurukshetra"
+    },
+    {
+      "id": "131",
+      "name": "Kushinagar"
+    },
+    {
+      "id": "59",
+      "name": "Lakhan Pur"
+    },
+    {
+      "id": "423",
+      "name": "Latur"
+    },
+    {
+      "id": "451",
+      "name": "Loha"
+    },
+    {
+      "id": "24",
+      "name": "Lucknow"
+    },
+    {
+      "id": "69",
+      "name": "Ludhiana"
+    },
+    {
+      "id": "401",
+      "name": "Malegaon"
+    },
+    {
+      "id": "53",
+      "name": "Manali"
+    },
+    {
+      "id": "64",
+      "name": "Mandi (Himachal Pradesh)"
+    },
+    {
+      "id": "235",
+      "name": "Manikaran"
+    },
+    {
+      "id": "395",
+      "name": "Manpur"
+    },
+    {
+      "id": "120",
+      "name": "Mathura"
+    },
+    {
+      "id": "180",
+      "name": "Matour"
+    },
+    {
+      "id": "501",
+      "name": "Mau"
+    },
+    {
+      "id": "12",
+      "name": "McLeod Ganj"
+    },
+    {
+      "id": "91",
+      "name": "Meerut"
+    },
+    {
+      "id": "466",
+      "name": "Mehandipur balaji mandir"
+    },
+    {
+      "id": "565",
+      "name": "Mehatpur"
+    },
+    {
+      "id": "357",
+      "name": "Mohansarai"
+    },
+    {
+      "id": "495",
+      "name": "Moradabad"
+    },
+    {
+      "id": "219",
+      "name": "Mubarikpur"
+    },
+    {
+      "id": "158",
+      "name": "Mukerian"
+    },
+    {
+      "id": "255",
+      "name": "Mumbai"
+    },
+    {
+      "id": "48",
+      "name": "Murthal"
+    },
+    {
+      "id": "271",
+      "name": "Mussoorie"
+    },
+    {
+      "id": "92",
+      "name": "Muzaffarnagar"
+    },
+    {
+      "id": "41",
+      "name": "Nadaun"
+    },
+    {
+      "id": "312",
+      "name": "Nagpur"
+    },
+    {
+      "id": "42",
+      "name": "Nagrota Bagwan"
+    },
+    {
+      "id": "107",
+      "name": "Nainital"
+    },
+    {
+      "id": "364",
+      "name": "Nanded"
+    },
+    {
+      "id": "119",
+      "name": "Nangal (Punjab)"
+    },
+    {
+      "id": "402",
+      "name": "Nashik"
+    },
+    {
+      "id": "480",
+      "name": "Nasirabad (rajasthan)"
+    },
+    {
+      "id": "260",
+      "name": "Nathdwara"
+    },
+    {
+      "id": "195",
+      "name": "Nawabganj"
+    },
+    {
+      "id": "159",
+      "name": "Nawanshahr"
+    },
+    {
+      "id": "224",
+      "name": "Nehran pukhar"
+    },
+    {
+      "id": "349",
+      "name": "Oras"
+    },
+    {
+      "id": "43",
+      "name": "Palampur"
+    },
+    {
+      "id": "308",
+      "name": "Pampore"
+    },
+    {
+      "id": "49",
+      "name": "Panipat"
+    },
+    {
+      "id": "309",
+      "name": "Pantha chowk"
+    },
+    {
+      "id": "21",
+      "name": "Paonta Sahib (Himachal Pradesh)"
+    },
+    {
+      "id": "55",
+      "name": "Paprola"
+    },
+    {
+      "id": "442",
+      "name": "Parola (jalgaon)"
+    },
+    {
+      "id": "214",
+      "name": "Parour"
+    },
+    {
+      "id": "207",
+      "name": "Parwanoo"
+    },
+    {
+      "id": "10",
+      "name": "Pathankot"
+    },
+    {
+      "id": "127",
+      "name": "Patna"
+    },
+    {
+      "id": "449",
+      "name": "Patoda"
+    },
+    {
+      "id": "522",
+      "name": "Pehowa"
+    },
+    {
+      "id": "68",
+      "name": "Phagwara"
+    },
+    {
+      "id": "510",
+      "name": "Phoolpur (uttar pradesh)"
+    },
+    {
+      "id": "394",
+      "name": "Pithampur"
+    },
+    {
+      "id": "218",
+      "name": "Pragpur"
+    },
+    {
+      "id": "307",
+      "name": "Pulwama"
+    },
+    {
+      "id": "185",
+      "name": "Punchkula"
+    },
+    {
+      "id": "241",
+      "name": "Pune"
+    },
+    {
+      "id": "305",
+      "name": "Qazigund"
+    },
+    {
+      "id": "194",
+      "name": "Ragadganj"
+    },
+    {
+      "id": "491",
+      "name": "Rajasmand"
+    },
+    {
+      "id": "176",
+      "name": "Rajpura"
+    },
+    {
+      "id": "303",
+      "name": "Ramban"
+    },
+    {
+      "id": "297",
+      "name": "Rampur(up)"
+    },
+    {
+      "id": "512",
+      "name": "Rani ki sarai"
+    },
+    {
+      "id": "179",
+      "name": "Ranital (Himachal Pradesh)"
+    },
+    {
+      "id": "17",
+      "name": "Rishikesh"
+    },
+    {
+      "id": "7",
+      "name": "Rohtak"
+    },
+    {
+      "id": "18",
+      "name": "Roorkee"
+    },
+    {
+      "id": "78",
+      "name": "Ropar"
+    },
+    {
+      "id": "112",
+      "name": "Rudrapur"
+    },
+    {
+      "id": "296",
+      "name": "Saharanpur"
+    },
+    {
+      "id": "87",
+      "name": "Samba"
+    },
+    {
+      "id": "403",
+      "name": "Sangamner"
+    },
+    {
+      "id": "457",
+      "name": "Sangareddy ( telangana)"
+    },
+    {
+      "id": "511",
+      "name": "Saraimeer (uttar pradesh)"
+    },
+    {
+      "id": "282",
+      "name": "Satara"
+    },
+    {
+      "id": "352",
+      "name": "Sawantwadi"
+    },
+    {
+      "id": "399",
+      "name": "Sendhwa"
+    },
+    {
+      "id": "502",
+      "name": "Shahganj"
+    },
+    {
+      "id": "365",
+      "name": "Shikrapur"
+    },
+    {
+      "id": "80",
+      "name": "Shimla"
+    },
+    {
+      "id": "220",
+      "name": "Sidhbari"
+    },
+    {
+      "id": "571",
+      "name": "Sikandra (uttar pradesh)"
+    },
+    {
+      "id": "128",
+      "name": "Siwan"
+    },
+    {
+      "id": "83",
+      "name": "Solan"
+    },
+    {
+      "id": "424",
+      "name": "Solapur"
+    },
+    {
+      "id": "51",
+      "name": "Sonipat"
+    },
+    {
+      "id": "300",
+      "name": "Srinagar"
+    },
+    {
+      "id": "114",
+      "name": "Sujanpur (Himachal Pradesh)"
+    },
+    {
+      "id": "187",
+      "name": "Sultanpur"
+    },
+    {
+      "id": "504",
+      "name": "Sultanpur (uttar pradesh)"
+    },
+    {
+      "id": "65",
+      "name": "Sunder Nagar(Himachal Pradesh)"
+    },
+    {
+      "id": "509",
+      "name": "Surapur (uttar pradesh)"
+    },
+    {
+      "id": "460",
+      "name": "Temburni"
+    },
+    {
+      "id": "212",
+      "name": "Thakur dwara"
+    },
+    {
+      "id": "243",
+      "name": "Thane"
+    },
+    {
+      "id": "115",
+      "name": "Thural"
+    },
+    {
+      "id": "425",
+      "name": "Tuljapur"
+    },
+    {
+      "id": "417",
+      "name": "Tumakuru"
+    },
+    {
+      "id": "256",
+      "name": "Udaipur"
+    },
+    {
+      "id": "302",
+      "name": "Udhampur"
+    },
+    {
+      "id": "172",
+      "name": "Ujjain"
+    },
+    {
+      "id": "454",
+      "name": "Umerga"
+    },
+    {
+      "id": "54",
+      "name": "Una (Himachal Pradesh)"
+    },
+    {
+      "id": "564",
+      "name": "Uruli kanchan"
+    },
+    {
+      "id": "31",
+      "name": "Varanasi"
+    },
+    {
+      "id": "503",
+      "name": "Vijaypur"
+    },
+    {
+      "id": "96",
+      "name": "Vikasnagar"
+    },
+    {
+      "id": "458",
+      "name": "Vikramjot"
+    },
+    {
+      "id": "204",
+      "name": "Waknaghat"
+    },
+    {
+      "id": "182",
+      "name": "Yol"
+    },
+    {
+      "id": "456",
+      "name": "Zaheerabad"
+    },
+    {
+      "id": "351",
+      "name": "Zarap"
+    },
+    {
+      "id": "177",
+      "name": "Zirakpur(Punjab)"
+    }
+  ],
+  "destinations": [
+    {
+      "id": "183",
+      "name": "53 mile"
+    },
+    {
+      "id": "22",
+      "name": "Agra"
+    },
+    {
+      "id": "446",
+      "name": "Ahmadpur"
+    },
+    {
+      "id": "418",
+      "name": "Ahmednagar"
+    },
+    {
+      "id": "190",
+      "name": "Akbarpur"
+    },
+    {
+      "id": "469",
+      "name": "Akbarpur (kanpur dehat)"
+    },
+    {
+      "id": "572",
+      "name": "Al-hilal"
+    },
+    {
+      "id": "234",
+      "name": "Alampur (himachal pradesh)"
+    },
+    {
+      "id": "30",
+      "name": "Allahabad"
+    },
+    {
+      "id": "117",
+      "name": "Amb (Himachal Pradesh)"
+    },
+    {
+      "id": "450",
+      "name": "Ambajogai"
+    },
+    {
+      "id": "45",
+      "name": "Ambala"
+    },
+    {
+      "id": "8",
+      "name": "Amritsar"
+    },
+    {
+      "id": "116",
+      "name": "Anandpur Sahib"
+    },
+    {
+      "id": "306",
+      "name": "Ananthnag"
+    },
+    {
+      "id": "472",
+      "name": "Arrah (bihar)"
+    },
+    {
+      "id": "168",
+      "name": "Atraulia"
+    },
+    {
+      "id": "356",
+      "name": "Aurai (up)"
+    },
+    {
+      "id": "34",
+      "name": "Auraiya"
+    },
+    {
+      "id": "419",
+      "name": "Aurangabad"
+    },
+    {
+      "id": "427",
+      "name": "Ausa"
+    },
+    {
+      "id": "76",
+      "name": "Aut"
+    },
+    {
+      "id": "134",
+      "name": "Ayodhya"
+    },
+    {
+      "id": "170",
+      "name": "Azamgarh"
+    },
+    {
+      "id": "507",
+      "name": "Babatpur"
+    },
+    {
+      "id": "505",
+      "name": "Badlapur (uttar pradesh)"
+    },
+    {
+      "id": "561",
+      "name": "Baglamukhi"
+    },
+    {
+      "id": "37",
+      "name": "Baijnath"
+    },
+    {
+      "id": "473",
+      "name": "Baitalpur"
+    },
+    {
+      "id": "288",
+      "name": "Balachaur"
+    },
+    {
+      "id": "353",
+      "name": "Banda(mh)"
+    },
+    {
+      "id": "488",
+      "name": "Bandanwara"
+    },
+    {
+      "id": "408",
+      "name": "Bangalore"
+    },
+    {
+      "id": "232",
+      "name": "Bangana"
+    },
+    {
+      "id": "310",
+      "name": "Bangarmau (uttar pradesh)"
+    },
+    {
+      "id": "304",
+      "name": "Banihal"
+    },
+    {
+      "id": "566",
+      "name": "Banuri"
+    },
+    {
+      "id": "25",
+      "name": "Barabanki"
+    },
+    {
+      "id": "231",
+      "name": "Barsar(himachal pradesh)"
+    },
+    {
+      "id": "167",
+      "name": "Baskhari"
+    },
+    {
+      "id": "26",
+      "name": "Basti"
+    },
+    {
+      "id": "90",
+      "name": "Beas"
+    },
+    {
+      "id": "409",
+      "name": "Belagavi"
+    },
+    {
+      "id": "359",
+      "name": "Bhager"
+    },
+    {
+      "id": "467",
+      "name": "Bharatpur"
+    },
+    {
+      "id": "113",
+      "name": "Bhawarna"
+    },
+    {
+      "id": "562",
+      "name": "Bhigwan"
+    },
+    {
+      "id": "481",
+      "name": "Bhilwara"
+    },
+    {
+      "id": "534",
+      "name": "Bhiwani"
+    },
+    {
+      "id": "233",
+      "name": "Bhota"
+    },
+    {
+      "id": "62",
+      "name": "Bhuntar"
+    },
+    {
+      "id": "498",
+      "name": "Bihta"
+    },
+    {
+      "id": "489",
+      "name": "Bijainagar"
+    },
+    {
+      "id": "63",
+      "name": "Bilaspur (Himachal Pradesh"
+    },
+    {
+      "id": "513",
+      "name": "Bilaspur (u.p)"
+    },
+    {
+      "id": "38",
+      "name": "Bir (Himachal Pradesh)"
+    },
+    {
+      "id": "499",
+      "name": "Brahmpur"
+    },
+    {
+      "id": "228",
+      "name": "Budhanpur"
+    },
+    {
+      "id": "471",
+      "name": "Buxar"
+    },
+    {
+      "id": "213",
+      "name": "Chamunda devi"
+    },
+    {
+      "id": "20",
+      "name": "Chandigarh"
+    },
+    {
+      "id": "523",
+      "name": "Charkhi dadri"
+    },
+    {
+      "id": "118",
+      "name": "Chauntra"
+    },
+    {
+      "id": "415",
+      "name": "Chitradurga"
+    },
+    {
+      "id": "229",
+      "name": "Daroh"
+    },
+    {
+      "id": "157",
+      "name": "Dasuya"
+    },
+    {
+      "id": "370",
+      "name": "Dausa"
+    },
+    {
+      "id": "414",
+      "name": "Davanagere"
+    },
+    {
+      "id": "66",
+      "name": "Dehra"
+    },
+    {
+      "id": "16",
+      "name": "Dehradun"
+    },
+    {
+      "id": "3",
+      "name": "Delhi"
+    },
+    {
+      "id": "106",
+      "name": "Deoria (Uttar Pradesh)"
+    },
+    {
+      "id": "217",
+      "name": "Dhaliara"
+    },
+    {
+      "id": "396",
+      "name": "Dhamnod"
+    },
+    {
+      "id": "206",
+      "name": "Dharampur (himachal pradesh)"
+    },
+    {
+      "id": "9",
+      "name": "Dharmshala"
+    },
+    {
+      "id": "400",
+      "name": "Dhule"
+    },
+    {
+      "id": "301",
+      "name": "Domel jammu"
+    },
+    {
+      "id": "443",
+      "name": "Erandol"
+    },
+    {
+      "id": "35",
+      "name": "Etawah"
+    },
+    {
+      "id": "27",
+      "name": "Faizabad"
+    },
+    {
+      "id": "11",
+      "name": "Gagal"
+    },
+    {
+      "id": "160",
+      "name": "Garhshankar"
+    },
+    {
+      "id": "474",
+      "name": "Gauri bazar"
+    },
+    {
+      "id": "470",
+      "name": "Ghazipur"
+    },
+    {
+      "id": "358",
+      "name": "Ghumarwin"
+    },
+    {
+      "id": "236",
+      "name": "Goa"
+    },
+    {
+      "id": "155",
+      "name": "Gonda"
+    },
+    {
+      "id": "355",
+      "name": "Gopiganj"
+    },
+    {
+      "id": "23",
+      "name": "Gorakhpur"
+    },
+    {
+      "id": "545",
+      "name": "Govindgarh (rajasthan)"
+    },
+    {
+      "id": "490",
+      "name": "Gulabpura (rajasthan)"
+    },
+    {
+      "id": "15",
+      "name": "Gurgaon"
+    },
+    {
+      "id": "188",
+      "name": "Haidargarh"
+    },
+    {
+      "id": "108",
+      "name": "Haldwani"
+    },
+    {
+      "id": "230",
+      "name": "Hamirpur (himachal pradesh)"
+    },
+    {
+      "id": "575",
+      "name": "Hapur"
+    },
+    {
+      "id": "67",
+      "name": "Haridwar"
+    },
+    {
+      "id": "192",
+      "name": "Harraiya"
+    },
+    {
+      "id": "573",
+      "name": "Hata"
+    },
+    {
+      "id": "93",
+      "name": "Herbertpur"
+    },
+    {
+      "id": "60",
+      "name": "Hoshiarpur"
+    },
+    {
+      "id": "410",
+      "name": "Hubli"
+    },
+    {
+      "id": "455",
+      "name": "Humnabad"
+    },
+    {
+      "id": "453",
+      "name": "Hyderabad"
+    },
+    {
+      "id": "459",
+      "name": "Indapur (pune)"
+    },
+    {
+      "id": "142",
+      "name": "Indore"
+    },
+    {
+      "id": "515",
+      "name": "Inhauna"
+    },
+    {
+      "id": "516",
+      "name": "Jagdishpur (uttar pradesh)"
+    },
+    {
+      "id": "13",
+      "name": "Jaipur"
+    },
+    {
+      "id": "74",
+      "name": "Jalandhar"
+    },
+    {
+      "id": "444",
+      "name": "Jalgaon"
+    },
+    {
+      "id": "61",
+      "name": "Jammu"
+    },
+    {
+      "id": "506",
+      "name": "Jaunpur"
+    },
+    {
+      "id": "39",
+      "name": "Jawala Ji"
+    },
+    {
+      "id": "189",
+      "name": "Jewar"
+    },
+    {
+      "id": "392",
+      "name": "Jibhi"
+    },
+    {
+      "id": "533",
+      "name": "Jind"
+    },
+    {
+      "id": "40",
+      "name": "Joginder Nagar"
+    },
+    {
+      "id": "398",
+      "name": "Julwania"
+    },
+    {
+      "id": "508",
+      "name": "Kadipur (uttar pradesh)"
+    },
+    {
+      "id": "289",
+      "name": "Kainchi dham"
+    },
+    {
+      "id": "532",
+      "name": "Kaithal"
+    },
+    {
+      "id": "81",
+      "name": "Kalka"
+    },
+    {
+      "id": "216",
+      "name": "Kaloha"
+    },
+    {
+      "id": "205",
+      "name": "Kandaghat"
+    },
+    {
+      "id": "19",
+      "name": "Kangra"
+    },
+    {
+      "id": "346",
+      "name": "Kankavli"
+    },
+    {
+      "id": "485",
+      "name": "Kankroli (rajasthan)"
+    },
+    {
+      "id": "311",
+      "name": "Kannauj"
+    },
+    {
+      "id": "29",
+      "name": "Kanpur"
+    },
+    {
+      "id": "287",
+      "name": "Kaptanganj (basti)"
+    },
+    {
+      "id": "191",
+      "name": "Kaptanganj(azamgarh)"
+    },
+    {
+      "id": "344",
+      "name": "Karad"
+    },
+    {
+      "id": "421",
+      "name": "Karanja lad"
+    },
+    {
+      "id": "46",
+      "name": "Karnal"
+    },
+    {
+      "id": "348",
+      "name": "Kasal"
+    },
+    {
+      "id": "574",
+      "name": "Kasia bazaar"
+    },
+    {
+      "id": "85",
+      "name": "Kasol (Himachal Pradesh)"
+    },
+    {
+      "id": "111",
+      "name": "Kathgodam"
+    },
+    {
+      "id": "88",
+      "name": "Kathua"
+    },
+    {
+      "id": "58",
+      "name": "Katra"
+    },
+    {
+      "id": "227",
+      "name": "Khaga"
+    },
+    {
+      "id": "397",
+      "name": "Khalghat"
+    },
+    {
+      "id": "28",
+      "name": "Khalilabad"
+    },
+    {
+      "id": "295",
+      "name": "Khamanon"
+    },
+    {
+      "id": "175",
+      "name": "Khanna"
+    },
+    {
+      "id": "186",
+      "name": "Kharar"
+    },
+    {
+      "id": "521",
+      "name": "Khatushyamji"
+    },
+    {
+      "id": "393",
+      "name": "Kiratpur sahib"
+    },
+    {
+      "id": "487",
+      "name": "Kishangarh"
+    },
+    {
+      "id": "497",
+      "name": "Koilwar"
+    },
+    {
+      "id": "281",
+      "name": "Kolhapur"
+    },
+    {
+      "id": "350",
+      "name": "Kudal"
+    },
+    {
+      "id": "52",
+      "name": "Kullu"
+    },
+    {
+      "id": "208",
+      "name": "Kumarhatti"
+    },
+    {
+      "id": "483",
+      "name": "Kunwariya (rajasthan)"
+    },
+    {
+      "id": "563",
+      "name": "Kurkumb"
+    },
+    {
+      "id": "47",
+      "name": "Kurukshetra"
+    },
+    {
+      "id": "131",
+      "name": "Kushinagar"
+    },
+    {
+      "id": "59",
+      "name": "Lakhan Pur"
+    },
+    {
+      "id": "423",
+      "name": "Latur"
+    },
+    {
+      "id": "451",
+      "name": "Loha"
+    },
+    {
+      "id": "24",
+      "name": "Lucknow"
+    },
+    {
+      "id": "69",
+      "name": "Ludhiana"
+    },
+    {
+      "id": "401",
+      "name": "Malegaon"
+    },
+    {
+      "id": "53",
+      "name": "Manali"
+    },
+    {
+      "id": "64",
+      "name": "Mandi (Himachal Pradesh)"
+    },
+    {
+      "id": "235",
+      "name": "Manikaran"
+    },
+    {
+      "id": "395",
+      "name": "Manpur"
+    },
+    {
+      "id": "120",
+      "name": "Mathura"
+    },
+    {
+      "id": "180",
+      "name": "Matour"
+    },
+    {
+      "id": "501",
+      "name": "Mau"
+    },
+    {
+      "id": "12",
+      "name": "McLeod Ganj"
+    },
+    {
+      "id": "91",
+      "name": "Meerut"
+    },
+    {
+      "id": "466",
+      "name": "Mehandipur balaji mandir"
+    },
+    {
+      "id": "565",
+      "name": "Mehatpur"
+    },
+    {
+      "id": "357",
+      "name": "Mohansarai"
+    },
+    {
+      "id": "495",
+      "name": "Moradabad"
+    },
+    {
+      "id": "219",
+      "name": "Mubarikpur"
+    },
+    {
+      "id": "158",
+      "name": "Mukerian"
+    },
+    {
+      "id": "255",
+      "name": "Mumbai"
+    },
+    {
+      "id": "48",
+      "name": "Murthal"
+    },
+    {
+      "id": "271",
+      "name": "Mussoorie"
+    },
+    {
+      "id": "92",
+      "name": "Muzaffarnagar"
+    },
+    {
+      "id": "41",
+      "name": "Nadaun"
+    },
+    {
+      "id": "312",
+      "name": "Nagpur"
+    },
+    {
+      "id": "42",
+      "name": "Nagrota Bagwan"
+    },
+    {
+      "id": "107",
+      "name": "Nainital"
+    },
+    {
+      "id": "364",
+      "name": "Nanded"
+    },
+    {
+      "id": "119",
+      "name": "Nangal (Punjab)"
+    },
+    {
+      "id": "402",
+      "name": "Nashik"
+    },
+    {
+      "id": "480",
+      "name": "Nasirabad (rajasthan)"
+    },
+    {
+      "id": "260",
+      "name": "Nathdwara"
+    },
+    {
+      "id": "195",
+      "name": "Nawabganj"
+    },
+    {
+      "id": "159",
+      "name": "Nawanshahr"
+    },
+    {
+      "id": "224",
+      "name": "Nehran pukhar"
+    },
+    {
+      "id": "223",
+      "name": "Norbulingka monastery"
+    },
+    {
+      "id": "349",
+      "name": "Oras"
+    },
+    {
+      "id": "43",
+      "name": "Palampur"
+    },
+    {
+      "id": "308",
+      "name": "Pampore"
+    },
+    {
+      "id": "391",
+      "name": "Pandoh"
+    },
+    {
+      "id": "49",
+      "name": "Panipat"
+    },
+    {
+      "id": "309",
+      "name": "Pantha chowk"
+    },
+    {
+      "id": "21",
+      "name": "Paonta Sahib (Himachal Pradesh)"
+    },
+    {
+      "id": "55",
+      "name": "Paprola"
+    },
+    {
+      "id": "442",
+      "name": "Parola (jalgaon)"
+    },
+    {
+      "id": "214",
+      "name": "Parour"
+    },
+    {
+      "id": "207",
+      "name": "Parwanoo"
+    },
+    {
+      "id": "10",
+      "name": "Pathankot"
+    },
+    {
+      "id": "127",
+      "name": "Patna"
+    },
+    {
+      "id": "449",
+      "name": "Patoda"
+    },
+    {
+      "id": "522",
+      "name": "Pehowa"
+    },
+    {
+      "id": "68",
+      "name": "Phagwara"
+    },
+    {
+      "id": "510",
+      "name": "Phoolpur (uttar pradesh)"
+    },
+    {
+      "id": "394",
+      "name": "Pithampur"
+    },
+    {
+      "id": "218",
+      "name": "Pragpur"
+    },
+    {
+      "id": "307",
+      "name": "Pulwama"
+    },
+    {
+      "id": "185",
+      "name": "Punchkula"
+    },
+    {
+      "id": "241",
+      "name": "Pune"
+    },
+    {
+      "id": "305",
+      "name": "Qazigund"
+    },
+    {
+      "id": "194",
+      "name": "Ragadganj"
+    },
+    {
+      "id": "491",
+      "name": "Rajasmand"
+    },
+    {
+      "id": "176",
+      "name": "Rajpura"
+    },
+    {
+      "id": "303",
+      "name": "Ramban"
+    },
+    {
+      "id": "297",
+      "name": "Rampur(up)"
+    },
+    {
+      "id": "512",
+      "name": "Rani ki sarai"
+    },
+    {
+      "id": "179",
+      "name": "Ranital (Himachal Pradesh)"
+    },
+    {
+      "id": "17",
+      "name": "Rishikesh"
+    },
+    {
+      "id": "7",
+      "name": "Rohtak"
+    },
+    {
+      "id": "18",
+      "name": "Roorkee"
+    },
+    {
+      "id": "78",
+      "name": "Ropar"
+    },
+    {
+      "id": "112",
+      "name": "Rudrapur"
+    },
+    {
+      "id": "296",
+      "name": "Saharanpur"
+    },
+    {
+      "id": "87",
+      "name": "Samba"
+    },
+    {
+      "id": "403",
+      "name": "Sangamner"
+    },
+    {
+      "id": "457",
+      "name": "Sangareddy ( telangana)"
+    },
+    {
+      "id": "511",
+      "name": "Saraimeer (uttar pradesh)"
+    },
+    {
+      "id": "282",
+      "name": "Satara"
+    },
+    {
+      "id": "352",
+      "name": "Sawantwadi"
+    },
+    {
+      "id": "399",
+      "name": "Sendhwa"
+    },
+    {
+      "id": "502",
+      "name": "Shahganj"
+    },
+    {
+      "id": "184",
+      "name": "Sheela chowk"
+    },
+    {
+      "id": "365",
+      "name": "Shikrapur"
+    },
+    {
+      "id": "80",
+      "name": "Shimla"
+    },
+    {
+      "id": "220",
+      "name": "Sidhbari"
+    },
+    {
+      "id": "571",
+      "name": "Sikandra (uttar pradesh)"
+    },
+    {
+      "id": "128",
+      "name": "Siwan"
+    },
+    {
+      "id": "83",
+      "name": "Solan"
+    },
+    {
+      "id": "424",
+      "name": "Solapur"
+    },
+    {
+      "id": "51",
+      "name": "Sonipat"
+    },
+    {
+      "id": "300",
+      "name": "Srinagar"
+    },
+    {
+      "id": "114",
+      "name": "Sujanpur (Himachal Pradesh)"
+    },
+    {
+      "id": "187",
+      "name": "Sultanpur"
+    },
+    {
+      "id": "504",
+      "name": "Sultanpur (uttar pradesh)"
+    },
+    {
+      "id": "65",
+      "name": "Sunder Nagar(Himachal Pradesh)"
+    },
+    {
+      "id": "509",
+      "name": "Surapur (uttar pradesh)"
+    },
+    {
+      "id": "460",
+      "name": "Temburni"
+    },
+    {
+      "id": "212",
+      "name": "Thakur dwara"
+    },
+    {
+      "id": "243",
+      "name": "Thane"
+    },
+    {
+      "id": "115",
+      "name": "Thural"
+    },
+    {
+      "id": "425",
+      "name": "Tuljapur"
+    },
+    {
+      "id": "417",
+      "name": "Tumakuru"
+    },
+    {
+      "id": "256",
+      "name": "Udaipur"
+    },
+    {
+      "id": "302",
+      "name": "Udhampur"
+    },
+    {
+      "id": "172",
+      "name": "Ujjain"
+    },
+    {
+      "id": "454",
+      "name": "Umerga"
+    },
+    {
+      "id": "54",
+      "name": "Una (Himachal Pradesh)"
+    },
+    {
+      "id": "564",
+      "name": "Uruli kanchan"
+    },
+    {
+      "id": "31",
+      "name": "Varanasi"
+    },
+    {
+      "id": "503",
+      "name": "Vijaypur"
+    },
+    {
+      "id": "96",
+      "name": "Vikasnagar"
+    },
+    {
+      "id": "458",
+      "name": "Vikramjot"
+    },
+    {
+      "id": "204",
+      "name": "Waknaghat"
+    },
+    {
+      "id": "182",
+      "name": "Yol"
+    },
+    {
+      "id": "456",
+      "name": "Zaheerabad"
+    },
+    {
+      "id": "351",
+      "name": "Zarap"
+    },
+    {
+      "id": "177",
+      "name": "Zirakpur(Punjab)"
+    }
+  ]
+}

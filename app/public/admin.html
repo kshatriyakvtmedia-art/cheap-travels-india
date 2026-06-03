@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Cheap Travels India</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e1a;
+  --surface: #111827;
+  --surface2: #1a2236;
+  --surface3: #222d44;
+  --border: #2a3550;
+  --ink: #e8ecf4;
+  --ink2: #8b97b0;
+  --ink3: #5a6784;
+  --teal: #22d3a7;
+  --teal-d: #159c7b;
+  --teal-glow: rgba(34,211,167,.15);
+  --gold: #f59e0b;
+  --gold-glow: rgba(245,158,11,.12);
+  --red: #ef4444;
+  --red-glow: rgba(239,68,68,.12);
+  --blue: #3b82f6;
+  --blue-glow: rgba(59,130,246,.12);
+  --purple: #a855f7;
+  --purple-glow: rgba(168,85,247,.12);
+  --green: #10b981;
+  --green-glow: rgba(16,185,129,.12);
+  --radius: 14px;
+  --shadow: 0 4px 24px rgba(0,0,0,.3);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 10% 10%, rgba(34,211,167,.06), transparent),
+    radial-gradient(ellipse 500px 300px at 90% 80%, rgba(59,130,246,.05), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── LOGIN GATE ─── */
+.login-gate {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+}
+.login-gate.hidden { display: none; }
+.login-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 48px 40px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.login-box::before {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px; right: -2px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--teal), var(--blue), var(--purple));
+  border-radius: 20px 20px 0 0;
+}
+.login-box .logo-icon {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 30px var(--teal-glow);
+}
+.login-box .logo-icon svg { width: 30px; height: 30px; }
+.login-box h2 {
+  font-size: 22px; font-weight: 800; margin-bottom: 6px;
+  background: linear-gradient(135deg, #fff, var(--ink2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.login-box p { color: var(--ink3); font-size: 13px; margin-bottom: 28px; }
+.login-box input {
+  width: 100%;
+  padding: 14px 18px;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  color: var(--ink);
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 600;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  margin-bottom: 16px;
+}
+.login-box input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px var(--teal-glow);
+}
+.login-box input::placeholder { color: var(--ink3); font-weight: 500; }
+.login-box button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--teal), var(--teal-d));
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .2s;
+}
+.login-box button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px var(--teal-glow);
+}
+.login-box button:active { transform: scale(.98); }
+.login-err {
+  color: var(--red);
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 12px;
+  display: none;
+}
+.login-err.show { display: block; }
+
+/* ─── HEADER ─── */
+.admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,14,26,.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.admin-header .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 800;
+  font-size: 17px;
+}
+.admin-header .brand-badge {
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.admin-header .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.admin-header .uptime {
+  color: var(--ink3);
+  font-size: 12px;
+  font-weight: 600;
+}
+.admin-header .uptime b { color: var(--teal); }
+.admin-header .logout-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--ink2);
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+.admin-header .logout-btn:hover {
+  color: var(--red);
+  border-color: var(--red);
+  background: var(--red-glow);
+}
+
+/* ─── SIDEBAR & TABS LAYOUT ─── */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+.admin-sidebar {
+  width: 260px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+}
+.admin-sidebar .brand {
+  padding: 0 24px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 850;
+  font-size: 19px;
+  color: var(--ink);
+}
+.admin-sidebar .brand-badge {
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 16px;
+}
+.sidebar-nav .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: var(--ink2);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 10px;
+  transition: all .2s;
+  cursor: pointer;
+}
+.sidebar-nav .nav-item:hover {
+  color: var(--ink);
+  background: var(--surface2);
+}
+.sidebar-nav .nav-item.active {
+  color: var(--teal);
+  background: var(--teal-glow);
+  border-left: 3px solid var(--teal);
+}
+.sidebar-nav .nav-item.hidden {
+  display: none !important;
+}
+.sidebar-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+}
+.admin-content {
+  flex: 1;
+  margin-left: 260px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+
+/* ─── MAIN LAYOUT ─── */
+.admin-main {
+  padding: 28px 24px 60px;
+  position: relative;
+  z-index: 1;
+}
+
+.section-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── STAT CARDS ─── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 20px;
+  position: relative;
+  overflow: hidden;
+  transition: transform .2s, box-shadow .2s;
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+.stat-card .icon-circle {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px;
+}
+.stat-card .icon-circle svg { width: 20px; height: 20px; }
+.stat-card .stat-value {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-card .stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.stat-card.teal .icon-circle { background: var(--teal-glow); }
+.stat-card.teal .stat-value { color: var(--teal); }
+.stat-card.gold .icon-circle { background: var(--gold-glow); }
+.stat-card.gold .stat-value { color: var(--gold); }
+.stat-card.blue .icon-circle { background: var(--blue-glow); }
+.stat-card.blue .stat-value { color: var(--blue); }
+.stat-card.purple .icon-circle { background: var(--purple-glow); }
+.stat-card.purple .stat-value { color: var(--purple); }
+.stat-card.red .icon-circle { background: var(--red-glow); }
+.stat-card.red .stat-value { color: var(--red); }
+.stat-card.green .icon-circle { background: var(--green-glow); }
+.stat-card.green .stat-value { color: var(--green); }
+.pnr-badge {
+  background: var(--green-glow);
+  color: var(--green);
+  font-family: monospace;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.seat-badge {
+  background: var(--surface3);
+  color: var(--ink);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+/* ─── PANELS ─── */
+.panels-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+@media (max-width: 768px) {
+  .panels-grid { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .admin-header { padding: 0 16px; }
+  .admin-main { padding: 20px 14px 60px; }
+}
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.panel-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.panel-header h3 {
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.panel-header h3 .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 8px var(--teal);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .5; transform: scale(.8); }
+}
+.panel-header .badge {
+  background: var(--surface3);
+  color: var(--ink2);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.panel-body {
+  padding: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.panel-body::-webkit-scrollbar { width: 6px; }
+.panel-body::-webkit-scrollbar-track { background: transparent; }
+.panel-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Activity Feed */
+.activity-item {
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(42,53,80,.5);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: background .15s;
+}
+.activity-item:hover { background: var(--surface2); }
+.activity-item:last-child { border-bottom: none; }
+.activity-item .ev-dot {
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+.activity-item .ev-dot.visit { background: var(--blue-glow); color: var(--blue); }
+.activity-item .ev-dot.search { background: var(--teal-glow); color: var(--teal); }
+.activity-item .ev-dot.view_seats { background: var(--gold-glow); color: var(--gold); }
+.activity-item .ev-dot.checkout { background: var(--purple-glow); color: var(--purple); }
+.activity-item .ev-dot.signup { background: var(--red-glow); color: var(--red); }
+.activity-item .ev-dot.booking { background: var(--green-glow); color: var(--green); }
+.activity-item .ev-text {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.activity-item .ev-text b { color: var(--ink); }
+.activity-item .ev-text { color: var(--ink2); }
+.activity-item .ev-time {
+  font-size: 11px;
+  color: var(--ink3);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Table */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.admin-table th {
+  padding: 12px 20px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+}
+.admin-table td {
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(42,53,80,.4);
+  color: var(--ink2);
+}
+.admin-table tr:hover td { background: var(--surface2); }
+.admin-table td b { color: var(--ink); }
+.admin-table .count-pill {
+  background: var(--teal-glow);
+  color: var(--teal);
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+/* Health Status */
+.health-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 20px;
+}
+@media (max-width: 600px) { .health-grid { grid-template-columns: 1fr; } }
+.health-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.health-card .h-name {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.health-card .status-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+.health-card .status-dot.active { background: var(--teal); box-shadow: 0 0 8px var(--teal); }
+.health-card .status-dot.inactive { background: var(--red); box-shadow: 0 0 8px var(--red); }
+.health-card .h-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 12px;
+}
+.health-card .h-row .h-label { color: var(--ink3); font-weight: 600; }
+.health-card .h-row .h-val { color: var(--ink); font-weight: 700; }
+
+/* Full-width panel */
+.panel-full {
+  grid-column: 1 / -1;
+}
+
+/* Empty state */
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--ink3);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Refresh button */
+.refresh-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--ink2);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.refresh-btn:hover {
+  color: var(--teal);
+  border-color: var(--teal);
+  background: var(--teal-glow);
+}
+.refresh-btn.spinning svg { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Filesystem Protocol Warning */
+.file-warning {
+  margin-top: 24px;
+  background: rgba(234, 179, 8, 0.08);
+  border: 1px solid #eab308;
+  border-radius: 12px;
+  padding: 16px 20px;
+  max-width: 400px;
+  width: 90%;
+  color: #fef08a;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+.file-warning a {
+  color: #06b6d4;
+  text-decoration: underline;
+  font-weight: 700;
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE -->
+<div class="login-gate" id="login-gate">
+  <div class="login-box">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/>
+        <circle cx="12" cy="10" r="3"/>
+      </svg>
+    </div>
+    <h2>Admin Dashboard</h2>
+    <p>Cheap Travels India · Control Panel</p>
+    <form onsubmit="loginAdmin(event)">
+      <input type="email" id="admin-email" placeholder="Enter admin email" autocomplete="on" required style="margin-bottom:12px;">
+      <input type="password" id="admin-pwd" placeholder="Enter admin password" autocomplete="off" required>
+      <button type="submit">Authenticate</button>
+    </form>
+    <div class="login-err" id="login-err">Invalid credentials. Try again.</div>
+  </div>
+  
+  <!-- File Protocol CORS Warning -->
+  <div id="file-protocol-warning" class="file-warning" style="display:none;">
+    ⚠️ <b>CORS / Local File Warning:</b> You have opened the admin dashboard directly from your filesystem (<code>file://</code>). 
+    Due to browser security policies (CORS), requests to the local backend server (port 3000) will be blocked.<br><br>
+    Please open the page via: <a href="http://localhost:3000/admin.html" target="_blank"><b>http://localhost:3000/admin.html</b></a> instead!
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="admin-layout" style="display:none;">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      CTI Admin
+      <span class="brand-badge">Hub</span>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-tab="overview" onclick="switchAdminTab('overview')">📊 Overview</div>
+      <div class="nav-item" data-tab="bookings" onclick="switchAdminTab('bookings')">🎫 Bookings</div>
+      <div class="nav-item" data-tab="payments" onclick="switchAdminTab('payments')">💳 Payments</div>
+      <div class="nav-item" data-tab="customers" onclick="switchAdminTab('customers')">👥 Customers</div>
+      <div class="nav-item" data-tab="providers" onclick="switchAdminTab('providers')">🔌 Providers</div>
+      <div class="nav-item" data-tab="admins" onclick="switchAdminTab('admins')">🔑 Admins</div>
+      <div class="nav-item" data-tab="logs" onclick="switchAdminTab('logs')">📜 System Logs</div>
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div id="admin-user-name" style="font-weight:700; font-size:14px; margin-bottom:2px; color:var(--ink);">Admin User</div>
+      <div id="admin-user-role" style="font-size:11px; color:var(--teal); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Super Admin</div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="admin-content">
+    <!-- HEADER -->
+    <header class="admin-header">
+      <div class="brand">
+        <span class="brand-badge" id="role-badge">SUPER ADMIN</span>
+      </div>
+      <div class="nav-right">
+        <div class="uptime" id="uptime-text">Uptime: <b>--</b></div>
+        <button class="refresh-btn" id="refresh-btn" onclick="refreshAll()">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh
+        </button>
+        <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      
+      <!-- TAB: OVERVIEW -->
+      <div class="tab-content active" id="tab-overview">
+        <!-- STATS -->
+        <div class="section-label">Overview</div>
+        <div class="stat-grid">
+          <div class="stat-card teal">
+            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div class="stat-value" id="stat-visitors">0</div>
+            <div class="stat-label">Total Visitors</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+            <div class="stat-value" id="stat-searches">0</div>
+            <div class="stat-label">Bus Searches</div>
+          </div>
+          <div class="stat-card green" id="stat-rev-card" style="display:none;">
+            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="stat-value" id="stat-revenue">₹0</div>
+            <div class="stat-label">Today's Revenue</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg></div>
+            <div class="stat-value" id="stat-bookings">0</div>
+            <div class="stat-label">Today's Bookings</div>
+          </div>
+          <div class="stat-card purple">
+            <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+            <div class="stat-value" id="stat-pending">0</div>
+            <div class="stat-label">Pending Bookings</div>
+          </div>
+        </div>
+
+        <div class="panels-grid">
+          <!-- Activity Feed -->
+          <div class="panel">
+            <div class="panel-header">
+              <h3>⚡ Recent Activity</h3>
+              <span class="badge" id="activity-count">0 events</span>
+            </div>
+            <div class="panel-body" id="activity-feed">
+              <div class="empty-state">No activity recorded yet.</div>
+            </div>
+          </div>
+          
+          <!-- Popular Routes -->
+          <div class="panel">
+            <div class="panel-header">
+              <h3>🔥 Popular Routes</h3>
+              <span class="badge" id="routes-count">0 routes</span>
+            </div>
+            <div class="panel-body" id="routes-table">
+              <div class="empty-state">No searches yet.</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Health Section -->
+        <div class="section-label" style="margin-top:32px;">B2B Portal Health</div>
+        <div class="panel">
+          <div class="panel-header">
+            <h3>🔌 Automation Portal Status</h3>
+          </div>
+          <div class="health-grid" id="health-grid">
+            <div class="empty-state" style="grid-column:1/-1;">Loading health status...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: BOOKINGS -->
+      <div class="tab-content" id="tab-bookings">
+        <div class="section-label">Booking Management</div>
+        <div class="panel">
+          <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <h3>🎫 All Bookings</h3>
+              <span class="badge" id="bookings-count">0 bookings</span>
+            </div>
+            <div>
+              <input type="text" id="booking-search-input" placeholder="Search by PNR, Name, Phone..." oninput="filterBookings()" style="width: 250px; padding: 8px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--ink); font-size: 13px; outline: none; margin: 0;">
+            </div>
+          </div>
+          <div class="panel-body" id="bookings-table">
+            <div class="empty-state">No bookings recorded yet.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: PAYMENTS -->
+      <div class="tab-content" id="tab-payments">
+        <div class="section-label">Payment & Refund Ledger</div>
+        <div class="panel">
+          <div class="panel-header">
+            <h3>💳 Payment Transactions</h3>
+            <span class="badge" id="payments-count">0 transactions</span>
+          </div>
+          <div class="panel-body" id="payments-table">
+            <div class="empty-state">No payments recorded yet.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: CUSTOMERS -->
+      <div class="tab-content" id="tab-customers">
+        <div class="section-label">Customer Accounts</div>
+        <div class="panels-grid">
+          <div class="panel" style="grid-column: 1 / -1;">
+            <div class="panel-header">
+              <h3>👥 Customer Profiles</h3>
+              <span class="badge" id="users-count">0 users</span>
+            </div>
+            <div class="panel-body" id="users-table">
+              <div class="empty-state">No customers registered yet.</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="section-label" style="margin-top:32px;">Search Audit Logs</div>
+        <div class="panel">
+          <div class="panel-header">
+            <h3>🔍 Bus Search Queries</h3>
+            <span class="badge" id="search-history-count">0 searches</span>
+          </div>
+          <div class="panel-body" id="search-history">
+            <div class="empty-state">No search history recorded yet.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: PROVIDERS -->
+      <div class="tab-content" id="tab-providers">
+        <div class="section-label">B2B Portal Provider Credentials</div>
+        <div class="panel">
+          <div class="panel-header">
+            <h3>🔌 B2B Gateways</h3>
+          </div>
+          <div class="panel-body">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px; padding: 12px 0;" id="providers-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: ADMINS -->
+      <div class="tab-content" id="tab-admins">
+        <div class="section-label">Administrator Account Creator</div>
+        <div class="panel" style="max-width:550px;">
+          <div class="panel-header">
+            <h3>🔑 Create New Admin Account</h3>
+          </div>
+          <div class="panel-body" style="padding: 16px 20px;">
+            <form onsubmit="createAdminUser(event)" id="admin-create-form" style="display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-size:11px; font-weight:700; color:var(--ink2);">FULL NAME</label>
+                <input type="text" id="new-admin-name" placeholder="Rakesh Sharma" required style="width:100%; padding:10px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); font-family:inherit; outline:none; margin:0;">
+              </div>
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-size:11px; font-weight:700; color:var(--ink2);">EMAIL ADDRESS</label>
+                <input type="email" id="new-admin-email" placeholder="rakesh@cheaptravels.in" required style="width:100%; padding:10px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); font-family:inherit; outline:none; margin:0;">
+              </div>
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-size:11px; font-weight:700; color:var(--ink2);">MOBILE NUMBER</label>
+                <input type="tel" id="new-admin-mobile" placeholder="9999999999" required style="width:100%; padding:10px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); font-family:inherit; outline:none; margin:0;">
+              </div>
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-size:11px; font-weight:700; color:var(--ink2);">ROLE</label>
+                <select id="new-admin-role" style="width:100%; padding:10px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); font-family:inherit; outline:none; cursor:pointer;">
+                  <option value="admin">Admin</option>
+                  <option value="support_executive">Support Executive</option>
+                  <option value="super_admin">Super Admin (Owner)</option>
+                </select>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-size:11px; font-weight:700; color:var(--ink2);">PASSWORD</label>
+                <input type="password" id="new-admin-pwd" placeholder="Enter secure password" required style="width:100%; padding:10px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); font-family:inherit; outline:none; margin:0;">
+              </div>
+              <button type="submit" style="margin-top:12px; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-family:inherit;">Create Account</button>
+              <div id="admin-create-msg" style="font-size:13px; font-weight:600; text-align:center; display:none; margin-top:8px;"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: SYSTEM LOGS -->
+      <div class="tab-content" id="tab-logs">
+        <div class="section-label">Audit Trail & Security Logs</div>
+        <div class="panel">
+          <div class="panel-header">
+            <h3>📜 Action Audit Logs</h3>
+            <span class="badge" id="logs-count">0 logs</span>
+          </div>
+          <div class="panel-body" id="logs-table">
+            <div class="empty-state">No audit logs recorded yet.</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+let adminToken = sessionStorage.getItem('cti_admin_token') || '';
+let adminUser = null;
+try {
+  adminUser = JSON.parse(sessionStorage.getItem('cti_admin_user') || 'null');
+} catch (e) {}
+
+const API = window.location.protocol === 'file:' ? 'http://localhost:3000' : '';
+
+// Escapes special HTML characters to prevent XSS
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  str = String(str);
+  return str.replace(/[&<>"']/g, function(m) {
+    switch (m) {
+      case '&': return '&amp;';
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '"': return '&quot;';
+      case "'": return '&#039;';
+      default: return m;
+    }
+  });
+}
+
+// ─── AUTH ───
+async function loginAdmin(e) {
+  e && e.preventDefault();
+  const email = document.getElementById('admin-email').value.trim();
+  const pwd = document.getElementById('admin-pwd').value;
+  const errEl = document.getElementById('login-err');
+  errEl.classList.remove('show');
+  
+  try {
+    const res = await fetch(`${API}/api/admin/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pwd })
+    });
+    const data = await res.json();
+    if (data.success) {
+      adminToken = data.token;
+      adminUser = data.user;
+      sessionStorage.setItem('cti_admin_token', adminToken);
+      sessionStorage.setItem('cti_admin_user', JSON.stringify(adminUser));
+      showDashboard();
+    } else {
+      errEl.textContent = data.error || 'Invalid credentials. Try again.';
+      errEl.classList.add('show');
+    }
+  } catch (err) {
+    errEl.textContent = 'Connection error. Is the server running?';
+    errEl.classList.add('show');
+  }
+}
+
+function logoutAdmin() {
+  adminToken = '';
+  adminUser = null;
+  sessionStorage.removeItem('cti_admin_token');
+  sessionStorage.removeItem('cti_admin_user');
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('login-gate').classList.remove('hidden');
+  document.getElementById('admin-pwd').value = '';
+}
+
+function showDashboard() {
+  document.getElementById('login-gate').classList.add('hidden');
+  document.getElementById('dashboard').style.display = 'flex';
+  
+  // Render header / name / role
+  const roleBadge = document.getElementById('role-badge');
+  if (roleBadge && adminUser) {
+    roleBadge.textContent = adminUser.role.replace('_', ' ').toUpperCase();
+  }
+
+  // Adjust dashboard sections depending on role
+  adjustUIForRole();
+
+  refreshAll();
+  startUptimeCounter();
+}
+
+function adjustUIForRole() {
+  const role = adminUser ? adminUser.role : '';
+  
+  // Update name & role in footer
+  document.getElementById('admin-user-name').textContent = adminUser ? adminUser.name : 'Administrator';
+  document.getElementById('admin-user-role').textContent = role.replace('_', ' ');
+
+  // Hide nav items based on role
+  document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+    const tabName = item.getAttribute('data-tab');
+    if (role === 'support_executive') {
+      if (tabName !== 'bookings') {
+        item.classList.add('hidden');
+      } else {
+        item.classList.remove('hidden');
+      }
+    } else if (role === 'admin') {
+      if (['admins', 'logs'].includes(tabName)) {
+        item.classList.add('hidden');
+      } else {
+        item.classList.remove('hidden');
+      }
+    } else if (role === 'super_admin') {
+      item.classList.remove('hidden');
+    }
+  });
+
+  // Switch to the first visible tab
+  if (role === 'support_executive') {
+    switchAdminTab('bookings');
+  } else {
+    switchAdminTab('overview');
+  }
+}
+
+function switchAdminTab(tabName) {
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav .nav-item').forEach(i => i.classList.remove('active'));
+  
+  const content = document.getElementById(`tab-${tabName}`);
+  const btn = document.querySelector(`.sidebar-nav .nav-item[data-tab="${tabName}"]`);
+  
+  if (content) content.classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  // Trigger specific fetches if needed
+  if (tabName === 'payments') fetchPayments();
+  if (tabName === 'providers') fetchProviders();
+  if (tabName === 'logs') fetchLogs();
+}
+
+function authHeaders() {
+  return { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' };
+}
+
+// ─── DATA FETCHERS ───
+async function fetchStats() {
+  try {
+    const res = await fetch(`${API}/api/admin/stats`, { headers: authHeaders() });
+    if (res.status === 401) { logoutAdmin(); return; }
+    if (res.status === 403) {
+      // Support executive does not have stats access
+      return;
+    }
+    const data = await res.json();
+    if (!data.success) return;
+    const s = data.stats;
+    
+    document.getElementById('stat-visitors').textContent = s.visitors.toLocaleString();
+    document.getElementById('stat-searches').textContent = s.searches.toLocaleString();
+    document.getElementById('stat-bookings').textContent = s.todayBookings.toLocaleString();
+    document.getElementById('stat-pending').textContent = s.pendingBookings.toLocaleString();
+    
+    // Revenue
+    if (adminUser && adminUser.role === 'super_admin') {
+      const revCard = document.getElementById('stat-rev-card');
+      if (revCard) {
+        revCard.style.display = 'block';
+        document.getElementById('stat-revenue').textContent = `₹${s.todayRevenue ? s.todayRevenue.toLocaleString() : 0}`;
+      }
+    } else {
+      const revCard = document.getElementById('stat-rev-card');
+      if (revCard) revCard.style.display = 'none';
+    }
+    
+    // Uptime
+    const h = Math.floor(s.uptimeSeconds / 3600);
+    const m = Math.floor((s.uptimeSeconds % 3600) / 60);
+    document.getElementById('uptime-text').innerHTML = `Uptime: <b>${h}h ${m}m</b>`;
+    
+    // Popular routes
+    renderTopRoutes(s.topRoutes || []);
+  } catch (err) { console.error('Stats fetch error:', err); }
+}
+
+async function fetchActivity() {
+  try {
+    const res = await fetch(`${API}/api/admin/activity?limit=50`, { headers: authHeaders() });
+    if (res.status === 401 || res.status === 403) return;
+    const data = await res.json();
+    if (!data.success) return;
+    renderActivity(data.activity);
+  } catch (err) { console.error('Activity fetch error:', err); }
+}
+
+async function fetchSearchHistory() {
+  try {
+    const res = await fetch(`${API}/api/admin/searches?limit=30`, { headers: authHeaders() });
+    if (res.status === 401 || res.status === 403) return;
+    const data = await res.json();
+    if (!data.success) return;
+    renderSearchHistory(data.searches);
+  } catch (err) { console.error('Search history fetch error:', err); }
+}
+
+async function fetchUsers() {
+  try {
+    const res = await fetch(`${API}/api/admin/users`, { headers: authHeaders() });
+    if (res.status === 401 || res.status === 403) return;
+    const data = await res.json();
+    if (!data.success) return;
+    renderUsers(data.users);
+  } catch (err) { console.error('Users fetch error:', err); }
+}
+
+let allBookingsCached = [];
+async function fetchBookings() {
+  try {
+    const res = await fetch(`${API}/api/admin/bookings`, { headers: authHeaders() });
+    if (res.status === 401) return;
+    const data = await res.json();
+    if (!data.success) return;
+    allBookingsCached = data.bookings;
+    renderBookings(data.bookings);
+  } catch (err) { console.error('Bookings fetch error:', err); }
+}
+
+async function fetchHealth() {
+  try {
+    const res = await fetch(`${API}/api/admin/health`, { headers: authHeaders() });
+    if (res.status === 401 || res.status === 403) return;
+    const data = await res.json();
+    if (!data.success) return;
+    renderHealth(data.health);
+  } catch (err) { console.error('Health fetch error:', err); }
+}
+
+async function fetchPayments() {
+  try {
+    const res = await fetch(`${API}/api/admin/payments`, { headers: authHeaders() });
+    if (res.status === 401 || res.status === 403) return;
+    const data = await res.json();
+    if (!data.success) return;
+    renderPayments(data.payments);
+  } catch (err) {
+    console.error('Payments fetch failed:', err);
+  }
+}
+
+async function fetchLogs() {
+  try {
+    const res = await fetch(`${API}/api/admin/logs`, { headers: authHeaders() });
+    if (res.status === 401 || res.status === 403) return;
+    const data = await res.json();
+    if (!data.success) return;
+    renderLogs(data.logs);
+  } catch (err) {
+    console.error('Audit logs fetch failed:', err);
+  }
+}
+
+// ─── RENDERERS ───
+function timeAgo(isoStr) {
+  const diff = Math.floor((Date.now() - new Date(isoStr).getTime()) / 1000);
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+  return `${Math.floor(diff/86400)}d ago`;
+}
+
+const eventIcons = {
+  visit: '👁',
+  search: '🔍',
+  view_seats: '💺',
+  checkout: '🛒',
+  signup: '✨',
+  booking: '🎫',
+  login: '🔐',
+  create_admin_user: '🔑',
+  update_provider_credentials: '🔌',
+  cancel_booking: '❌',
+  refund_booking: '💰'
+};
+
+const eventLabels = {
+  visit: 'Page Visit',
+  search: 'Bus Search',
+  view_seats: 'Viewed Seats',
+  checkout: 'Checkout',
+  signup: 'New Signup',
+  booking: 'Booking',
+  login: 'Admin Login',
+  create_admin_user: 'Created Admin User',
+  update_provider_credentials: 'Updated Provider credentials',
+  cancel_booking: 'Cancelled booking',
+  refund_booking: 'Refund processed'
+};
+
+function renderActivity(items) {
+  const feed = document.getElementById('activity-feed');
+  document.getElementById('activity-count').textContent = `${items.length} events`;
+  
+  if (items.length === 0) {
+    feed.innerHTML = '<div class="empty-state">No activity recorded yet.</div>';
+    return;
+  }
+
+  let html = '';
+  items.forEach(item => {
+    const icon = eventIcons[item.event] || '📋';
+    const label = eventLabels[item.event] || item.event;
+    let detail = '';
+    
+    if (item.event === 'search' && item.data) {
+      detail = `<b>${escapeHtml(item.data.from)} → ${escapeHtml(item.data.to)}</b> on ${escapeHtml(item.data.date)}`;
+    } else if (item.event === 'view_seats' && item.data) {
+      detail = `Bus <b>${escapeHtml(item.data.busId)}</b>`;
+    } else if (item.event === 'checkout' && item.data) {
+      detail = `<b>${escapeHtml(item.data.bus)}</b> · Seats: ${escapeHtml(item.data.seats)}`;
+    } else if (item.event === 'signup' && item.data) {
+      detail = `<b>${escapeHtml(item.data.name)}</b> (${escapeHtml(item.data.phone || item.data.email)})`;
+    } else if (item.event === 'booking' && item.data) {
+      detail = `<b>${escapeHtml(item.data.operator)}</b> · ${escapeHtml(item.data.route)} · Seats: <b>${escapeHtml(item.data.seats)}</b> · PNR: <b>${escapeHtml(item.data.pnr)}</b> · <b>₹${escapeHtml(item.data.amount)}</b>`;
+    } else if (item.event === 'visit' && item.data) {
+      detail = `${escapeHtml(item.data.page)}`;
+    } else if (item.data) {
+      detail = `${escapeHtml(JSON.stringify(item.data))}`;
+    }
+
+    html += `
+      <div class="activity-item">
+        <div class="ev-dot ${escapeHtml(item.event)}">${icon}</div>
+        <div class="ev-text"><b>${escapeHtml(label)}</b> ${detail ? '· ' + detail : ''}</div>
+        <div class="ev-time">${timeAgo(item.time)}</div>
+      </div>
+    `;
+  });
+  feed.innerHTML = html;
+}
+
+function renderTopRoutes(routes) {
+  const container = document.getElementById('routes-table');
+  document.getElementById('routes-count').textContent = `${routes.length} routes`;
+  
+  if (routes.length === 0) {
+    container.innerHTML = '<div class="empty-state">No searches yet.</div>';
+    return;
+  }
+
+  let html = `<table class="admin-table"><thead><tr><th>#</th><th>Route</th><th>Searches</th></tr></thead><tbody>`;
+  routes.forEach((r, i) => {
+    html += `<tr><td>${i + 1}</td><td><b>${escapeHtml(r.route)}</b></td><td><span class="count-pill">${escapeHtml(r.count)}</span></td></tr>`;
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+function renderSearchHistory(searches) {
+  const container = document.getElementById('search-history');
+  document.getElementById('search-history-count').textContent = `${searches.length} searches`;
+  
+  if (searches.length === 0) {
+    container.innerHTML = '<div class="empty-state">No searches yet.</div>';
+    return;
+  }
+
+  let html = `<table class="admin-table"><thead><tr><th>Route</th><th>Date</th><th>Buses Found</th><th>When</th></tr></thead><tbody>`;
+  searches.forEach(s => {
+    const busInfo = s.realCount !== undefined ? `${escapeHtml(s.realCount)} real / ${escapeHtml(s.totalCount)} total` : '-';
+    html += `<tr><td><b>${escapeHtml(s.from)} → ${escapeHtml(s.to)}</b></td><td>${escapeHtml(s.date)}</td><td>${busInfo}</td><td style="color:var(--ink3)">${timeAgo(s.time)}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+function renderUsers(users) {
+  const container = document.getElementById('users-table');
+  document.getElementById('users-count').textContent = `${users.length} users`;
+  
+  if (users.length === 0) {
+    container.innerHTML = '<div class="empty-state">No registrations yet.</div>';
+    return;
+  }
+
+  let html = `<table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Registered</th></tr></thead><tbody>`;
+  users.forEach(u => {
+    html += `<tr><td><b>${escapeHtml(u.name)}</b></td><td>${escapeHtml(u.email)}</td><td>${escapeHtml(u.phone)}</td><td style="color:var(--ink3)">${timeAgo(u.time)}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+function filterBookings() {
+  const query = document.getElementById('booking-search-input').value.toLowerCase().trim();
+  if (!query) {
+    renderBookings(allBookingsCached);
+    return;
+  }
+  const filtered = allBookingsCached.filter(b => {
+    return (b.pnr && b.pnr.toLowerCase().includes(query)) ||
+           (b.operator && b.operator.toLowerCase().includes(query)) ||
+           (b.route && b.route.toLowerCase().includes(query)) ||
+           (b.seats && b.seats.toLowerCase().includes(query)) ||
+           (b.passengerName && b.passengerName.toLowerCase().includes(query)) ||
+           (b.customerPhone && b.customerPhone.includes(query)) ||
+           (b.customerEmail && b.customerEmail.toLowerCase().includes(query));
+  });
+  renderBookings(filtered);
+}
+
+function renderBookings(bookings) {
+  const container = document.getElementById('bookings-table');
+  document.getElementById('bookings-count').textContent = `${bookings.length} bookings`;
+  
+  if (bookings.length === 0) {
+    container.innerHTML = '<div class="empty-state">No bookings recorded yet.</div>';
+    return;
+  }
+
+  const role = adminUser ? adminUser.role : '';
+
+  let html = `<table class="admin-table">
+    <thead>
+      <tr>
+        <th>PNR</th>
+        <th>Passenger</th>
+        <th>Operator</th>
+        <th>Route</th>
+        <th>Seats</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Booked On</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>`;
+    
+  bookings.forEach(b => {
+    const statusClass = b.status === 'confirmed' ? 'green' : (b.status === 'cancelled' || b.status === 'failed' ? 'red' : 'gold');
+    
+    let actionsHtml = '';
+    actionsHtml += `<button onclick="resendTicket('${escapeHtml(b.id)}')" style="padding:4px 8px; font-size:11px; font-weight:700; background:var(--blue-glow); color:var(--blue); border:1px solid var(--border); border-radius:6px; cursor:pointer; margin-right:4px;">Resend</button>`;
+    
+    if (role === 'super_admin' || role === 'admin') {
+      if (b.status !== 'cancelled' && b.status !== 'refunded') {
+        actionsHtml += `<button onclick="cancelBooking('${escapeHtml(b.id)}')" style="padding:4px 8px; font-size:11px; font-weight:700; background:var(--red-glow); color:var(--red); border:1px solid var(--border); border-radius:6px; cursor:pointer; margin-right:4px;">Cancel</button>`;
+      }
+      if (b.status === 'cancelled') {
+        actionsHtml += `<button onclick="refundBooking('${escapeHtml(b.id)}')" style="padding:4px 8px; font-size:11px; font-weight:700; background:var(--gold-glow); color:var(--gold); border:1px solid var(--border); border-radius:6px; cursor:pointer;">Refund</button>`;
+      }
+    } else if (role === 'support_executive') {
+      if (b.status !== 'confirmed' && b.status !== 'cancelled' && b.status !== 'refunded' && b.status !== 'failed') {
+        actionsHtml += `<button onclick="cancelBooking('${escapeHtml(b.id)}')" style="padding:4px 8px; font-size:11px; font-weight:700; background:var(--red-glow); color:var(--red); border:1px solid var(--border); border-radius:6px; cursor:pointer;">Cancel</button>`;
+      }
+    }
+
+    html += `<tr>
+      <td><span class="pnr-badge">${escapeHtml(b.pnr)}</span></td>
+      <td><b>${escapeHtml(b.passengerName)}</b><br><span style="font-size:11px; color:var(--ink3);">${escapeHtml(b.customerPhone)}</span></td>
+      <td><b>${escapeHtml(b.operator)}</b></td>
+      <td>${escapeHtml(b.route)}</td>
+      <td><span class="seat-badge">${escapeHtml(b.seats)}</span></td>
+      <td><b style="color:var(--green)">₹${escapeHtml(b.amount)}</b></td>
+      <td><span class="badge ${statusClass}">${escapeHtml(b.status.toUpperCase())}</span></td>
+      <td style="color:var(--ink3)">${timeAgo(b.time)}</td>
+      <td>${actionsHtml}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+async function resendTicket(bookingId) {
+  alert('Ticket resent request sent successfully.');
+  await fetch(`${API}/api/admin/bookings/${bookingId}/resend`, {
+    method: 'POST',
+    headers: authHeaders()
+  });
+}
+
+async function cancelBooking(bookingId) {
+  if (!confirm('Are you sure you want to cancel this booking?')) return;
+  try {
+    const res = await fetch(`${API}/api/admin/bookings/${bookingId}/cancel`, {
+      method: 'POST',
+      headers: authHeaders()
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('Booking cancelled successfully.');
+      refreshAll();
+    } else {
+      alert('Cancellation failed: ' + data.error);
+    }
+  } catch (err) {
+    alert('Failed to cancel booking.');
+  }
+}
+
+async function refundBooking(bookingId) {
+  if (!confirm('Are you sure you want to process refund for this booking?')) return;
+  try {
+    const res = await fetch(`${API}/api/admin/bookings/${bookingId}/refund`, {
+      method: 'POST',
+      headers: authHeaders()
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('Refund processed successfully.');
+      refreshAll();
+    } else {
+      alert('Refund failed: ' + data.error);
+    }
+  } catch (err) {
+    alert('Failed to process refund.');
+  }
+}
+
+function renderHealth(health) {
+  const grid = document.getElementById('health-grid');
+  
+  const portals = [health.lxmi, health.rdlh];
+  let html = '';
+  
+  portals.forEach(p => {
+    if (!p) return;
+    const age = p.sessionAge !== null ? `${Math.floor(p.sessionAge / 60)}m ${p.sessionAge % 60}s` : 'N/A';
+    const statusText = p.status ? p.status : (p.sessionActive ? '✅ Active' : '❌ Expired');
+    const noteRow = p.note ? `<div class="h-row"><span class="h-label">Note</span><span class="h-val" style="color:#eab308;font-size:11px;font-weight:600;">${escapeHtml(p.note)}</span></div>` : '';
+    const activeClass = p.sessionActive || p.status?.includes('Reachable') ? 'active' : 'inactive';
+    
+    html += `
+      <div class="health-card">
+        <div class="h-name">
+          <span class="status-dot ${activeClass}"></span>
+          ${escapeHtml(p.name)}
+        </div>
+        <div class="h-row"><span class="h-label">Status</span><span class="h-val">${escapeHtml(statusText)}</span></div>
+        <div class="h-row"><span class="h-label">Last Login</span><span class="h-val">${p.lastLogin ? new Date(p.lastLogin).toLocaleTimeString('en-IN') : 'Never'}</span></div>
+        <div class="h-row"><span class="h-label">Session Age</span><span class="h-val">${escapeHtml(age)}</span></div>
+        <div class="h-row"><span class="h-label">Cities Loaded</span><span class="h-val">${escapeHtml(p.citiesLoaded)}</span></div>
+        ${noteRow}
+      </div>
+    `;
+  });
+  
+  grid.innerHTML = html;
+}
+
+function renderPayments(payments) {
+  const container = document.getElementById('payments-table');
+  document.getElementById('payments-count').textContent = `${payments.length} transactions`;
+  
+  if (payments.length === 0) {
+    container.innerHTML = '<div class="empty-state">No payment logs recorded yet.</div>';
+    return;
+  }
+
+  let html = `<table class="admin-table">
+    <thead>
+      <tr>
+        <th>Payment ID</th>
+        <th>Customer Name</th>
+        <th>Gateway</th>
+        <th>Transaction ID</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
+    <tbody>`;
+    
+  payments.forEach(p => {
+    const statusClass = p.status === 'success' || p.status === 'captured' ? 'green' : (p.status === 'failed' ? 'red' : 'gold');
+    html += `<tr>
+      <td><code>${escapeHtml(p.id.slice(0, 8))}...</code></td>
+      <td><b>${escapeHtml(p.customerName)}</b></td>
+      <td>${escapeHtml(p.gateway)}</td>
+      <td><code>${escapeHtml(p.transactionId)}</code></td>
+      <td><b style="color:var(--green)">₹${escapeHtml(p.amount)}</b></td>
+      <td><span class="badge ${statusClass}">${escapeHtml(p.status.toUpperCase())}</span></td>
+      <td style="color:var(--ink3)">${new Date(p.createdAt).toLocaleString('en-IN')}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+async function fetchProviders() {
+  try {
+    const res = await fetch(`${API}/api/admin/providers`, { headers: authHeaders() });
+    if (res.status === 401) return;
+    const data = await res.json();
+    if (!data.success) return;
+    renderProviders(data.providers);
+  } catch (err) {
+    console.error('Providers fetch failed:', err);
+  }
+}
+
+function renderProviders(providers) {
+  const container = document.getElementById('providers-container');
+  const role = adminUser ? adminUser.role : '';
+
+  let html = '';
+  providers.forEach(p => {
+    const isOnline = p.status === 'active';
+    const statusClass = isOnline ? 'green' : 'red';
+    
+    let actionBtn = '';
+    if (role === 'super_admin') {
+      actionBtn = `<button onclick="openProviderModal('${escapeHtml(p.providerName)}', '${escapeHtml(p.portalUrl)}', '${escapeHtml(p.status)}')" style="margin-top:14px; width:100%; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); font-weight:700; cursor:pointer;">Edit Credentials</button>`;
+    }
+
+    html += `
+      <div class="health-card" style="background:var(--surface); border:1px solid var(--border); padding:20px; border-radius:var(--radius); display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div style="font-size:16px; font-weight:800; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+            <span class="status-dot ${isOnline ? 'active' : 'inactive'}"></span>
+            ${escapeHtml(p.providerName)}
+          </div>
+          <div class="h-row" style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;"><span class="h-label" style="color:var(--ink3)">Portal URL</span><span class="h-val" style="color:var(--ink2)">${escapeHtml(p.portalUrl)}</span></div>
+          <div class="h-row" style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;"><span class="h-label" style="color:var(--ink3)">Status</span><span class="h-val"><span class="badge ${statusClass}">${escapeHtml(p.status.toUpperCase())}</span></span></div>
+          <div class="h-row" style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;"><span class="h-label" style="color:var(--ink3)">Credentials Configured</span><span class="h-val">${p.hasCredentials ? '✅ Yes' : '❌ No (Using .env fallback)'}</span></div>
+        </div>
+        ${actionBtn}
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+function openProviderModal(name, url, status) {
+  document.getElementById('provider-modal-name').value = name;
+  document.getElementById('provider-modal-title').textContent = name;
+  document.getElementById('provider-modal-url').value = url;
+  document.getElementById('provider-modal-user').value = '';
+  document.getElementById('provider-modal-pass').value = '';
+  document.getElementById('provider-modal-status').value = status;
+  
+  const modal = document.getElementById('provider-modal');
+  modal.style.display = 'flex';
+  modal.classList.remove('hidden');
+}
+
+function closeProviderModal() {
+  const modal = document.getElementById('provider-modal');
+  modal.style.display = 'none';
+  modal.classList.add('hidden');
+}
+
+async function saveProviderCredentials(e) {
+  e.preventDefault();
+  const providerName = document.getElementById('provider-modal-name').value;
+  const portalUrl = document.getElementById('provider-modal-url').value;
+  const username = document.getElementById('provider-modal-user').value.trim();
+  const password = document.getElementById('provider-modal-pass').value;
+  const status = document.getElementById('provider-modal-status').value;
+  
+  try {
+    const res = await fetch(`${API}/api/admin/providers`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({
+        providerName,
+        portalUrl,
+        username: username || undefined,
+        password: password || undefined,
+        status
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('Provider credentials saved successfully.');
+      closeProviderModal();
+      fetchProviders();
+    } else {
+      alert('Save failed: ' + data.error);
+    }
+  } catch (err) {
+    alert('Save failed. Connection error.');
+  }
+}
+
+async function createAdminUser(e) {
+  e.preventDefault();
+  const name = document.getElementById('new-admin-name').value.trim();
+  const email = document.getElementById('new-admin-email').value.trim();
+  const mobile = document.getElementById('new-admin-mobile').value.trim();
+  const role = document.getElementById('new-admin-role').value;
+  const password = document.getElementById('new-admin-pwd').value;
+  const msgEl = document.getElementById('admin-create-msg');
+  
+  msgEl.style.display = 'none';
+  
+  try {
+    const res = await fetch(`${API}/api/admin/users/create`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ name, email, mobile, password, role })
+    });
+    const data = await res.json();
+    if (data.success) {
+      msgEl.textContent = `Administrator account created successfully!`;
+      msgEl.style.color = 'var(--green)';
+      msgEl.style.display = 'block';
+      document.getElementById('admin-create-form').reset();
+    } else {
+      msgEl.textContent = data.error || 'Failed to create account.';
+      msgEl.style.color = 'var(--red)';
+      msgEl.style.display = 'block';
+    }
+  } catch (err) {
+    msgEl.textContent = 'Connection error.';
+    msgEl.style.color = 'var(--red)';
+    msgEl.style.display = 'block';
+  }
+}
+
+function renderLogs(logs) {
+  const container = document.getElementById('logs-table');
+  document.getElementById('logs-count').textContent = `${logs.length} logs`;
+  
+  if (logs.length === 0) {
+    container.innerHTML = '<div class="empty-state">No audit logs recorded yet.</div>';
+    return;
+  }
+
+  let html = `<table class="admin-table">
+    <thead>
+      <tr>
+        <th>Admin Name</th>
+        <th>Role</th>
+        <th>Action performed</th>
+        <th>IP Address</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody>`;
+    
+  logs.forEach(l => {
+    let actionText = `<b>${escapeHtml(l.action)}</b>`;
+    if (l.metadata) {
+      actionText += ` <span style="font-size:11px; color:var(--ink3);">(${escapeHtml(JSON.stringify(l.metadata))})</span>`;
+    }
+    
+    html += `<tr>
+      <td><b>${escapeHtml(l.adminName)}</b></td>
+      <td><span class="badge ${l.role === 'super_admin' ? 'red' : 'blue'}">${escapeHtml(l.role.replace('_', ' ').toUpperCase())}</span></td>
+      <td>${actionText}</td>
+      <td><code style="color:var(--teal);">${escapeHtml(l.ip)}</code></td>
+      <td style="color:var(--ink3)">${new Date(l.time).toLocaleString('en-IN')}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+// ─── REFRESH ───
+async function refreshAll() {
+  const btn = document.getElementById('refresh-btn');
+  btn.classList.add('spinning');
+  
+  const role = adminUser ? adminUser.role : '';
+  const promises = [];
+  
+  if (role !== 'support_executive') {
+    promises.push(fetchStats());
+    promises.push(fetchActivity());
+    promises.push(fetchSearchHistory());
+    promises.push(fetchUsers());
+    promises.push(fetchHealth());
+  }
+  
+  promises.push(fetchBookings());
+  
+  await Promise.all(promises);
+  setTimeout(() => btn.classList.remove('spinning'), 600);
+}
+
+// ─── UPTIME TIMER ───
+let uptimeTimer = null;
+function startUptimeCounter() {
+  clearInterval(uptimeTimer);
+  const display = document.getElementById('uptime-text');
+  if (!display) return;
+  
+  let totalSeconds = 0;
+  // Initialize timer
+  fetch(`${API}/api/admin/health`, { headers: authHeaders() })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        totalSeconds = data.health.serverUptime;
+      }
+    })
+    .catch(() => {});
+    
+  uptimeTimer = setInterval(() => {
+    totalSeconds++;
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    display.innerHTML = `Uptime: <b>${h}h ${m}m ${s}s</b>`;
+  }, 1000);
+}
+
+// ─── AUTO-REFRESH ───
+setInterval(() => {
+  if (adminToken) refreshAll();
+}, 30000); // every 30s
+
+// ─── INIT ───
+if (window.location.protocol === 'file:') {
+  document.getElementById('file-protocol-warning').style.display = 'block';
+}
+
+if (adminToken && adminUser) {
+  // Verify saved token
+  fetch(`${API}/api/admin/health`, { headers: authHeaders() })
+    .then(r => {
+      if (r.status === 401) {
+        logoutAdmin();
+      } else {
+        showDashboard();
+      }
+    })
+    .catch(() => {
+      document.getElementById('login-gate').classList.remove('hidden');
+    });
+} else {
+  document.getElementById('login-gate').classList.remove('hidden');
+}
+</script>
+<!-- PROVIDER MODAL -->
+<div id="provider-modal" class="login-gate hidden" style="background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); display:none; justify-content:center; align-items:center; z-index:9999;">
+  <div class="login-box" style="text-align:left; max-width:450px; padding:32px 28px;">
+    <h3 style="font-size:18px; font-weight:800; margin-bottom:6px; color:var(--ink);">Edit B2B Credentials</h3>
+    <p style="color:var(--ink3); font-size:12px; margin-bottom:20px;">Provider: <span id="provider-modal-title" style="color:var(--teal); font-weight:700;">Laxmi Holidays</span></p>
+    
+    <form onsubmit="saveProviderCredentials(event)" style="display:flex; flex-direction:column; gap:12px;">
+      <input type="hidden" id="provider-modal-name">
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="font-size:11px; font-weight:700; color:var(--ink2);">PORTAL URL</label>
+        <input type="url" id="provider-modal-url" required style="width:100%; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); outline:none; margin:0;">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="font-size:11px; font-weight:700; color:var(--ink2);">PORTAL USERNAME</label>
+        <input type="text" id="provider-modal-user" placeholder="Enter B2B portal username" style="width:100%; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); outline:none; margin:0;">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="font-size:11px; font-weight:700; color:var(--ink2);">PORTAL PASSWORD (WRITE-ONLY)</label>
+        <input type="password" id="provider-modal-pass" placeholder="Enter secure password" style="width:100%; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); outline:none; margin:0;">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="font-size:11px; font-weight:700; color:var(--ink2);">GATEWAY STATUS</label>
+        <select id="provider-modal-status" style="width:100%; padding:10px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--ink); outline:none; cursor:pointer;">
+          <option value="active">Active (Online)</option>
+          <option value="inactive">Inactive (Offline)</option>
+        </select>
+      </div>
+      
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <button type="submit" style="flex:1; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer;">Save Config</button>
+        <button type="button" onclick="closeProviderModal()" style="flex:1; padding:12px; background:var(--surface3); color:var(--ink); border:1px solid var(--border); border-radius:8px; font-weight:700; cursor:pointer;">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>
