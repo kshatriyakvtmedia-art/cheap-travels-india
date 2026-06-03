@@ -3,12 +3,17 @@ const { prisma } = require('../lib/db');
 const { hashPassword } = require('../lib/auth');
 
 async function seed() {
-  const email = process.env.ADMIN_EMAIL || 'admin@cheaptravels.in';
-  const password = process.env.ADMIN_PASSWORD || 'Admin123!';
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+
+  if (!email || !password) {
+    console.error('ERROR: ADMIN_EMAIL and ADMIN_PASSWORD must be set in .env');
+    process.exit(1);
+  }
 
   console.log(`Seeding Super Admin user...`);
   console.log(`Email: ${email}`);
-  console.log(`Password configured in .env: ${password ? 'YES' : 'NO'}`);
+  console.log(`Password configured in .env: YES`);
 
   const hashedPassword = await hashPassword(password);
 
@@ -32,19 +37,30 @@ async function seed() {
   // Seed B2B Operator Providers
   console.log(`Seeding B2B Operator Providers...`);
   const { encrypt } = require('../lib/crypto');
-  
+
+  // Read operator credentials from environment variables
+  const lxmiUser = process.env.LXMI_USERNAME;
+  const lxmiPass = process.env.LXMI_PASSWORD;
+  const rdlhUser = process.env.RDLH_USERNAME;
+  const rdlhPass = process.env.RDLH_PASSWORD;
+
+  if (!lxmiUser || !lxmiPass || !rdlhUser || !rdlhPass) {
+    console.error('ERROR: Operator credentials (LXMI_USERNAME, LXMI_PASSWORD, RDLH_USERNAME, RDLH_PASSWORD) must be set in .env');
+    process.exit(1);
+  }
+
   const providersToSeed = [
     {
       providerName: 'Laxmi Holidays',
-      portalUrl: 'https://lxmi.laxmiholidays.com',
-      username: 'lxmi.cheap',
-      password: 'lxmicheap546'
+      portalUrl: process.env.LXMI_PORTAL_URL || 'https://lxmi.laxmiholidays.com',
+      username: lxmiUser,
+      password: lxmiPass
     },
     {
       providerName: 'Ram Dalal',
-      portalUrl: 'https://rdlh.ticketsimply.com',
-      username: 'cheap',
-      password: 'cheapdalal546'
+      portalUrl: process.env.RDLH_PORTAL_URL || 'https://rdlh.ticketsimply.com',
+      username: rdlhUser,
+      password: rdlhPass
     }
   ];
 
