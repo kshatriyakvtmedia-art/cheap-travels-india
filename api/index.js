@@ -12,6 +12,7 @@ const cookieParser = require('cookie-parser');
 const { prisma } = require('../lib/db');
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 
 // Security and compression middleware
@@ -1306,6 +1307,33 @@ app.get('/api/admin/health', requireAuth, requireRole(['super_admin', 'admin']),
   });
 });
 
+// Admin: payments list (Super Admin & Admin)
+app.get('/api/admin/payments', requireAuth, requireRole(['super_admin', 'admin']), async (req, res) => {
+  try {
+    const payments = await prisma.payment.findMany({
+      include: {
+        order: true
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    const formatted = payments.map(p => ({
+      id: p.id,
+      customerName: p.order ? (p.order.passengerName || p.order.customerEmail || 'Customer') : 'Customer',
+      gateway: p.gateway,
+      transactionId: p.gatewayTransactionId || p.gatewayOrderId || '',
+      amount: p.amount,
+      status: p.paymentStatus,
+      createdAt: p.createdAt.toISOString()
+    }));
+
+    res.json({ success: true, payments: formatted });
+  } catch (err) {
+    console.error('Failed to get payments:', err.message);
+    res.status(500).json({ success: false, error: 'Internal server error.' });
+  }
+});
+
 // Admin: list B2B providers (Super Admin & Admin)
 app.get('/api/admin/providers', requireAuth, requireRole(['super_admin', 'admin']), async (req, res) => {
   try {
@@ -1487,6 +1515,25 @@ app.post('/api/admin/bookings/:id/refund', requireAuth, requireRole(['super_admi
   } catch (err) {
     console.error('Booking refund failed:', err.message);
     res.status(500).json({ success: false, error: 'Failed to process refund.' });
+  }
+});
+
+// Admin: resend ticket (Super Admin, Admin, Support Executive)
+app.post('/api/admin/bookings/:id/resend', requireAuth, requireRole(['super_admin', 'admin', 'support_executive']), async (req, res) => {
+  const { id } = req.params;
+  try {
+    const order = await prisma.order.findUnique({ where: { id } });
+    if (!order) {
+      return res.status(404).json({ success: false, error: 'Booking not found.' });
+    }
+    
+    await logAdminAction(req, 'resend_ticket', 'order', order.id, { pnr: order.providerPnr || order.bookingReference });
+    console.log(`[Resend Ticket] Resent ticket for Order ID: ${order.id}, PNR: ${order.providerPnr || order.bookingReference}`);
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Failed to resend ticket:', err.message);
+    res.status(500).json({ success: false, error: 'Internal server error.' });
   }
 });
 
