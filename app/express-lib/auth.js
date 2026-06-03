@@ -2,14 +2,15 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { prisma } = require('./db');
 
-if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('FATAL: JWT_SECRET and JWT_REFRESH_SECRET must be set in production environment.');
-  }
-  console.warn('⚠ WARNING: JWT_SECRET / JWT_REFRESH_SECRET not set. Using insecure dev-only fallbacks.');
-}
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_only_jwt_secret_DO_NOT_USE_IN_PROD';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'dev_only_jwt_refresh_DO_NOT_USE_IN_PROD';
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'dev_only_jwt_refresh_DO_NOT_USE_IN_PROD';
+
+if (!process.env.JWT_SECRET) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('FATAL: JWT_SECRET must be set in production environment.');
+  }
+  console.warn('⚠ WARNING: JWT_SECRET not set. Using insecure dev-only fallbacks.');
+}
 
 // Generate random 6-digit OTP
 function generateOtpCode() {
