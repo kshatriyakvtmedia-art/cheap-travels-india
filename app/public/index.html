@@ -2363,8 +2363,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const dd = String(tomorrow.getDate()).padStart(2, '0');
   document.getElementById('depart-date').value = `${yyyy}-${mm}-${dd}`;
 
-  await loadCities();
-  await initFirebase();
+  loadCities();
+  initFirebase();
   setupQR();
   
   // Offline & connection state tracking
