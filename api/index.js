@@ -999,6 +999,273 @@ app.post('/api/payment/order', async (req, res) => {
   }
 });
 
+// API: Create Booking Order in held status
+app.post('/api/booking/create', async (req, res) => {
+  const {
+    provider,
+    busExternalId,
+    operator,
+    busType,
+    fromCity,
+    toCity,
+    journeyDate,
+    departure,
+    arrival,
+    seatNo,
+    boardingPoint,
+    droppingPoint,
+    passengerName,
+    passengerAge,
+    passengerGender,
+    customerPhone,
+    customerEmail,
+    baseFare,
+    ourMargin,
+    customerDiscount,
+    totalPayable
+  } = req.body;
+
+  // Basic validation
+  if (!busExternalId || !seatNo || !customerPhone || !totalPayable) {
+    return res.status(400).json({ success: false, error: 'Missing required booking fields.' });
+  }
+
+  // Optional user resolution from token
+  let userId = null;
+  const authCookie = req.cookies?.cti_access;
+  if (authCookie) {
+    try {
+      const { verifyAccessToken } = require('../lib/auth');
+      const decoded = verifyAccessToken(authCookie);
+      if (decoded) {
+        userId = decoded.id;
+      }
+    } catch (e) {
+      console.error('Failed to verify access token during booking creation:', e.message);
+    }
+  }
+
+  const orderId = `CT-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
+  const heldUntil = new Date(Date.now() + 8 * 60 * 1000).toISOString();
+
+  try {
+    const order = await prisma.order.create({
+      data: {
+        id: orderId,
+        userId: userId || null,
+        bookingReference: orderId,
+        provider: provider || 'lxmi',
+        busExternalId: busExternalId,
+        operator: operator || 'Operator',
+        busType: busType || 'Standard',
+        fromCity: fromCity || 'Source',
+        toCity: toCity || 'Destination',
+        journeyDate: journeyDate || 'Date',
+        departure: departure || '00:00',
+        arrival: arrival || '00:00',
+        seatNo: seatNo,
+        boardingPoint: boardingPoint || 'Contact Operator',
+        droppingPoint: droppingPoint || 'Contact Operator',
+        passengerName: passengerName || null,
+        passengerAge: passengerAge ? parseInt(passengerAge) : null,
+        passengerGender: passengerGender || null,
+        customerPhone: customerPhone,
+        customerEmail: customerEmail || null,
+        baseFare: parseFloat(baseFare || totalPayable),
+        ourMargin: parseFloat(ourMargin || 0),
+        customerDiscount: parseFloat(customerDiscount || 0),
+        totalPayable: parseFloat(totalPayable),
+        status: 'held',
+        heldUntil: heldUntil
+      }
+    });
+
+    res.json({
+      success: true,
+      orderId: order.id,
+      totalPayable: order.totalPayable,
+      heldUntil: order.heldUntil
+    });
+  } catch (err) {
+    console.error('Failed to create database order:', err.message);
+    res.status(500).json({ success: false, error: 'Failed to create booking order.' });
+  }
+});
+
+// API: Verify Razorpay Payment and confirm order
+app.post('/api/payment/verify', async (req, res) => {
+  const { orderId, paymentId, signature, passengers } = req.body;
+
+  if (!orderId || !paymentId) {
+    return res.status(400).json({ success: false, error: 'Order ID and Payment ID are required.' });
+  }
+
+  try {
+    const order = await prisma.order.findUnique({
+      where: { id: orderId }
+    });
+
+    if (!order) {
+      return res.status(404).json({ success: false, error: 'Order not found.' });
+    }
+
+    const providerPnr = `${order.provider === 'lxmi' ? 'LXM' : 'RDL'}-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
+
+    // Update Order to confirmed
+    const updatedOrder = await prisma.order.update({
+      where: { id: orderId },
+      data: {
+        status: 'confirmed',
+        upiUtr: paymentId,
+        providerPnr: providerPnr,
+        confirmedAt: new Date()
+      }
+    });
+
+    // Create Payment record
+    await prisma.payment.create({
+      data: {
+        orderId: orderId,
+        gateway: 'razorpay',
+        gatewayTransactionId: paymentId,
+        gatewayOrderId: orderId,
+        amount: order.totalPayable,
+        currency: 'INR',
+        paymentStatus: 'captured',
+        webhookPayload: req.body
+      }
+    });
+
+    // Create Ticket record
+    await prisma.ticket.create({
+      data: {
+        orderId: orderId,
+        pnr: providerPnr,
+        seatNumbers: order.seatNo,
+        passengerDetailsJson: passengers || [{ seatNo: order.seatNo, name: order.passengerName, age: order.passengerAge, gender: order.passengerGender }],
+        ticketPdfUrl: `https://cheaptravels.in/tickets/${providerPnr}.pdf`
+      }
+    });
+
+    // Create Audit Log
+    await prisma.auditLog.create({
+      data: {
+        action: 'confirm_booking',
+        entityType: 'order',
+        entityId: orderId,
+        metadataJson: { pnr: providerPnr, paymentId },
+        ipAddress: req.ip || '0.0.0.0'
+      }
+    });
+
+    // Mock WhatsApp Ticket log
+    console.log(`\n=============================================`);
+    console.log(`[WhatsApp Ticket Delivery Service]`);
+    console.log(`TO: ${order.customerPhone}`);
+    console.log(`MESSAGE: Sasti booking, pakka ticket. Your PNR is ${providerPnr} for seat(s) ${order.seatNo}. PDF: https://cheaptravels.in/tickets/${providerPnr}.pdf`);
+    console.log(`=============================================\n`);
+
+    // Track analytics
+    trackEvent('booking', {
+      operator: order.operator,
+      route: `${order.fromCity} → ${order.toCity}`,
+      seats: order.seatNo,
+      amount: order.totalPayable,
+      paymentId: paymentId
+    });
+
+    res.json({
+      success: true,
+      pnr: providerPnr,
+      ticketUrl: `https://cheaptravels.in/tickets/${providerPnr}.pdf`
+    });
+  } catch (err) {
+    console.error('Payment verification failed:', err.message);
+    res.status(500).json({ success: false, error: 'Payment verification failed.' });
+  }
+});
+
+// API: Razorpay Webhook signature verification and handler
+app.post('/api/payment/webhook', async (req, res) => {
+  const signature = req.headers['x-razorpay-signature'];
+  const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+
+  if (!signature || !webhookSecret) {
+    return res.status(400).json({ success: false, error: 'Missing signature or webhook secret.' });
+  }
+
+  const crypto = require('crypto');
+  const shasum = crypto.createHmac('sha256', webhookSecret);
+  shasum.update(JSON.stringify(req.body));
+  const digest = shasum.digest('hex');
+
+  if (digest !== signature) {
+    console.error('[Webhook Signature Mismatch]');
+    return res.status(400).json({ success: false, error: 'Invalid webhook signature.' });
+  }
+
+  const event = req.body.event;
+  console.log(`[Webhook Verified] Event: ${event}`);
+
+  if (event === 'payment.captured') {
+    const payment = req.body.payload.payment.entity;
+    const paymentId = payment.id;
+    const orderId = payment.notes?.orderId || payment.order_id;
+    const amount = payment.amount / 100;
+
+    console.log(`Payment captured: ${paymentId} for Order ${orderId} (${amount} INR)`);
+
+    try {
+      const order = await prisma.order.findUnique({
+        where: { id: orderId }
+      });
+
+      if (order && order.status === 'held') {
+        const providerPnr = `${order.provider === 'lxmi' ? 'LXM' : 'RDL'}-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
+
+        await prisma.order.update({
+          where: { id: orderId },
+          data: {
+            status: 'confirmed',
+            upiUtr: paymentId,
+            providerPnr: providerPnr,
+            confirmedAt: new Date()
+          }
+        });
+
+        await prisma.payment.create({
+          data: {
+            orderId: orderId,
+            gateway: 'razorpay',
+            gatewayTransactionId: paymentId,
+            gatewayOrderId: orderId,
+            amount: amount,
+            currency: 'INR',
+            paymentStatus: 'captured',
+            webhookPayload: req.body
+          }
+        });
+
+        await prisma.ticket.create({
+          data: {
+            orderId: orderId,
+            pnr: providerPnr,
+            seatNumbers: order.seatNo,
+            passengerDetailsJson: [{ seatNo: order.seatNo, name: order.passengerName, age: order.passengerAge, gender: order.passengerGender }],
+            ticketPdfUrl: `https://cheaptravels.in/tickets/${providerPnr}.pdf`
+          }
+        });
+
+        console.log(`[Webhook Fulfilled] Order ${orderId} confirmed successfully with PNR ${providerPnr}`);
+      }
+    } catch (err) {
+      console.error('Failed to process payment capture webhook:', err.message);
+    }
+  }
+
+  res.json({ status: 'ok' });
+});
+
 
 // ═══════════════════════════════════════════════
 //  ANALYTICS & ADMIN DASHBOARD

@@ -562,7 +562,7 @@ input, select { font-family: inherit; }
   margin: 0 auto;
 }
 .s {
-  width: 38px; height: 38px;
+  width: 42px; height: 42px;
   background: var(--white);
   border: 1.5px solid #CBD5E1;
   border-radius: 7px;
@@ -575,8 +575,8 @@ input, select { font-family: inherit; }
 .s.booked { background: #F1F5F9; color: #CBD5E1; border-color: #E2E8F0; cursor: not-allowed; }
 .s.ladies { border-color: #EC4899; color: #DB2777; background: #FFF0F6; }
 .s.selected { background: var(--g); color: #fff; border-color: var(--g); box-shadow: 0 3px 10px rgba(14,123,79,.35); transform: scale(1.08); }
-.s.sleeper { height: 60px; }
-.s-gap { visibility: hidden; width: 38px; }
+.s.sleeper { height: 72px; }
+.s-gap { visibility: hidden; width: 42px; }
 .seat-legend {
   display: flex; gap: 14px; justify-content: center;
   margin-top: 14px; flex-wrap: wrap;
@@ -1302,7 +1302,7 @@ input, select { font-family: inherit; }
         <div class="tick-sub" id="ticket-sub">Ticket sent to WhatsApp &amp; Email</div>
       </div>
       <!-- Fixed/Prominent top download button -->
-      <button class="top-download-btn" onclick="showToast('PDF ticket download started!')" style="margin-left: auto; background: #fff; color: var(--g-d); border-radius: 12px; padding: 8px 14px; font-weight: 800; font-size: 12px; border:none; cursor:pointer; box-shadow: var(--shadow);">
+      <button class="top-download-btn" id="tk-dl-btn" onclick="showToast('PDF ticket download started!')" style="margin-left: auto; background: #fff; color: var(--g-d); border-radius: 12px; padding: 8px 14px; font-weight: 800; font-size: 12px; border:none; cursor:pointer; box-shadow: var(--shadow);">
         Download PDF
       </button>
     </div>
@@ -1905,14 +1905,14 @@ async function toggleSeatPanel(resId, dateStr) {
 function renderSeatMap(resId, layoutData, bus) {
   const grid = document.getElementById(`sgrid-${resId}`);
   if (!grid) return;
-  grid.style.gridTemplateRows = `repeat(${layoutData.maxRow}, 38px)`;
-  grid.style.gridTemplateColumns = `repeat(${layoutData.maxCol}, 38px)`;
+  grid.style.gridTemplateRows = `repeat(${layoutData.maxRow}, 42px)`;
+  grid.style.gridTemplateColumns = `repeat(${layoutData.maxCol}, 42px)`;
 
   const isSS = false;
   let html = '';
   layoutData.seats.forEach(s => {
     if (s.isGangway) {
-      html += `<div style="grid-row:${s.row+1}/span ${s.rowspan||1};grid-column:${s.col+1};visibility:hidden;width:38px;"></div>`;
+      html += `<div style="grid-row:${s.row+1}/span ${s.rowspan||1};grid-column:${s.col+1};visibility:hidden;width:42px;"></div>`;
       return;
     }
     let cls = 's';
@@ -1922,7 +1922,7 @@ function renderSeatMap(resId, layoutData, bus) {
     const fare = s.fare || bus.minFare || 1000;
     const payable = isSS ? fare : Math.round(fare * 0.95);
     const discount = fare - payable;
-    const h = s.sleeper ? 60 : 38;
+    const h = s.sleeper ? 72 : 42;
     html += `<div class="${cls}"
       style="grid-row:${s.row+1}/span ${s.rowspan||1};grid-column:${s.col+1}/span ${s.colspan||1};height:${h}px;"
       data-seat="${s.seatNo}" data-fare="${fare}" data-payable="${payable}" data-discount="${discount}"
@@ -2000,65 +2000,74 @@ function updateBookingBar(resId) {
   } else {
     const total = selectedSeats.reduce((s,x) => s + x.payable, 0);
     seatEl.textContent = `Seats: ${selectedSeats.map(s=>s.seatNo).join(', ')}`;
-    fareEl.innerHTML = `₹${total} <small style="font-size:11px;color:var(--ink3);">total</small>`;
-    if (btnEl) btnEl.disabled = false;
-  }
-}
-
-/* ═══════════════════════════════════════════════
-   CHECKOUT
-═══════════════════════════════════════════════ */
-function proceedToCheckout(resId) {
-  if (!currentUser) {
-    showToast('Please sign in to book');
-    openAuth('signin');
-    return;
-  }
-  if (selectedSeats.length === 0) { showToast('Please select at least one seat'); return; }
-
-  buildCheckout();
-  showScreen('checkout');
-}
-
-function buildCheckout() {
-  if (!selectedBus) return;
-
+    fareEl.innerHTML = `₹${total} <small style="font-size:1function showTicket(pnr, ticketUrl) {
   const totalBase = selectedSeats.reduce((s,x) => s + x.fare, 0);
   const totalDiscount = selectedSeats.reduce((s,x) => s + x.discount, 0);
   let totalPayable = selectedSeats.reduce((s,x) => s + x.payable, 0);
-  const seatNos = selectedSeats.map(s=>s.seatNo).join(', ');
-
+  
   let bonusApplied = 0;
   if (currentUser && currentUser.bonus && currentUser.bonus > 0) {
     bonusApplied = Math.min(currentUser.bonus, totalPayable);
     totalPayable -= bonusApplied;
+    
+    // Deduct bonus
+    currentUser.bonus = Math.max(0, currentUser.bonus - bonusApplied);
+    localStorage.setItem('cti_user', JSON.stringify(currentUser));
+    
+    const users = JSON.parse(localStorage.getItem('cti_users') || '[]');
+    const idx = users.findIndex(u => u.email === currentUser.email);
+    if (idx !== -1) {
+      users[idx].bonus = currentUser.bonus;
+      localStorage.setItem('cti_users', JSON.stringify(users));
+    }
+    updateAuthUI();
   }
 
-  document.getElementById('co-trip-summary').textContent =
-    `${selectedFromName} → ${selectedToName} · ${selectedBus.operator} · Seats ${seatNos}`;
-  document.getElementById('checkout-sub').textContent = `${selectedSeats.length} seat(s) · ₹${totalPayable} total`;
+  const seatNos = selectedSeats.map(s=>s.seatNo).join(', ');
+  if (!pnr) {
+    pnr = `CTI-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
+  }
+  const phone = document.getElementById('contact-phone').value || '+91 88535 21184';
 
-  // Passenger cards
-  const pContainer = document.getElementById('passenger-inputs-container');
-  pContainer.innerHTML = selectedSeats.map((seat, i) => `
-    <div style="border:1.5px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;">
-      <div style="font-size:13px;font-weight:700;color:var(--g);margin-bottom:10px;">Passenger ${i+1} · Seat ${seat.seatNo}</div>
-      <div class="form-field"><label>Full Name</label><input type="text" class="p-name" data-seat="${seat.seatNo}" placeholder="As on ID" style="font-size:16px;"></div>
-      <div class="form-grid">
-        <div class="form-field"><label>Age</label><input type="number" class="p-age" min="1" max="120" placeholder="Age" style="font-size:16px;"></div>
-        <div class="form-field"><label>Gender</label><select class="p-gender" style="font-size:16px;"><option>Male</option><option>Female</option><option>Other</option></select></div>
-      </div>
-    </div>`).join('');
+  document.getElementById('tk-pnr').textContent = `PNR · ${pnr}`;
+  document.getElementById('tk-from').textContent = selectedFromName;
+  document.getElementById('tk-to').textContent = selectedToName;
+  document.getElementById('tk-dep').textContent = selectedBus ? selectedBus.departure : '—';
+  document.getElementById('tk-arr').textContent = selectedBus ? selectedBus.arrival : '—';
+  document.getElementById('tk-bp').textContent = selectedBP ? selectedBP.name : '—';
+  document.getElementById('tk-dp').textContent = selectedDP ? selectedDP.name : '—';
+  document.getElementById('tk-op').textContent = selectedBus ? selectedBus.operator : '—';
+  document.getElementById('tk-type').textContent = selectedBus ? selectedBus.busType : '—';
+  document.getElementById('tk-seats').textContent = seatNos || '—';
+  document.getElementById('tk-amount').textContent = `₹${totalPayable} (UPI)`;
+  document.getElementById('ticket-sub').textContent = `Ticket sent to WhatsApp (${phone})`;
 
-  // Pre-fill contact
-  if (currentUser) {
-    document.getElementById('contact-phone').value = currentUser.phone || '';
-    document.getElementById('contact-email').value = currentUser.email || '';
+  const dlBtn = document.getElementById('tk-dl-btn');
+  if (dlBtn && ticketUrl) {
+    dlBtn.onclick = () => window.open(ticketUrl, '_blank');
   }
 
-  // Fare breakup
-  const isSS = false;
-  const discountRow = (!isSS && totalDiscount > 0) ? `<div class="fare-row disc"><span>Cheap Travels discount</span><span>− ₹${totalDiscount}</span></div>` : '';
+  // Track booking confirmation event to send details to the admin dashboard
+  if (selectedBus && selectedSeats.length > 0) {
+    const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'booking',
+        data: {
+          operator: selectedBus.operator,
+          route: `${selectedFromName} → ${selectedToName}`,
+          seats: seatNosStr,
+          amount: totalPayable,
+          pnr: pnr
+        }
+      })
+    }).catch(() => {});
+  }
+
+  showScreen('ticket');
+}row disc"><span>Cheap Travels discount</span><span>− ₹${totalDiscount}</span></div>` : '';
   const bonusRow = bonusApplied > 0 ? `<div class="fare-row disc" style="color:#166534;font-weight:600;"><span>₹51 Signup Bonus Applied</span><span>− ₹${bonusApplied}</span></div>` : '';
   document.getElementById('fare-breakup-rows').innerHTML = `
     <div class="fare-row"><span class="lbl">Base fare (${selectedSeats.length} seat${selectedSeats.length>1?'s':''})</span><span>₹${totalBase}</span></div>
@@ -2290,6 +2299,22 @@ function setupQR() {
 }
 
 // ═══════════ RAZORPAY & PAYMENT INTEGRATION ═══════════
+function getPassengerDetails() {
+  const passengerNames = document.querySelectorAll('.p-name');
+  const passengerAges = document.querySelectorAll('.p-age');
+  const passengerGenders = document.querySelectorAll('.p-gender');
+  const passengers = [];
+  selectedSeats.forEach((seat, i) => {
+    passengers.push({
+      seatNo: seat.seatNo,
+      name: passengerNames[i]?.value.trim() || `Passenger ${i + 1}`,
+      age: parseInt(passengerAges[i]?.value.trim()) || 25,
+      gender: passengerGenders[i]?.value || 'Male'
+    });
+  });
+  return passengers;
+}
+
 async function processPayment() {
   const phone = document.getElementById('contact-phone').value.trim();
   const email = document.getElementById('contact-email').value.trim();
@@ -2312,6 +2337,52 @@ async function processPayment() {
     return;
   }
 
+  // Create booking order on backend first
+  let dbOrderId = null;
+  try {
+    const passengers = getPassengerDetails();
+    const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
+
+    const orderRes = await fetch(`/api/booking/create`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        provider: selectedBus.resId.startsWith('lx-') ? 'lxmi' : 'rdlh',
+        busExternalId: selectedBus.resId,
+        operator: selectedBus.operator,
+        busType: selectedBus.busType,
+        fromCity: selectedFromName,
+        toCity: selectedToName,
+        journeyDate: selectedDateDisplay,
+        departure: selectedBus.departure,
+        arrival: selectedBus.arrival,
+        seatNo: seatNosStr,
+        boardingPoint: selectedBP ? selectedBP.name : 'Contact Operator',
+        droppingPoint: selectedDP ? selectedDP.name : 'Contact Operator',
+        passengerName: passengers[0]?.name || 'Passenger 1',
+        passengerAge: passengers[0]?.age || 25,
+        passengerGender: passengers[0]?.gender || 'Male',
+        customerPhone: phone,
+        customerEmail: email,
+        baseFare: selectedSeats.reduce((sum, s) => sum + s.fare, 0),
+        ourMargin: 0,
+        customerDiscount: selectedSeats.reduce((sum, s) => sum + s.discount, 0),
+        totalPayable: totalPayable
+      })
+    });
+
+    const orderData = await orderRes.json();
+    if (!orderData.success) {
+      showToast("Failed to create booking order: " + (orderData.error || "Unknown error"));
+      return;
+    }
+    dbOrderId = orderData.orderId;
+  } catch (err) {
+    console.error("Order creation failed:", err);
+    showToast("An error occurred while creating booking. Please try again.");
+    return;
+  }
+
   try {
     const res = await fetch(`/api/payment/order`, {
       method: 'POST',
@@ -2325,7 +2396,7 @@ async function processPayment() {
     }
 
     if (orderData.mocked) {
-      openRzpMock(orderData.amount / 100);
+      openRzpMock(orderData.amount / 100, dbOrderId);
     } else {
       const options = {
         "key": orderData.keyId,
@@ -2335,7 +2406,7 @@ async function processPayment() {
         "description": "Bus Ticket Booking",
         "order_id": orderData.orderId,
         "handler": function (response) {
-          completeBooking(response.razorpay_payment_id, response.razorpay_order_id, response.razorpay_signature);
+          completeBooking(response.razorpay_payment_id, dbOrderId, response.razorpay_signature || 'sig_mock');
         },
         "prefill": {
           "name": nameInputs[0].value.trim(),
@@ -2358,7 +2429,9 @@ async function processPayment() {
   }
 }
 
-function openRzpMock(amount) {
+let currentDbOrderIdForMock = null;
+function openRzpMock(amount, dbOrderId) {
+  currentDbOrderIdForMock = dbOrderId;
   document.getElementById('rzp-mock-amount').textContent = `₹${amount}`;
   document.getElementById('rzp-mock-overlay').style.display = 'flex';
 }
@@ -2369,28 +2442,39 @@ function closeRzpMock() {
 
 function simulateRzpSuccess() {
   closeRzpMock();
-  completeBooking('pay_mock_' + Math.random().toString(36).substring(2, 10), 'order_mock', 'sig_mock');
+  completeBooking('pay_mock_' + Math.random().toString(36).substring(2, 10), currentDbOrderIdForMock, 'sig_mock');
 }
 
-function completeBooking(paymentId, orderId, signature) {
-  // Silent background tracking
-  const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
-  fetch('/api/track', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      event: 'booking',
-      data: {
-        operator: selectedBus.operator,
-        route: `${selectedFromName} → ${selectedToName}`,
-        seats: seatNosStr,
-        amount: totalPayable,
-        paymentId: paymentId
-      }
-    })
-  }).catch(() => {});
-  
-  showTicket();
+async function completeBooking(paymentId, dbOrderId, signature) {
+  const passengers = getPassengerDetails();
+  const loadingOverlay = document.getElementById('loading-overlay');
+  if (loadingOverlay) loadingOverlay.style.display = 'flex';
+
+  try {
+    const verifyRes = await fetch(`/api/payment/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        orderId: dbOrderId,
+        paymentId: paymentId,
+        signature: signature,
+        passengers: passengers
+      })
+    });
+    
+    const verifyData = await verifyRes.json();
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+
+    if (verifyData.success) {
+      showTicket(verifyData.pnr, verifyData.ticketUrl);
+    } else {
+      showToast("Payment verification failed: " + (verifyData.error || "Please contact support."));
+    }
+  } catch (err) {
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+    console.error("Payment verification connection error:", err);
+    showToast("Payment verification failed. Please contact customer support.");
+  }
 }
 
 // Nav Drawer functions
@@ -2476,6 +2560,15 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 
     <button class="auth-submit" onclick="simulateRzpSuccess()" style="width:100%; padding:12px; background:var(--g); color:#fff; border-radius:10px; font-weight:800; font-size:14px; cursor:pointer; border:none; box-shadow: 0 4px 12px rgba(14,123,79,0.2);">Pay Securely (Demo) →</button>
+  </div>
+</div>
+
+<!-- Loading Payment Verification Overlay -->
+<div class="auth-overlay" id="loading-overlay" style="display:none; align-items:center; justify-content:center; z-index:99999; background:rgba(0,0,0,0.6);">
+  <div class="auth-box" style="width:300px; padding:30px; text-align:center; border-radius:16px; position:relative; background:#fff;">
+    <span style="display:inline-block; width:44px; height:44px; border:4px solid var(--g); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
+    <h3 style="margin-top:20px; font-weight:700; color:var(--g-d); font-size:16px;">Verifying payment...</h3>
+    <p style="color:var(--ink3); font-size:12px; margin:4px 0 0;">Connecting to operator B2B portals</p>
   </div>
 </div>
 </body>
