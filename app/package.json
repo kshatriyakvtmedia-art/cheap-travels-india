@@ -5,7 +5,7 @@
   "description": "Cheap Travels India — affordable bus ticketing portal",
   "scripts": {
     "dev": "next dev -p 3000",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start -p 3000",
     "lint": "next lint",
     "seed": "node scripts/seed.js"
@@ -23,6 +23,7 @@
   "devDependencies": {
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
+    "prisma": "^6.2.1",
     "tailwindcss": "^3.4.13"
   },
   "engines": {

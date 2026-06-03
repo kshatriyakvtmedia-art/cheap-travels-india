@@ -1,8 +1,8 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 
-export default function BusDetail() {
+function BusDetailContent() {
   const { id } = useParams();
   const sp = useSearchParams();
   const router = useRouter();
@@ -152,6 +152,14 @@ export default function BusDetail() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function BusDetail() {
+  return (
+    <Suspense fallback={<div className="max-w-7xl mx-auto p-8 text-gray-500">Loading bus details...</div>}>
+      <BusDetailContent />
+    </Suspense>
   );
 }
 

@@ -1,9 +1,9 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function SearchPage() {
+function SearchPageContent() {
   const sp = useSearchParams();
   const from = sp.get('from') || 'Azamgarh';
   const to = sp.get('to') || 'Delhi';
@@ -92,6 +92,14 @@ export default function SearchPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="bg-brand-surface min-h-screen p-5 flex items-center justify-center text-gray-500">Loading search...</div>}>
+      <SearchPageContent />
+    </Suspense>
   );
 }
 
