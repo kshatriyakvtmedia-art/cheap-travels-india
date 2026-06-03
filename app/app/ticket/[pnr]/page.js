@@ -24,7 +24,7 @@ export default async function TicketPage({ params }) {
           <div className="text-white p-5 flex items-center justify-between" style={{ background: 'linear-gradient(135deg,#094B30,#0E7B4F)' }}>
             <div className="flex items-center gap-3">
               <div className="bg-white p-2 rounded-lg">
-                <Image src="/Logo.png" alt="Cheap Travels India" width={130} height={36} style={{ height: 36, width: 'auto' }} />
+                <Image src="/images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" width={130} height={36} style={{ height: 36, width: 'auto' }} />
               </div>
               <div>
                 <div className="font-bold text-sm">Verified E-Ticket</div>

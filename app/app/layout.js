@@ -14,13 +14,13 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-        <link rel="icon" href="/Logo.png" />
+        <link rel="icon" href="/images/logos/CheapTravel_India_Logo_Transparent.png" />
       </head>
       <body>
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-6">
             <Link href="/" className="flex items-center">
-              <Image src="/Logo.png" alt="Cheap Travels India" width={170} height={48} priority style={{ height: 48, width: 'auto' }} />
+              <Image src="/images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" width={170} height={48} priority style={{ height: 48, width: 'auto' }} />
             </Link>
             <nav className="hidden md:flex gap-6 text-sm font-medium text-gray-500">
               <Link href="/" className="text-brand-green font-semibold">Bus Tickets</Link>
@@ -42,7 +42,7 @@ export default function RootLayout({ children }) {
           <div className="max-w-7xl mx-auto px-4 py-10 grid md:grid-cols-4 gap-8">
             <div>
               <div className="bg-white inline-flex p-3 rounded-lg mb-3">
-                <Image src="/Logo.png" alt="Cheap Travels India" width={160} height={46} style={{ height: 46, width: 'auto' }} />
+                <Image src="/images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" width={160} height={46} style={{ height: 46, width: 'auto' }} />
               </div>
               <p className="text-sm leading-relaxed text-emerald-100/90">
                 India's affordable bus booking platform. Direct from operator. Up to 5% extra discount. WhatsApp ticket in 90 seconds.
