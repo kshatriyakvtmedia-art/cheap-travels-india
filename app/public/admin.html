@@ -398,7 +398,100 @@ body::before {
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .admin-header { padding: 0 16px; }
   .admin-main { padding: 20px 14px 60px; }
+  
+  /* Sidebar / Drawer collapse */
+  .admin-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+  }
+  .admin-sidebar.open {
+    transform: translateX(0);
+  }
+  .admin-content {
+    margin-left: 0 !important;
+  }
+  
+  /* Sticky panel filter header */
+  #tab-bookings .panel-header {
+    position: sticky;
+    top: 64px;
+    z-index: 90;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  
+  /* Responsive Tables as Cards */
+  .admin-table, .admin-table thead, .admin-table tbody, .admin-table th, .admin-table td, .admin-table tr {
+    display: block;
+  }
+  .admin-table thead {
+    display: none;
+  }
+  .admin-table tr {
+    margin-bottom: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    box-shadow: var(--shadow);
+  }
+  .admin-table td {
+    border-bottom: 1px solid rgba(42,53,80,.2);
+    padding: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+  }
+  .admin-table td:last-child {
+    border-bottom: none;
+  }
+  .admin-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--ink3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: left;
+    margin-right: 12px;
+  }
+  
+  .td-val {
+    text-align: right;
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
 }
+
+@media (max-width: 480px) {
+  .stat-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 999;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.sidebar-overlay.show {
+  display: block;
+  opacity: 1;
+}
+
 .panel {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -679,6 +772,9 @@ body::before {
   <div class="admin-content">
     <!-- HEADER -->
     <header class="admin-header">
+      <button class="hamburger-btn" onclick="toggleSidebar()" style="display:none; color:var(--ink); font-size:22px; background:none; border:none; margin-right:12px; cursor:pointer; align-items:center; justify-content:center;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
       <div class="brand">
         <span class="brand-badge" id="role-badge">SUPER ADMIN</span>
       </div>
@@ -1027,6 +1123,41 @@ function switchAdminTab(tabName) {
   if (tabName === 'payments') fetchPayments();
   if (tabName === 'providers') fetchProviders();
   if (tabName === 'logs') fetchLogs();
+
+  // Close sidebar drawer on mobile after selection
+  if (window.innerWidth <= 768) {
+    const sidebar = document.querySelector('.admin-sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+      toggleSidebar();
+    }
+  }
+}
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.admin-sidebar');
+  if (!sidebar) return;
+  let overlay = document.querySelector('.sidebar-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.className = 'sidebar-overlay';
+    overlay.onclick = toggleSidebar;
+    document.body.appendChild(overlay);
+  }
+  const isOpen = sidebar.classList.contains('open');
+  if (isOpen) {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+    setTimeout(() => {
+      if (!sidebar.classList.contains('open')) {
+        overlay.style.display = 'none';
+      }
+    }, 300);
+  } else {
+    overlay.style.display = 'block';
+    overlay.offsetHeight; // trigger reflow
+    sidebar.classList.add('open');
+    overlay.classList.add('show');
+  }
 }
 
 function authHeaders() {
@@ -1239,7 +1370,7 @@ function renderTopRoutes(routes) {
 
   let html = `<table class="admin-table"><thead><tr><th>#</th><th>Route</th><th>Searches</th></tr></thead><tbody>`;
   routes.forEach((r, i) => {
-    html += `<tr><td>${i + 1}</td><td><b>${escapeHtml(r.route)}</b></td><td><span class="count-pill">${escapeHtml(r.count)}</span></td></tr>`;
+    html += `<tr><td data-label="#">${i + 1}</td><td data-label="Route"><div class="td-val"><b>${escapeHtml(r.route)}</b></div></td><td data-label="Searches"><div class="td-val"><span class="count-pill">${escapeHtml(r.count)}</span></div></td></tr>`;
   });
   html += '</tbody></table>';
   container.innerHTML = html;
@@ -1257,7 +1388,7 @@ function renderSearchHistory(searches) {
   let html = `<table class="admin-table"><thead><tr><th>Route</th><th>Date</th><th>Buses Found</th><th>When</th></tr></thead><tbody>`;
   searches.forEach(s => {
     const busInfo = s.realCount !== undefined ? `${escapeHtml(s.realCount)} real / ${escapeHtml(s.totalCount)} total` : '-';
-    html += `<tr><td><b>${escapeHtml(s.from)} → ${escapeHtml(s.to)}</b></td><td>${escapeHtml(s.date)}</td><td>${busInfo}</td><td style="color:var(--ink3)">${timeAgo(s.time)}</td></tr>`;
+    html += `<tr><td data-label="Route"><div class="td-val"><b>${escapeHtml(s.from)} → ${escapeHtml(s.to)}</b></div></td><td data-label="Date"><div class="td-val">${escapeHtml(s.date)}</div></td><td data-label="Buses Found"><div class="td-val">${busInfo}</div></td><td data-label="When" style="color:var(--ink3)"><div class="td-val">${timeAgo(s.time)}</div></td></tr>`;
   });
   html += '</tbody></table>';
   container.innerHTML = html;
@@ -1274,7 +1405,7 @@ function renderUsers(users) {
 
   let html = `<table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Registered</th></tr></thead><tbody>`;
   users.forEach(u => {
-    html += `<tr><td><b>${escapeHtml(u.name)}</b></td><td>${escapeHtml(u.email)}</td><td>${escapeHtml(u.phone)}</td><td style="color:var(--ink3)">${timeAgo(u.time)}</td></tr>`;
+    html += `<tr><td data-label="Name"><div class="td-val"><b>${escapeHtml(u.name)}</b></div></td><td data-label="Email"><div class="td-val">${escapeHtml(u.email)}</div></td><td data-label="Phone"><div class="td-val">${escapeHtml(u.phone)}</div></td><td data-label="Registered" style="color:var(--ink3)"><div class="td-val">${timeAgo(u.time)}</div></td></tr>`;
   });
   html += '</tbody></table>';
   container.innerHTML = html;
@@ -1345,15 +1476,15 @@ function renderBookings(bookings) {
     }
 
     html += `<tr>
-      <td><span class="pnr-badge">${escapeHtml(b.pnr)}</span></td>
-      <td><b>${escapeHtml(b.passengerName)}</b><br><span style="font-size:11px; color:var(--ink3);">${escapeHtml(b.customerPhone)}</span></td>
-      <td><b>${escapeHtml(b.operator)}</b></td>
-      <td>${escapeHtml(b.route)}</td>
-      <td><span class="seat-badge">${escapeHtml(b.seats)}</span></td>
-      <td><b style="color:var(--green)">₹${escapeHtml(b.amount)}</b></td>
-      <td><span class="badge ${statusClass}">${escapeHtml(b.status.toUpperCase())}</span></td>
-      <td style="color:var(--ink3)">${timeAgo(b.time)}</td>
-      <td>${actionsHtml}</td>
+      <td data-label="PNR"><div class="td-val"><span class="pnr-badge">${escapeHtml(b.pnr)}</span></div></td>
+      <td data-label="Passenger"><div class="td-val"><b>${escapeHtml(b.passengerName)}</b><br><span style="font-size:11px; color:var(--ink3);">${escapeHtml(b.customerPhone)}</span></div></td>
+      <td data-label="Operator"><div class="td-val"><b>${escapeHtml(b.operator)}</b></div></td>
+      <td data-label="Route"><div class="td-val">${escapeHtml(b.route)}</div></td>
+      <td data-label="Seats"><div class="td-val"><span class="seat-badge">${escapeHtml(b.seats)}</span></div></td>
+      <td data-label="Amount"><div class="td-val"><b style="color:var(--green)">₹${escapeHtml(b.amount)}</b></div></td>
+      <td data-label="Status"><div class="td-val"><span class="badge ${statusClass}">${escapeHtml(b.status.toUpperCase())}</span></div></td>
+      <td data-label="Booked On" style="color:var(--ink3)"><div class="td-val">${timeAgo(b.time)}</div></td>
+      <td data-label="Actions"><div class="td-val">${actionsHtml}</div></td>
     </tr>`;
   });
   html += '</tbody></table>';
@@ -1463,13 +1594,13 @@ function renderPayments(payments) {
   payments.forEach(p => {
     const statusClass = p.status === 'success' || p.status === 'captured' ? 'green' : (p.status === 'failed' ? 'red' : 'gold');
     html += `<tr>
-      <td><code>${escapeHtml(p.id.slice(0, 8))}...</code></td>
-      <td><b>${escapeHtml(p.customerName)}</b></td>
-      <td>${escapeHtml(p.gateway)}</td>
-      <td><code>${escapeHtml(p.transactionId)}</code></td>
-      <td><b style="color:var(--green)">₹${escapeHtml(p.amount)}</b></td>
-      <td><span class="badge ${statusClass}">${escapeHtml(p.status.toUpperCase())}</span></td>
-      <td style="color:var(--ink3)">${new Date(p.createdAt).toLocaleString('en-IN')}</td>
+      <td data-label="Payment ID"><div class="td-val"><code>${escapeHtml(p.id.slice(0, 8))}...</code></div></td>
+      <td data-label="Customer Name"><div class="td-val"><b>${escapeHtml(p.customerName)}</b></div></td>
+      <td data-label="Gateway"><div class="td-val">${escapeHtml(p.gateway)}</div></td>
+      <td data-label="Transaction ID"><div class="td-val"><code>${escapeHtml(p.transactionId)}</code></div></td>
+      <td data-label="Amount"><div class="td-val"><b style="color:var(--green)">₹${escapeHtml(p.amount)}</b></div></td>
+      <td data-label="Status"><div class="td-val"><span class="badge ${statusClass}">${escapeHtml(p.status.toUpperCase())}</span></div></td>
+      <td data-label="Created At" style="color:var(--ink3)"><div class="td-val">${new Date(p.createdAt).toLocaleString('en-IN')}</div></td>
     </tr>`;
   });
   html += '</tbody></table>';
@@ -1636,11 +1767,11 @@ function renderLogs(logs) {
     }
     
     html += `<tr>
-      <td><b>${escapeHtml(l.adminName)}</b></td>
-      <td><span class="badge ${l.role === 'super_admin' ? 'red' : 'blue'}">${escapeHtml(l.role.replace('_', ' ').toUpperCase())}</span></td>
-      <td>${actionText}</td>
-      <td><code style="color:var(--teal);">${escapeHtml(l.ip)}</code></td>
-      <td style="color:var(--ink3)">${new Date(l.time).toLocaleString('en-IN')}</td>
+      <td data-label="Admin Name"><div class="td-val"><b>${escapeHtml(l.adminName)}</b></div></td>
+      <td data-label="Role"><div class="td-val"><span class="badge ${l.role === 'super_admin' ? 'red' : 'blue'}">${escapeHtml(l.role.replace('_', ' ').toUpperCase())}</span></div></td>
+      <td data-label="Action performed"><div class="td-val">${actionText}</div></td>
+      <td data-label="IP Address"><div class="td-val"><code style="color:var(--teal);">${escapeHtml(l.ip)}</code></div></td>
+      <td data-label="Timestamp" style="color:var(--ink3)"><div class="td-val">${new Date(l.time).toLocaleString('en-IN')}</div></td>
     </tr>`;
   });
   html += '</tbody></table>';

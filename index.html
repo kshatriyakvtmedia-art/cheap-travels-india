@@ -7,6 +7,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<!-- Firebase SDKs (Compat version) -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<!-- Razorpay SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <!-- Core Web Vitals Telemetry (inspired by redBus performance monitoring) -->
 <script type="module">
   import { onCLS, onFID, onLCP, onINP, onTTFB } from 'https://unpkg.com/web-vitals@4/dist/web-vitals.attribution.js?module';
@@ -1203,6 +1208,223 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   STORY · SERVICES · FLEET sections  (added 2026-06-02)
+   ════════════════════════════════════════════════════════════════ */
+.story-section, .services-section, .fleet-section {
+  max-width: 1200px;
+  margin: 56px auto 0;
+  padding: 0 24px;
+}
+.story-inner, .services-inner, .fleet-inner {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 48px 40px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+.story-eyebrow {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11.5px;
+  letter-spacing: 3px;
+  font-weight: 800;
+  color: var(--gold-d);
+  margin-bottom: 12px;
+}
+.story-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(24px, 4vw, 38px);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+  margin: 0 0 24px;
+  font-weight: 800;
+  max-width: 720px;
+}
+.story-title span { color: var(--teal); }
+.story-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+.story-copy p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink2);
+  margin: 0 0 14px;
+}
+.story-copy b { color: var(--ink); font-weight: 700; }
+.story-illustration {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.story-illustration img {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  display: block;
+  animation: float 4s ease-in-out infinite;
+}
+.story-stat-pill {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: var(--gold);
+  color: var(--teal-d);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 24px rgba(238,140,46,.3);
+  text-align: center;
+  transform: rotate(-4deg);
+}
+.story-stat-pill .stat-num {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1;
+}
+.story-stat-pill .stat-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+/* Services grid (9 mascot cards) */
+.services-header { text-align: center; max-width: 720px; margin: 0 auto 32px; }
+.services-header .story-title { margin: 0 auto 12px; }
+.services-sub { color: var(--ink2); font-size: 14.5px; }
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.svc-card {
+  background: linear-gradient(180deg, #fff 0%, #FAFBF9 100%);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 18px 16px 22px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--ink);
+  transition: transform .25s cubic-bezier(.4,0,.2,1), box-shadow .25s, border-color .25s;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+.svc-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 32px rgba(14,123,79,.12);
+  border-color: var(--teal-l);
+}
+.svc-img-wrap {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.svc-img-wrap img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.svc-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+.svc-tag { font-size: 11.5px; color: var(--ink2); line-height: 1.4; }
+.float-1 .svc-img-wrap img { animation: float 5s ease-in-out infinite; }
+.float-2 .svc-img-wrap img { animation: float 6s ease-in-out -1.5s infinite; }
+.float-3 .svc-img-wrap img { animation: float 4.5s ease-in-out -2.8s infinite; }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Fleet section with bus line-art */
+.fleet-inner {
+  background: linear-gradient(135deg, #0A4F4A 0%, #0E7B4F 60%, #14B58C 100%);
+  color: #fff;
+  padding: 48px 40px;
+}
+.fleet-inner .story-eyebrow { color: var(--gold); }
+.fleet-inner .story-title { color: #fff; }
+.fleet-inner .story-title span { color: var(--gold-s); }
+.fleet-inner p { color: rgba(255,255,255,.85); font-size: 15px; line-height: 1.6; margin: 0 0 22px; max-width: 720px; }
+.fleet-inner { display: block; }
+.fleet-inner .fleet-copy { padding: 0; }
+.fleet-points { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.fp {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.12);
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(4px);
+}
+.fp span {
+  background: var(--gold);
+  color: var(--teal-d);
+  padding: 4px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  flex-shrink: 0;
+}
+.fp b { display: block; font-size: 14.5px; font-weight: 700; color: #fff; }
+.fp small { display: block; color: rgba(255,255,255,.7); font-size: 12px; margin-top: 2px; }
+.bus-line-art { width: 100%; height: auto; max-height: 320px; display: block; }
+.bus-wheels { animation: spin 6s linear infinite; transform-origin: center; transform-box: fill-box; }
+.bus-wheels circle:nth-child(1), .bus-wheels circle:nth-child(3) { animation: spin 4s linear infinite; transform-origin: center; transform-box: fill-box; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.speed-lines line { animation: speedDash 1.2s ease-in-out infinite; }
+.speed-lines line:nth-child(2) { animation-delay: -0.4s; }
+.speed-lines line:nth-child(3) { animation-delay: -0.8s; }
+@keyframes speedDash {
+  0% { opacity: 0; transform: translateX(20px); }
+  40% { opacity: .8; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(-20px); }
+}
+
+/* Scroll reveal */
+.reveal-on-scroll { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+.reveal-on-scroll.in-view { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .float-1 img, .float-2 img, .float-3 img, .bus-wheels, .speed-lines line, .story-illustration img { animation: none !important; }
+  .reveal-on-scroll { opacity: 1; transform: none; transition: none; }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE BREAKPOINTS — 480px (small phones) and 380px (iPhone SE)
+   ════════════════════════════════════════════════════════════════ */
+@media (max-width: 700px) {
+  .story-section, .services-section, .fleet-section { margin: 36px auto 0; padding: 0 14px; }
+  .story-inner, .services-inner, .fleet-inner { padding: 28px 20px; border-radius: var(--radius-lg); }
+  .story-grid { grid-template-columns: 1fr; gap: 28px; }
+  .story-illustration img { max-width: 240px; }
+  .story-stat-pill { bottom: 0; right: 0; padding: 10px 14px; }
+  .story-stat-pill .stat-num { font-size: 22px; }
+  .services-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .svc-card { padding: 14px 10px 16px; }
+  .svc-img-wrap { width: 90px; height: 90px; }
+  .svc-label { font-size: 13.5px; }
+  .svc-tag { font-size: 11px; }
+  .fleet-inner { padding: 26px 18px; }
+  .fp { padding: 10px 12px; }
+  .fp b { font-size: 13px; }
+  .fp small { font-size: 11px; }
+}
+
 @media (max-width: 480px) {
   /* Header tightening */
   .top-inner { gap: 6px; padding: 0 10px; }
@@ -1297,13 +1519,227 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .fare { font-size: 17px; }
   .lc-title { font-size: 11px; }
 }
+
+/* Mobile-first layout tweaks */
+@media (max-width: 700px) {
+  header.top {
+    height: 64px !important;
+  }
+  .brand-logo {
+    height: 32px !important;
+  }
+  .my-trips-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    background: var(--teal-light);
+    color: var(--teal-d);
+    border: 1.5px solid rgba(14, 123, 79, 0.15);
+    border-radius: var(--radius-md);
+    padding: 6px 12px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    height: 32px;
+    margin-right: 4px;
+  }
+  .login-btn {
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11.5px;
+    padding: 6px 11px;
+    border-radius: var(--radius-sm);
+  }
+  #bus-type-field {
+    display: none !important;
+  }
+  
+  /* Bus cards stack vertically */
+  .bus {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 16px !important;
+    gap: 12px !important;
+  }
+  .bus-badge-col {
+    display: none !important;
+  }
+  .bus-main {
+    width: 100% !important;
+  }
+  .bus-times {
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 10px !important;
+    text-align: center !important;
+  }
+  .time-block:first-child { text-align: left !important; }
+  .time-block:last-child { text-align: right !important; }
+  .time-line {
+    display: flex !important;
+  }
+  .time-line .dur {
+    font-size: 10px;
+    padding: 3px 8px;
+    background: var(--teal-light);
+    color: var(--teal-d);
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+  }
+  .bus-side {
+    border-left: none !important;
+    border-top: 1px dashed var(--line) !important;
+    padding-left: 0 !important;
+    padding-top: 12px !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-width: unset !important;
+    gap: 12px !important;
+  }
+  .fare-block {
+    text-align: left !important;
+    width: auto !important;
+  }
+  .view-seats {
+    width: auto !important;
+    padding: 10px 24px !important;
+  }
+  
+  /* Skeleton cards stack vertically */
+  .skeleton-card {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 16px !important;
+    gap: 12px !important;
+  }
+  .skeleton-right {
+    border-left: none !important;
+    border-top: 1px dashed var(--line) !important;
+    padding-left: 0 !important;
+    padding-top: 12px !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  /* Seat selection sticky bottom */
+  .seat-panel .booking-side {
+    position: static !important;
+  }
+  .seat-panel .summary {
+    position: fixed !important;
+    bottom: 56px !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border-top: 1px solid var(--line) !important;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08) !important;
+    padding: 12px 16px !important;
+  }
+  .seat-panel .continue-btn {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 16px !important;
+    height: 56px !important;
+    font-size: 16px !important;
+    width: 100% !important;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+  .seat-content {
+    padding-bottom: 180px !important;
+  }
+  .seat {
+    width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* OTP modal constraint and fields */
+#auth-overlay .auth-box, #profile-overlay .auth-box, #bookings-overlay .auth-box {
+  width: 90vw !important;
+  max-width: 420px !important;
+}
+#auth-overlay input, #auth-overlay button, #auth-overlay .auth-submit {
+  height: 52px !important;
+  font-size: 16px !important;
+}
+
+/* Passenger details and form layout */
+@media (max-width: 480px) {
+  .passenger-card .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Footer accordion on desktop and mobile */
+@media (min-width: 769px) {
+  .foot-details {
+    pointer-events: none;
+  }
+  .foot-details summary {
+    list-style: none;
+    outline: none;
+  }
+  .foot-details summary::-webkit-details-marker {
+    display: none;
+  }
+  .foot-details > *:not(summary) {
+    display: flex !important;
+  }
+}
+@media (max-width: 768px) {
+  .foot-details summary {
+    cursor: pointer;
+    list-style: none;
+    outline: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 10px 0;
+  }
+  .foot-details summary::-webkit-details-marker {
+    display: none;
+  }
+  .foot-details summary h4::after {
+    content: " ▾";
+    font-size: 14px;
+    float: right;
+    transition: transform 0.2s;
+  }
+  .foot-details[open] summary h4::after {
+    content: " ▴";
+  }
+  .foot-links-list, .foot-contact-chips {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}
 </style>
 </head>
 <body>
 
 <!-- Offline/Slow network banner -->
 <div id="offline-banner" style="display:none; position:fixed; top:0; left:0; width:100%; background:var(--red); color:#fff; text-align:center; padding:10px 16px; font-weight:700; font-size:14px; z-index:99999; box-shadow:0 4px 12px rgba(239,68,68,0.3); border-bottom: 2px solid #dc2626;">
-  ⚠️ Connection Lost: You are currently offline. Pages and searches may not load.
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Connection lost: you are currently offline. Pages and searches may not load.
 </div>
 
 <header class="top">
@@ -1319,14 +1755,15 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     </nav>
     <div class="top-right">
       <div class="support"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> <a href="tel:8853391184" style="color:inherit">8853391184</a></div>
+      <button class="my-trips-btn" onclick="openBookingsModal()" title="My Trips">My Trips</button>
       <button class="login-btn" id="auth-open-btn" onclick="openAuth('signin')">Sign In</button>
       <div class="user-chip" id="user-chip" style="display:none" onclick="this.classList.toggle('open')">
         <div class="user-avatar" id="user-avatar">U</div>
         <span id="user-name-display">User</span>
         <div class="user-dropdown">
-          <a href="#">👤 My Profile</a>
-          <a href="#">🎟 My Bookings</a>
-          <a href="#">💬 Help &amp; Support</a>
+          <a href="#" onclick="event.preventDefault(); openProfileModal();">👤 My Profile</a>
+          <a href="#" onclick="event.preventDefault(); openBookingsModal();">🎟 My Bookings</a>
+          <a href="#" onclick="event.preventDefault(); openHelpModal();">💬 Help &amp; Support</a>
           <button class="logout-row" onclick="logoutUser()">🚪 Sign Out</button>
         </div>
       </div>
@@ -1347,8 +1784,9 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     </a>
     <a href="/about.html">Cheap Travels India ↗</a>
     <a href="#" class="active">Bus Tickets</a>
-    <a href="#">My Bookings</a>
-    <a href="#">Offers</a>
+    <a href="#" onclick="event.preventDefault(); toggleMobileNav(); openBookingsModal();">My Bookings</a>
+    <a href="#" onclick="event.preventDefault(); toggleMobileNav(); openHelpModal();">Help &amp; Support</a>
+
     <a href="tel:8853391184"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> 8853391184</a>
     <button class="mn-signin" id="mn-signin-btn" onclick="toggleMobileNav(); openAuth('signin');">Sign In</button>
     <button class="mn-signin" id="mn-user-btn" style="display:none;background:var(--green-s);color:var(--teal-d);" onclick="toggleMobileNav(); document.getElementById('user-chip').classList.toggle('open');">My Account ▾</button>
@@ -1370,53 +1808,145 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 
 <!-- ════════════ AUTH MODAL ════════════ -->
 <div class="auth-overlay" id="auth-overlay">
-  <div class="auth-box">
+  <div class="auth-box" style="padding:40px 32px; max-width:380px;">
     <button class="auth-close" onclick="closeAuth()">✕</button>
-    <img src="images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" class="auth-logo">
-    <div class="auth-tabs">
-      <div class="auth-tab active" id="tab-signin" onclick="switchAuthTab('signin')">Sign In</div>
-      <div class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Create Account</div>
+    <img src="images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" class="auth-logo" style="margin-bottom:24px;">
+    <!-- Firebase Invisible reCAPTCHA Container -->
+    <div id="recaptcha-container"></div>
+    
+    <div id="otp-phone-pane">
+      <h3 style="font-size:18px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Verify Mobile Number</h3>
+      <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px;">Enter your mobile number to receive a 6-digit verification code. Register or login instantly!</p>
+      
+      <div class="auth-err" id="auth-mobile-err" style="display:none; color:var(--red); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
+      
+      <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:20px;">
+        <label style="font-size:11px; font-weight:700; color:var(--ink2);">MOBILE NUMBER</label>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span style="font-size:15px; font-weight:700; color:var(--ink); background:var(--line); padding:10px 12px; border-radius:8px; border:1.5px solid var(--line);">+91</span>
+          <input type="tel" id="auth-mobile-input" placeholder="9876543210" maxlength="10" style="flex:1; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; outline:none; font-size:15px; font-weight:700; color:var(--ink);">
+        </div>
+      </div>
+      
+      <button class="auth-submit" onclick="sendMobileOtp()" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:750; cursor:pointer; font-size:14px;">Send Verification OTP →</button>
     </div>
-
-    <!-- SIGN IN -->
-    <div class="auth-panel active" id="panel-signin">
-      <div class="auth-err" id="signin-err"></div>
-      <div class="auth-field">
-        <label>Email or Phone</label>
-        <input type="text" id="signin-email" placeholder="you@email.com or +91 98765 43210">
+    
+    <div id="otp-code-pane" style="display:none;">
+      <h3 style="font-size:18px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Enter Verification Code</h3>
+      <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px;">A 6-digit code has been sent to <b id="otp-sent-mobile" style="color:var(--ink);">+91 98765 43210</b>. Please enter it below.</p>
+      
+      <div class="auth-err" id="auth-otp-err" style="display:none; color:var(--red); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
+      
+      <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:20px;">
+        <label style="font-size:11px; font-weight:700; color:var(--ink2);">6-DIGIT OTP CODE</label>
+        <input type="text" id="auth-otp-input" placeholder="e.g. 123456" maxlength="6" style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; outline:none; font-size:16px; font-weight:800; text-align:center; letter-spacing:4px; color:var(--ink);">
       </div>
-      <div class="auth-field">
-        <label>Password</label>
-        <input type="password" id="signin-pass" placeholder="Enter your password">
+      
+      <button class="auth-submit" onclick="verifyMobileOtp()" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:750; cursor:pointer; font-size:14px; margin-bottom:12px;">Verify & Login →</button>
+      
+      <div style="text-align:center; font-size:12px; color:var(--ink3);">
+        Didn't receive code? <span onclick="resetOtpFlow()" style="color:var(--teal); font-weight:700; cursor:pointer;">Go back and retry</span>
       </div>
-      <button class="auth-submit" onclick="doSignIn()">Sign In →</button>
-      <div class="auth-small">Don't have an account? <span onclick="switchAuthTab('signup')">Create one free</span></div>
-    </div>
-
-    <!-- SIGN UP -->
-    <div class="auth-panel" id="panel-signup">
-      <div class="auth-err" id="signup-err"></div>
-      <div class="auth-field">
-        <label>Full Name</label>
-        <input type="text" id="signup-name" placeholder="Rakesh Sharma">
-      </div>
-      <div class="auth-field">
-        <label>Email</label>
-        <input type="email" id="signup-email" placeholder="you@email.com">
-      </div>
-      <div class="auth-field">
-        <label>Mobile Number</label>
-        <input type="tel" id="signup-phone" placeholder="+91 98765 43210">
-      </div>
-      <div class="auth-field">
-        <label>Password</label>
-        <input type="password" id="signup-pass" placeholder="Min 6 characters">
-      </div>
-      <button class="auth-submit" onclick="doSignUp()">Create Account →</button>
-      <div class="auth-small">Already registered? <span onclick="switchAuthTab('signin')">Sign in here</span></div>
     </div>
   </div>
 </div>
+
+<!-- ════════════ PROFILE MODAL ════════════ -->
+<div class="auth-overlay" id="profile-overlay">
+  <div class="auth-box" style="padding:40px 32px; max-width:400px;">
+    <button class="auth-close" onclick="closeProfileModal()">✕</button>
+    <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d); text-align:center;">My Profile</h3>
+    <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px; text-align:center;">Manage your contact and passenger details for quick bookings.</p>
+    
+    <div class="auth-err" id="profile-err" style="display:none; color:var(--red); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
+    <div class="auth-err" id="profile-success" style="display:none; color:var(--teal); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
+    
+    <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:14px;">
+      <label style="font-size:11px; font-weight:700; color:var(--ink2);">MOBILE NUMBER</label>
+      <input type="text" id="profile-phone-input" readonly style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:14px; font-weight:700; color:var(--ink3); background:var(--bg);">
+    </div>
+
+    <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:14px;">
+      <label style="font-size:11px; font-weight:700; color:var(--ink2);">FULL NAME</label>
+      <input type="text" id="profile-name-input" placeholder="Enter your full name" style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:14px; font-weight:700; color:var(--ink);">
+    </div>
+
+    <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:20px;">
+      <label style="font-size:11px; font-weight:700; color:var(--ink2);">EMAIL ADDRESS</label>
+      <input type="email" id="profile-email-input" placeholder="e.g. name@domain.com" style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:14px; font-weight:700; color:var(--ink);">
+    </div>
+
+    <button class="auth-submit" onclick="saveProfileData()" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:750; cursor:pointer; font-size:14px;">Save Profile Changes</button>
+  </div>
+</div>
+
+<!-- ════════════ COMPLETE PROFILE MODAL (Post-Login) ════════════ -->
+<div class="auth-overlay" id="complete-profile-overlay">
+  <div class="auth-box" style="padding:40px 32px; max-width:400px; border-top: 5px solid var(--gold);">
+    <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d); text-align:center;">Complete Your Profile</h3>
+    <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px; text-align:center;">Please provide your details to complete setup. This helps us dispatch your tickets securely to your correct email.</p>
+    
+    <div class="auth-err" id="complete-profile-err" style="display:none; color:var(--red); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
+    
+    <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:14px;">
+      <label style="font-size:11px; font-weight:700; color:var(--ink2);">FULL NAME</label>
+      <input type="text" id="complete-name-input" placeholder="Enter your full name" style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:14px; font-weight:700; color:var(--ink);">
+    </div>
+
+    <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:20px;">
+      <label style="font-size:11px; font-weight:700; color:var(--ink2);">EMAIL ADDRESS</label>
+      <input type="email" id="complete-email-input" placeholder="e.g. name@domain.com" style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:14px; font-weight:700; color:var(--ink);">
+    </div>
+
+    <button class="auth-submit" onclick="submitCompleteProfile()" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:750; cursor:pointer; font-size:14px;">Complete Setup →</button>
+  </div>
+</div>
+
+<!-- ════════════ BOOKINGS HISTORY MODAL ════════════ -->
+<div class="auth-overlay" id="bookings-overlay">
+  <div class="auth-box" style="padding:40px 32px; max-width:550px; width: 95%;">
+    <button class="auth-close" onclick="closeBookingsModal()">✕</button>
+    <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d); text-align:center;">My Booking History</h3>
+    <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:15px; text-align:center;">View your ticket bookings, PNR status, and journey details.</p>
+    
+    <div id="bookings-loading" style="text-align:center; padding: 30px 0; display:none;">
+      <span style="display:inline-block; width:24px; height:24px; border:3px solid var(--teal); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:10px;"></span>
+      <div style="font-size:13px; color:var(--ink2); font-weight:600;">Loading your bookings...</div>
+    </div>
+    
+    <div id="bookings-container" style="max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap:12px; padding-right:4px;">
+      <!-- Bookings list will be rendered dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ HELP & SUPPORT MODAL ════════════ -->
+<div class="auth-overlay" id="help-overlay">
+  <div class="auth-box" style="padding:40px 32px; max-width:400px; text-align:center;">
+    <button class="auth-close" onclick="closeHelpModal()">✕</button>
+    <div style="width:50px; height:50px; border-radius:50%; background:var(--green-s); color:var(--teal); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:24px;">💬</div>
+    <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Help & Support</h3>
+    <p style="color:var(--ink2); font-size:13px; line-height:1.5; margin-bottom:24px;">Have questions or need help with a refund or booking? Get in touch with us directly.</p>
+    
+    <div style="background:var(--bg); padding:16px; border-radius:12px; display:flex; flex-direction:column; gap:12px; text-align:left; border:1px solid var(--line); margin-bottom:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:13px; font-weight:700; color:var(--ink2);">WHATSAPP CHAT</span>
+        <a href="https://wa.me/918853391184" target="_blank" style="font-size:14px; font-weight:800; color:var(--teal); text-decoration:none;">+91 88533 91184 ↗</a>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line); padding-top:12px;">
+        <span style="font-size:13px; font-weight:700; color:var(--ink2);">CALL HELPLINE</span>
+        <a href="tel:8853391184" style="font-size:14px; font-weight:800; color:var(--teal); text-decoration:none;">+91 88533 91184</a>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line); padding-top:12px;">
+        <span style="font-size:13px; font-weight:700; color:var(--ink2);">EMAIL SUPPORT</span>
+        <a href="mailto:support@cheaptravels.in" style="font-size:14px; font-weight:800; color:var(--teal); text-decoration:none;">support@cheaptravels.in</a>
+      </div>
+    </div>
+    
+    <div style="font-size:11px; color:var(--ink3); font-weight:600;">OPERATIONAL HOURS: 24/7 SUPPORT AVAILABLE</div>
+  </div>
+</div>
+
 
 <!-- SEARCH/RESULTS VIEW -->
 <div class="view active" id="view-results">
@@ -1425,10 +1955,10 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
       <h1>Affordable bus tickets, <span>delivered with trust</span></h1>
       <p>Verified agent inventory · live rate-compare · ticket pushed in 90 seconds.</p>
       <div class="hero-badges">
-        <div class="hb">🛡️ Direct from operator</div>
-        <div class="hb">💰 Up to 5% extra discount</div>
-        <div class="hb">📲 WhatsApp ticket push</div>
-        <div class="hb">↩️ Auto-refund if not issued in 30 min</div>
+        <div class="hb"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Direct from operator</div>
+        <div class="hb"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Up to 5% extra discount</div>
+        <div class="hb"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> WhatsApp ticket push</div>
+        <div class="hb"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Auto-refund if not issued in 30 min</div>
       </div>
       <div class="search-card">
         <div class="field" style="position: relative;" id="field-from-container">
@@ -1474,7 +2004,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
             <div class="sv">General · Any</div>
           </div>
         </div>
-        <div class="field">
+        <div class="field" id="bus-type-field">
           <label for="bus-type-select">BUS TYPE</label>
           <div class="field-box" style="padding: 4px 12px; display: flex; flex-direction: column; justify-content: center; min-height: 62px;">
             <select id="bus-type-select" style="width:100%; border:none; background:transparent; font-size:16px; font-weight:700; color:var(--ink); outline:none; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer;">
@@ -1606,6 +2136,108 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
       </div>
     </div>
   </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+       OUR STORY — Parrot metaphor (added 2026-06-02)
+       ════════════════════════════════════════════════════════════ -->
+  <section class="story-section reveal-on-scroll" id="our-story">
+    <div class="story-inner">
+      <div class="story-eyebrow">OUR STORY · हमारी कहानी</div>
+      <h2 class="story-title">A parrot doesn't need a feast to fly the length of <span>India</span>.</h2>
+      <div class="story-grid">
+        <div class="story-copy">
+          <p>The Indian parrot — <i>tota</i> — flies hundreds of kilometres on a handful of seeds. It doesn't wait for a full plate. It just goes.</p>
+          <p>That bird is our quiet hero. Because the traveller in our country deserves the same — to go far without paying for a feast.</p>
+          <p>So we built <b>Cheap Travels India</b>. We don't make travel basic. We make it <b>affordable on purpose</b>. The bus is the same one selling for ₹1,499 elsewhere — with us it's ₹1,424, the operator's logo is still on your ticket, and the WhatsApp confirmation lands in ninety seconds.</p>
+          <p>The name <i>"Cheap"</i> isn't an apology. It's a promise: <b>fair fare, full journey.</b> <i>Sasti booking, pakka ticket.</i></p>
+        </div>
+        <div class="story-illustration">
+          <img src="images/mascots/all_india_travel.png" alt="Cheap Travels India mascot — affordable journeys across India" loading="lazy">
+          <div class="story-stat-pill">
+            <div class="stat-num">5%</div>
+            <div class="stat-label">cheaper than RedBus<br>on the same bus</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       WHY CHEAP TRAVELS — 9 mascot service grid
+       ════════════════════════════════════════════════════════════ -->
+  <section class="services-section reveal-on-scroll" id="services">
+    <div class="services-inner">
+      <div class="services-header">
+        <div class="story-eyebrow">WHY TRAVELLERS CHOOSE US</div>
+        <h2 class="story-title">Built around the <span>Indian journey.</span></h2>
+        <p class="services-sub">Nine things our travellers depend on. Tap any to read more.</p>
+      </div>
+      <div class="services-grid">
+        <a class="svc-card float-1" href="#" aria-label="Booking Tickets">
+          <div class="svc-img-wrap"><img src="images/mascots/booking_tickets.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Booking Tickets</div>
+          <div class="svc-tag">90-second WhatsApp ticket</div>
+        </a>
+        <a class="svc-card float-2" href="#" aria-label="Bus Travel">
+          <div class="svc-img-wrap"><img src="images/mascots/bus_travel.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Bus Travel</div>
+          <div class="svc-tag">3 partner networks, 600+ routes</div>
+        </a>
+        <a class="svc-card float-3" href="#" aria-label="Cab Service">
+          <div class="svc-img-wrap"><img src="images/mascots/cab_service.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Cab Service</div>
+          <div class="svc-tag">Outstation & local · coming soon</div>
+        </a>
+        <a class="svc-card float-2" href="#" aria-label="Pilgrimage Travel">
+          <div class="svc-img-wrap"><img src="images/mascots/pilgrimage_travel.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Pilgrimage Travel</div>
+          <div class="svc-tag">Kashi · Ayodhya · Prayagraj</div>
+        </a>
+        <a class="svc-card float-1" href="#" aria-label="24x7 Support">
+          <div class="svc-img-wrap"><img src="images/mascots/customer_support.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Customer Support</div>
+          <div class="svc-tag">Hindi · 24×7 · real humans</div>
+        </a>
+        <a class="svc-card float-3" href="#" aria-label="Safe Travel">
+          <div class="svc-img-wrap"><img src="images/mascots/safe_travel.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Safe Travel</div>
+          <div class="svc-tag">Verified operators, refund SLA</div>
+        </a>
+        <a class="svc-card float-1" href="#" aria-label="Holiday Planning">
+          <div class="svc-img-wrap"><img src="images/mascots/holiday_planning.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Holiday Planning</div>
+          <div class="svc-tag">Custom itineraries on call</div>
+        </a>
+        <a class="svc-card float-2" href="#" aria-label="Happy Traveler">
+          <div class="svc-img-wrap"><img src="images/mascots/happy_traveler.png" alt="" loading="lazy"></div>
+          <div class="svc-label">Happy Traveller</div>
+          <div class="svc-tag">10,000+ pin-codes served</div>
+        </a>
+        <a class="svc-card float-3" href="#" aria-label="All India Travel">
+          <div class="svc-img-wrap"><img src="images/mascots/all_india_travel.png" alt="" loading="lazy"></div>
+          <div class="svc-label">All India Travel</div>
+          <div class="svc-tag">From Kashmir to Kanyakumari</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       OUR FLEET — luxury bus line-art SVG
+       ════════════════════════════════════════════════════════════ -->
+  <section class="fleet-section reveal-on-scroll" id="fleet">
+    <div class="fleet-inner">
+      <div class="fleet-copy">
+        <div class="story-eyebrow">OUR FLEET</div>
+        <h2 class="story-title">Premium coaches, <span>everyday prices.</span></h2>
+        <p>We aggregate buses from verified operator partners — Volvo multi-axles, Mercedes B9s, AC and non-AC sleepers. The bus is the same. The fare is just fairer.</p>
+        <div class="fleet-points">
+          <div class="fp"><span>AC</span><div><b>AC Sleeper 2+1</b><small>Reclining bunks, charging point, blanket</small></div></div>
+          <div class="fp"><span>VOLVO</span><div><b>Volvo Multi-Axle</b><small>9400 / 9600 series, premium suspension</small></div></div>
+          <div class="fp"><span>SEMI</span><div><b>Semi-Sleeper Seater</b><small>For day journeys under 8 hours</small></div></div>
+        </div>
+    </div>
+  </section>
 </div>
 
 <!-- CHECKOUT VIEW -->
@@ -1631,19 +2263,19 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
         <div class="section qr-section">
           <h3><span class="step">2</span> Pay via UPI</h3>
           <p>Scan the QR with any UPI app · Pay <b class="qr-payable">₹1,424</b> to <b class="qr-upi-id">cheaptravel546@okhdfcbank</b></p>
-          <div class="timer">⏱ Hold expires in 07:23</div>
+          <div class="timer"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Hold expires in 07:23</div>
           <div class="qr-box" style="display:inline-block; background:#fff; padding:6px; border-radius:14px; box-shadow:var(--shadow); margin:0 auto 14px; overflow:hidden; border: 1.5px solid var(--line);">
             <img src="payment_qr.png" alt="Scan to pay" style="width:260px; height:auto; display:block; margin:0 auto; border-radius:10px;" loading="lazy">
           </div>
           <div class="upi-id">cheaptravel546@okhdfcbank</div>
-          <button class="copy-btn" onclick="copyUPI()">📋 Copy UPI ID</button>
+          <button class="copy-btn" onclick="copyUPI()"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy UPI ID</button>
           <div class="upi-apps">
             <div class="upi-app" style="color:#4285F4">GPay</div>
             <div class="upi-app" style="color:#5F259F">PhonePe</div>
             <div class="upi-app" style="color:#012E5E">Paytm</div>
             <div class="upi-app" style="color:#EA4D4D">BHIM</div>
           </div>
-          <button class="paid-btn" onclick="showTicket()">I have paid · Confirm booking</button>
+          <button class="paid-btn" onclick="processPayment()">Pay Securely via Razorpay</button>
           <p style="margin-top:14px;font-size:11.5px;color:var(--ink2)">By clicking confirm, you authorise Cheap Travels to issue the operator ticket on your behalf. Ticket delivery in &lt;90 sec via WhatsApp.</p>
         </div>
       </div>
@@ -1667,7 +2299,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
           <div class="sum-row tot"><span>Total payable</span><span>₹1,424</span></div>
         </div>
         <div class="sum-card" style="background:linear-gradient(135deg,#0F766E,#0A4F4A);color:#fff">
-          <h4 style="color:#fff;border-color:rgba(255,255,255,.2)">🛡️ Cheap Travels Promise</h4>
+          <h4 style="color:#fff;border-color:rgba(255,255,255,.2)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Cheap Travels Promise</h4>
           <div style="font-size:12.5px;line-height:1.6;color:#D9F2EE">If your ticket isn't issued by the operator within 30 minutes, your full payment is auto-refunded. No questions asked.</div>
         </div>
       </aside>
@@ -1739,10 +2371,10 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
           </div>
         </div>
         <div class="tk-actions">
-          <button class="tk-btn wa">📲 Send to WhatsApp</button>
-          <button class="tk-btn email">✉️ Email me</button>
-          <button class="tk-btn pdf">⬇ Download PDF</button>
-          <button class="tk-btn pdf">🗺 Live track</button>
+          <button class="tk-btn wa"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:5px"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>Send to WhatsApp</button>
+          <button class="tk-btn email"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:5px"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Email me</button>
+          <button class="tk-btn pdf"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:5px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download PDF</button>
+          <button class="tk-btn pdf"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:5px"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Live track</button>
         </div>
         <div class="tk-footer">
           <div>Cheap Travels · 24×7 helpline 8853391184 · cheaptravels.in@gmail.com</div>
@@ -1766,39 +2398,45 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
       <p class="foot-brand-desc">India's affordable bus booking platform. Direct from operator. 5% extra discount. WhatsApp ticket in 90 seconds.</p>
     </div>
     <div class="foot-links-col">
-      <h4>Company</h4>
-      <div class="foot-links-list">
-        <a href="/about.html">About us</a>
-        <a href="#">Careers</a>
-        <a href="#">Contact</a>
-        <a href="#">Press</a>
-      </div>
+      <details class="foot-details">
+        <summary><h4>Company</h4></summary>
+        <div class="foot-links-list">
+          <a href="/about.html">About us</a>
+          <a href="#">Careers</a>
+          <a href="#">Contact</a>
+          <a href="#">Press</a>
+        </div>
+      </details>
     </div>
     <div class="foot-links-col">
-      <h4>Support</h4>
-      <div class="foot-links-list">
-        <a href="#">Help centre</a>
-        <a href="#">Cancellation</a>
-        <a href="#">Refund policy</a>
-        <a href="#">Terms</a>
-      </div>
+      <details class="foot-details">
+        <summary><h4>Support</h4></summary>
+        <div class="foot-links-list">
+          <a href="#">Help centre</a>
+          <a href="#">Cancellation</a>
+          <a href="#">Refund policy</a>
+          <a href="#">Terms</a>
+        </div>
+      </details>
     </div>
     <div class="foot-connect-col">
-      <h4>Connect</h4>
-      <div class="foot-contact-chips">
-        <a href="tel:8853391184" class="contact-chip">
-          <span class="chip-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></span>
-          <span class="chip-text">8853391184</span>
-        </a>
-        <a href="mailto:cheaptravels.in@gmail.com" class="contact-chip">
-          <span class="chip-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></span>
-          <span class="chip-text">cheaptravels.in@gmail.com</span>
-        </a>
-        <a href="https://wa.me/918853521184" class="contact-chip" target="_blank">
-          <span class="chip-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></span>
-          <span class="chip-text">WhatsApp</span>
-        </a>
-      </div>
+      <details class="foot-details">
+        <summary><h4>Connect</h4></summary>
+        <div class="foot-contact-chips">
+          <a href="tel:8853391184" class="contact-chip">
+            <span class="chip-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></span>
+            <span class="chip-text">8853391184</span>
+          </a>
+          <a href="mailto:cheaptravels.in@gmail.com" class="contact-chip">
+            <span class="chip-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></span>
+            <span class="chip-text">cheaptravels.in@gmail.com</span>
+          </a>
+          <a href="https://wa.me/918853521184" class="contact-chip" target="_blank">
+            <span class="chip-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></span>
+            <span class="chip-text">WhatsApp</span>
+          </a>
+        </div>
+      </details>
     </div>
   </div>
   <div class="foot-bottom">
@@ -1948,7 +2586,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const dd = String(tomorrow.getDate()).padStart(2, '0');
   document.getElementById('depart-date').value = `${yyyy}-${mm}-${dd}`;
 
-  await loadCities();
+  loadCities();
+  initFirebase();
   setupQR();
   
   // Offline & connection state tracking
@@ -2922,79 +3561,169 @@ let pendingCheckout = false;
 })();
 
 function openAuth(tab = 'signin') {
+  resetOtpFlow();
   document.getElementById('auth-overlay').classList.add('open');
-  switchAuthTab(tab);
 }
+
 function closeAuth() {
   document.getElementById('auth-overlay').classList.remove('open');
   pendingCheckout = false;
 }
-function switchAuthTab(tab) {
-  ['signin','signup'].forEach(t => {
-    document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
-    document.getElementById(`panel-${t}`).classList.toggle('active', t === tab);
-  });
+
+function resetOtpFlow() {
+  document.getElementById('otp-phone-pane').style.display = 'block';
+  document.getElementById('otp-code-pane').style.display = 'none';
+  document.getElementById('auth-mobile-input').value = '';
+  document.getElementById('auth-otp-input').value = '';
+  document.getElementById('auth-mobile-err').style.display = 'none';
+  document.getElementById('auth-otp-err').style.display = 'none';
 }
 
-function doSignIn() {
-  const email = document.getElementById('signin-email').value.trim();
-  const pass  = document.getElementById('signin-pass').value;
-  const err   = document.getElementById('signin-err');
-  err.style.display = 'none';
-
-  if (!email || !pass) { showAuthErr('signin', 'Please fill in all fields.'); return; }
-
-  // Check localStorage users
-  const users = JSON.parse(localStorage.getItem('cti_users') || '[]');
-  const user  = users.find(u => (u.email === email || u.phone === email) && u.pass === pass);
-  if (!user) { showAuthErr('signin', 'Incorrect email/phone or password.'); return; }
-
-  loginUser(user);
+async function initFirebase() {
+  try {
+    const res = await fetch(`${API}/api/config/firebase`);
+    const config = await res.json();
+    if (config.apiKey) {
+      firebase.initializeApp(config);
+      
+      // Setup invisible reCAPTCHA
+      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        size: 'invisible',
+        callback: (response) => {
+          // reCAPTCHA solved
+        }
+      });
+      console.log('Firebase App initialized successfully.');
+    } else {
+      console.warn('Firebase config empty. Phone auth may not work.');
+    }
+  } catch (err) {
+    console.error('Failed to initialize Firebase SDK:', err);
+  }
 }
 
-function doSignUp() {
-  const name  = document.getElementById('signup-name').value.trim();
-  const email = document.getElementById('signup-email').value.trim();
-  const phone = document.getElementById('signup-phone').value.trim();
-  const pass  = document.getElementById('signup-pass').value;
-  const err   = document.getElementById('signup-err');
-  err.style.display = 'none';
+async function sendMobileOtp() {
+  const mobileInput = document.getElementById('auth-mobile-input').value.trim();
+  const errEl = document.getElementById('auth-mobile-err');
+  errEl.style.display = 'none';
 
-  if (!name || !email || !phone || !pass) { showAuthErr('signup', 'All fields are required.'); return; }
-  if (pass.length < 6) { showAuthErr('signup', 'Password must be at least 6 characters.'); return; }
-  if (!/\S+@\S+\.\S+/.test(email)) { showAuthErr('signup', 'Please enter a valid email address.'); return; }
+  if (!mobileInput || mobileInput.length !== 10 || isNaN(mobileInput)) {
+    errEl.textContent = 'Please enter a valid 10-digit mobile number.';
+    errEl.style.display = 'block';
+    return;
+  }
 
-  const users = JSON.parse(localStorage.getItem('cti_users') || '[]');
-  if (users.find(u => u.email === email)) { showAuthErr('signup', 'This email is already registered. Sign in instead.'); return; }
+  const formattedMobile = `+91${mobileInput}`;
 
-  const user = { name, email, phone, pass, joined: new Date().toISOString(), bonus: 51 };
-  users.push(user);
-  localStorage.setItem('cti_users', JSON.stringify(users));
-
-  // Send details to owner's email
-  fetch(`${API}/api/signup`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, phone })
-  }).catch(e => console.error("Signup email notification failed:", e));
-
-  loginUser(user);
+  try {
+    const appVerifier = window.recaptchaVerifier;
+    if (!appVerifier) {
+      errEl.textContent = 'Firebase reCAPTCHA is not initialized yet. Please reload page.';
+      errEl.style.display = 'block';
+      return;
+    }
+    
+    const confirmationResult = await firebase.auth().signInWithPhoneNumber(formattedMobile, appVerifier);
+    window.confirmationResult = confirmationResult;
+    
+    document.getElementById('otp-phone-pane').style.display = 'none';
+    document.getElementById('otp-code-pane').style.display = 'block';
+    document.getElementById('otp-sent-mobile').textContent = `+91 ${mobileInput.slice(0,5)} ${mobileInput.slice(5)}`;
+    setTimeout(() => {
+      const codeInput = document.getElementById('auth-otp-input');
+      if (codeInput) codeInput.focus();
+    }, 100);
+  } catch (err) {
+    console.error("Firebase SMS error:", err);
+    errEl.textContent = err.message || 'Failed to send OTP via Firebase.';
+    errEl.style.display = 'block';
+    if (window.recaptchaVerifier) {
+      window.recaptchaVerifier.render().then(widgetId => {
+        grecaptcha.reset(widgetId);
+      }).catch(() => {});
+    }
+  }
 }
 
-function loginUser(user) {
-  currentUser = user;
-  localStorage.setItem('cti_user', JSON.stringify(user));
-  updateAuthUI();
-  closeAuth();
-  if (pendingCheckout) {
-    pendingCheckout = false;
-    continueToCheckout();
+async function verifyMobileOtp() {
+  const mobileInput = document.getElementById('auth-mobile-input').value.trim();
+  const otpInput = document.getElementById('auth-otp-input').value.trim();
+  const errEl = document.getElementById('auth-otp-err');
+  errEl.style.display = 'none';
+
+  if (!otpInput || otpInput.length !== 6 || isNaN(otpInput)) {
+    errEl.textContent = 'Please enter a valid 6-digit OTP code.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  try {
+    if (!window.confirmationResult) {
+      errEl.textContent = 'Verification session expired. Please start over.';
+      errEl.style.display = 'block';
+      return;
+    }
+    
+    const result = await window.confirmationResult.confirm(otpInput);
+    const idToken = await result.user.getIdToken();
+    
+    const res = await fetch(`${API}/api/auth/firebase`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken })
+    });
+    const data = await res.json();
+    
+    if (data.success) {
+      const user = {
+        name: data.user.name,
+        phone: data.user.mobile,
+        email: data.user.email || '',
+        id: data.user.id
+      };
+      
+      currentUser = user;
+      localStorage.setItem('cti_user', JSON.stringify(user));
+      updateAuthUI();
+      closeAuth();
+      
+      // Check if profile needs completion
+      const isGuest = user.name && user.name.startsWith('Guest User');
+      const isEmailMissing = !user.email;
+      if (isGuest || isEmailMissing) {
+        triggerCompleteProfileCheck();
+      } else if (pendingCheckout) {
+        pendingCheckout = false;
+        continueToCheckout();
+      }
+    } else {
+      errEl.textContent = data.error || 'Failed to verify session with server.';
+      errEl.style.display = 'block';
+    }
+  } catch (err) {
+    console.error("Verification error:", err);
+    let friendlyMessage = 'Invalid verification code. Please try again.';
+    if (err && err.code) {
+      if (err.code === 'auth/invalid-verification-code') {
+        friendlyMessage = 'The verification code you entered is invalid. Please check and try again.';
+      } else if (err.code === 'auth/code-expired') {
+        friendlyMessage = 'The code has expired. Please go back and request a new one.';
+      } else if (err.code === 'auth/too-many-requests') {
+        friendlyMessage = 'Too many attempts. Please try again later.';
+      } else {
+        friendlyMessage = err.message || friendlyMessage;
+      }
+    }
+    errEl.textContent = friendlyMessage;
+    errEl.style.display = 'block';
   }
 }
 
 function logoutUser() {
   currentUser = null;
   localStorage.removeItem('cti_user');
+  firebase.auth().signOut().catch(() => {});
+  fetch(`${API}/api/auth/logout`, { method: 'POST' }).catch(() => {});
   updateAuthUI();
   document.getElementById('user-chip').classList.remove('open');
 }
@@ -3020,16 +3749,230 @@ function updateAuthUI() {
   }
 }
 
-function showAuthErr(panel, msg) {
-  const el = document.getElementById(`${panel}-err`);
-  el.textContent = msg;
-  el.style.display = 'block';
+// ═══════════ CUSTOM CUSTOMER PROFILE & BOOKINGS JS ═══════════
+function openProfileModal() {
+  if (!currentUser) return;
+  document.getElementById('profile-err').style.display = 'none';
+  document.getElementById('profile-success').style.display = 'none';
+  
+  document.getElementById('profile-phone-input').value = currentUser.phone || '';
+  document.getElementById('profile-name-input').value = currentUser.name || '';
+  document.getElementById('profile-email-input').value = currentUser.email || '';
+  
+  document.getElementById('profile-overlay').classList.add('open');
+}
+
+function closeProfileModal() {
+  document.getElementById('profile-overlay').classList.remove('open');
+}
+
+async function saveProfileData() {
+  const name = document.getElementById('profile-name-input').value.trim();
+  const email = document.getElementById('profile-email-input').value.trim();
+  const errEl = document.getElementById('profile-err');
+  const successEl = document.getElementById('profile-success');
+  
+  errEl.style.display = 'none';
+  successEl.style.display = 'none';
+  
+  if (!name) {
+    errEl.textContent = 'Name is required.';
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API}/api/auth/profile`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email })
+    });
+    const data = await res.json();
+    
+    if (data.success) {
+      currentUser.name = data.user.name;
+      currentUser.email = data.user.email || '';
+      localStorage.setItem('cti_user', JSON.stringify(currentUser));
+      updateAuthUI();
+      successEl.textContent = 'Profile updated successfully!';
+      successEl.style.display = 'block';
+      setTimeout(closeProfileModal, 1200);
+    } else {
+      errEl.textContent = data.error || 'Failed to save changes.';
+      errEl.style.display = 'block';
+    }
+  } catch (err) {
+    console.error('Failed to update profile:', err);
+    errEl.textContent = 'Network error. Please try again.';
+    errEl.style.display = 'block';
+  }
+}
+
+// Complete profile flow (post-login)
+function triggerCompleteProfileCheck() {
+  if (!currentUser) return;
+  
+  const isGuest = currentUser.name && currentUser.name.startsWith('Guest User');
+  const isEmailMissing = !currentUser.email;
+  
+  if (isGuest || isEmailMissing) {
+    document.getElementById('complete-profile-err').style.display = 'none';
+    document.getElementById('complete-name-input').value = isGuest ? '' : currentUser.name;
+    document.getElementById('complete-email-input').value = currentUser.email || '';
+    document.getElementById('complete-profile-overlay').classList.add('open');
+  }
+}
+
+async function submitCompleteProfile() {
+  const name = document.getElementById('complete-name-input').value.trim();
+  const email = document.getElementById('complete-email-input').value.trim();
+  const errEl = document.getElementById('complete-profile-err');
+  
+  errEl.style.display = 'none';
+  
+  if (!name) {
+    errEl.textContent = 'Please enter your full name.';
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  if (!email || !email.includes('@')) {
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.style.display = 'block';
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API}/api/auth/profile`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email })
+    });
+    const data = await res.json();
+    
+    if (data.success) {
+      currentUser.name = data.user.name;
+      currentUser.email = data.user.email || '';
+      localStorage.setItem('cti_user', JSON.stringify(currentUser));
+      updateAuthUI();
+      document.getElementById('complete-profile-overlay').classList.remove('open');
+      
+      if (pendingCheckout) {
+        pendingCheckout = false;
+        continueToCheckout();
+      }
+    } else {
+      errEl.textContent = data.error || 'Failed to update details.';
+      errEl.style.display = 'block';
+    }
+  } catch (err) {
+    console.error('Failed to complete profile:', err);
+    errEl.textContent = 'Network error. Please try again.';
+    errEl.style.display = 'block';
+  }
+}
+
+// Help modal functions
+function openHelpModal() {
+  document.getElementById('help-overlay').classList.add('open');
+}
+function closeHelpModal() {
+  document.getElementById('help-overlay').classList.remove('open');
+}
+
+// Bookings modal functions
+function openBookingsModal() {
+  document.getElementById('bookings-overlay').classList.add('open');
+  loadUserBookings();
+}
+function closeBookingsModal() {
+  document.getElementById('bookings-overlay').classList.remove('open');
+}
+
+async function loadUserBookings() {
+  const container = document.getElementById('bookings-container');
+  const loader = document.getElementById('bookings-loading');
+  
+  container.innerHTML = '';
+  loader.style.display = 'block';
+  
+  try {
+    const res = await fetch(`${API}/api/auth/bookings`);
+    const data = await res.json();
+    loader.style.display = 'none';
+    
+    if (data.success) {
+      if (data.bookings.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:40px 20px; color:var(--ink3);">
+            <div style="font-size:32px; margin-bottom:12px;">🎟</div>
+            <div style="font-weight:700; font-size:14px; color:var(--ink);">No bookings found</div>
+            <p style="font-size:12px; margin:4px 0 0; line-height:1.4;">Your tickets will appear here once booked.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      let html = '';
+      data.bookings.forEach(b => {
+        let statusBadgeCls = 'background: #f3f4f6; color: #374151;';
+        if (b.status === 'confirmed') statusBadgeCls = 'background: #d1fae5; color: #065f46;';
+        else if (b.status === 'paid_pending') statusBadgeCls = 'background: #fef3c7; color: #92400e;';
+        else if (b.status === 'held') statusBadgeCls = 'background: #f3f4f6; color: #374151;';
+        else if (b.status === 'failed' || b.status === 'cancelled' || b.status === 'refunded') statusBadgeCls = 'background: #fee2e2; color: #991b1b;';
+        
+        const dateParts = b.journeyDate.split('-');
+        const journeyDateStr = dateParts[2] && dateParts[1] ? `${dateParts[2]} ${getMonthName(dateParts[1])}` : b.journeyDate;
+        
+        html += `
+          <div style="background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:10px; text-align:left;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:10px; font-weight:750; color:var(--ink3); text-transform:uppercase; letter-spacing:0.5px;">ORDER: ${b.id.slice(0, 18)}</span>
+              <span style="${statusBadgeCls} font-size:10px; font-weight:800; padding:3px 8px; border-radius:6px; text-transform:uppercase; letter-spacing:0.5px;">${b.status}</span>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px dashed var(--line); border-bottom:1px dashed var(--line); padding:10px 0;">
+              <div>
+                <div style="font-size:14px; font-weight:800; color:var(--ink);">${b.fromCity} ➔ ${b.toCity}</div>
+                <div style="font-size:11px; color:var(--ink2); font-weight:600; margin-top:2px;">${journeyDateStr} · ${b.departure}</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:14px; font-weight:800; color:var(--teal);">₹${b.totalPayable}</div>
+                <div style="font-size:11px; color:var(--ink3); font-weight:600; margin-top:2px;">Seat ${b.seatNo}</div>
+              </div>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+              <div style="color:var(--ink2); font-weight:600;">Passenger: <b style="color:var(--ink);">${b.passengerName || 'Guest'}</b></div>
+              ${b.providerPnr ? `<div style="color:var(--ink2); font-weight:600;">PNR: <b style="color:var(--teal); font-size:12px; font-weight:800;">${b.providerPnr}</b></div>` : `<div style="color:var(--ink3); font-style:italic;">PNR Pending</div>`}
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    } else {
+      container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--red); font-weight:600;">Error: ${data.error || 'Failed to fetch bookings'}</div>`;
+    }
+  } catch (err) {
+    console.error('Failed to load bookings:', err);
+    container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--red); font-weight:600;">Failed to load bookings due to connection issues.</div>`;
+  }
 }
 
 // Close modal when clicking overlay backdrop
 document.getElementById('auth-overlay').addEventListener('click', function(e) {
   if (e.target === this) closeAuth();
 });
+document.getElementById('profile-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeProfileModal();
+});
+document.getElementById('bookings-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeBookingsModal();
+});
+document.getElementById('help-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeHelpModal();
+});
+
 
 // Allow Enter key in auth fields
 document.addEventListener('keydown', e => {
@@ -3572,6 +4515,198 @@ function claimBonus() {
 function closeBonusPopup() {
   document.getElementById('bonus-popup').classList.remove('open');
 }
+
+// Scroll-reveal for story/services/fleet sections
+(function () {
+  if (typeof IntersectionObserver === 'undefined') {
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('in-view'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in-view');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('.reveal-on-scroll').forEach(el => io.observe(el));
+})();
+
+// ═══════════ RAZORPAY & PAYMENT INTEGRATION ═══════════
+async function processPayment() {
+  const phone = document.getElementById('contact-phone').value.trim();
+  const email = document.getElementById('contact-email').value.trim();
+  if (!phone || !email) {
+    alert("Please fill in contact phone and email first!");
+    return;
+  }
+  
+  const nameInputs = document.querySelectorAll('.passenger-name');
+  const ageInputs = document.querySelectorAll('.passenger-age');
+  let isValid = true;
+  nameInputs.forEach(input => {
+    if (!input.value.trim()) isValid = false;
+  });
+  ageInputs.forEach(input => {
+    if (!input.value.trim()) isValid = false;
+  });
+  if (!isValid) {
+    alert("Please fill in all passenger details!");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/api/payment/order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: totalPayable * 100, currency: 'INR' })
+    });
+    const orderData = await res.json();
+    if (!orderData.success) {
+      alert("Failed to initiate payment. Please try again.");
+      return;
+    }
+
+    if (orderData.mocked) {
+      openRzpMock(orderData.amount / 100);
+    } else {
+      const options = {
+        "key": orderData.keyId,
+        "amount": orderData.amount,
+        "currency": orderData.currency,
+        "name": "Cheap Travels India",
+        "description": "Bus Ticket Booking",
+        "order_id": orderData.orderId,
+        "handler": function (response) {
+          completeBooking(response.razorpay_payment_id, response.razorpay_order_id, response.razorpay_signature);
+        },
+        "prefill": {
+          "name": nameInputs[0].value.trim(),
+          "email": email,
+          "contact": phone
+        },
+        "theme": {
+          "color": "#0E7B4F"
+        }
+      };
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        alert("Payment failed: " + response.error.description);
+      });
+      rzp.open();
+    }
+  } catch (err) {
+    console.error("Payment initiation error:", err);
+    alert("An error occurred during payment. Please try again.");
+  }
+}
+
+function openRzpMock(amount) {
+  document.getElementById('rzp-mock-amount').textContent = `₹${amount}`;
+  document.getElementById('rzp-mock-overlay').style.display = 'flex';
+}
+
+function closeRzpMock() {
+  document.getElementById('rzp-mock-overlay').style.display = 'none';
+}
+
+function simulateRzpSuccess() {
+  closeRzpMock();
+  completeBooking('pay_mock_' + Math.random().toString(36).substring(2, 10), 'order_mock', 'sig_mock');
+}
+
+function completeBooking(paymentId, orderId, signature) {
+  const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
+  fetch(`${API}/api/track`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      event: 'booking',
+      data: {
+        operator: selectedBus.operator,
+        route: selectedBus.routeName,
+        seats: seatNosStr,
+        amount: totalPayable,
+        paymentId: paymentId
+      }
+    })
+  }).catch(() => {});
+  
+  showTicket();
+}
+
+// Add autofocus logic on page load
+document.addEventListener('DOMContentLoaded', () => {
+  // Autofocus input transition on Enter for passenger inputs and other checkout details
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && e.target.closest('.checkout-wrap')) {
+      const inputs = Array.from(document.querySelectorAll('.checkout-wrap input, .checkout-wrap select'));
+      const index = inputs.indexOf(e.target);
+      if (index > -1 && index < inputs.length - 1) {
+        e.preventDefault();
+        inputs[index + 1].focus();
+      }
+    }
+  });
+
+  const mobileInputEl = document.getElementById('auth-mobile-input');
+  if (mobileInputEl) {
+    mobileInputEl.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendMobileOtp();
+      }
+    });
+  }
+
+  const otpInputEl = document.getElementById('auth-otp-input');
+  if (otpInputEl) {
+    otpInputEl.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        verifyMobileOtp();
+      }
+    });
+  }
+});
 </script>
+
+<!-- Mock Razorpay Payment Modal -->
+<div class="auth-overlay" id="rzp-mock-overlay" style="display:none; align-items:center; justify-content:center; z-index:99999;">
+  <div class="auth-box" style="width:360px; padding:24px; border-top: 4px solid var(--teal); position:relative;">
+    <button class="auth-close" onclick="closeRzpMock()" style="top:12px; right:14px;">✕</button>
+    <div style="text-align:center; margin-bottom:20px;">
+      <h3 style="font-size:16px; font-weight:800; color:var(--teal-d); margin-bottom:4px;">Razorpay Secure Checkout</h3>
+      <p style="font-size:12px; color:var(--ink2); margin:0;">Cheap Travels India · Payment Demo</p>
+    </div>
+    
+    <div style="background:var(--bg); border:1.5px solid var(--line); border-radius:var(--radius-md); padding:12px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <span style="font-size:11px; font-weight:700; color:var(--ink2); text-transform:uppercase;">Amount Payable</span>
+        <div style="font-size:18px; font-weight:800; color:var(--teal-d); margin-top:2px;" id="rzp-mock-amount">₹0</div>
+      </div>
+      <span style="background:rgba(14, 123, 79, 0.1); color:var(--teal-d); padding:4px 8px; border-radius:var(--radius-sm); font-size:10px; font-weight:700; letter-spacing:0.5px;">DEMO MODE</span>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+      <div style="font-size:11px; font-weight:700; color:var(--ink2); text-transform:uppercase; letter-spacing:0.5px;">Select Payment Method</div>
+      <label style="display:flex; align-items:center; gap:10px; padding:12px; border:1.5px solid var(--teal); background:var(--teal-light); border-radius:var(--radius-md); cursor:pointer;">
+        <input type="radio" name="rzp-method" checked style="accent-color:var(--teal);">
+        <span style="font-size:14px; font-weight:700; color:var(--teal-d);">UPI (GPay, PhonePe, Paytm)</span>
+      </label>
+      <label style="display:flex; align-items:center; gap:10px; padding:12px; border:1.5px solid var(--line); border-radius:var(--radius-md); cursor:pointer; opacity:0.6;">
+        <input type="radio" name="rzp-method" disabled style="accent-color:var(--teal);">
+        <span style="font-size:14px; font-weight:600; color:var(--ink);">Credit / Debit Card</span>
+      </label>
+      <label style="display:flex; align-items:center; gap:10px; padding:12px; border:1.5px solid var(--line); border-radius:var(--radius-md); cursor:pointer; opacity:0.6;">
+        <input type="radio" name="rzp-method" disabled style="accent-color:var(--teal);">
+        <span style="font-size:14px; font-weight:600; color:var(--ink);">Netbanking</span>
+      </label>
+    </div>
+
+    <button class="auth-submit" onclick="simulateRzpSuccess()" style="width:100%; padding:14px; background:var(--teal); color:#fff; border-radius:var(--radius-md); font-weight:800; font-size:14px; cursor:pointer; border:none;">Pay Securely (Demo) →</button>
+  </div>
+</div>
 </body>
 </html>

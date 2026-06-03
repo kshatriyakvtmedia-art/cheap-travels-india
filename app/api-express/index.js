@@ -672,6 +672,27 @@ app.get('/api/search', apiLimiter, async (req, res) => {
     // Merge and filter real operator buses to ensure they actually match the searched origin city name.
     // TicketSimply B2B portals sometimes return unrelated nearby routes (e.g. Azamgarh to Delhi for a Varanasi to Delhi search).
     let rawBuses = [...lxmiBuses, ...rdlhBuses];
+    
+    // Add fallback boarding/dropping points if they are empty
+    rawBuses.forEach(bus => {
+      if (!bus.boardingPoints || bus.boardingPoints.length === 0) {
+        bus.boardingPoints = [{
+          id: 'fallback-bp',
+          time: bus.departure || "00:00 AM",
+          name: `${fromName} (Contact Operator)`,
+          landmark: 'Please contact operator for exact boarding point details.'
+        }];
+      }
+      if (!bus.droppingPoints || bus.droppingPoints.length === 0) {
+        bus.droppingPoints = [{
+          id: 'fallback-dp',
+          time: bus.arrival || "00:00 AM",
+          name: `${toName} (Contact Operator)`,
+          landmark: 'Please contact operator for exact dropping point details.'
+        }];
+      }
+    });
+
     let realBuses = rawBuses.filter(bus => {
       const orig = fromName.toLowerCase();
       const routeMatches = bus.routeName.toLowerCase().includes(orig);
@@ -922,6 +943,59 @@ app.get('/api/layout/:resId', async (req, res) => {
   } catch (error) {
     console.error("API /layout error:", error.message);
     res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// API: Create Razorpay Order
+app.post('/api/payment/order', async (req, res) => {
+  const { amount, currency } = req.body;
+  if (!amount) return res.status(400).json({ success: false, error: 'Amount is required' });
+  
+  try {
+    const keyId = process.env.RAZORPAY_KEY;
+    const keySecret = process.env.RAZORPAY_SECRET;
+    
+    if (!keyId || !keySecret) {
+      return res.json({
+        success: true,
+        mocked: true,
+        id: 'order_mock_' + Math.random().toString(36).substring(2, 15),
+        amount: amount,
+        currency: currency || 'INR'
+      });
+    }
+
+    const auth = Buffer.from(`${keyId}:${keySecret}`).toString('base64');
+    const response = await fetch('https://api.razorpay.com/v1/orders', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        amount: amount,
+        currency: currency || 'INR',
+        receipt: 'rcpt_' + Date.now()
+      })
+    });
+    
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("Razorpay order creation error response:", errText);
+      return res.status(500).json({ success: false, error: 'Failed to create order with Razorpay API' });
+    }
+    
+    const order = await response.json();
+    res.json({
+      success: true,
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      keyId: keyId
+    });
+  } catch (err) {
+    console.error("Razorpay order creation failed:", err.message);
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 

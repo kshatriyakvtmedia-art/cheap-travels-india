@@ -6,6 +6,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="description" content="Book affordable bus tickets from verified operators. Get 5% extra discount on partner buses. WhatsApp ticket in 90 seconds.">
 <meta name="theme-color" content="#0E7B4F">
+<!-- Razorpay SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
 <style>
@@ -912,6 +914,66 @@ input, select { font-family: inherit; }
 
 /* Scroll reveal */
 .results-list > * { animation: fadeIn .25s ease backwards; }
+
+/* Sticky bottom booking bar overrides */
+.booking-bar {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 1000 !important;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1) !important;
+  background: var(--white) !important;
+}
+
+/* Single column checkout forms */
+.form-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px;
+}
+
+/* Ticket boarding pass notches and styling */
+.ticket-card {
+  overflow: visible !important;
+}
+
+.ticket-divider {
+  border-top: 2px dashed var(--line);
+  margin: 14px 0;
+  position: relative;
+  height: 0;
+}
+.ticket-divider::before, .ticket-divider::after {
+  content: '';
+  position: absolute;
+  top: -11px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--bg); /* Matches page canvas background */
+  border: 1px solid var(--line);
+  z-index: 10;
+}
+.ticket-divider::before {
+  left: -27px;
+  clip-path: circle(11px at 22px 11px);
+}
+.ticket-divider::after {
+  right: -27px;
+  clip-path: circle(11px at 0px 11px);
+}
+
+/* Nav Drawer */
+.nav-drawer {
+  transition: opacity 0.3s ease;
+}
+.nav-drawer.open {
+  display: block !important;
+}
+.nav-drawer.open .nav-drawer-content {
+  transform: translateX(0) !important;
+}
 </style>
 </head>
 <body>
@@ -922,10 +984,21 @@ input, select { font-family: inherit; }
   SCREEN: HOME
 ════════════════════════════════════ -->
 <div class="screen active" id="screen-home">
+  <!-- Sticky header on home screen -->
+  <div class="app-header" style="height: 64px; position: sticky; top: 0; z-index: 1000; background: var(--g); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; flex-shrink: 0;">
+    <button class="header-menu-btn" onclick="toggleNavDrawer()" style="color: #fff; font-size: 20px; border:none; background:none;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <img src="../images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" style="height: 32px; filter: brightness(0) invert(1);">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button onclick="openBookingsModal()" style="color: #fff; font-size: 13px; font-weight: 700; background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px;">My Trips</button>
+      <button class="home-signin-btn" id="sticky-signin-btn" onclick="openAuth('signin')" style="padding: 6px 12px; border-radius: 20px; font-size: 12.5px; border: 1.5px solid rgba(255,255,255,0.5); color: #fff;">Sign In</button>
+    </div>
+  </div>
   <div class="screen-body" id="home-body">
     <!-- Hero header -->
     <div class="home-header">
-      <div class="home-logo-row">
+      <div class="home-logo-row" style="display: none;">
         <img src="../images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" class="home-logo">
         <button class="home-signin-btn" id="home-signin-btn" onclick="openAuth('signin')">Sign In</button>
       </div>
@@ -979,6 +1052,24 @@ input, select { font-family: inherit; }
           <!-- Invisible date input stretched over the whole row -->
           <input type="date" id="date-input" onchange="onDateChange(this)"
             style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:5;font-size:16px;border:none;background:transparent;">
+        </div>
+
+        <!-- PASSENGERS -->
+        <div class="search-field" style="position:relative;">
+          <div class="sf-icon" style="background:#FFF1F2; color:#F43F5E; display:flex; align-items:center; justify-content:center;">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          <div class="sf-text">
+            <div class="sf-label">Passengers</div>
+            <select id="passenger-count" style="width:100%; border:none; background:transparent; font-size:17px; font-weight:700; color:var(--ink); outline:none; font-family:'Plus Jakarta Sans',sans-serif; cursor:pointer;-webkit-appearance:none; padding:0; height: 24px; line-height:24px;">
+              <option value="1">1 Passenger</option>
+              <option value="2">2 Passengers</option>
+              <option value="3">3 Passengers</option>
+              <option value="4">4 Passengers</option>
+              <option value="5">5 Passengers</option>
+              <option value="6">6 Passengers</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -1210,6 +1301,10 @@ input, select { font-family: inherit; }
         <div class="tick-title">Booking Confirmed!</div>
         <div class="tick-sub" id="ticket-sub">Ticket sent to WhatsApp &amp; Email</div>
       </div>
+      <!-- Fixed/Prominent top download button -->
+      <button class="top-download-btn" onclick="showToast('PDF ticket download started!')" style="margin-left: auto; background: #fff; color: var(--g-d); border-radius: 12px; padding: 8px 14px; font-weight: 800; font-size: 12px; border:none; cursor:pointer; box-shadow: var(--shadow);">
+        Download PDF
+      </button>
     </div>
 
     <div class="ticket-card">
@@ -1230,15 +1325,21 @@ input, select { font-family: inherit; }
           <div class="tr-point" id="tk-dp">—</div>
         </div>
       </div>
+      
+      <!-- Boarding Pass Notches Divider -->
+      <div class="ticket-divider"></div>
+
       <div class="ticket-detail-grid" id="tk-detail-grid">
         <div class="tk-cell"><div class="tk-lbl">Operator</div><div class="tk-val" id="tk-op">—</div></div>
         <div class="tk-cell"><div class="tk-lbl">Bus Type</div><div class="tk-val" id="tk-type">—</div></div>
         <div class="tk-cell"><div class="tk-lbl">Seat(s)</div><div class="tk-val" id="tk-seats">—</div></div>
         <div class="tk-cell"><div class="tk-lbl">Amount Paid</div><div class="tk-val" id="tk-amount" style="color:var(--g);">—</div></div>
       </div>
-      <div class="ticket-actions">
-        <button class="tk-action-btn tk-wa" onclick="shareTicketWA()">📲 WhatsApp</button>
-        <button class="tk-action-btn tk-pdf" onclick="showToast('PDF download coming soon!')">📄 Download</button>
+      <div class="ticket-actions" style="padding: 16px 20px; flex-direction: column; gap: 10px;">
+        <button class="tk-action-btn tk-wa" onclick="shareTicketWA()" style="width: 100%; padding: 14px; font-size: 15px; background: #25D366; color: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; box-shadow: 0 4px 14px rgba(37,211,102,0.3);">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          Send Ticket via WhatsApp
+        </button>
       </div>
     </div>
 
@@ -2188,6 +2289,194 @@ function setupQR() {
   dots.innerHTML = s;
 }
 
+// ═══════════ RAZORPAY & PAYMENT INTEGRATION ═══════════
+async function processPayment() {
+  const phone = document.getElementById('contact-phone').value.trim();
+  const email = document.getElementById('contact-email').value.trim();
+  if (!phone || !email) {
+    showToast("Please fill in contact phone and email first!");
+    return;
+  }
+  
+  const nameInputs = document.querySelectorAll('.p-name');
+  const ageInputs = document.querySelectorAll('.p-age');
+  let isValid = true;
+  nameInputs.forEach(input => {
+    if (!input.value.trim()) isValid = false;
+  });
+  ageInputs.forEach(input => {
+    if (!input.value.trim()) isValid = false;
+  });
+  if (!isValid) {
+    showToast("Please fill in all passenger details!");
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/payment/order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: totalPayable * 100, currency: 'INR' })
+    });
+    const orderData = await res.json();
+    if (!orderData.success) {
+      showToast("Failed to initiate payment. Please try again.");
+      return;
+    }
+
+    if (orderData.mocked) {
+      openRzpMock(orderData.amount / 100);
+    } else {
+      const options = {
+        "key": orderData.keyId,
+        "amount": orderData.amount,
+        "currency": orderData.currency,
+        "name": "Cheap Travels India",
+        "description": "Bus Ticket Booking",
+        "order_id": orderData.orderId,
+        "handler": function (response) {
+          completeBooking(response.razorpay_payment_id, response.razorpay_order_id, response.razorpay_signature);
+        },
+        "prefill": {
+          "name": nameInputs[0].value.trim(),
+          "email": email,
+          "contact": phone
+        },
+        "theme": {
+          "color": "#0E7B4F"
+        }
+      };
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        showToast("Payment failed: " + response.error.description);
+      });
+      rzp.open();
+    }
+  } catch (err) {
+    console.error("Payment initiation error:", err);
+    showToast("An error occurred during payment. Please try again.");
+  }
+}
+
+function openRzpMock(amount) {
+  document.getElementById('rzp-mock-amount').textContent = `₹${amount}`;
+  document.getElementById('rzp-mock-overlay').style.display = 'flex';
+}
+
+function closeRzpMock() {
+  document.getElementById('rzp-mock-overlay').style.display = 'none';
+}
+
+function simulateRzpSuccess() {
+  closeRzpMock();
+  completeBooking('pay_mock_' + Math.random().toString(36).substring(2, 10), 'order_mock', 'sig_mock');
+}
+
+function completeBooking(paymentId, orderId, signature) {
+  // Silent background tracking
+  const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
+  fetch('/api/track', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      event: 'booking',
+      data: {
+        operator: selectedBus.operator,
+        route: `${selectedFromName} → ${selectedToName}`,
+        seats: seatNosStr,
+        amount: totalPayable,
+        paymentId: paymentId
+      }
+    })
+  }).catch(() => {});
+  
+  showTicket();
+}
+
+// Nav Drawer functions
+function toggleNavDrawer() {
+  const drawer = document.getElementById('nav-drawer');
+  const isOpen = drawer.classList.contains('open');
+  if (isOpen) {
+    drawer.querySelector('.nav-drawer-content').style.transform = 'translateX(-100%)';
+    setTimeout(() => {
+      drawer.classList.remove('open');
+      drawer.style.display = 'none';
+    }, 300);
+  } else {
+    drawer.style.display = 'block';
+    drawer.offsetHeight; // trigger reflow
+    drawer.classList.add('open');
+    setTimeout(() => {
+      drawer.querySelector('.nav-drawer-content').style.transform = 'translateX(0)';
+    }, 10);
+  }
+}
+
+// Add autofocus logic on page load
+document.addEventListener('DOMContentLoaded', () => {
+  // Autofocus input transition on Enter for passenger inputs and other checkout details
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && e.target.closest('#screen-checkout')) {
+      const inputs = Array.from(document.querySelectorAll('#screen-checkout input, #screen-checkout select'));
+      const index = inputs.indexOf(e.target);
+      if (index > -1 && index < inputs.length - 1) {
+        e.preventDefault();
+        inputs[index + 1].focus();
+      }
+    }
+  });
+});
 </script>
+
+<!-- Nav Drawer HTML -->
+<div id="nav-drawer" class="nav-drawer" style="position: fixed; inset: 0; z-index: 10000; display: none;">
+  <div class="nav-drawer-overlay" onclick="toggleNavDrawer()" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"></div>
+  <div class="nav-drawer-content" style="position: absolute; left: 0; top: 0; bottom: 0; width: 280px; background: #fff; box-shadow: 4px 0 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; padding: 24px; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <img src="../images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels" style="height: 32px;">
+      <button onclick="toggleNavDrawer()" style="font-size: 20px; color: var(--ink2); border:none; background:none;">✕</button>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px; font-weight: 700; font-size: 15px; color: var(--ink);">
+      <a href="index.html" style="color: var(--g);">🏠 Home</a>
+      <a href="/about.html">ℹ️ About Us</a>
+      <a href="#" onclick="event.preventDefault(); toggleNavDrawer(); openBookingsModal();">🎟️ My Bookings</a>
+      <a href="#" onclick="event.preventDefault(); toggleNavDrawer(); openAuth('signin');" id="drawer-signin-link">🚪 Sign In</a>
+    </div>
+  </div>
+</div>
+
+<!-- Mock Razorpay Payment Modal -->
+<div class="auth-overlay" id="rzp-mock-overlay" style="display:none; align-items:center; justify-content:center; z-index:99999; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
+  <div class="auth-box" style="width:340px; padding:20px; border-top: 4px solid var(--g); position:relative; background:#fff; border-radius:14px; box-shadow: var(--shadow-md);">
+    <button class="auth-close" onclick="closeRzpMock()" style="position:absolute; top:12px; right:14px; font-size:18px; color:var(--ink3); background:none; border:none; cursor:pointer;">✕</button>
+    <div style="text-align:center; margin-bottom:16px;">
+      <h3 style="font-size:15px; font-weight:800; color:var(--g-d); margin-bottom:4px;">Razorpay Secure Checkout</h3>
+      <p style="font-size:12px; color:var(--ink2); margin:0;">Cheap Travels India · Payment Demo</p>
+    </div>
+    
+    <div style="background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:10px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <span style="font-size:10px; font-weight:700; color:var(--ink2); text-transform:uppercase;">Amount Payable</span>
+        <div style="font-size:16px; font-weight:800; color:var(--g-d); margin-top:2px;" id="rzp-mock-amount">₹0</div>
+      </div>
+      <span style="background:rgba(14, 123, 79, 0.1); color:var(--g-d); padding:3px 6px; border-radius:4px; font-size:9px; font-weight:700; letter-spacing:0.5px;">DEMO</span>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+      <div style="font-size:10px; font-weight:700; color:var(--ink2); text-transform:uppercase; letter-spacing:0.5px;">Select Payment Method</div>
+      <label style="display:flex; align-items:center; gap:8px; padding:10px; border:1.5px solid var(--g); background:var(--g-l); border-radius:10px; cursor:pointer;">
+        <input type="radio" name="rzp-method" checked style="accent-color:var(--g);">
+        <span style="font-size:13px; font-weight:700; color:var(--g-d);">UPI (GPay, PhonePe, Paytm)</span>
+      </label>
+      <label style="display:flex; align-items:center; gap:8px; padding:10px; border:1px solid var(--line); border-radius:10px; cursor:pointer; opacity:0.5;">
+        <input type="radio" name="rzp-method" disabled style="accent-color:var(--g);">
+        <span style="font-size:13px; font-weight:600; color:var(--ink);">Credit / Debit Card</span>
+      </label>
+    </div>
+
+    <button class="auth-submit" onclick="simulateRzpSuccess()" style="width:100%; padding:12px; background:var(--g); color:#fff; border-radius:10px; font-weight:800; font-size:14px; cursor:pointer; border:none; box-shadow: 0 4px 12px rgba(14,123,79,0.2);">Pay Securely (Demo) →</button>
+  </div>
+</div>
 </body>
 </html>
