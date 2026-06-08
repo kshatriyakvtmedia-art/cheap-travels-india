@@ -4900,6 +4900,13 @@ async function processPayment() {
     const toCity = toSelect.options[toSelect.selectedIndex].text;
     const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
 
+    // Resolve the raw city IDs from the select elements for B2B portal calls
+    const fromCityId = document.getElementById('from-select').value;
+    const toCityId = document.getElementById('to-select').value;
+    const rawDate = document.getElementById('depart-date').value;
+    const dateParts = rawDate.split('-');
+    const journeyDateFormatted = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`; // DD/MM/YYYY
+
     const orderRes = await fetch(`${API}/api/booking/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -4910,15 +4917,22 @@ async function processPayment() {
         busType: selectedBus.busType,
         fromCity: fromCity,
         toCity: toCity,
-        journeyDate: document.getElementById('depart-date').value,
+        fromCityId: fromCityId,
+        toCityId: toCityId,
+        journeyDate: rawDate,
+        journeyDateFormatted: journeyDateFormatted,
         departure: selectedBus.departure,
         arrival: selectedBus.arrival,
         seatNo: seatNosStr,
+        seatNos: selectedSeats.map(s => s.seatNo),
         boardingPoint: selectedBoardingPoint ? selectedBoardingPoint.name : 'Contact Operator',
+        boardingPointId: selectedBoardingPoint ? selectedBoardingPoint.id : null,
         droppingPoint: selectedDroppingPoint ? selectedDroppingPoint.name : 'Contact Operator',
+        droppingPointId: selectedDroppingPoint ? selectedDroppingPoint.id : null,
         passengerName: passengers[0]?.name || 'Passenger 1',
         passengerAge: passengers[0]?.age || 25,
         passengerGender: passengers[0]?.gender || 'Male',
+        passengers: passengers,
         customerPhone: phone,
         customerEmail: email,
         baseFare: selectedSeats.reduce((sum, s) => sum + s.baseFare, 0),

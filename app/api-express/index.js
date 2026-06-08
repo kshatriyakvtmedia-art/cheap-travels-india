@@ -590,6 +590,193 @@ async function searchOperatorBuses(opKey, fromId, toId, date) {
   });
 }
 
+// ═══════════════════════════════════════════════
+//  B2B SEAT BLOCKING & BOOKING HELPERS
+// ═══════════════════════════════════════════════
+
+/**
+ * Block a seat on the B2B portal (Laxmi / RDLH).
+ * Called right after order creation, before payment.
+ * Returns the b2b_block_id (pnr) used to confirm later.
+ */
+async function blockSeatOnB2B(opKey, { realResId, fromId, toId, date, seatNos, boardingPointId, droppingPointId, passengerName, passengerAge, passengerGender, customerPhone }) {
+  const op = OPERATORS[opKey];
+  await ensureSession(opKey);
+
+  console.log(`[B2B Block] Blocking seat(s) ${seatNos} on ${op.name} (res ${realResId})...`);
+
+  // Step 1: Re-initialize the session route via a quick search (required by TicketSimply before seat ops)
+  const initParams = new URLSearchParams();
+  initParams.append('searchbus[from]', fromId);
+  initParams.append('searchbus[to]', toId);
+  initParams.append('searchbus[depart]', date);
+  initParams.append('searchbus[code]', '');
+  initParams.append('get_all_services', 'false');
+  initParams.append('rountrip_return', '');
+  initParams.append('render_new_dates', 'true');
+  initParams.append('prev_date_for_cal', '');
+  initParams.append('is_from_modify_org_dest_service_ac', '');
+  initParams.append('is_pickup_confirm_phone_block', 'false');
+  initParams.append('old_passanger_data_arr', '');
+  initParams.append('old_pnr_for_pickup_phone', '');
+  initParams.append('is_progressively_loading', 'false');
+  initParams.append('is_round_trip_parallel_booking', 'false');
+  initParams.append('show_connecting_services', 'false');
+  initParams.append('searchbus_allocation', '0');
+  initParams.append('can_block_or_unblock', 'false');
+
+  await fetchWithTimeoutAndRetry(`${op.url}/ibooking/bookings/search_service?${initParams.toString()}`, {
+    headers: {
+      'Cookie': op.sessionCookies.join('; '),
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Referer': `${op.url}/bookings`,
+      'X-CSRF-Token': op.csrfToken,
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  });
+
+  // Step 2: Build block_seat payload — TicketSimply expects one entry per seat
+  const blockBody = new URLSearchParams();
+  blockBody.append('res_id', realResId);
+  blockBody.append('booking_from', fromId);
+  blockBody.append('booking_to', toId);
+  blockBody.append('booking_date', date);
+  blockBody.append('boarding_stage', boardingPointId || '');
+  blockBody.append('dropping_stage', droppingPointId || '');
+  blockBody.append('pickup_confirm_phone', customerPhone || '');
+
+  // Append each seat
+  const seatsArr = Array.isArray(seatNos) ? seatNos : String(seatNos).split(',').map(s => s.trim());
+  seatsArr.forEach((seatNo, idx) => {
+    blockBody.append(`seat_no[${idx}]`, seatNo);
+    blockBody.append(`passenger_name[${idx}]`, passengerName || 'Passenger');
+    blockBody.append(`passenger_age[${idx}]`, String(passengerAge || 25));
+    blockBody.append(`passenger_sex[${idx}]`, passengerGender === 'Female' ? 'F' : 'M');
+  });
+
+  const blockRes = await fetchWithTimeoutAndRetry(`${op.url}/ibooking/bookings/block_seat`, {
+    method: 'POST',
+    headers: {
+      'Cookie': op.sessionCookies.join('; '),
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Referer': `${op.url}/ibooking/bookings/select_seat/${realResId}`,
+      'X-CSRF-Token': op.csrfToken,
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: blockBody.toString()
+  });
+
+  if (blockRes.status === 401) {
+    console.warn(`[B2B Block] Session expired (401) on ${op.name}. Re-authenticating...`);
+    await performLogin(opKey);
+    return blockSeatOnB2B(opKey, { realResId, fromId, toId, date, seatNos, boardingPointId, droppingPointId, passengerName, passengerAge, passengerGender, customerPhone });
+  }
+
+  const blockText = await blockRes.text();
+  const trimmedBlock = blockText.trim();
+
+  if (trimmedBlock.startsWith('<!DOCTYPE') || trimmedBlock.startsWith('<html') || trimmedBlock.includes('signin')) {
+    console.warn(`[B2B Block] Got login redirect from ${op.name}. Re-authenticating...`);
+    await performLogin(opKey);
+    return blockSeatOnB2B(opKey, { realResId, fromId, toId, date, seatNos, boardingPointId, droppingPointId, passengerName, passengerAge, passengerGender, customerPhone });
+  }
+
+  let blockJson;
+  try {
+    blockJson = JSON.parse(blockText);
+  } catch (e) {
+    console.error(`[B2B Block] Failed to parse block response from ${op.name}: ${blockText.substring(0, 200)}`);
+    throw new Error(`B2B block_seat returned non-JSON response from ${op.name}`);
+  }
+
+  // TicketSimply returns status:true/false and a pnr/block_id on success
+  if (!blockJson.status && !blockJson.success && !blockJson.pnr && !blockJson.block_id) {
+    console.error(`[B2B Block] Seat blocking FAILED on ${op.name}:`, JSON.stringify(blockJson).substring(0, 300));
+    throw new Error(blockJson.message || blockJson.error || `Seat block failed on ${op.name}`);
+  }
+
+  const blockId = blockJson.pnr || blockJson.block_id || blockJson.booking_id || String(blockJson.id || '');
+  console.log(`[B2B Block] SUCCESS on ${op.name} — Block ID: ${blockId}`);
+  return blockId;
+}
+
+/**
+ * Confirm a blocked booking on the B2B portal after payment is verified.
+ * Returns the real PNR string from the portal.
+ */
+async function confirmBookingOnB2B(opKey, { b2bBlockId, realResId, fromId, toId, date, seatNos, boardingPointId, droppingPointId, passengerName, passengerAge, passengerGender, customerPhone, customerEmail, totalPayable }) {
+  const op = OPERATORS[opKey];
+  await ensureSession(opKey);
+
+  console.log(`[B2B Confirm] Confirming booking block ID ${b2bBlockId} on ${op.name}...`);
+
+  const confirmBody = new URLSearchParams();
+  confirmBody.append('pnr', b2bBlockId);
+  confirmBody.append('res_id', realResId);
+  confirmBody.append('booking_from', fromId);
+  confirmBody.append('booking_to', toId);
+  confirmBody.append('booking_date', date);
+  confirmBody.append('boarding_stage', boardingPointId || '');
+  confirmBody.append('dropping_stage', droppingPointId || '');
+  confirmBody.append('mobile', customerPhone || '');
+  confirmBody.append('email', customerEmail || '');
+  confirmBody.append('amount', String(totalPayable || 0));
+
+  const seatsArr = Array.isArray(seatNos) ? seatNos : String(seatNos).split(',').map(s => s.trim());
+  seatsArr.forEach((seatNo, idx) => {
+    confirmBody.append(`seat_no[${idx}]`, seatNo);
+    confirmBody.append(`passenger_name[${idx}]`, passengerName || 'Passenger');
+    confirmBody.append(`passenger_age[${idx}]`, String(passengerAge || 25));
+    confirmBody.append(`passenger_sex[${idx}]`, passengerGender === 'Female' ? 'F' : 'M');
+  });
+
+  const confirmRes = await fetchWithTimeoutAndRetry(`${op.url}/ibooking/bookings/confirm_booking`, {
+    method: 'POST',
+    headers: {
+      'Cookie': op.sessionCookies.join('; '),
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Referer': `${op.url}/ibooking/bookings`,
+      'X-CSRF-Token': op.csrfToken,
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: confirmBody.toString()
+  });
+
+  if (confirmRes.status === 401) {
+    console.warn(`[B2B Confirm] Session expired (401) on ${op.name}. Re-authenticating...`);
+    await performLogin(opKey);
+    return confirmBookingOnB2B(opKey, { b2bBlockId, realResId, fromId, toId, date, seatNos, boardingPointId, droppingPointId, passengerName, passengerAge, passengerGender, customerPhone, customerEmail, totalPayable });
+  }
+
+  const confirmText = await confirmRes.text();
+  const trimmedConfirm = confirmText.trim();
+
+  if (trimmedConfirm.startsWith('<!DOCTYPE') || trimmedConfirm.startsWith('<html') || trimmedConfirm.includes('signin')) {
+    console.warn(`[B2B Confirm] Got login redirect from ${op.name}. Re-authenticating...`);
+    await performLogin(opKey);
+    return confirmBookingOnB2B(opKey, { b2bBlockId, realResId, fromId, toId, date, seatNos, boardingPointId, droppingPointId, passengerName, passengerAge, passengerGender, customerPhone, customerEmail, totalPayable });
+  }
+
+  let confirmJson;
+  try {
+    confirmJson = JSON.parse(confirmText);
+  } catch (e) {
+    console.error(`[B2B Confirm] Failed to parse confirm response from ${op.name}: ${confirmText.substring(0, 200)}`);
+    throw new Error(`B2B confirm_booking returned non-JSON response from ${op.name}`);
+  }
+
+  if (!confirmJson.status && !confirmJson.success && !confirmJson.pnr && !confirmJson.ticket_no) {
+    console.error(`[B2B Confirm] Booking confirmation FAILED on ${op.name}:`, JSON.stringify(confirmJson).substring(0, 300));
+    throw new Error(confirmJson.message || confirmJson.error || `Booking confirmation failed on ${op.name}`);
+  }
+
+  const realPnr = confirmJson.pnr || confirmJson.ticket_no || confirmJson.booking_ref || b2bBlockId;
+  console.log(`[B2B Confirm] SUCCESS on ${op.name} — Real PNR: ${realPnr}`);
+  return realPnr;
+}
+
 // Simulator helpers removed
 
 // API: Search buses
@@ -693,7 +880,16 @@ app.get('/api/search', apiLimiter, async (req, res) => {
       }
     });
 
+    // Relaxed filter: only drop buses whose route name explicitly belongs to a *different*
+    // origin city — not our searched city. This avoids dropping valid buses whose boarding
+    // point names don't literally contain the city name (e.g. "Cantt Bus Stand" vs "Varanasi").
+    // Buses that came from a specific operator search with matched city IDs are trusted by default.
     let realBuses = rawBuses.filter(bus => {
+      // If the bus has real (non-fallback) boarding points, trust the B2B portal result
+      const hasRealBoardingPoints = bus.boardingPoints.some(bp => bp.id !== 'fallback-bp');
+      if (hasRealBoardingPoints) return true;
+
+      // For fallback boarding point buses, verify routeName at least contains origin city
       const orig = fromName.toLowerCase();
       const routeMatches = bus.routeName.toLowerCase().includes(orig);
       const boardingMatches = bus.boardingPoints.some(bp => bp.name.toLowerCase().includes(orig));
@@ -702,7 +898,7 @@ app.get('/api/search', apiLimiter, async (req, res) => {
 
     let buses = realBuses;
 
-    // Track search analytics
+    console.log(`[Search] ${fromName} → ${toName} on ${date}: lxmi=${lxmiBuses.length}, rdlh=${rdlhBuses.length}, raw=${rawBuses.length}, afterFilter=${realBuses.length}`);
     trackEvent('search', { from: fromName, to: toName, date, realCount: realBuses.length, totalCount: buses.length });
 
     // Store in cache
@@ -999,7 +1195,7 @@ app.post('/api/payment/order', async (req, res) => {
   }
 });
 
-// API: Create Booking Order in held status
+// API: Create Booking Order in held status + Block seat on B2B portal
 app.post('/api/booking/create', async (req, res) => {
   const {
     provider,
@@ -1008,15 +1204,22 @@ app.post('/api/booking/create', async (req, res) => {
     busType,
     fromCity,
     toCity,
+    fromCityId,
+    toCityId,
     journeyDate,
+    journeyDateFormatted,
     departure,
     arrival,
     seatNo,
+    seatNos,
     boardingPoint,
+    boardingPointId,
     droppingPoint,
+    droppingPointId,
     passengerName,
     passengerAge,
     passengerGender,
+    passengers,
     customerPhone,
     customerEmail,
     baseFare,
@@ -1044,27 +1247,53 @@ app.post('/api/booking/create', async (req, res) => {
   const orderId = `CT-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
   const heldUntil = new Date(Date.now() + 8 * 60 * 1000).toISOString();
 
+  // Resolve the operator key and raw B2B res ID
+  const opKey = (provider === 'lxmi' || busExternalId.startsWith('lx-')) ? 'lxmi' : 'rdlh';
+  const realResId = busExternalId.replace('lx-', '').replace('rd-', '');
+
+  // Resolve city IDs for B2B portal
+  const { lxmiFromId, lxmiToId, rdlhFromId, rdlhToId } = resolveCityNamesAndIds(fromCityId || '', toCityId || '');
+  const b2bFromId = opKey === 'lxmi' ? lxmiFromId : rdlhFromId;
+  const b2bToId   = opKey === 'lxmi' ? lxmiToId   : rdlhToId;
+  const b2bDate   = journeyDateFormatted || '';
+
+  // Flatten seat numbers to an array
+  const seatsArray = Array.isArray(seatNos) && seatNos.length > 0
+    ? seatNos
+    : String(seatNo).split(',').map(s => s.trim()).filter(Boolean);
+
+  // Use first passenger details for the block call (portal requires at least one)
+  const firstPassenger = Array.isArray(passengers) && passengers.length > 0
+    ? passengers[0]
+    : { name: passengerName || 'Passenger', age: passengerAge || 25, gender: passengerGender || 'Male' };
+
   try {
+    // 1. Save order to our DB first (so we always have a record)
     const order = await prisma.order.create({
       data: {
         id: orderId,
         userId: userId || null,
         bookingReference: orderId,
-        provider: provider || 'lxmi',
+        provider: opKey,
         busExternalId: busExternalId,
         operator: operator || 'Operator',
         busType: busType || 'Standard',
         fromCity: fromCity || 'Source',
         toCity: toCity || 'Destination',
+        fromCityId: fromCityId || null,
+        toCityId: toCityId || null,
         journeyDate: journeyDate || 'Date',
+        journeyDateFormatted: b2bDate || null,
         departure: departure || '00:00',
         arrival: arrival || '00:00',
         seatNo: seatNo,
         boardingPoint: boardingPoint || 'Contact Operator',
+        boardingPointId: boardingPointId || null,
         droppingPoint: droppingPoint || 'Contact Operator',
-        passengerName: passengerName || null,
-        passengerAge: passengerAge ? parseInt(passengerAge) : null,
-        passengerGender: passengerGender || null,
+        droppingPointId: droppingPointId || null,
+        passengerName: firstPassenger.name || null,
+        passengerAge: firstPassenger.age ? parseInt(firstPassenger.age) : null,
+        passengerGender: firstPassenger.gender || null,
         customerPhone: customerPhone,
         customerEmail: customerEmail || null,
         baseFare: parseFloat(baseFare || totalPayable),
@@ -1072,15 +1301,62 @@ app.post('/api/booking/create', async (req, res) => {
         customerDiscount: parseFloat(customerDiscount || 0),
         totalPayable: parseFloat(totalPayable),
         status: 'held',
+        b2bBookingStatus: 'pending_block',
         heldUntil: heldUntil
       }
     });
+
+    // 2. Attempt to block the seat on the real B2B portal
+    let b2bBlockId = null;
+    if (b2bFromId && b2bToId && b2bDate) {
+      try {
+        b2bBlockId = await blockSeatOnB2B(opKey, {
+          realResId,
+          fromId: b2bFromId,
+          toId: b2bToId,
+          date: b2bDate,
+          seatNos: seatsArray,
+          boardingPointId: boardingPointId || '',
+          droppingPointId: droppingPointId || '',
+          passengerName: firstPassenger.name,
+          passengerAge: firstPassenger.age,
+          passengerGender: firstPassenger.gender,
+          customerPhone
+        });
+
+        // Store the block ID so we can confirm after payment
+        await prisma.order.update({
+          where: { id: orderId },
+          data: {
+            b2bBlockId: b2bBlockId,
+            b2bBookingStatus: 'blocked'
+          }
+        });
+
+        console.log(`[Booking Create] B2B seat blocked. Order ${orderId}, Block ID ${b2bBlockId}`);
+      } catch (b2bErr) {
+        // B2B block failed — log it but don't block the user from proceeding.
+        // The admin will need to manually book if payment goes through.
+        console.error(`[Booking Create] B2B block_seat FAILED for order ${orderId}:`, b2bErr.message);
+        await prisma.order.update({
+          where: { id: orderId },
+          data: { b2bBookingStatus: 'block_failed' }
+        }).catch(() => {});
+      }
+    } else {
+      console.warn(`[Booking Create] Missing B2B city IDs or date for order ${orderId}. Skipping B2B block. fromId=${b2bFromId}, toId=${b2bToId}, date=${b2bDate}`);
+      await prisma.order.update({
+        where: { id: orderId },
+        data: { b2bBookingStatus: 'skipped_missing_ids' }
+      }).catch(() => {});
+    }
 
     res.json({
       success: true,
       orderId: order.id,
       totalPayable: order.totalPayable,
-      heldUntil: order.heldUntil
+      heldUntil: order.heldUntil,
+      b2bBlocked: !!b2bBlockId
     });
   } catch (err) {
     console.error('Failed to create database order:', err.message);
@@ -1088,7 +1364,8 @@ app.post('/api/booking/create', async (req, res) => {
   }
 });
 
-// API: Verify Razorpay Payment and confirm order
+
+// API: Verify Razorpay Payment and confirm order + Confirm booking on B2B portal
 app.post('/api/payment/verify', async (req, res) => {
   const { orderId, paymentId, signature, passengers } = req.body;
 
@@ -1105,15 +1382,65 @@ app.post('/api/payment/verify', async (req, res) => {
       return res.status(404).json({ success: false, error: 'Order not found.' });
     }
 
-    const providerPnr = `${order.provider === 'lxmi' ? 'LXM' : 'RDL'}-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
+    // --- Attempt to confirm the real B2B booking ---
+    let realPnr = null;
+    const opKey = order.provider === 'lxmi' ? 'lxmi' : 'rdlh';
+    const realResId = order.busExternalId.replace('lx-', '').replace('rd-', '');
 
-    // Update Order to confirmed
-    const updatedOrder = await prisma.order.update({
+    // Resolve city IDs from stored values
+    const { lxmiFromId, lxmiToId, rdlhFromId, rdlhToId } = resolveCityNamesAndIds(
+      order.fromCityId || '',
+      order.toCityId || ''
+    );
+    const b2bFromId = opKey === 'lxmi' ? lxmiFromId : rdlhFromId;
+    const b2bToId   = opKey === 'lxmi' ? lxmiToId   : rdlhToId;
+    const b2bDate   = order.journeyDateFormatted || '';
+
+    // Use first passenger from the passed list, or fall back to DB record
+    const firstPax = Array.isArray(passengers) && passengers.length > 0
+      ? passengers[0]
+      : { name: order.passengerName, age: order.passengerAge, gender: order.passengerGender };
+    const seatsArray = String(order.seatNo).split(',').map(s => s.trim()).filter(Boolean);
+
+    if (order.b2bBlockId && b2bFromId && b2bToId && b2bDate) {
+      try {
+        realPnr = await confirmBookingOnB2B(opKey, {
+          b2bBlockId: order.b2bBlockId,
+          realResId,
+          fromId: b2bFromId,
+          toId: b2bToId,
+          date: b2bDate,
+          seatNos: seatsArray,
+          boardingPointId: order.boardingPointId || '',
+          droppingPointId: order.droppingPointId || '',
+          passengerName: firstPax.name,
+          passengerAge: firstPax.age,
+          passengerGender: firstPax.gender,
+          customerPhone: order.customerPhone,
+          customerEmail: order.customerEmail,
+          totalPayable: order.totalPayable
+        });
+        console.log(`[Payment Verify] B2B booking confirmed. Order ${orderId}, Real PNR: ${realPnr}`);
+      } catch (b2bErr) {
+        console.error(`[Payment Verify] B2B confirm_booking FAILED for order ${orderId}:`, b2bErr.message);
+        // Continue — we'll store a fallback PNR and admin can fix manually
+      }
+    } else {
+      console.warn(`[Payment Verify] No B2B block ID or missing city IDs for order ${orderId}. Skipping B2B confirm.`);
+    }
+
+    // Fallback PNR if B2B confirm failed or was skipped
+    const finalPnr = realPnr || `${opKey === 'lxmi' ? 'LXM' : 'RDL'}-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
+    const b2bConfirmed = !!realPnr;
+
+    // Update Order to confirmed in our DB
+    await prisma.order.update({
       where: { id: orderId },
       data: {
         status: 'confirmed',
         upiUtr: paymentId,
-        providerPnr: providerPnr,
+        providerPnr: finalPnr,
+        b2bBookingStatus: b2bConfirmed ? 'confirmed' : 'confirm_failed',
         confirmedAt: new Date()
       }
     });
@@ -1136,10 +1463,10 @@ app.post('/api/payment/verify', async (req, res) => {
     await prisma.ticket.create({
       data: {
         orderId: orderId,
-        pnr: providerPnr,
+        pnr: finalPnr,
         seatNumbers: order.seatNo,
         passengerDetailsJson: passengers || [{ seatNo: order.seatNo, name: order.passengerName, age: order.passengerAge, gender: order.passengerGender }],
-        ticketPdfUrl: `https://cheaptravels.in/tickets/${providerPnr}.pdf`
+        ticketPdfUrl: `https://cheaptravels.in/tickets/${finalPnr}.pdf`
       }
     });
 
@@ -1149,16 +1476,24 @@ app.post('/api/payment/verify', async (req, res) => {
         action: 'confirm_booking',
         entityType: 'order',
         entityId: orderId,
-        metadataJson: { pnr: providerPnr, paymentId },
+        metadataJson: { pnr: finalPnr, paymentId, b2bConfirmed, realPnr },
         ipAddress: req.ip || '0.0.0.0'
       }
     });
 
-    // Mock WhatsApp Ticket log
+    // Invalidate the search cache for this route+date so the next search shows seat as booked
+    if (b2bDate) {
+      const cacheKey = getSearchCacheKey(order.fromCityId || order.fromCity, order.toCityId || order.toCity, b2bDate);
+      searchCache.delete(cacheKey);
+      console.log(`[Cache Invalidate] Cleared search cache for ${cacheKey} after booking confirmation.`);
+    }
+
+    // WhatsApp/log delivery
     console.log(`\n=============================================`);
-    console.log(`[WhatsApp Ticket Delivery Service]`);
+    console.log(`[Ticket Delivery]`);
     console.log(`TO: ${order.customerPhone}`);
-    console.log(`MESSAGE: Sasti booking, pakka ticket. Your PNR is ${providerPnr} for seat(s) ${order.seatNo}. PDF: https://cheaptravels.in/tickets/${providerPnr}.pdf`);
+    console.log(`PNR: ${finalPnr} | Seat(s): ${order.seatNo} | B2B Confirmed: ${b2bConfirmed}`);
+    console.log(`PDF: https://cheaptravels.in/tickets/${finalPnr}.pdf`);
     console.log(`=============================================\n`);
 
     // Track analytics
@@ -1167,19 +1502,22 @@ app.post('/api/payment/verify', async (req, res) => {
       route: `${order.fromCity} → ${order.toCity}`,
       seats: order.seatNo,
       amount: order.totalPayable,
-      paymentId: paymentId
+      paymentId: paymentId,
+      b2bConfirmed
     });
 
     res.json({
       success: true,
-      pnr: providerPnr,
-      ticketUrl: `https://cheaptravels.in/tickets/${providerPnr}.pdf`
+      pnr: finalPnr,
+      b2bConfirmed,
+      ticketUrl: `https://cheaptravels.in/tickets/${finalPnr}.pdf`
     });
   } catch (err) {
     console.error('Payment verification failed:', err.message);
     res.status(500).json({ success: false, error: 'Payment verification failed.' });
   }
 });
+
 
 // API: Razorpay Webhook signature verification and handler
 app.post('/api/payment/webhook', async (req, res) => {
