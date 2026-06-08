@@ -120,7 +120,8 @@ const OPERATORS = {
     sessionCookies: [],
     csrfToken: '',
     lastLoginTime: 0,
-    cities: []
+    cities: [],
+    loginPromise: null
   },
   rdlh: {
     username: process.env.RDLH_USERNAME,
@@ -130,7 +131,8 @@ const OPERATORS = {
     sessionCookies: [],
     csrfToken: '',
     lastLoginTime: 0,
-    cities: []
+    cities: [],
+    loginPromise: null
   }
 };
 
@@ -169,79 +171,97 @@ async function getOperatorCredentials(opKey) {
 async function performLogin(opKey) {
   const op = OPERATORS[opKey];
   if (!op) throw new Error(`Unknown operator key: ${opKey}`);
-  
-  const creds = await getOperatorCredentials(opKey);
-  op.username = creds.username;
-  op.password = creds.password;
-  op.url = creds.url;
 
-  if (!op.username || !op.password) {
-    throw new Error(`Credentials for ${op.name} (key: ${opKey}) are not configured in DB or environment variables.`);
+  if (op.loginPromise) {
+    console.log(`[Login Lock] Reusing existing in-progress login sequence for ${op.name}...`);
+    return op.loginPromise;
   }
-  console.log(`Starting B2B portal login sequence for ${op.name}...`);
-  try {
 
+  op.loginPromise = (async () => {
+    // Clear old session cookies and token to ensure we start clean and don't carry over stale/corrupt cookies
+    op.sessionCookies = [];
+    op.csrfToken = '';
+    op.lastLoginTime = 0;
 
-    // 1. Fetch main page to get initial cookies and CSRF token
-    const initialRes = await fetchWithTimeoutAndRetry(op.url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      }
-    });
-    const text = await initialRes.text();
-    const headers = initialRes.headers;
-    
-    // Extract CSRF token
-    const tokenMatch = text.match(/name="csrf-token" content="([^"]+)"/) || text.match(/name="authenticity_token" value="([^"]+)"/);
-    op.csrfToken = tokenMatch ? tokenMatch[1] : '';
-    
-    // Extract cookies
-    const cookies = [];
-    headers.forEach((value, name) => {
-      if (name.toLowerCase() === 'set-cookie') {
-        cookies.push(value.split(';')[0]);
-      }
-    });
+    const creds = await getOperatorCredentials(opKey);
+    op.username = creds.username;
+    op.password = creds.password;
+    op.url = creds.url;
 
-    if (!op.csrfToken) {
-      throw new Error(`Could not retrieve authenticity token from ${op.name} login page.`);
+    if (!op.username || !op.password) {
+      throw new Error(`Credentials for ${op.name} (key: ${opKey}) are not configured in DB or environment variables.`);
     }
+    console.log(`Starting B2B portal login sequence for ${op.name}...`);
+    try {
+      // 1. Fetch main page to get initial cookies and CSRF token
+      const initialRes = await fetchWithTimeoutAndRetry(op.url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+      });
+      const text = await initialRes.text();
+      const headers = initialRes.headers;
+      
+      // Extract CSRF token
+      const tokenMatch = text.match(/name="csrf-token" content="([^"]+)"/) || text.match(/name="authenticity_token" value="([^"]+)"/);
+      op.csrfToken = tokenMatch ? tokenMatch[1] : '';
+      
+      // Extract cookies
+      const cookies = [];
+      headers.forEach((value, name) => {
+        if (name.toLowerCase() === 'set-cookie') {
+          cookies.push(value.split(';')[0]);
+        }
+      });
 
-    // 2. Perform POST to signin endpoint
-    const bodyParams = new URLSearchParams();
-    bodyParams.append("login", op.username);
-    bodyParams.append("password", op.password);
-    bodyParams.append("login_flag", "");
-    bodyParams.append("authenticity_token", op.csrfToken);
-
-    const loginRes = await fetchWithTimeoutAndRetry(`${op.url}/account/signin`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": cookies.join("; "),
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Referer": `${op.url}/`,
-        "X-CSRF-Token": op.csrfToken,
-        "X-Requested-With": "XMLHttpRequest"
-      },
-      body: bodyParams.toString(),
-      redirect: "manual"
-    });
-
-    const finalCookies = [...cookies];
-    loginRes.headers.forEach((value, name) => {
-      if (name.toLowerCase() === 'set-cookie') {
-        finalCookies.push(value.split(';')[0]);
+      if (!op.csrfToken) {
+        throw new Error(`Could not retrieve authenticity token from ${op.name} login page.`);
       }
-    });
 
-    op.sessionCookies = finalCookies;
-    op.lastLoginTime = Date.now();
-    console.log(`Logged in successfully to ${op.name}! Cookies locked.`);
-    return true;
-  } catch (error) {
-    console.error(`Login attempt failed for ${op.name}:`, error.message);
-    throw error;
+      // 2. Perform POST to signin endpoint
+      const bodyParams = new URLSearchParams();
+      bodyParams.append("login", op.username);
+      bodyParams.append("password", op.password);
+      bodyParams.append("login_flag", "");
+      bodyParams.append("authenticity_token", op.csrfToken);
+
+      const loginRes = await fetchWithTimeoutAndRetry(`${op.url}/account/signin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Cookie": cookies.join("; "),
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Referer": `${op.url}/`,
+          "X-CSRF-Token": op.csrfToken,
+          "X-Requested-With": "XMLHttpRequest"
+        },
+        body: bodyParams.toString(),
+        redirect: "manual"
+      });
+
+      const finalCookies = [...cookies];
+      loginRes.headers.forEach((value, name) => {
+        if (name.toLowerCase() === 'set-cookie') {
+          finalCookies.push(value.split(';')[0]);
+        }
+      });
+
+      op.sessionCookies = finalCookies;
+      op.lastLoginTime = Date.now();
+      console.log(`Logged in successfully to ${op.name}! Cookies locked.`);
+      return true;
+    } catch (error) {
+      console.error(`Login attempt failed for ${op.name}:`, error.message);
+      throw error;
+    }
+  })();
+
+  try {
+    const result = await op.loginPromise;
+    return result;
+  } finally {
+    // Clear active login promise after it completes (success or failure)
+    op.loginPromise = null;
   }
 }
 
@@ -590,6 +610,193 @@ async function searchOperatorBuses(opKey, fromId, toId, date) {
   });
 }
 
+// ═══════════════════════════════════════════════
+//  B2B SEAT BLOCKING & BOOKING HELPERS
+// ═══════════════════════════════════════════════
+
+/**
+ * Block a seat on the B2B portal (Laxmi / RDLH).
+ * Called right after order creation, before payment.
+ * Returns the b2b_block_id (pnr) used to confirm later.
+ */
+async function blockSeatOnB2B(opKey, { realResId, fromId, toId, date, seatNos, boardingPointId, droppingPointId, passengerName, passengerAge, passengerGender, customerPhone }) {
+  const op = OPERATORS[opKey];
+  await ensureSession(opKey);
+
+  console.log(`[B2B Block] Blocking seat(s) ${seatNos} on ${op.name} (res ${realResId})...`);
+
+  // Step 1: Re-initialize the session route via a quick search (required by TicketSimply before seat ops)
+  const initParams = new URLSearchParams();
+  initParams.append('searchbus[from]', fromId);
+  initParams.append('searchbus[to]', toId);
+  initParams.append('searchbus[depart]', date);
+  initParams.append('searchbus[code]', '');
+  initParams.append('get_all_services', 'false');
+  initParams.append('rountrip_return', '');
+  initParams.append('render_new_dates', 'true');
+  initParams.append('prev_date_for_cal', '');
+  initParams.append('is_from_modify_org_dest_service_ac', '');
+  initParams.append('is_pickup_confirm_phone_block', 'false');
+  initParams.append('old_passanger_data_arr', '');
+  initParams.append('old_pnr_for_pickup_phone', '');
+  initParams.append('is_progressively_loading', 'false');
+  initParams.append('is_round_trip_parallel_booking', 'false');
+  initParams.append('show_connecting_services', 'false');
+  initParams.append('searchbus_allocation', '0');
+  initParams.append('can_block_or_unblock', 'false');
+
+  await fetchWithTimeoutAndRetry(`${op.url}/ibooking/bookings/search_service?${initParams.toString()}`, {
+    headers: {
+      'Cookie': op.sessionCookies.join('; '),
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Referer': `${op.url}/bookings`,
+      'X-CSRF-Token': op.csrfToken,
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  });
+
+  // Step 2: Build block_seat payload — TicketSimply expects one entry per seat
+  const blockBody = new URLSearchParams();
+  blockBody.append('res_id', realResId);
+  blockBody.append('booking_from', fromId);
+  blockBody.append('booking_to', toId);
+  blockBody.append('booking_date', date);
+  blockBody.append('boarding_stage', boardingPointId || '');
+  blockBody.append('dropping_stage', droppingPointId || '');
+  blockBody.append('pickup_confirm_phone', customerPhone || '');
+
+  // Append each seat
+  const seatsArr = Array.isArray(seatNos) ? seatNos : String(seatNos).split(',').map(s => s.trim());
+  seatsArr.forEach((seatNo, idx) => {
+    blockBody.append(`seat_no[${idx}]`, seatNo);
+    blockBody.append(`passenger_name[${idx}]`, passengerName || 'Passenger');
+    blockBody.append(`passenger_age[${idx}]`, String(passengerAge || 25));
+    blockBody.append(`passenger_sex[${idx}]`, passengerGender === 'Female' ? 'F' : 'M');
+  });
+
+  const blockRes = await fetchWithTimeoutAndRetry(`${op.url}/ibooking/bookings/block_seat`, {
+    method: 'POST',
+    headers: {
+      'Cookie': op.sessionCookies.join('; '),
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Referer': `${op.url}/ibooking/bookings/select_seat/${realResId}`,
+      'X-CSRF-Token': op.csrfToken,
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: blockBody.toString()
+  });
+
+  if (blockRes.status === 401) {
+    console.warn(`[B2B Block] Session expired (401) on ${op.name}. Re-authenticating...`);
+    await performLogin(opKey);
+    return blockSeatOnB2B(opKey, { realResId, fromId, toId, date, seatNos, boardingPointId, droppingPointId, passengerName, passengerAge, passengerGender, customerPhone });
+  }
+
+  const blockText = await blockRes.text();
+  const trimmedBlock = blockText.trim();
+
+  if (trimmedBlock.startsWith('<!DOCTYPE') || trimmedBlock.startsWith('<html') || trimmedBlock.includes('signin')) {
+    console.warn(`[B2B Block] Got login redirect from ${op.name}. Re-authenticating...`);
+    await performLogin(opKey);
+    return blockSeatOnB2B(opKey, { realResId, fromId, toId, date, seatNos, boardingPointId, droppingPointId, passengerName, passengerAge, passengerGender, customerPhone });
+  }
+
+  let blockJson;
+  try {
+    blockJson = JSON.parse(blockText);
+  } catch (e) {
+    console.error(`[B2B Block] Failed to parse block response from ${op.name}: ${blockText.substring(0, 200)}`);
+    throw new Error(`B2B block_seat returned non-JSON response from ${op.name}`);
+  }
+
+  // TicketSimply returns status:true/false and a pnr/block_id on success
+  if (!blockJson.status && !blockJson.success && !blockJson.pnr && !blockJson.block_id) {
+    console.error(`[B2B Block] Seat blocking FAILED on ${op.name}:`, JSON.stringify(blockJson).substring(0, 300));
+    throw new Error(blockJson.message || blockJson.error || `Seat block failed on ${op.name}`);
+  }
+
+  const blockId = blockJson.pnr || blockJson.block_id || blockJson.booking_id || String(blockJson.id || '');
+  console.log(`[B2B Block] SUCCESS on ${op.name} — Block ID: ${blockId}`);
+  return blockId;
+}
+
+/**
+ * Confirm a blocked booking on the B2B portal after payment is verified.
+ * Returns the real PNR string from the portal.
+ */
+async function confirmBookingOnB2B(opKey, { b2bBlockId, realResId, fromId, toId, date, seatNos, boardingPointId, droppingPointId, passengerName, passengerAge, passengerGender, customerPhone, customerEmail, totalPayable }) {
+  const op = OPERATORS[opKey];
+  await ensureSession(opKey);
+
+  console.log(`[B2B Confirm] Confirming booking block ID ${b2bBlockId} on ${op.name}...`);
+
+  const confirmBody = new URLSearchParams();
+  confirmBody.append('pnr', b2bBlockId);
+  confirmBody.append('res_id', realResId);
+  confirmBody.append('booking_from', fromId);
+  confirmBody.append('booking_to', toId);
+  confirmBody.append('booking_date', date);
+  confirmBody.append('boarding_stage', boardingPointId || '');
+  confirmBody.append('dropping_stage', droppingPointId || '');
+  confirmBody.append('mobile', customerPhone || '');
+  confirmBody.append('email', customerEmail || '');
+  confirmBody.append('amount', String(totalPayable || 0));
+
+  const seatsArr = Array.isArray(seatNos) ? seatNos : String(seatNos).split(',').map(s => s.trim());
+  seatsArr.forEach((seatNo, idx) => {
+    confirmBody.append(`seat_no[${idx}]`, seatNo);
+    confirmBody.append(`passenger_name[${idx}]`, passengerName || 'Passenger');
+    confirmBody.append(`passenger_age[${idx}]`, String(passengerAge || 25));
+    confirmBody.append(`passenger_sex[${idx}]`, passengerGender === 'Female' ? 'F' : 'M');
+  });
+
+  const confirmRes = await fetchWithTimeoutAndRetry(`${op.url}/ibooking/bookings/confirm_booking`, {
+    method: 'POST',
+    headers: {
+      'Cookie': op.sessionCookies.join('; '),
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Referer': `${op.url}/ibooking/bookings`,
+      'X-CSRF-Token': op.csrfToken,
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: confirmBody.toString()
+  });
+
+  if (confirmRes.status === 401) {
+    console.warn(`[B2B Confirm] Session expired (401) on ${op.name}. Re-authenticating...`);
+    await performLogin(opKey);
+    return confirmBookingOnB2B(opKey, { b2bBlockId, realResId, fromId, toId, date, seatNos, boardingPointId, droppingPointId, passengerName, passengerAge, passengerGender, customerPhone, customerEmail, totalPayable });
+  }
+
+  const confirmText = await confirmRes.text();
+  const trimmedConfirm = confirmText.trim();
+
+  if (trimmedConfirm.startsWith('<!DOCTYPE') || trimmedConfirm.startsWith('<html') || trimmedConfirm.includes('signin')) {
+    console.warn(`[B2B Confirm] Got login redirect from ${op.name}. Re-authenticating...`);
+    await performLogin(opKey);
+    return confirmBookingOnB2B(opKey, { b2bBlockId, realResId, fromId, toId, date, seatNos, boardingPointId, droppingPointId, passengerName, passengerAge, passengerGender, customerPhone, customerEmail, totalPayable });
+  }
+
+  let confirmJson;
+  try {
+    confirmJson = JSON.parse(confirmText);
+  } catch (e) {
+    console.error(`[B2B Confirm] Failed to parse confirm response from ${op.name}: ${confirmText.substring(0, 200)}`);
+    throw new Error(`B2B confirm_booking returned non-JSON response from ${op.name}`);
+  }
+
+  if (!confirmJson.status && !confirmJson.success && !confirmJson.pnr && !confirmJson.ticket_no) {
+    console.error(`[B2B Confirm] Booking confirmation FAILED on ${op.name}:`, JSON.stringify(confirmJson).substring(0, 300));
+    throw new Error(confirmJson.message || confirmJson.error || `Booking confirmation failed on ${op.name}`);
+  }
+
+  const realPnr = confirmJson.pnr || confirmJson.ticket_no || confirmJson.booking_ref || b2bBlockId;
+  console.log(`[B2B Confirm] SUCCESS on ${op.name} — Real PNR: ${realPnr}`);
+  return realPnr;
+}
+
 // Simulator helpers removed
 
 // API: Search buses
@@ -693,7 +900,16 @@ app.get('/api/search', apiLimiter, async (req, res) => {
       }
     });
 
+    // Relaxed filter: only drop buses whose route name explicitly belongs to a *different*
+    // origin city — not our searched city. This avoids dropping valid buses whose boarding
+    // point names don't literally contain the city name (e.g. "Cantt Bus Stand" vs "Varanasi").
+    // Buses that came from a specific operator search with matched city IDs are trusted by default.
     let realBuses = rawBuses.filter(bus => {
+      // If the bus has real (non-fallback) boarding points, trust the B2B portal result
+      const hasRealBoardingPoints = bus.boardingPoints.some(bp => bp.id !== 'fallback-bp');
+      if (hasRealBoardingPoints) return true;
+
+      // For fallback boarding point buses, verify routeName at least contains origin city
       const orig = fromName.toLowerCase();
       const routeMatches = bus.routeName.toLowerCase().includes(orig);
       const boardingMatches = bus.boardingPoints.some(bp => bp.name.toLowerCase().includes(orig));
@@ -702,7 +918,7 @@ app.get('/api/search', apiLimiter, async (req, res) => {
 
     let buses = realBuses;
 
-    // Track search analytics
+    console.log(`[Search] ${fromName} → ${toName} on ${date}: lxmi=${lxmiBuses.length}, rdlh=${rdlhBuses.length}, raw=${rawBuses.length}, afterFilter=${realBuses.length}`);
     trackEvent('search', { from: fromName, to: toName, date, realCount: realBuses.length, totalCount: buses.length });
 
     // Store in cache
@@ -729,45 +945,71 @@ app.get('/api/search', apiLimiter, async (req, res) => {
 // Helper to extract HTML strings from jQuery .html("...") calls in the JS response
 function extractHtmlFromJs(jsText) {
   let accumulatedHtml = "";
-  let pos = 0;
-  while (true) {
-    const startIdx = jsText.indexOf('.html("', pos);
-    if (startIdx === -1) break;
-    
-    const stringStart = startIdx + '.html("'.length;
-    let stringEnd = -1;
-    for (let i = stringStart; i < jsText.length; i++) {
-      if (jsText[i] === '"') {
-        let backslashCount = 0;
-        let j = i - 1;
-        while (j >= stringStart && jsText[j] === '\\') {
-          backslashCount++;
-          j--;
-        }
-        if (backslashCount % 2 === 0) {
-          stringEnd = i;
-          break;
+
+  // TicketSimply uses both single-quoted and double-quoted .html('...') / .html("...")
+  // We must handle both or the entire seat table will be missed.
+  function extractQuotedStrings(text, quote) {
+    const marker = `.html(${quote}`;
+    let pos = 0;
+    const results = [];
+    while (true) {
+      const startIdx = text.indexOf(marker, pos);
+      if (startIdx === -1) break;
+
+      const stringStart = startIdx + marker.length;
+      let stringEnd = -1;
+      for (let i = stringStart; i < text.length; i++) {
+        if (text[i] === quote) {
+          // Count preceding backslashes to handle escaping
+          let backslashCount = 0;
+          let j = i - 1;
+          while (j >= stringStart && text[j] === '\\') {
+            backslashCount++;
+            j--;
+          }
+          if (backslashCount % 2 === 0) {
+            stringEnd = i;
+            break;
+          }
         }
       }
+
+      if (stringEnd !== -1) {
+        const escapedStr = text.substring(stringStart, stringEnd);
+        // Unescape the string — handle both quote variants and common escape sequences
+        const unescapedStr = escapedStr
+          .replace(/\\"/g, '"')
+          .replace(/\\'/g, "'")
+          .replace(/\\n/g, '\n')
+          .replace(/\\t/g, '\t')
+          .replace(/\\r/g, '\r')
+          .replace(/\\\//g, '/');
+        results.push({ pos: startIdx, html: unescapedStr });
+        pos = stringEnd + 1;
+      } else {
+        pos = stringStart;
+      }
     }
-    
-    if (stringEnd !== -1) {
-      const escapedStr = jsText.substring(stringStart, stringEnd);
-      const unescapedStr = escapedStr
-        .replace(/\\"/g, '"')
-        .replace(/\\'/g, "'")
-        .replace(/\\n/g, '\n')
-        .replace(/\\t/g, '\t')
-        .replace(/\\r/g, '\r')
-        .replace(/\\\//g, '/');
-      accumulatedHtml += unescapedStr + "\n";
-      pos = stringEnd + 1;
-    } else {
-      pos = stringStart;
+    return results;
+  }
+
+  // Gather all .html() calls (single and double quoted) sorted by position
+  const doubleQuoted = extractQuotedStrings(jsText, '"');
+  const singleQuoted = extractQuotedStrings(jsText, "'");
+  const allChunks = [...doubleQuoted, ...singleQuoted].sort((a, b) => a.pos - b.pos);
+
+  // Deduplicate overlapping chunks (keep the one starting earlier)
+  const seen = new Set();
+  for (const chunk of allChunks) {
+    if (!seen.has(chunk.pos)) {
+      seen.add(chunk.pos);
+      accumulatedHtml += chunk.html + "\n";
     }
   }
+
   return accumulatedHtml;
 }
+
 
 // API: Get coach layout for seat selection
 app.get('/api/layout/:resId', async (req, res) => {
@@ -904,7 +1146,23 @@ app.get('/api/layout/:resId', async (req, res) => {
         }
 
         const isAvailable = $(td).hasClass('available_seat');
-        const isBooked = $(td).hasClass('booked_seat') || $(td).hasClass('blocked_seat') || $(td).hasClass('phone_blocked_seat') || $(td).hasClass('booked_by_ladies_seat') || $(td).hasClass('booked_by_gents_seat');
+
+        // All known TicketSimply booked/blocked seat class variants:
+        const isBooked = (
+          $(td).hasClass('booked_seat') ||
+          $(td).hasClass('blocked_seat') ||
+          $(td).hasClass('phone_blocked_seat') ||
+          $(td).hasClass('booked_by_ladies_seat') ||
+          $(td).hasClass('booked_by_gents_seat') ||
+          $(td).hasClass('agent_blocked_seat') ||
+          $(td).hasClass('seat_block') ||
+          $(td).hasClass('temp_block') ||
+          $(td).hasClass('locked_seat') ||
+          $(td).hasClass('selected_seat') ||
+          // Fallback: seat has no 'available_seat' class AND has a seatNo (real seat, not gangway)
+          (!isAvailable && !$(td).hasClass('ladies_seat') && seatNo && $(td).attr('data-seatnumber'))
+        );
+
         const isLadies = $(td).hasClass('booked_by_ladies_seat') || $(td).hasClass('ladies_adjacent_seat') || $(td).hasClass('ladies_seat') || ladiesAdjacent.includes(seatNo) || ladiesQuota.includes(seatNo);
         
         // Determine seat type (Sleeper vs Seater)
@@ -999,7 +1257,7 @@ app.post('/api/payment/order', async (req, res) => {
   }
 });
 
-// API: Create Booking Order in held status
+// API: Create Booking Order in held status + Block seat on B2B portal
 app.post('/api/booking/create', async (req, res) => {
   const {
     provider,
@@ -1008,15 +1266,22 @@ app.post('/api/booking/create', async (req, res) => {
     busType,
     fromCity,
     toCity,
+    fromCityId,
+    toCityId,
     journeyDate,
+    journeyDateFormatted,
     departure,
     arrival,
     seatNo,
+    seatNos,
     boardingPoint,
+    boardingPointId,
     droppingPoint,
+    droppingPointId,
     passengerName,
     passengerAge,
     passengerGender,
+    passengers,
     customerPhone,
     customerEmail,
     baseFare,
@@ -1037,38 +1302,60 @@ app.post('/api/booking/create', async (req, res) => {
     try {
       const { verifyAccessToken } = require('../lib/auth');
       const decoded = verifyAccessToken(authCookie);
-      if (decoded) {
-        userId = decoded.id;
-      }
-    } catch (e) {
-      console.error('Failed to verify access token during booking creation:', e.message);
-    }
+      if (decoded) userId = decoded.id;
+    } catch (e) {}
   }
 
   const orderId = `CT-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
   const heldUntil = new Date(Date.now() + 8 * 60 * 1000).toISOString();
 
+  // Resolve the operator key and raw B2B res ID
+  const opKey = (provider === 'lxmi' || busExternalId.startsWith('lx-')) ? 'lxmi' : 'rdlh';
+  const realResId = busExternalId.replace('lx-', '').replace('rd-', '');
+
+  // Resolve city IDs for B2B portal
+  const { lxmiFromId, lxmiToId, rdlhFromId, rdlhToId } = resolveCityNamesAndIds(fromCityId || '', toCityId || '');
+  const b2bFromId = opKey === 'lxmi' ? lxmiFromId : rdlhFromId;
+  const b2bToId   = opKey === 'lxmi' ? lxmiToId   : rdlhToId;
+  const b2bDate   = journeyDateFormatted || '';
+
+  // Flatten seat numbers to an array
+  const seatsArray = Array.isArray(seatNos) && seatNos.length > 0
+    ? seatNos
+    : String(seatNo).split(',').map(s => s.trim()).filter(Boolean);
+
+  // Use first passenger details for the block call (portal requires at least one)
+  const firstPassenger = Array.isArray(passengers) && passengers.length > 0
+    ? passengers[0]
+    : { name: passengerName || 'Passenger', age: passengerAge || 25, gender: passengerGender || 'Male' };
+
   try {
+    // 1. Save order to our DB first (so we always have a record)
     const order = await prisma.order.create({
       data: {
         id: orderId,
         userId: userId || null,
         bookingReference: orderId,
-        provider: provider || 'lxmi',
+        provider: opKey,
         busExternalId: busExternalId,
         operator: operator || 'Operator',
         busType: busType || 'Standard',
         fromCity: fromCity || 'Source',
         toCity: toCity || 'Destination',
+        fromCityId: fromCityId || null,
+        toCityId: toCityId || null,
         journeyDate: journeyDate || 'Date',
+        journeyDateFormatted: b2bDate || null,
         departure: departure || '00:00',
         arrival: arrival || '00:00',
         seatNo: seatNo,
         boardingPoint: boardingPoint || 'Contact Operator',
+        boardingPointId: boardingPointId || null,
         droppingPoint: droppingPoint || 'Contact Operator',
-        passengerName: passengerName || null,
-        passengerAge: passengerAge ? parseInt(passengerAge) : null,
-        passengerGender: passengerGender || null,
+        droppingPointId: droppingPointId || null,
+        passengerName: firstPassenger.name || null,
+        passengerAge: firstPassenger.age ? parseInt(firstPassenger.age) : null,
+        passengerGender: firstPassenger.gender || null,
         customerPhone: customerPhone,
         customerEmail: customerEmail || null,
         baseFare: parseFloat(baseFare || totalPayable),
@@ -1076,15 +1363,62 @@ app.post('/api/booking/create', async (req, res) => {
         customerDiscount: parseFloat(customerDiscount || 0),
         totalPayable: parseFloat(totalPayable),
         status: 'held',
+        b2bBookingStatus: 'pending_block',
         heldUntil: heldUntil
       }
     });
+
+    // 2. Attempt to block the seat on the real B2B portal
+    let b2bBlockId = null;
+    if (b2bFromId && b2bToId && b2bDate) {
+      try {
+        b2bBlockId = await blockSeatOnB2B(opKey, {
+          realResId,
+          fromId: b2bFromId,
+          toId: b2bToId,
+          date: b2bDate,
+          seatNos: seatsArray,
+          boardingPointId: boardingPointId || '',
+          droppingPointId: droppingPointId || '',
+          passengerName: firstPassenger.name,
+          passengerAge: firstPassenger.age,
+          passengerGender: firstPassenger.gender,
+          customerPhone
+        });
+
+        // Store the block ID so we can confirm after payment
+        await prisma.order.update({
+          where: { id: orderId },
+          data: {
+            b2bBlockId: b2bBlockId,
+            b2bBookingStatus: 'blocked'
+          }
+        });
+
+        console.log(`[Booking Create] B2B seat blocked. Order ${orderId}, Block ID ${b2bBlockId}`);
+      } catch (b2bErr) {
+        // B2B block failed — log it but don't block the user from proceeding.
+        // The admin will need to manually book if payment goes through.
+        console.error(`[Booking Create] B2B block_seat FAILED for order ${orderId}:`, b2bErr.message);
+        await prisma.order.update({
+          where: { id: orderId },
+          data: { b2bBookingStatus: 'block_failed' }
+        }).catch(() => {});
+      }
+    } else {
+      console.warn(`[Booking Create] Missing B2B city IDs or date for order ${orderId}. Skipping B2B block. fromId=${b2bFromId}, toId=${b2bToId}, date=${b2bDate}`);
+      await prisma.order.update({
+        where: { id: orderId },
+        data: { b2bBookingStatus: 'skipped_missing_ids' }
+      }).catch(() => {});
+    }
 
     res.json({
       success: true,
       orderId: order.id,
       totalPayable: order.totalPayable,
-      heldUntil: order.heldUntil
+      heldUntil: order.heldUntil,
+      b2bBlocked: !!b2bBlockId
     });
   } catch (err) {
     console.error('Failed to create database order:', err.message);
@@ -1092,7 +1426,8 @@ app.post('/api/booking/create', async (req, res) => {
   }
 });
 
-// API: Verify Razorpay Payment and confirm order
+
+// API: Verify Razorpay Payment and confirm order + Confirm booking on B2B portal
 app.post('/api/payment/verify', async (req, res) => {
   const { orderId, paymentId, signature, passengers } = req.body;
 
@@ -1109,15 +1444,65 @@ app.post('/api/payment/verify', async (req, res) => {
       return res.status(404).json({ success: false, error: 'Order not found.' });
     }
 
-    const providerPnr = `${order.provider === 'lxmi' ? 'LXM' : 'RDL'}-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
+    // --- Attempt to confirm the real B2B booking ---
+    let realPnr = null;
+    const opKey = order.provider === 'lxmi' ? 'lxmi' : 'rdlh';
+    const realResId = order.busExternalId.replace('lx-', '').replace('rd-', '');
 
-    // Update Order to confirmed
-    const updatedOrder = await prisma.order.update({
+    // Resolve city IDs from stored values
+    const { lxmiFromId, lxmiToId, rdlhFromId, rdlhToId } = resolveCityNamesAndIds(
+      order.fromCityId || '',
+      order.toCityId || ''
+    );
+    const b2bFromId = opKey === 'lxmi' ? lxmiFromId : rdlhFromId;
+    const b2bToId   = opKey === 'lxmi' ? lxmiToId   : rdlhToId;
+    const b2bDate   = order.journeyDateFormatted || '';
+
+    // Use first passenger from the passed list, or fall back to DB record
+    const firstPax = Array.isArray(passengers) && passengers.length > 0
+      ? passengers[0]
+      : { name: order.passengerName, age: order.passengerAge, gender: order.passengerGender };
+    const seatsArray = String(order.seatNo).split(',').map(s => s.trim()).filter(Boolean);
+
+    if (order.b2bBlockId && b2bFromId && b2bToId && b2bDate) {
+      try {
+        realPnr = await confirmBookingOnB2B(opKey, {
+          b2bBlockId: order.b2bBlockId,
+          realResId,
+          fromId: b2bFromId,
+          toId: b2bToId,
+          date: b2bDate,
+          seatNos: seatsArray,
+          boardingPointId: order.boardingPointId || '',
+          droppingPointId: order.droppingPointId || '',
+          passengerName: firstPax.name,
+          passengerAge: firstPax.age,
+          passengerGender: firstPax.gender,
+          customerPhone: order.customerPhone,
+          customerEmail: order.customerEmail,
+          totalPayable: order.totalPayable
+        });
+        console.log(`[Payment Verify] B2B booking confirmed. Order ${orderId}, Real PNR: ${realPnr}`);
+      } catch (b2bErr) {
+        console.error(`[Payment Verify] B2B confirm_booking FAILED for order ${orderId}:`, b2bErr.message);
+        // Continue — we'll store a fallback PNR and admin can fix manually
+      }
+    } else {
+      console.warn(`[Payment Verify] No B2B block ID or missing city IDs for order ${orderId}. Skipping B2B confirm.`);
+    }
+
+    // Fallback PNR if B2B confirm failed or was skipped
+    const finalPnr = realPnr || `${opKey === 'lxmi' ? 'LXM' : 'RDL'}-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
+    const b2bConfirmed = !!realPnr;
+
+    // Update Order to confirmed in our DB
+    await prisma.order.update({
       where: { id: orderId },
       data: {
         status: 'confirmed',
         upiUtr: paymentId,
-        providerPnr: providerPnr,
+        providerPnr: finalPnr,
+        b2bBookingStatus: b2bConfirmed ? 'confirmed' : 'confirm_failed',
         confirmedAt: new Date()
       }
     });
@@ -1140,10 +1525,10 @@ app.post('/api/payment/verify', async (req, res) => {
     await prisma.ticket.create({
       data: {
         orderId: orderId,
-        pnr: providerPnr,
+        pnr: finalPnr,
         seatNumbers: order.seatNo,
         passengerDetailsJson: passengers || [{ seatNo: order.seatNo, name: order.passengerName, age: order.passengerAge, gender: order.passengerGender }],
-        ticketPdfUrl: `https://cheaptravels.in/tickets/${providerPnr}.pdf`
+        ticketPdfUrl: `https://cheaptravels.in/tickets/${finalPnr}.pdf`
       }
     });
 
@@ -1153,16 +1538,24 @@ app.post('/api/payment/verify', async (req, res) => {
         action: 'confirm_booking',
         entityType: 'order',
         entityId: orderId,
-        metadataJson: { pnr: providerPnr, paymentId },
+        metadataJson: { pnr: finalPnr, paymentId, b2bConfirmed, realPnr },
         ipAddress: req.ip || '0.0.0.0'
       }
     });
 
-    // Mock WhatsApp Ticket log
+    // Invalidate the search cache for this route+date so the next search shows seat as booked
+    if (b2bDate) {
+      const cacheKey = getSearchCacheKey(order.fromCityId || order.fromCity, order.toCityId || order.toCity, b2bDate);
+      searchCache.delete(cacheKey);
+      console.log(`[Cache Invalidate] Cleared search cache for ${cacheKey} after booking confirmation.`);
+    }
+
+    // WhatsApp/log delivery
     console.log(`\n=============================================`);
-    console.log(`[WhatsApp Ticket Delivery Service]`);
+    console.log(`[Ticket Delivery]`);
     console.log(`TO: ${order.customerPhone}`);
-    console.log(`MESSAGE: Sasti booking, pakka ticket. Your PNR is ${providerPnr} for seat(s) ${order.seatNo}. PDF: https://cheaptravels.in/tickets/${providerPnr}.pdf`);
+    console.log(`PNR: ${finalPnr} | Seat(s): ${order.seatNo} | B2B Confirmed: ${b2bConfirmed}`);
+    console.log(`PDF: https://cheaptravels.in/tickets/${finalPnr}.pdf`);
     console.log(`=============================================\n`);
 
     // Track analytics
@@ -1171,19 +1564,22 @@ app.post('/api/payment/verify', async (req, res) => {
       route: `${order.fromCity} → ${order.toCity}`,
       seats: order.seatNo,
       amount: order.totalPayable,
-      paymentId: paymentId
+      paymentId: paymentId,
+      b2bConfirmed
     });
 
     res.json({
       success: true,
-      pnr: providerPnr,
-      ticketUrl: `https://cheaptravels.in/tickets/${providerPnr}.pdf`
+      pnr: finalPnr,
+      b2bConfirmed,
+      ticketUrl: `https://cheaptravels.in/tickets/${finalPnr}.pdf`
     });
   } catch (err) {
     console.error('Payment verification failed:', err.message);
     res.status(500).json({ success: false, error: 'Payment verification failed.' });
   }
 });
+
 
 // API: Razorpay Webhook signature verification and handler
 app.post('/api/payment/webhook', async (req, res) => {
@@ -1621,6 +2017,32 @@ app.get('/api/admin/bookings', requireAuth, requireRole(['super_admin', 'admin',
   }
 });
 
+// Admin: manually clear B2B operator session cache (Super Admin & Admin)
+app.post('/api/admin/clear-session', requireAuth, requireRole(['super_admin', 'admin']), async (req, res) => {
+  const { opKey } = req.body;
+  if (opKey && OPERATORS[opKey]) {
+    OPERATORS[opKey].sessionCookies = [];
+    OPERATORS[opKey].csrfToken = '';
+    OPERATORS[opKey].lastLoginTime = 0;
+    OPERATORS[opKey].loginPromise = null;
+    console.log(`[Admin Action] Cleared B2B session cache manually for ${OPERATORS[opKey].name}.`);
+    return res.json({ success: true, message: `Session cache for ${OPERATORS[opKey].name} cleared successfully.` });
+  } else {
+    // Clear both
+    OPERATORS.lxmi.sessionCookies = [];
+    OPERATORS.lxmi.csrfToken = '';
+    OPERATORS.lxmi.lastLoginTime = 0;
+    OPERATORS.lxmi.loginPromise = null;
+
+    OPERATORS.rdlh.sessionCookies = [];
+    OPERATORS.rdlh.csrfToken = '';
+    OPERATORS.rdlh.lastLoginTime = 0;
+    OPERATORS.rdlh.loginPromise = null;
+    console.log(`[Admin Action] Cleared B2B session cache manually for all operators.`);
+    return res.json({ success: true, message: "Session cache for all operators cleared successfully." });
+  }
+});
+
 // Admin: server & portal health (Super Admin & Admin)
 app.get('/api/admin/health', requireAuth, requireRole(['super_admin', 'admin']), async (req, res) => {
   const uptime = Math.floor((Date.now() - analytics.startTime) / 1000);
@@ -1631,6 +2053,7 @@ app.get('/api/admin/health', requireAuth, requireRole(['super_admin', 'admin']),
     health: {
       serverUptime: uptime,
       lxmi: {
+        opKey: 'lxmi',
         name: OPERATORS.lxmi.name,
         sessionActive: OPERATORS.lxmi.sessionCookies.length > 0,
         lastLogin: OPERATORS.lxmi.lastLoginTime ? new Date(OPERATORS.lxmi.lastLoginTime).toISOString() : null,
@@ -1638,6 +2061,7 @@ app.get('/api/admin/health', requireAuth, requireRole(['super_admin', 'admin']),
         citiesLoaded: (OPERATORS.lxmi.cities || []).length
       },
       rdlh: {
+        opKey: 'rdlh',
         name: OPERATORS.rdlh.name,
         sessionActive: OPERATORS.rdlh.sessionCookies.length > 0,
         lastLogin: OPERATORS.rdlh.lastLoginTime ? new Date(OPERATORS.rdlh.lastLoginTime).toISOString() : null,

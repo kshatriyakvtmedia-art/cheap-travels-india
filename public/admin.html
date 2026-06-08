@@ -1561,11 +1561,32 @@ function renderHealth(health) {
         <div class="h-row"><span class="h-label">Session Age</span><span class="h-val">${escapeHtml(age)}</span></div>
         <div class="h-row"><span class="h-label">Cities Loaded</span><span class="h-val">${escapeHtml(p.citiesLoaded)}</span></div>
         ${noteRow}
+        <button onclick="clearSessionCache('${escapeHtml(p.opKey)}')" class="clear-session-btn" style="margin-top:12px; width:100%; padding:6px 12px; font-size:11px; font-weight:700; background:rgba(239,68,68,0.1); color:#ef4444; border:1px solid rgba(239,68,68,0.2); border-radius:6px; cursor:pointer; transition:all 0.2s;">Clear Session Cache</button>
       </div>
     `;
   });
   
   grid.innerHTML = html;
+}
+
+async function clearSessionCache(opKey) {
+  if (!confirm(`Are you sure you want to clear session cache for ${opKey === 'lxmi' ? 'Laxmi Holidays' : 'Ram Dalal Holidays'}?`)) return;
+  try {
+    const res = await fetch(`${API}/api/admin/clear-session`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ opKey })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert(data.message);
+      refreshAll();
+    } else {
+      alert('Failed to clear session: ' + data.error);
+    }
+  } catch (err) {
+    alert('Failed to clear session cache due to a connection error.');
+  }
 }
 
 function renderPayments(payments) {

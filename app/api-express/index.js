@@ -120,7 +120,8 @@ const OPERATORS = {
     sessionCookies: [],
     csrfToken: '',
     lastLoginTime: 0,
-    cities: []
+    cities: [],
+    loginPromise: null
   },
   rdlh: {
     username: process.env.RDLH_USERNAME,
@@ -130,7 +131,8 @@ const OPERATORS = {
     sessionCookies: [],
     csrfToken: '',
     lastLoginTime: 0,
-    cities: []
+    cities: [],
+    loginPromise: null
   }
 };
 
@@ -169,79 +171,97 @@ async function getOperatorCredentials(opKey) {
 async function performLogin(opKey) {
   const op = OPERATORS[opKey];
   if (!op) throw new Error(`Unknown operator key: ${opKey}`);
-  
-  const creds = await getOperatorCredentials(opKey);
-  op.username = creds.username;
-  op.password = creds.password;
-  op.url = creds.url;
 
-  if (!op.username || !op.password) {
-    throw new Error(`Credentials for ${op.name} (key: ${opKey}) are not configured in DB or environment variables.`);
+  if (op.loginPromise) {
+    console.log(`[Login Lock] Reusing existing in-progress login sequence for ${op.name}...`);
+    return op.loginPromise;
   }
-  console.log(`Starting B2B portal login sequence for ${op.name}...`);
-  try {
 
+  op.loginPromise = (async () => {
+    // Clear old session cookies and token to ensure we start clean and don't carry over stale/corrupt cookies
+    op.sessionCookies = [];
+    op.csrfToken = '';
+    op.lastLoginTime = 0;
 
-    // 1. Fetch main page to get initial cookies and CSRF token
-    const initialRes = await fetchWithTimeoutAndRetry(op.url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      }
-    });
-    const text = await initialRes.text();
-    const headers = initialRes.headers;
-    
-    // Extract CSRF token
-    const tokenMatch = text.match(/name="csrf-token" content="([^"]+)"/) || text.match(/name="authenticity_token" value="([^"]+)"/);
-    op.csrfToken = tokenMatch ? tokenMatch[1] : '';
-    
-    // Extract cookies
-    const cookies = [];
-    headers.forEach((value, name) => {
-      if (name.toLowerCase() === 'set-cookie') {
-        cookies.push(value.split(';')[0]);
-      }
-    });
+    const creds = await getOperatorCredentials(opKey);
+    op.username = creds.username;
+    op.password = creds.password;
+    op.url = creds.url;
 
-    if (!op.csrfToken) {
-      throw new Error(`Could not retrieve authenticity token from ${op.name} login page.`);
+    if (!op.username || !op.password) {
+      throw new Error(`Credentials for ${op.name} (key: ${opKey}) are not configured in DB or environment variables.`);
     }
+    console.log(`Starting B2B portal login sequence for ${op.name}...`);
+    try {
+      // 1. Fetch main page to get initial cookies and CSRF token
+      const initialRes = await fetchWithTimeoutAndRetry(op.url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+      });
+      const text = await initialRes.text();
+      const headers = initialRes.headers;
+      
+      // Extract CSRF token
+      const tokenMatch = text.match(/name="csrf-token" content="([^"]+)"/) || text.match(/name="authenticity_token" value="([^"]+)"/);
+      op.csrfToken = tokenMatch ? tokenMatch[1] : '';
+      
+      // Extract cookies
+      const cookies = [];
+      headers.forEach((value, name) => {
+        if (name.toLowerCase() === 'set-cookie') {
+          cookies.push(value.split(';')[0]);
+        }
+      });
 
-    // 2. Perform POST to signin endpoint
-    const bodyParams = new URLSearchParams();
-    bodyParams.append("login", op.username);
-    bodyParams.append("password", op.password);
-    bodyParams.append("login_flag", "");
-    bodyParams.append("authenticity_token", op.csrfToken);
-
-    const loginRes = await fetchWithTimeoutAndRetry(`${op.url}/account/signin`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": cookies.join("; "),
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Referer": `${op.url}/`,
-        "X-CSRF-Token": op.csrfToken,
-        "X-Requested-With": "XMLHttpRequest"
-      },
-      body: bodyParams.toString(),
-      redirect: "manual"
-    });
-
-    const finalCookies = [...cookies];
-    loginRes.headers.forEach((value, name) => {
-      if (name.toLowerCase() === 'set-cookie') {
-        finalCookies.push(value.split(';')[0]);
+      if (!op.csrfToken) {
+        throw new Error(`Could not retrieve authenticity token from ${op.name} login page.`);
       }
-    });
 
-    op.sessionCookies = finalCookies;
-    op.lastLoginTime = Date.now();
-    console.log(`Logged in successfully to ${op.name}! Cookies locked.`);
-    return true;
-  } catch (error) {
-    console.error(`Login attempt failed for ${op.name}:`, error.message);
-    throw error;
+      // 2. Perform POST to signin endpoint
+      const bodyParams = new URLSearchParams();
+      bodyParams.append("login", op.username);
+      bodyParams.append("password", op.password);
+      bodyParams.append("login_flag", "");
+      bodyParams.append("authenticity_token", op.csrfToken);
+
+      const loginRes = await fetchWithTimeoutAndRetry(`${op.url}/account/signin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Cookie": cookies.join("; "),
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Referer": `${op.url}/`,
+          "X-CSRF-Token": op.csrfToken,
+          "X-Requested-With": "XMLHttpRequest"
+        },
+        body: bodyParams.toString(),
+        redirect: "manual"
+      });
+
+      const finalCookies = [...cookies];
+      loginRes.headers.forEach((value, name) => {
+        if (name.toLowerCase() === 'set-cookie') {
+          finalCookies.push(value.split(';')[0]);
+        }
+      });
+
+      op.sessionCookies = finalCookies;
+      op.lastLoginTime = Date.now();
+      console.log(`Logged in successfully to ${op.name}! Cookies locked.`);
+      return true;
+    } catch (error) {
+      console.error(`Login attempt failed for ${op.name}:`, error.message);
+      throw error;
+    }
+  })();
+
+  try {
+    const result = await op.loginPromise;
+    return result;
+  } finally {
+    // Clear active login promise after it completes (success or failure)
+    op.loginPromise = null;
   }
 }
 
@@ -1997,6 +2017,32 @@ app.get('/api/admin/bookings', requireAuth, requireRole(['super_admin', 'admin',
   }
 });
 
+// Admin: manually clear B2B operator session cache (Super Admin & Admin)
+app.post('/api/admin/clear-session', requireAuth, requireRole(['super_admin', 'admin']), async (req, res) => {
+  const { opKey } = req.body;
+  if (opKey && OPERATORS[opKey]) {
+    OPERATORS[opKey].sessionCookies = [];
+    OPERATORS[opKey].csrfToken = '';
+    OPERATORS[opKey].lastLoginTime = 0;
+    OPERATORS[opKey].loginPromise = null;
+    console.log(`[Admin Action] Cleared B2B session cache manually for ${OPERATORS[opKey].name}.`);
+    return res.json({ success: true, message: `Session cache for ${OPERATORS[opKey].name} cleared successfully.` });
+  } else {
+    // Clear both
+    OPERATORS.lxmi.sessionCookies = [];
+    OPERATORS.lxmi.csrfToken = '';
+    OPERATORS.lxmi.lastLoginTime = 0;
+    OPERATORS.lxmi.loginPromise = null;
+
+    OPERATORS.rdlh.sessionCookies = [];
+    OPERATORS.rdlh.csrfToken = '';
+    OPERATORS.rdlh.lastLoginTime = 0;
+    OPERATORS.rdlh.loginPromise = null;
+    console.log(`[Admin Action] Cleared B2B session cache manually for all operators.`);
+    return res.json({ success: true, message: "Session cache for all operators cleared successfully." });
+  }
+});
+
 // Admin: server & portal health (Super Admin & Admin)
 app.get('/api/admin/health', requireAuth, requireRole(['super_admin', 'admin']), async (req, res) => {
   const uptime = Math.floor((Date.now() - analytics.startTime) / 1000);
@@ -2007,6 +2053,7 @@ app.get('/api/admin/health', requireAuth, requireRole(['super_admin', 'admin']),
     health: {
       serverUptime: uptime,
       lxmi: {
+        opKey: 'lxmi',
         name: OPERATORS.lxmi.name,
         sessionActive: OPERATORS.lxmi.sessionCookies.length > 0,
         lastLogin: OPERATORS.lxmi.lastLoginTime ? new Date(OPERATORS.lxmi.lastLoginTime).toISOString() : null,
@@ -2014,6 +2061,7 @@ app.get('/api/admin/health', requireAuth, requireRole(['super_admin', 'admin']),
         citiesLoaded: (OPERATORS.lxmi.cities || []).length
       },
       rdlh: {
+        opKey: 'rdlh',
         name: OPERATORS.rdlh.name,
         sessionActive: OPERATORS.rdlh.sessionCookies.length > 0,
         lastLogin: OPERATORS.rdlh.lastLoginTime ? new Date(OPERATORS.rdlh.lastLoginTime).toISOString() : null,
