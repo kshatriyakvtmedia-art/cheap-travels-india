@@ -925,45 +925,71 @@ app.get('/api/search', apiLimiter, async (req, res) => {
 // Helper to extract HTML strings from jQuery .html("...") calls in the JS response
 function extractHtmlFromJs(jsText) {
   let accumulatedHtml = "";
-  let pos = 0;
-  while (true) {
-    const startIdx = jsText.indexOf('.html("', pos);
-    if (startIdx === -1) break;
-    
-    const stringStart = startIdx + '.html("'.length;
-    let stringEnd = -1;
-    for (let i = stringStart; i < jsText.length; i++) {
-      if (jsText[i] === '"') {
-        let backslashCount = 0;
-        let j = i - 1;
-        while (j >= stringStart && jsText[j] === '\\') {
-          backslashCount++;
-          j--;
-        }
-        if (backslashCount % 2 === 0) {
-          stringEnd = i;
-          break;
+
+  // TicketSimply uses both single-quoted and double-quoted .html('...') / .html("...")
+  // We must handle both or the entire seat table will be missed.
+  function extractQuotedStrings(text, quote) {
+    const marker = `.html(${quote}`;
+    let pos = 0;
+    const results = [];
+    while (true) {
+      const startIdx = text.indexOf(marker, pos);
+      if (startIdx === -1) break;
+
+      const stringStart = startIdx + marker.length;
+      let stringEnd = -1;
+      for (let i = stringStart; i < text.length; i++) {
+        if (text[i] === quote) {
+          // Count preceding backslashes to handle escaping
+          let backslashCount = 0;
+          let j = i - 1;
+          while (j >= stringStart && text[j] === '\\') {
+            backslashCount++;
+            j--;
+          }
+          if (backslashCount % 2 === 0) {
+            stringEnd = i;
+            break;
+          }
         }
       }
+
+      if (stringEnd !== -1) {
+        const escapedStr = text.substring(stringStart, stringEnd);
+        // Unescape the string — handle both quote variants and common escape sequences
+        const unescapedStr = escapedStr
+          .replace(/\\"/g, '"')
+          .replace(/\\'/g, "'")
+          .replace(/\\n/g, '\n')
+          .replace(/\\t/g, '\t')
+          .replace(/\\r/g, '\r')
+          .replace(/\\\//g, '/');
+        results.push({ pos: startIdx, html: unescapedStr });
+        pos = stringEnd + 1;
+      } else {
+        pos = stringStart;
+      }
     }
-    
-    if (stringEnd !== -1) {
-      const escapedStr = jsText.substring(stringStart, stringEnd);
-      const unescapedStr = escapedStr
-        .replace(/\\"/g, '"')
-        .replace(/\\'/g, "'")
-        .replace(/\\n/g, '\n')
-        .replace(/\\t/g, '\t')
-        .replace(/\\r/g, '\r')
-        .replace(/\\\//g, '/');
-      accumulatedHtml += unescapedStr + "\n";
-      pos = stringEnd + 1;
-    } else {
-      pos = stringStart;
+    return results;
+  }
+
+  // Gather all .html() calls (single and double quoted) sorted by position
+  const doubleQuoted = extractQuotedStrings(jsText, '"');
+  const singleQuoted = extractQuotedStrings(jsText, "'");
+  const allChunks = [...doubleQuoted, ...singleQuoted].sort((a, b) => a.pos - b.pos);
+
+  // Deduplicate overlapping chunks (keep the one starting earlier)
+  const seen = new Set();
+  for (const chunk of allChunks) {
+    if (!seen.has(chunk.pos)) {
+      seen.add(chunk.pos);
+      accumulatedHtml += chunk.html + "\n";
     }
   }
+
   return accumulatedHtml;
 }
+
 
 // API: Get coach layout for seat selection
 app.get('/api/layout/:resId', async (req, res) => {
@@ -1100,7 +1126,23 @@ app.get('/api/layout/:resId', async (req, res) => {
         }
 
         const isAvailable = $(td).hasClass('available_seat');
-        const isBooked = $(td).hasClass('booked_seat') || $(td).hasClass('blocked_seat') || $(td).hasClass('phone_blocked_seat') || $(td).hasClass('booked_by_ladies_seat') || $(td).hasClass('booked_by_gents_seat');
+
+        // All known TicketSimply booked/blocked seat class variants:
+        const isBooked = (
+          $(td).hasClass('booked_seat') ||
+          $(td).hasClass('blocked_seat') ||
+          $(td).hasClass('phone_blocked_seat') ||
+          $(td).hasClass('booked_by_ladies_seat') ||
+          $(td).hasClass('booked_by_gents_seat') ||
+          $(td).hasClass('agent_blocked_seat') ||
+          $(td).hasClass('seat_block') ||
+          $(td).hasClass('temp_block') ||
+          $(td).hasClass('locked_seat') ||
+          $(td).hasClass('selected_seat') ||
+          // Fallback: seat has no 'available_seat' class AND has a seatNo (real seat, not gangway)
+          (!isAvailable && !$(td).hasClass('ladies_seat') && seatNo && $(td).attr('data-seatnumber'))
+        );
+
         const isLadies = $(td).hasClass('booked_by_ladies_seat') || $(td).hasClass('ladies_adjacent_seat') || $(td).hasClass('ladies_seat') || ladiesAdjacent.includes(seatNo) || ladiesQuota.includes(seatNo);
         
         // Determine seat type (Sleeper vs Seater)
