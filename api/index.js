@@ -1030,6 +1030,15 @@ app.get('/api/layout/:resId', async (req, res) => {
     await ensureSession(opKey);
     console.log(`Fetching seat layout from ${op.name} for reservation ID ${realResId}...`);
 
+    // Load city lists for both operators so cross-reference by name works.
+    // Required because Vercel is stateless — each request starts with empty city arrays.
+    if (!OPERATORS.lxmi.cities || OPERATORS.lxmi.cities.length === 0) {
+      try { OPERATORS.lxmi.cities = await fetchCities('lxmi'); } catch (e) { console.error('Layout: failed to load lxmi cities', e.message); }
+    }
+    if (!OPERATORS.rdlh.cities || OPERATORS.rdlh.cities.length === 0) {
+      try { OPERATORS.rdlh.cities = await fetchCities('rdlh'); } catch (e) { console.error('Layout: failed to load rdlh cities', e.message); }
+    }
+
     const { lxmiFromId, lxmiToId, rdlhFromId, rdlhToId } = resolveCityNamesAndIds(from, to);
     const fromId = opKey === 'lxmi' ? lxmiFromId : rdlhFromId;
     const toId = opKey === 'lxmi' ? lxmiToId : rdlhToId;
@@ -1313,6 +1322,14 @@ app.post('/api/booking/create', async (req, res) => {
   const opKey = (provider === 'lxmi' || busExternalId.startsWith('lx-')) ? 'lxmi' : 'rdlh';
   const realResId = busExternalId.replace('lx-', '').replace('rd-', '');
 
+  // Ensure city lists loaded (stateless serverless environment)
+  if (!OPERATORS.lxmi.cities || OPERATORS.lxmi.cities.length === 0) {
+    try { OPERATORS.lxmi.cities = await fetchCities('lxmi'); } catch (e) {}
+  }
+  if (!OPERATORS.rdlh.cities || OPERATORS.rdlh.cities.length === 0) {
+    try { OPERATORS.rdlh.cities = await fetchCities('rdlh'); } catch (e) {}
+  }
+
   // Resolve city IDs for B2B portal
   const { lxmiFromId, lxmiToId, rdlhFromId, rdlhToId } = resolveCityNamesAndIds(fromCityId || '', toCityId || '');
   const b2bFromId = opKey === 'lxmi' ? lxmiFromId : rdlhFromId;
@@ -1448,6 +1465,14 @@ app.post('/api/payment/verify', async (req, res) => {
     let realPnr = null;
     const opKey = order.provider === 'lxmi' ? 'lxmi' : 'rdlh';
     const realResId = order.busExternalId.replace('lx-', '').replace('rd-', '');
+
+    // Ensure city lists loaded (stateless serverless environment)
+    if (!OPERATORS.lxmi.cities || OPERATORS.lxmi.cities.length === 0) {
+      try { OPERATORS.lxmi.cities = await fetchCities('lxmi'); } catch (e) {}
+    }
+    if (!OPERATORS.rdlh.cities || OPERATORS.rdlh.cities.length === 0) {
+      try { OPERATORS.rdlh.cities = await fetchCities('rdlh'); } catch (e) {}
+    }
 
     // Resolve city IDs from stored values
     const { lxmiFromId, lxmiToId, rdlhFromId, rdlhToId } = resolveCityNamesAndIds(
