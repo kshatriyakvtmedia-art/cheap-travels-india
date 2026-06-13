@@ -2546,11 +2546,24 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
             <div class="input full"><label>Mobile (for WhatsApp ticket)</label><input type="tel" id="contact-phone" placeholder="+91 9XXXX XXXXX"></div>
             <div class="input full"><label>Email</label><input type="email" id="contact-email" placeholder="you@example.com"></div>
           </div>
+          <!-- STEP 1 SUBMIT — captures lead immediately -->
+          <button class="continue-btn" id="confirm-booking-btn" onclick="confirmAndNotify()" style="margin-top:18px;background:linear-gradient(135deg,#0E7B4F,#064B2F);color:#fff;font-size:15px;font-weight:800;padding:15px;border-radius:10px;width:100%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 6px 16px rgba(14,123,79,0.25);">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            Submit Details &amp; Get Payment QR →
+          </button>
         </div>
 
-        <div class="section qr-section">
-          <h3><span class="step">2</span> Pay via UPI</h3>
-          <p>Scan the QR with any UPI app · Pay <b class="qr-payable">₹1,424</b> to <b class="qr-upi-id">cheaptravel546@okhdfcbank</b></p>
+        <!-- STEP 2: Payment — hidden until form submitted -->
+        <div class="section qr-section" id="payment-section" style="display:none;">
+          <div style="background:#E8F5EE;border:1.5px solid var(--teal);border-radius:10px;padding:13px 16px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px;">
+            <span style="font-size:20px;line-height:1">✅</span>
+            <div>
+              <div style="font-size:14px;color:#065f46;font-weight:700;margin-bottom:3px">Booking request received!</div>
+              <div style="font-size:12.5px;color:var(--ink2);line-height:1.5">Scan QR below &amp; pay. Then tap the WhatsApp button — we'll issue your ticket within <b>30 min</b>.</div>
+            </div>
+          </div>
+          <h3 style="margin-bottom:8px;"><span class="step">2</span> Pay via UPI</h3>
+          <p>Pay <b class="qr-payable">₹1,424</b> · UPI: <b class="qr-upi-id">cheaptravel546@okhdfcbank</b></p>
           <div class="timer"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Hold expires in 07:23</div>
           <div class="qr-box" style="display:inline-block; background:#fff; padding:6px; border-radius:14px; box-shadow:var(--shadow); margin:0 auto 14px; overflow:hidden; border: 1.5px solid var(--line);">
             <img src="payment_qr.png" alt="Scan to pay" style="width:260px; height:auto; display:block; margin:0 auto; border-radius:10px;" loading="lazy">
@@ -2563,21 +2576,11 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
             <div class="upi-app" style="color:#012E5E">Paytm</div>
             <div class="upi-app" style="color:#EA4D4D">BHIM</div>
           </div>
-          <button class="paid-btn" id="confirm-booking-btn" onclick="confirmAndNotify()" style="background:linear-gradient(135deg,#0E7B4F,#064B2F);">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:7px"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-            Confirm Booking &amp; Notify via WhatsApp
+          <button onclick="sendPaymentScreenshot()" style="width:100%;margin-top:18px;padding:15px;background:linear-gradient(135deg,#25D366,#128C4B);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 12px rgba(37,211,102,0.3);">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            I've Paid · Send Screenshot on WhatsApp
           </button>
-          <div id="after-confirm" style="display:none;margin-top:16px">
-            <div style="background:#E8F5EE;border:1.5px solid var(--teal);border-radius:12px;padding:14px 18px;margin-bottom:14px;text-align:center">
-              <div style="font-size:14px;color:#065f46;font-weight:700;margin-bottom:4px">✅ Booking details sent to our WhatsApp!</div>
-              <div style="font-size:12.5px;color:var(--ink2);line-height:1.5">Scan the QR above &amp; pay. Then send us your payment screenshot below — your ticket will be issued within <b>30 minutes</b>.</div>
-            </div>
-            <button onclick="sendPaymentScreenshot()" style="width:100%;padding:14px;background:linear-gradient(135deg,#25D366,#128C4B);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 12px rgba(37,211,102,0.3);">
-              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-              I've Paid · Send Screenshot on WhatsApp
-            </button>
-          </div>
-          <p style="margin-top:14px;font-size:11.5px;color:var(--ink2)">After confirming, pay via QR above &amp; share your payment screenshot on WhatsApp. Your ticket will be issued within 30 min.</p>
+          <p style="margin-top:12px;font-size:11.5px;color:var(--ink2);text-align:center;">After paying, tap above to send us your payment screenshot. Ticket delivered within 30 min.</p>
         </div>
       </div>
 
@@ -4328,12 +4331,17 @@ function continueToCheckout() {
   chView.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Reset WhatsApp confirm flow state
+  // Reset WhatsApp confirm flow state for fresh checkout
   currentBookingId = null;
   const confirmBtn = document.getElementById('confirm-booking-btn');
-  if (confirmBtn) { confirmBtn.style.display = ''; confirmBtn.disabled = false; confirmBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:7px"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>Confirm Booking &amp; Notify via WhatsApp'; }
-  const afterConfirm = document.getElementById('after-confirm');
-  if (afterConfirm) afterConfirm.style.display = 'none';
+  if (confirmBtn) {
+    confirmBtn.style.display = 'flex';
+    confirmBtn.style.opacity = '1';
+    confirmBtn.disabled = false;
+    confirmBtn.innerHTML = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>Submit Details &amp; Get Payment QR →';
+  }
+  const paySection = document.getElementById('payment-section');
+  if (paySection) paySection.style.display = 'none';
   
   const totalBase = selectedSeats.reduce((sum, s) => sum + s.baseFare, 0);
   const totalDiscount = selectedSeats.reduce((sum, s) => sum + s.discount, 0);
@@ -5042,9 +5050,15 @@ UPI: cheaptravel546@okhdfcbank
     }).catch(() => {});
   } catch(e) {}
 
-  // Show success state + screenshot button
-  btn.style.display = 'none';
-  document.getElementById('after-confirm').style.display = 'block';
+  // Lead captured — reveal payment section and scroll to it
+  btn.textContent = '✅ Details submitted!';
+  btn.style.opacity = '0.7';
+  btn.disabled = true;
+  const paySection = document.getElementById('payment-section');
+  if (paySection) {
+    paySection.style.display = 'block';
+    setTimeout(() => paySection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+  }
 }
 
 // Legacy: kept for mock/testing path only
