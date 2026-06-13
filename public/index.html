@@ -3525,7 +3525,7 @@ function displayFilteredBuses(buses, formattedDate) {
     
     const badgeText = getBusBadgeText(bus.busType);
     html += `
-      <div class="bus ${isFeatured ? 'featured' : ''}" data-bus="${bus.resId}">
+      <div class="bus ${isFeatured ? 'featured' : ''}" data-bus="${bus.resId}" data-from="${bus.fromCityId || ''}" data-to="${bus.toCityId || ''}">
         <div class="bus-badge-col">
           <span class="bus-type-badge">${badgeText}</span>
         </div>
@@ -3670,9 +3670,10 @@ async function toggleSeatLive(resId, dateStr) {
     </div>
   `;
   
-  const fromId = document.getElementById('from-select').value;
-  const toId = document.getElementById('to-select').value;
-  
+  // Prefer provider-specific city IDs stored on the bus card (avoids cross-reference failure)
+  const fromId = busCard?.dataset.from || document.getElementById('from-select').value;
+  const toId   = busCard?.dataset.to   || document.getElementById('to-select').value;
+
   try {
     const res = await fetch(`${API}/api/layout/${resId}?from=${fromId}&to=${toId}&date=${dateStr}`);
     const data = await res.json();

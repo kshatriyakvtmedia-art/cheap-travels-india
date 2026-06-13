@@ -876,6 +876,17 @@ app.get('/api/search', apiLimiter, async (req, res) => {
 
     const [lxmiBuses, rdlhBuses] = await Promise.all(searchPromises);
 
+    // Stamp provider-specific city IDs onto each bus so the layout API can use them directly,
+    // avoiding a cross-reference lookup that requires loading city lists.
+    lxmiBuses.forEach(bus => {
+      bus.fromCityId = lxmiFromId || null;
+      bus.toCityId   = lxmiToId   || null;
+    });
+    rdlhBuses.forEach(bus => {
+      bus.fromCityId = rdlhFromId ? `rd-${rdlhFromId}` : null;
+      bus.toCityId   = rdlhToId   ? `rd-${rdlhToId}`   : null;
+    });
+
     // Merge and filter real operator buses to ensure they actually match the searched origin city name.
     // TicketSimply B2B portals sometimes return unrelated nearby routes (e.g. Azamgarh to Delhi for a Varanasi to Delhi search).
     let rawBuses = [...lxmiBuses, ...rdlhBuses];
