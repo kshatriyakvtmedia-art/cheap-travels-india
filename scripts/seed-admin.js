@@ -43,6 +43,8 @@ async function seed() {
   const lxmiPass = process.env.LXMI_PASSWORD;
   const rdlhUser = process.env.RDLH_USERNAME;
   const rdlhPass = process.env.RDLH_PASSWORD;
+  const seatSellerUser = process.env.SEATSELLER_USERNAME || '';
+  const seatSellerPass = process.env.SEATSELLER_PASSWORD || '';
 
   if (!lxmiUser || !lxmiPass || !rdlhUser || !rdlhPass) {
     console.error('ERROR: Operator credentials (LXMI_USERNAME, LXMI_PASSWORD, RDLH_USERNAME, RDLH_PASSWORD) must be set in .env');
@@ -61,6 +63,12 @@ async function seed() {
       portalUrl: process.env.RDLH_PORTAL_URL || 'https://rdlh.ticketsimply.com',
       username: rdlhUser,
       password: rdlhPass
+    },
+    {
+      providerName: 'SeatSeller',
+      portalUrl: process.env.SEATSELLER_PORTAL_URL || 'https://in3.seatseller.travel',
+      username: seatSellerUser,
+      password: seatSellerPass
     }
   ];
 
@@ -69,16 +77,16 @@ async function seed() {
       where: { providerName: prov.providerName }
     });
 
-    const encUsername = encrypt(prov.username);
-    const encPassword = encrypt(prov.password);
+    const encUsername = prov.username ? encrypt(prov.username) : null;
+    const encPassword = prov.password ? encrypt(prov.password) : null;
 
     if (existing) {
       await prisma.provider.update({
         where: { id: existing.id },
         data: {
           portalUrl: prov.portalUrl,
-          encryptedUsername: encUsername,
-          encryptedPassword: encPassword,
+          encryptedUsername: encUsername || existing.encryptedUsername,
+          encryptedPassword: encPassword || existing.encryptedPassword,
           status: 'active'
         }
       });
