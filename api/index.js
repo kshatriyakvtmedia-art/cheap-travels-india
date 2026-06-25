@@ -2376,6 +2376,68 @@ app.get('/api/config/firebase', (req, res) => {
   });
 });
 
+// WhatsApp OTP auth — send
+app.post('/api/auth/send-otp', async (req, res) => {
+  const { phone } = req.body;
+  if (!phone || !/^\d{10}$/.test(phone)) {
+    return res.status(400).json({ success: false, error: 'Enter a valid 10-digit mobile number.' });
+  }
+  try {
+    const { sendOtp } = require('../lib/auth');
+    await sendOtp(phone);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('[send-otp]', err.message);
+    res.status(500).json({ success: false, error: 'Failed to send OTP. Please try again.' });
+  }
+});
+
+// WhatsApp OTP auth — verify
+app.post('/api/auth/verify-otp', async (req, res) => {
+  const { phone, otp } = req.body;
+  if (!phone || !otp || !/^\d{10}$/.test(phone) || !/^\d{6}$/.test(otp)) {
+    return res.status(400).json({ success: false, error: 'Invalid phone or OTP.' });
+  }
+  try {
+    const { verifyOtp } = require('../lib/auth');
+    const result = await verifyOtp(phone, otp);
+    if (!result.success) return res.status(401).json(result);
+
+    res.cookie('cti_access', result.accessToken, {
+      httpOnly: true, secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax', maxAge: 15 * 60 * 1000
+    });
+    res.cookie('cti_refresh', result.refreshToken, {
+      httpOnly: true, secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax', maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+    try {
+      await prisma.auditLog.create({
+        data: {
+          action: result.isNewUser ? 'signup' : 'login',
+          userId: result.user.id,
+          entityType: 'customer',
+          metadataJson: { source: 'whatsapp_otp' },
+          ipAddress: req.ip || req.headers['x-forwarded-for'] || ''
+        }
+      });
+    } catch (_) {}
+    res.json({
+      success: true,
+      user: {
+        id: result.user.id,
+        name: result.user.name,
+        mobile: result.user.mobile,
+        email: result.user.email,
+        role: result.user.role
+      }
+    });
+  } catch (err) {
+    console.error('[verify-otp]', err.message);
+    res.status(500).json({ success: false, error: 'Verification failed. Please try again.' });
+  }
+});
+
 app.post('/api/auth/firebase', async (req, res) => {
   const { idToken } = req.body;
   if (!idToken) {

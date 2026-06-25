@@ -7,9 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-<!-- Firebase SDKs (Compat version) -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<!-- WhatsApp OTP auth — no third-party SDK needed -->
 <!-- Razorpay SDK -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <!-- Core Web Vitals Telemetry (inspired by redBus performance monitoring) -->
@@ -2099,12 +2097,9 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   <div class="auth-box" style="padding:40px 32px; max-width:380px;">
     <button class="auth-close" onclick="closeAuth()">✕</button>
     <img src="images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" class="auth-logo" style="margin-bottom:24px;">
-    <!-- Firebase Invisible reCAPTCHA Container -->
-    <div id="recaptcha-container"></div>
-    
     <div id="otp-phone-pane">
       <h3 style="font-size:18px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Verify Mobile Number</h3>
-      <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px;">Enter your mobile number to receive a 6-digit verification code. Register or login instantly!</p>
+      <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px;">Enter your mobile number to receive a 6-digit OTP on <b>WhatsApp</b>. Register or login instantly!</p>
       
       <div class="auth-err" id="auth-mobile-err" style="display:none; color:var(--red); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
       
@@ -2116,12 +2111,12 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
         </div>
       </div>
       
-      <button class="auth-submit" onclick="sendMobileOtp()" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:750; cursor:pointer; font-size:14px;">Send Verification OTP →</button>
+      <button class="auth-submit" onclick="sendMobileOtp()" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:750; cursor:pointer; font-size:14px;">Send OTP on WhatsApp →</button>
     </div>
     
     <div id="otp-code-pane" style="display:none;">
       <h3 style="font-size:18px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Enter Verification Code</h3>
-      <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px;">A 6-digit code has been sent to <b id="otp-sent-mobile" style="color:var(--ink);">+91 98765 43210</b>. Please enter it below.</p>
+      <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px;">A 6-digit code has been sent to <b id="otp-sent-mobile" style="color:var(--ink);">+91 98765 43210</b> via <b>WhatsApp</b>. Please enter it below.</p>
       
       <div class="auth-err" id="auth-otp-err" style="display:none; color:var(--red); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
       
@@ -2892,7 +2887,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('depart-date').value = `${yyyy}-${mm}-${dd}`;
 
   loadCities();
-  initFirebase();
   setupQR();
   
   // Offline & connection state tracking
@@ -3895,29 +3889,6 @@ function resetOtpFlow() {
   document.getElementById('auth-otp-err').style.display = 'none';
 }
 
-async function initFirebase() {
-  try {
-    const res = await fetch(`${API}/api/config/firebase`);
-    const config = await res.json();
-    if (config.apiKey) {
-      firebase.initializeApp(config);
-      
-      // Setup invisible reCAPTCHA
-      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        size: 'invisible',
-        callback: (response) => {
-          // reCAPTCHA solved
-        }
-      });
-      console.log('Firebase App initialized successfully.');
-    } else {
-      console.warn('Firebase config empty. Phone auth may not work.');
-    }
-  } catch (err) {
-    console.error('Failed to initialize Firebase SDK:', err);
-  }
-}
-
 async function sendMobileOtp() {
   const mobileInput = document.getElementById('auth-mobile-input').value.trim();
   const errEl = document.getElementById('auth-mobile-err');
@@ -3929,26 +3900,19 @@ async function sendMobileOtp() {
     return;
   }
 
-  const formattedMobile = `+91${mobileInput}`;
+  const btn = document.querySelector('#otp-phone-pane .auth-submit');
+  const origText = btn.textContent;
+  btn.textContent = 'Sending OTP…';
+  btn.disabled = true;
 
   try {
-    const appVerifier = window.recaptchaVerifier;
-    if (!appVerifier) {
-      // In local dev/testing mode without Firebase credentials, fallback gracefully to mock entry
-      console.warn("Firebase appVerifier not initialized. Falling back to local Mock verification.");
-      window.confirmationResult = {
-        confirm: async (otpCode) => {
-          if (otpCode === '123456' || otpCode === '111111' || otpCode === '888888') {
-            return {
-              user: {
-                getIdToken: async () => 'mock_firebase_id_token_for_' + mobileInput
-              }
-            };
-          }
-          throw { code: 'auth/invalid-verification-code', message: 'Invalid mock verification code' };
-        }
-      };
-      
+    const res = await fetch(`${API}/api/auth/send-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: mobileInput })
+    });
+    const data = await res.json();
+    if (data.success) {
       document.getElementById('otp-phone-pane').style.display = 'none';
       document.getElementById('otp-code-pane').style.display = 'block';
       document.getElementById('otp-sent-mobile').textContent = `+91 ${mobileInput.slice(0,5)} ${mobileInput.slice(5)}`;
@@ -3956,28 +3920,17 @@ async function sendMobileOtp() {
         const codeInput = document.getElementById('auth-otp-input');
         if (codeInput) codeInput.focus();
       }, 100);
-      return;
+    } else {
+      errEl.textContent = data.error || 'Failed to send OTP. Please try again.';
+      errEl.style.display = 'block';
     }
-    
-    const confirmationResult = await firebase.auth().signInWithPhoneNumber(formattedMobile, appVerifier);
-    window.confirmationResult = confirmationResult;
-    
-    document.getElementById('otp-phone-pane').style.display = 'none';
-    document.getElementById('otp-code-pane').style.display = 'block';
-    document.getElementById('otp-sent-mobile').textContent = `+91 ${mobileInput.slice(0,5)} ${mobileInput.slice(5)}`;
-    setTimeout(() => {
-      const codeInput = document.getElementById('auth-otp-input');
-      if (codeInput) codeInput.focus();
-    }, 100);
   } catch (err) {
-    console.error("Firebase SMS error:", err);
-    errEl.textContent = err.message || 'Failed to send OTP via Firebase.';
+    console.error('Send OTP error:', err);
+    errEl.textContent = 'Network error. Please check your connection.';
     errEl.style.display = 'block';
-    if (window.recaptchaVerifier) {
-      window.recaptchaVerifier.render().then(widgetId => {
-        grecaptcha.reset(widgetId);
-      }).catch(() => {});
-    }
+  } finally {
+    btn.textContent = origText;
+    btn.disabled = false;
   }
 }
 
@@ -3993,23 +3946,19 @@ async function verifyMobileOtp() {
     return;
   }
 
+  const btn = document.querySelector('#otp-code-pane .auth-submit');
+  const origText = btn.textContent;
+  btn.textContent = 'Verifying…';
+  btn.disabled = true;
+
   try {
-    if (!window.confirmationResult) {
-      errEl.textContent = 'Verification session expired. Please start over.';
-      errEl.style.display = 'block';
-      return;
-    }
-    
-    const result = await window.confirmationResult.confirm(otpInput);
-    const idToken = await result.user.getIdToken();
-    
-    const res = await fetch(`${API}/api/auth/firebase`, {
+    const res = await fetch(`${API}/api/auth/verify-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ idToken })
+      body: JSON.stringify({ phone: mobileInput, otp: otpInput })
     });
     const data = await res.json();
-    
+
     if (data.success) {
       const user = {
         name: data.user.name,
@@ -4017,13 +3966,10 @@ async function verifyMobileOtp() {
         email: data.user.email || '',
         id: data.user.id
       };
-      
       currentUser = user;
       localStorage.setItem('cti_user', JSON.stringify(user));
       updateAuthUI();
       closeAuth();
-      
-      // Check if profile needs completion
       const isGuest = user.name && user.name.startsWith('Guest User');
       const isEmailMissing = !user.email;
       if (isGuest || isEmailMissing) {
@@ -4033,32 +3979,22 @@ async function verifyMobileOtp() {
         continueToCheckout();
       }
     } else {
-      errEl.textContent = data.error || 'Failed to verify session with server.';
+      errEl.textContent = data.error || 'Invalid OTP. Please try again.';
       errEl.style.display = 'block';
     }
   } catch (err) {
-    console.error("Verification error:", err);
-    let friendlyMessage = 'Invalid verification code. Please try again.';
-    if (err && err.code) {
-      if (err.code === 'auth/invalid-verification-code') {
-        friendlyMessage = 'The verification code you entered is invalid. Please check and try again.';
-      } else if (err.code === 'auth/code-expired') {
-        friendlyMessage = 'The code has expired. Please go back and request a new one.';
-      } else if (err.code === 'auth/too-many-requests') {
-        friendlyMessage = 'Too many attempts. Please try again later.';
-      } else {
-        friendlyMessage = err.message || friendlyMessage;
-      }
-    }
-    errEl.textContent = friendlyMessage;
+    console.error('Verify OTP error:', err);
+    errEl.textContent = 'Network error. Please check your connection.';
     errEl.style.display = 'block';
+  } finally {
+    btn.textContent = origText;
+    btn.disabled = false;
   }
 }
 
 function logoutUser() {
   currentUser = null;
   localStorage.removeItem('cti_user');
-  firebase.auth().signOut().catch(() => {});
   fetch(`${API}/api/auth/logout`, { method: 'POST' }).catch(() => {});
   updateAuthUI();
   document.getElementById('user-chip').classList.remove('open');
