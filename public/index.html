@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Cheap Travels India — Affordable Bus Tickets</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
@@ -77,6 +77,7 @@
 }
 
 * { box-sizing: border-box; }
+img { max-width: 100%; height: auto; }
 html, body {
   margin: 0; padding: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -128,7 +129,8 @@ header.top {
   background: #ffffff;
   border-bottom: 1px solid var(--line);
   box-shadow: var(--shadow-sm);
-  height: 72px;
+  min-height: 72px;
+  padding-top: env(safe-area-inset-top, 0px);
   display: flex;
   align-items: center;
 }
@@ -243,7 +245,9 @@ header.top {
   border: 1px solid var(--line);
 }
 .auth-close {
-  position: absolute; top: 16px; right: 18px;
+  position: absolute; top: 6px; right: 6px;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
   font-size: 20px; color: var(--ink2); cursor: pointer;
   line-height: 1; background: none; border: none;
 }
@@ -560,7 +564,7 @@ header.top {
 .view-seats {
   padding: 10px 22px; background: var(--teal); color: #ffffff;
   border-radius: var(--radius-md); font-weight: 700; font-size: 14px;
-  box-shadow: 0 4px 12px rgba(14, 123, 79, 0.15);
+  box-shadow: 0 4px 12px rgba(14, 123, 79, 0.15); min-height: 44px;
 }
 .view-seats:hover { background: var(--teal-d); box-shadow: 0 6px 16px rgba(14, 123, 79, 0.25); }
 .view-seats.active { background: var(--gold); color: var(--teal-d); box-shadow: 0 4px 12px rgba(238, 140, 46, 0.25); }
@@ -758,7 +762,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 .foot-bottom { max-width: 1240px; margin: 40px auto 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 12.5px; color: #A4DBD3; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; font-weight: 500; }
 
 /* Hamburger / Mobile Nav Drawer */
-.ham-btn { display: none; flex-direction: column; gap: 5px; padding: 6px; cursor: pointer; margin-left: auto; }
+.ham-btn { display: none; flex-direction: column; justify-content: center; align-items: center; gap: 5px; width: 44px; height: 44px; padding: 0; cursor: pointer; margin-left: auto; }
 .ham-btn span { display: block; width: 22px; height: 2px; background: var(--ink); border-radius: 2px; }
 .ham-btn.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
 .ham-btn.open span:nth-child(2) { opacity: 0; }
@@ -766,7 +770,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 .mobile-nav-drawer { position: fixed; inset: 0; z-index: 999; display: none; }
 .mobile-nav-drawer.open { display: block; }
 .mobile-nav-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(4px); }
-.mobile-nav-panel { position: absolute; top: 0; right: 0; bottom: 0; width: 80%; max-width: 300px; background: #ffffff; padding: 28px 24px; transform: translateX(100%); transition: transform .28s cubic-bezier(.4,0,.2,1); box-shadow: -10px 0 40px rgba(0,0,0,0.15); }
+.mobile-nav-panel { position: absolute; top: 0; right: 0; bottom: 0; width: 80%; max-width: 300px; background: #ffffff; padding: calc(28px + env(safe-area-inset-top, 0px)) 24px calc(28px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; transform: translateX(100%); transition: transform .28s cubic-bezier(.4,0,.2,1); box-shadow: -10px 0 40px rgba(0,0,0,0.15); }
 .mobile-nav-drawer.open .mobile-nav-panel { transform: none; }
 .mobile-nav-panel .mn-logo { height: 38px; margin-bottom: 24px; }
 .mobile-nav-panel a, .mobile-nav-panel button.mn-link { display: block; padding: 14px 0; font-size: 15.5px; font-weight: 700; color: var(--ink); border-bottom: 1px solid var(--line); background: none; text-align: left; width: 100%; }
@@ -798,7 +802,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   background: #ffffff;
   border-top-left-radius: var(--radius-lg);
   border-top-right-radius: var(--radius-lg);
-  padding: 24px 24px 32px;
+  padding: 24px 24px calc(32px + env(safe-area-inset-bottom, 0px));
   max-height: 80%;
   overflow-y: auto;
   transform: translateY(100%);
@@ -818,10 +822,10 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 }
 .filter-drawer-close {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 28px;
-  height: 28px;
+  top: 8px;
+  right: 8px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -841,7 +845,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 .filter-fab {
   display: none; /* hidden on desktop */
   position: fixed;
-  bottom: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   z-index: 999;
@@ -934,8 +938,8 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   to { transform: scale(1); opacity: 1; }
 }
 .bonus-popup-close {
-  position: absolute; top: 16px; right: 16px; font-size: 18px; color: var(--ink3);
-  background: none; border: none; cursor: pointer; width: 28px; height: 28px;
+  position: absolute; top: 6px; right: 6px; font-size: 18px; color: var(--ink3);
+  background: none; border: none; cursor: pointer; width: 44px; height: 44px;
   display: flex; align-items: center; justify-content: center; border-radius: 50%;
 }
 .bonus-popup-close:hover { background: var(--bg); }
@@ -966,12 +970,12 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .foot-inner { grid-template-columns: 1fr 1fr; }
   .nav { display: none; }
   .ham-btn { display: flex; }
+  .top-right .support { display: none; }
 }
 
 @media (max-width: 700px) {
   .ham-btn { display: flex; margin-left: 0; }
   .top-right { display: flex !important; margin-left: auto; align-items: center; gap: 6px; }
-  .top-right .support { display: none; }
   .login-btn { font-size: 11.5px; padding: 6px 11px; border-radius: var(--radius-sm); }
   .top-inner { padding: 0 14px; gap: 8px; }
   .brand-logo { height: 36px; }
@@ -990,8 +994,8 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     top: calc(100% - 5px);
     transform: translateY(-50%);
     margin: 0;
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     font-size: 16px;
     z-index: 10;
   }
@@ -1003,7 +1007,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   }
   .field-box select { font-weight: 700; color: var(--ink); }
 
-  :root { --seat-size: 40px; }
+  :root { --seat-size: 44px; }
   .page { padding: 0 16px; margin-top: -80px; }
   .trust-strip { grid-template-columns: 1fr 1fr; gap: 12px; padding: 14px; }
   .ts-ico { width: 36px; height: 36px; font-size: 18px; }
@@ -1627,7 +1631,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .field label { font-size: 10px; }
   .field-box input, .field-box select { font-size: 16px !important; font-weight: 700; }
   .field-box .sv { font-size: 11px; }
-  .swap { width: 28px; height: 28px; font-size: 14px; }
+  .swap { width: 44px; height: 44px; font-size: 14px; }
   .search-btn { padding: 13px; font-size: 14px; min-height: 48px; }
 
   /* Page padding */
@@ -1705,7 +1709,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 /* Mobile-first layout tweaks */
 @media (max-width: 700px) {
   header.top {
-    height: 64px !important;
+    min-height: 64px !important;
   }
   .brand-logo {
     height: 32px !important;
@@ -1722,11 +1726,11 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     font-size: 12.5px;
     font-weight: 700;
     cursor: pointer;
-    height: 32px;
+    height: 44px;
     margin-right: 4px;
   }
   .login-btn {
-    height: 32px;
+    height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1891,7 +1895,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     width: auto !important;
     font-size: 12px !important;
     padding: 8px 16px !important;
-    height: 36px !important;
+    height: 44px !important;
     white-space: nowrap !important;
     display: flex !important;
     align-items: center !important;
@@ -1922,7 +1926,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   }
   .seat-panel .summary {
     position: fixed !important;
-    bottom: 56px !important;
+    bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
     left: 0 !important;
     right: 0 !important;
     z-index: 1000 !important;
@@ -1941,19 +1945,22 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     z-index: 1000 !important;
     border-radius: 0 !important;
     margin: 0 !important;
-    padding: 16px !important;
-    height: 56px !important;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px)) 16px !important;
+    min-height: 56px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     font-size: 16px !important;
     width: 100% !important;
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15) !important;
   }
   .seat-content {
-    padding-bottom: 180px !important;
+    padding-bottom: calc(180px + env(safe-area-inset-bottom, 0px)) !important;
   }
   .seat {
-    width: 42px !important;
-    height: 42px !important;
-    min-height: 42px !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
     font-size: 12px !important;
   }
 }
@@ -2024,7 +2031,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 <body>
 
 <!-- Offline/Slow network banner -->
-<div id="offline-banner" style="display:none; position:fixed; top:0; left:0; width:100%; background:var(--red); color:#fff; text-align:center; padding:10px 16px; font-weight:700; font-size:14px; z-index:99999; box-shadow:0 4px 12px rgba(239,68,68,0.3); border-bottom: 2px solid #dc2626;">
+<div id="offline-banner" style="display:none; position:fixed; top:0; left:0; width:100%; background:var(--red); color:#fff; text-align:center; padding:calc(10px + env(safe-area-inset-top, 0px)) 16px 10px; font-weight:700; font-size:14px; z-index:99999; box-shadow:0 4px 12px rgba(239,68,68,0.3); border-bottom: 2px solid #dc2626;">
   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Connection lost: you are currently offline. Pages and searches may not load.
 </div>
 
@@ -2083,7 +2090,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 <div class="bonus-popup" id="bonus-popup">
   <div class="bonus-popup-overlay" onclick="closeBonusPopup()"></div>
   <div class="bonus-popup-box">
-    <button class="bonus-popup-close" onclick="closeBonusPopup()">✕</button>
+    <button class="bonus-popup-close" onclick="closeBonusPopup()" aria-label="Close sign-up bonus popup">✕</button>
     <div class="bonus-gift-icon"><svg viewBox="0 0 24 24" width="64" height="64" stroke="var(--gold)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><path d="M20 12v10H4V12"></path><path d="M2 7h20v5H2z"></path><path d="M12 22V7"></path><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg></div>
     <h3>Unlock ₹51 Sign-up Bonus!</h3>
     <p>Create an account today to claim your <b>₹51 cash bonus</b> for your 1st ticket + get <b>5% regular discount</b> on Laxmi & Ram Dalal partner buses.</p>
@@ -2095,7 +2102,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 <!-- ════════════ AUTH MODAL ════════════ -->
 <div class="auth-overlay" id="auth-overlay">
   <div class="auth-box" style="padding:40px 32px; max-width:380px;">
-    <button class="auth-close" onclick="closeAuth()">✕</button>
+    <button class="auth-close" onclick="closeAuth()" aria-label="Close sign-in dialog">✕</button>
     <img src="images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" class="auth-logo" style="margin-bottom:24px;">
     <div id="otp-phone-pane">
       <h3 style="font-size:18px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Verify Mobile Number</h3>
@@ -2137,7 +2144,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 <!-- ════════════ PROFILE MODAL ════════════ -->
 <div class="auth-overlay" id="profile-overlay">
   <div class="auth-box" style="padding:40px 32px; max-width:400px;">
-    <button class="auth-close" onclick="closeProfileModal()">✕</button>
+    <button class="auth-close" onclick="closeProfileModal()" aria-label="Close profile dialog">✕</button>
     <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d); text-align:center;">My Profile</h3>
     <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px; text-align:center;">Manage your contact and passenger details for quick bookings.</p>
     
@@ -2188,7 +2195,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 <!-- ════════════ BOOKINGS HISTORY MODAL ════════════ -->
 <div class="auth-overlay" id="bookings-overlay">
   <div class="auth-box" style="padding:40px 32px; max-width:550px; width: 95%;">
-    <button class="auth-close" onclick="closeBookingsModal()">✕</button>
+    <button class="auth-close" onclick="closeBookingsModal()" aria-label="Close booking history dialog">✕</button>
     <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d); text-align:center;">My Booking History</h3>
     <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:15px; text-align:center;">View your ticket bookings, PNR status, and journey details.</p>
     
@@ -2206,7 +2213,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 <!-- ════════════ HELP & SUPPORT MODAL ════════════ -->
 <div class="auth-overlay" id="help-overlay">
   <div class="auth-box" style="padding:40px 32px; max-width:400px; text-align:center;">
-    <button class="auth-close" onclick="closeHelpModal()">✕</button>
+    <button class="auth-close" onclick="closeHelpModal()" aria-label="Close help dialog">✕</button>
     <div style="width:50px; height:50px; border-radius:50%; background:var(--green-s); color:var(--teal); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:24px;">💬</div>
     <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Help & Support</h3>
     <p style="color:var(--ink2); font-size:13px; line-height:1.5; margin-bottom:24px;">Have questions or need help with a refund or booking? Get in touch with us directly.</p>
@@ -2254,7 +2261,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
             </select>
             <div class="autocomplete-results" id="from-autocomplete" style="display:none;"></div>
           </div>
-          <div class="swap" style="cursor: pointer;" onclick="swapCities()">⇌</div>
+          <div class="swap" style="cursor: pointer;" onclick="swapCities()" role="button" tabindex="0" aria-label="Swap source and destination" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();swapCities();}">⇌</div>
         </div>
         <div class="field" style="position: relative;" id="field-to-container">
           <label for="to-search">TO</label>
@@ -2334,7 +2341,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
       <div class="filter-drawer-overlay" onclick="closeFilterDrawer()"></div>
       <div class="filter-drawer-panel">
         <div class="filter-drawer-handle"></div>
-        <button class="filter-drawer-close" onclick="closeFilterDrawer()">✕</button>
+        <button class="filter-drawer-close" onclick="closeFilterDrawer()" aria-label="Close filters">✕</button>
         <h3 style="font-size:16px;color:var(--teal-d);margin-bottom:16px;clear:both">Filters</h3>
         <div class="f-group">
           <h4>Bus Type</h4>
@@ -5128,7 +5135,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- Mock Razorpay Payment Modal -->
 <div class="auth-overlay" id="rzp-mock-overlay" style="display:none; align-items:center; justify-content:center; z-index:99999;">
   <div class="auth-box" style="width:360px; padding:24px; border-top: 4px solid var(--teal); position:relative;">
-    <button class="auth-close" onclick="closeRzpMock()" style="top:12px; right:14px;">✕</button>
+    <button class="auth-close" onclick="closeRzpMock()" style="top:12px; right:14px;" aria-label="Close payment dialog">✕</button>
     <div style="text-align:center; margin-bottom:20px;">
       <h3 style="font-size:16px; font-weight:800; color:var(--teal-d); margin-bottom:4px;">Razorpay Secure Checkout</h3>
       <p style="font-size:12px; color:var(--ink2); margin:0;">Cheap Travels India · Payment Demo</p>
