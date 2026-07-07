@@ -5455,16 +5455,16 @@ async function initTickerFares() {
     console.warn('[FareTicker] Could not load ticker fares:', err.message);
     // Populate with sensible fallback static data
     const fallback = {
-      '3-31':  { seater:600,  doubleSleeper:800,  singleSleeper:1300 },
-      '31-3':  { seater:600,  doubleSleeper:800,  singleSleeper:1300 },
-      '3-170': { seater:500,  doubleSleeper:650,  singleSleeper:900  },
-      '170-3': { seater:500,  doubleSleeper:650,  singleSleeper:900  },
-      '3-127': { seater:700,  doubleSleeper:999,  singleSleeper:1500 },
-      '127-3': { seater:700,  doubleSleeper:999,  singleSleeper:1500 },
-      '3-53':  { seater:500,  doubleSleeper:700,  singleSleeper:1350 },
-      '53-3':  { seater:599,  doubleSleeper:779,  singleSleeper:1078 },
-      '3-29':  { seater:349,  doubleSleeper:454,  singleSleeper:628  },
-      '29-3':  { seater:500,  doubleSleeper:700,  singleSleeper:1000 },
+      '3-31':  { seater:550,  doubleSleeper:750,  singleSleeper:1199 },
+      '31-3':  { seater:550,  doubleSleeper:750,  singleSleeper:1199 },
+      '3-170': { seater:499,  doubleSleeper:649,  singleSleeper:999  },
+      '170-3': { seater:499,  doubleSleeper:649,  singleSleeper:999  },
+      '3-127': { seater:649,  doubleSleeper:899,  singleSleeper:1399 },
+      '127-3': { seater:649,  doubleSleeper:899,  singleSleeper:1399 },
+      '3-53':  { seater:799,  doubleSleeper:1099, singleSleeper:1599 },
+      '53-3':  { seater:799,  doubleSleeper:1099, singleSleeper:1599 },
+      '3-29':  { seater:500,  doubleSleeper:700,  singleSleeper:1350 },
+      '29-3':  { seater:500,  doubleSleeper:700,  singleSleeper:1350 },
     };
     fillCardTrack('today-card-track',    fallback, getISTDate(0), true);
     fillCardTrack('tomorrow-card-track', fallback, getISTDate(1), false);

@@ -527,45 +527,50 @@ const POPULAR_ROUTES = [
 function getFallbackFareForRoute(route) {
   const key = `${route.fromId}-${route.toId}`;
   const fallbacks = {
-    "3-31": { seater: 600, doubleSleeper: 800, singleSleeper: 1300 },
-    "31-3": { seater: 600, doubleSleeper: 800, singleSleeper: 1300 },
-    "3-170": { seater: 550, doubleSleeper: 750, singleSleeper: 1200 },
-    "170-3": { seater: 550, doubleSleeper: 750, singleSleeper: 1200 },
-    "3-127": { seater: 700, doubleSleeper: 999, singleSleeper: 1500 },
-    "127-3": { seater: 700, doubleSleeper: 999, singleSleeper: 1500 },
-    "3-53": { seater: 800, doubleSleeper: 1100, singleSleeper: 1600 },
-    "53-3": { seater: 800, doubleSleeper: 1100, singleSleeper: 1600 },
-    "3-29": { seater: 500, doubleSleeper: 700, singleSleeper: 1350 },
-    "29-3": { seater: 500, doubleSleeper: 700, singleSleeper: 1350 }
+    // Delhi ↔ Varanasi (~8h, popular sleeper corridor)
+    "3-31": { seater: 550, doubleSleeper: 750, singleSleeper: 1199 },
+    "31-3": { seater: 550, doubleSleeper: 750, singleSleeper: 1199 },
+    // Delhi ↔ Azamgarh (~10h)
+    "3-170": { seater: 499, doubleSleeper: 649, singleSleeper: 999 },
+    "170-3": { seater: 499, doubleSleeper: 649, singleSleeper: 999 },
+    // Delhi ↔ Patna (~12h overnight)
+    "3-127": { seater: 649, doubleSleeper: 899, singleSleeper: 1399 },
+    "127-3": { seater: 649, doubleSleeper: 899, singleSleeper: 1399 },
+    // Delhi ↔ Manali (~14h mountain route)
+    "3-53":  { seater: 799, doubleSleeper: 1099, singleSleeper: 1599 },
+    "53-3":  { seater: 799, doubleSleeper: 1099, singleSleeper: 1599 },
+    // Delhi ↔ Kanpur (~5h, reference rate from operator)
+    "3-29":  { seater: 500, doubleSleeper: 700, singleSleeper: 1350 },
+    "29-3":  { seater: 500, doubleSleeper: 700, singleSleeper: 1350 }
   };
-  return fallbacks[key] || { seater: 500, doubleSleeper: 700, singleSleeper: 1200 };
+  return fallbacks[key] || { seater: 499, doubleSleeper: 699, singleSleeper: 1199 };
 }
 
 // Global cache for popular routes ticker fares
 let tickerFaresCache = {
   today: {
-    "3-31": { seater: 600, doubleSleeper: 800, singleSleeper: 1300 },
-    "31-3": { seater: 600, doubleSleeper: 800, singleSleeper: 1300 },
-    "3-170": { seater: 550, doubleSleeper: 750, singleSleeper: 1200 },
-    "170-3": { seater: 550, doubleSleeper: 750, singleSleeper: 1200 },
-    "3-127": { seater: 700, doubleSleeper: 999, singleSleeper: 1500 },
-    "127-3": { seater: 700, doubleSleeper: 999, singleSleeper: 1500 },
-    "3-53": { seater: 800, doubleSleeper: 1100, singleSleeper: 1600 },
-    "53-3": { seater: 800, doubleSleeper: 1100, singleSleeper: 1600 },
-    "3-29": { seater: 500, doubleSleeper: 700, singleSleeper: 1350 },
-    "29-3": { seater: 500, doubleSleeper: 700, singleSleeper: 1350 }
+    "3-31":  { seater: 550, doubleSleeper: 750, singleSleeper: 1199 },
+    "31-3":  { seater: 550, doubleSleeper: 750, singleSleeper: 1199 },
+    "3-170": { seater: 499, doubleSleeper: 649, singleSleeper: 999  },
+    "170-3": { seater: 499, doubleSleeper: 649, singleSleeper: 999  },
+    "3-127": { seater: 649, doubleSleeper: 899, singleSleeper: 1399 },
+    "127-3": { seater: 649, doubleSleeper: 899, singleSleeper: 1399 },
+    "3-53":  { seater: 799, doubleSleeper: 1099, singleSleeper: 1599 },
+    "53-3":  { seater: 799, doubleSleeper: 1099, singleSleeper: 1599 },
+    "3-29":  { seater: 500, doubleSleeper: 700, singleSleeper: 1350 },
+    "29-3":  { seater: 500, doubleSleeper: 700, singleSleeper: 1350 }
   },
   tomorrow: {
-    "3-31": { seater: 620, doubleSleeper: 820, singleSleeper: 1320 },
-    "31-3": { seater: 620, doubleSleeper: 820, singleSleeper: 1320 },
-    "3-170": { seater: 570, doubleSleeper: 770, singleSleeper: 1220 },
-    "170-3": { seater: 570, doubleSleeper: 770, singleSleeper: 1220 },
-    "3-127": { seater: 720, doubleSleeper: 1020, singleSleeper: 1520 },
-    "127-3": { seater: 720, doubleSleeper: 1020, singleSleeper: 1520 },
-    "3-53": { seater: 820, doubleSleeper: 1120, singleSleeper: 1620 },
-    "53-3": { seater: 820, doubleSleeper: 1120, singleSleeper: 1620 },
-    "3-29": { seater: 500, doubleSleeper: 700, singleSleeper: 1350 },
-    "29-3": { seater: 500, doubleSleeper: 700, singleSleeper: 1350 }
+    "3-31":  { seater: 550, doubleSleeper: 750, singleSleeper: 1199 },
+    "31-3":  { seater: 550, doubleSleeper: 750, singleSleeper: 1199 },
+    "3-170": { seater: 499, doubleSleeper: 649, singleSleeper: 999  },
+    "170-3": { seater: 499, doubleSleeper: 649, singleSleeper: 999  },
+    "3-127": { seater: 649, doubleSleeper: 899, singleSleeper: 1399 },
+    "127-3": { seater: 649, doubleSleeper: 899, singleSleeper: 1399 },
+    "3-53":  { seater: 799, doubleSleeper: 1099, singleSleeper: 1599 },
+    "53-3":  { seater: 799, doubleSleeper: 1099, singleSleeper: 1599 },
+    "3-29":  { seater: 500, doubleSleeper: 700, singleSleeper: 1350 },
+    "29-3":  { seater: 500, doubleSleeper: 700, singleSleeper: 1350 }
   }
 };
 let tickerFaresLastFetch = 0;
