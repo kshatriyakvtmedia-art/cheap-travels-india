@@ -502,6 +502,256 @@ app.get('/api/cities', async (req, res) => {
   }
 });
 
+// ════════════ POPULAR ROUTES TICKER FARES SYSTEM ════════════
+
+// Popular routes configuration for news tickers
+const POPULAR_ROUTES = [
+  { fromId: "3", toId: "31", fromName: "Delhi", toName: "Varanasi" },
+  { fromId: "31", toId: "3", fromName: "Varanasi", toName: "Delhi" },
+  { fromId: "3", toId: "170", fromName: "Delhi", toName: "Azamgarh" },
+  { fromId: "170", toId: "3", fromName: "Azamgarh", toName: "Delhi" },
+  { fromId: "3", toId: "127", fromName: "Delhi", toName: "Patna" },
+  { 
+    fromId: "127", 
+    toId: "3", 
+    fromName: "Patna", 
+    toName: "Delhi" 
+  },
+  { fromId: "3", toId: "53", fromName: "Delhi", toName: "Manali" },
+  { fromId: "53", toId: "3", fromName: "Manali", toName: "Delhi" },
+  { fromId: "3", toId: "29", fromName: "Delhi", toName: "Kanpur" },
+  { fromId: "29", toId: "3", fromName: "Kanpur", toName: "Delhi" }
+];
+
+// Fallback prices for popular routes
+function getFallbackFareForRoute(route) {
+  const key = `${route.fromId}-${route.toId}`;
+  const fallbacks = {
+    "3-31": { seater: 600, doubleSleeper: 800, singleSleeper: 1300 },
+    "31-3": { seater: 600, doubleSleeper: 800, singleSleeper: 1300 },
+    "3-170": { seater: 550, doubleSleeper: 750, singleSleeper: 1200 },
+    "170-3": { seater: 550, doubleSleeper: 750, singleSleeper: 1200 },
+    "3-127": { seater: 700, doubleSleeper: 999, singleSleeper: 1500 },
+    "127-3": { seater: 700, doubleSleeper: 999, singleSleeper: 1500 },
+    "3-53": { seater: 800, doubleSleeper: 1100, singleSleeper: 1600 },
+    "53-3": { seater: 800, doubleSleeper: 1100, singleSleeper: 1600 },
+    "3-29": { seater: 500, doubleSleeper: 700, singleSleeper: 1350 },
+    "29-3": { seater: 500, doubleSleeper: 700, singleSleeper: 1350 }
+  };
+  return fallbacks[key] || { seater: 500, doubleSleeper: 700, singleSleeper: 1200 };
+}
+
+// Global cache for popular routes ticker fares
+let tickerFaresCache = {
+  today: {
+    "3-31": { seater: 600, doubleSleeper: 800, singleSleeper: 1300 },
+    "31-3": { seater: 600, doubleSleeper: 800, singleSleeper: 1300 },
+    "3-170": { seater: 550, doubleSleeper: 750, singleSleeper: 1200 },
+    "170-3": { seater: 550, doubleSleeper: 750, singleSleeper: 1200 },
+    "3-127": { seater: 700, doubleSleeper: 999, singleSleeper: 1500 },
+    "127-3": { seater: 700, doubleSleeper: 999, singleSleeper: 1500 },
+    "3-53": { seater: 800, doubleSleeper: 1100, singleSleeper: 1600 },
+    "53-3": { seater: 800, doubleSleeper: 1100, singleSleeper: 1600 },
+    "3-29": { seater: 500, doubleSleeper: 700, singleSleeper: 1350 },
+    "29-3": { seater: 500, doubleSleeper: 700, singleSleeper: 1350 }
+  },
+  tomorrow: {
+    "3-31": { seater: 620, doubleSleeper: 820, singleSleeper: 1320 },
+    "31-3": { seater: 620, doubleSleeper: 820, singleSleeper: 1320 },
+    "3-170": { seater: 570, doubleSleeper: 770, singleSleeper: 1220 },
+    "170-3": { seater: 570, doubleSleeper: 770, singleSleeper: 1220 },
+    "3-127": { seater: 720, doubleSleeper: 1020, singleSleeper: 1520 },
+    "127-3": { seater: 720, doubleSleeper: 1020, singleSleeper: 1520 },
+    "3-53": { seater: 820, doubleSleeper: 1120, singleSleeper: 1620 },
+    "53-3": { seater: 820, doubleSleeper: 1120, singleSleeper: 1620 },
+    "3-29": { seater: 500, doubleSleeper: 700, singleSleeper: 1350 },
+    "29-3": { seater: 500, doubleSleeper: 700, singleSleeper: 1350 }
+  }
+};
+let tickerFaresLastFetch = 0;
+const TICKER_FARES_CACHE_TTL = 60 * 60 * 1000; // 1 hour TTL
+let isUpdatingTickerFares = false;
+
+// Compute India Standard Time (IST) dates
+function getISTDateStrings() {
+  const utc = new Date();
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const todayIST = new Date(utc.getTime() + istOffset);
+  const tomorrowIST = new Date(todayIST.getTime() + 24 * 60 * 60 * 1000);
+
+  const format = (d) => {
+    const day = String(d.getUTCDate()).padStart(2, '0');
+    const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const year = d.getUTCFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  return {
+    today: format(todayIST),
+    tomorrow: format(tomorrowIST)
+  };
+}
+
+// Search buses wrapper
+async function getBusesForRoute(fromId, toId, date) {
+  // Ensure cities are loaded
+  if (!OPERATORS.lxmi.cities || OPERATORS.lxmi.cities.length === 0) {
+    try {
+      OPERATORS.lxmi.cities = await fetchCities('lxmi');
+    } catch (err) {
+      console.error("Failed to load cities for Laxmi in background:", err.message);
+    }
+  }
+  if (!OPERATORS.rdlh.cities || OPERATORS.rdlh.cities.length === 0) {
+    try {
+      OPERATORS.rdlh.cities = await fetchCities('rdlh');
+    } catch (err) {
+      console.error("Failed to load cities for RDLH in background:", err.message);
+    }
+  }
+
+  const { fromName, toName, lxmiFromId, lxmiToId, rdlhFromId, rdlhToId } = resolveCityNamesAndIds(fromId, toId);
+  if (!fromName || !toName) return [];
+
+  const searchPromises = [];
+  if (lxmiFromId && lxmiToId) {
+    searchPromises.push(searchOperatorBuses('lxmi', lxmiFromId, lxmiToId, date).catch(() => []));
+  } else {
+    searchPromises.push(Promise.resolve([]));
+  }
+
+  if (rdlhFromId && rdlhToId) {
+    searchPromises.push(searchOperatorBuses('rdlh', rdlhFromId, rdlhToId, date).catch(() => []));
+  } else {
+    searchPromises.push(Promise.resolve([]));
+  }
+
+  const [lxmiBuses, rdlhBuses] = await Promise.all(searchPromises);
+  return [...lxmiBuses, ...rdlhBuses];
+}
+
+// Parse operator fares into seater, double sleeper, single sleeper
+function parseLowestFares(buses, route) {
+  if (!buses || buses.length === 0) {
+    return getFallbackFareForRoute(route);
+  }
+
+  let minSeater = Infinity;
+  let minDoubleSleeper = Infinity;
+  let minSingleSleeper = Infinity;
+
+  buses.forEach(bus => {
+    const type = (bus.busType || "").toLowerCase();
+    const fareStr = bus.fareString || "";
+    const fares = fareStr.split('/')
+      .map(f => parseFloat(f.trim()))
+      .filter(f => !isNaN(f) && f > 0);
+
+    if (fares.length === 0) return;
+    fares.sort((a, b) => a - b);
+
+    const isSleeperOnly = type.includes("sleeper") && !type.includes("seater") && !type.includes("semi");
+    const isSeaterOnly = type.includes("seater") && !type.includes("sleeper");
+
+    if (isSeaterOnly) {
+      minSeater = Math.min(minSeater, fares[0]);
+    } else if (isSleeperOnly) {
+      if (fares.length >= 2) {
+        minDoubleSleeper = Math.min(minDoubleSleeper, fares[0]);
+        minSingleSleeper = Math.min(minSingleSleeper, fares[fares.length - 1]);
+      } else {
+        minSingleSleeper = Math.min(minSingleSleeper, fares[0]);
+        minDoubleSleeper = Math.min(minDoubleSleeper, Math.round(fares[0] * 0.8));
+      }
+    } else {
+      if (fares.length === 3) {
+        minSeater = Math.min(minSeater, fares[0]);
+        minDoubleSleeper = Math.min(minDoubleSleeper, fares[1]);
+        minSingleSleeper = Math.min(minSingleSleeper, fares[2]);
+      } else if (fares.length === 2) {
+        minSeater = Math.min(minSeater, fares[0]);
+        minSingleSleeper = Math.min(minSingleSleeper, fares[1]);
+        minDoubleSleeper = Math.min(minDoubleSleeper, Math.round(fares[1] * 0.8));
+      } else {
+        minSeater = Math.min(minSeater, fares[0]);
+        minDoubleSleeper = Math.min(minDoubleSleeper, Math.round(fares[0] * 1.3));
+        minSingleSleeper = Math.min(minSingleSleeper, Math.round(fares[0] * 1.8));
+      }
+    }
+  });
+
+  const fallback = getFallbackFareForRoute(route);
+  return {
+    seater: minSeater !== Infinity ? minSeater : fallback.seater,
+    doubleSleeper: minDoubleSleeper !== Infinity ? minDoubleSleeper : fallback.doubleSleeper,
+    singleSleeper: minSingleSleeper !== Infinity ? minSingleSleeper : fallback.singleSleeper
+  };
+}
+
+// Background updates fetch
+async function updateTickerFares() {
+  if (isUpdatingTickerFares) return;
+  isUpdatingTickerFares = true;
+  console.log("[Ticker] Starting background update of ticker fares...");
+
+  const { today, tomorrow } = getISTDateStrings();
+  const updatedCache = { today: {}, tomorrow: {} };
+
+  for (const route of POPULAR_ROUTES) {
+    const routeKey = `${route.fromId}-${route.toId}`;
+    
+    // Today Fares
+    try {
+      const todayBuses = await getBusesForRoute(route.fromId, route.toId, today);
+      updatedCache.today[routeKey] = parseLowestFares(todayBuses, route);
+    } catch (err) {
+      console.error(`[Ticker] Error fetching today's fare for ${routeKey}:`, err.message);
+      updatedCache.today[routeKey] = tickerFaresCache?.today?.[routeKey] || getFallbackFareForRoute(route);
+    }
+
+    // Tomorrow Fares
+    try {
+      const tomorrowBuses = await getBusesForRoute(route.fromId, route.toId, tomorrow);
+      updatedCache.tomorrow[routeKey] = parseLowestFares(tomorrowBuses, route);
+    } catch (err) {
+      console.error(`[Ticker] Error fetching tomorrow's fare for ${routeKey}:`, err.message);
+      updatedCache.tomorrow[routeKey] = tickerFaresCache?.tomorrow?.[routeKey] || getFallbackFareForRoute(route);
+    }
+
+    // Small delay between scrapes to avoid slamming operators
+    await new Promise(resolve => setTimeout(resolve, 800));
+  }
+
+  tickerFaresCache = updatedCache;
+  tickerFaresLastFetch = Date.now();
+  isUpdatingTickerFares = false;
+  console.log("[Ticker] Background update of ticker fares completed successfully.");
+}
+
+// API Route
+app.get('/api/ticker-fares', (req, res) => {
+  const now = Date.now();
+  res.json({
+    success: true,
+    fares: tickerFaresCache,
+    lastUpdated: tickerFaresLastFetch
+  });
+
+  if (now - tickerFaresLastFetch > TICKER_FARES_CACHE_TTL && !isUpdatingTickerFares) {
+    updateTickerFares().catch(err => {
+      console.error("[Ticker] Error in background update:", err);
+    });
+  }
+});
+
+// Trigger initial warm up of ticker fares after a short delay
+setTimeout(() => {
+  console.log("[Ticker] Warming up ticker fares cache...");
+  updateTickerFares().catch(err => {
+    console.error("[Ticker] Warmup error:", err);
+  });
+}, 8000);
+
 // (Laxmi and Ram Dalal Holidays integration below)
 
 // Helper: search buses for a specific operator B2B portal

@@ -80,7 +80,7 @@
 
 * { box-sizing: border-box; }
 html, body {
-  margin: 0; padding: 0;
+  margin: 0; padding: 38px 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--ink);
   background: var(--bg);
@@ -125,7 +125,7 @@ button:active, .view-seats:active, .continue-btn:active, .paid-btn:active, .tk-b
 /* Header */
 header.top {
   position: sticky;
-  top: 0;
+  top: 38px;
   z-index: 100;
   background: #ffffff;
   border-bottom: 1px solid var(--line);
@@ -2021,9 +2021,554 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     padding-bottom: 10px;
   }
 }
+
+/* ════════════ TICKER BANNERS & WHATSAPP WIDGET STYLES ════════════ */
+
+/* Ticker Banners */
+.today-ticker-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 38px;
+  background: linear-gradient(90deg, var(--teal-d), var(--teal));
+  color: #ffffff;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.tomorrow-ticker-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 38px;
+  background: linear-gradient(90deg, #0F172A, #1E293B);
+  color: #E2E8F0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+
+.ticker-wrap {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.ticker-track {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 30px;
+  padding-right: 30px;
+  flex-shrink: 0;
+  animation: ticker-marquee 40s linear infinite;
+}
+
+.ticker-wrap:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+@keyframes ticker-marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+
+.ticker-label {
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 2px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--gold);
+  color: #ffffff;
+  font-size: 11px;
+  margin-right: 15px;
+  display: inline-block;
+  box-shadow: 0 2px 5px rgba(238, 140, 46, 0.3);
+  text-transform: uppercase;
+}
+
+.tomorrow-ticker-banner .ticker-label {
+  background: var(--teal);
+  box-shadow: 0 2px 5px rgba(14, 123, 79, 0.3);
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.ticker-route {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.tomorrow-ticker-banner .ticker-route {
+  color: var(--gold-s);
+}
+
+.ticker-price {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.tomorrow-ticker-banner .ticker-price {
+  background: rgba(255, 255, 255, 0.05);
+  color: #CBD5E1;
+}
+
+.ticker-price.highlight {
+  background: rgba(238, 140, 46, 0.2);
+  color: var(--gold);
+  border: 1px solid rgba(238, 140, 46, 0.4);
+  font-weight: 700;
+}
+
+.tomorrow-ticker-banner .ticker-price.highlight {
+  background: rgba(14, 115, 79, 0.2);
+  color: var(--teal-l);
+  border: 1px solid rgba(14, 115, 79, 0.4);
+}
+
+/* WhatsApp Widget Styles */
+.wa-widget-container {
+  position: fixed;
+  bottom: 50px;
+  right: 24px;
+  z-index: 9999;
+  font-family: 'Inter', sans-serif;
+}
+
+.wa-floating-btn {
+  width: 60px;
+  height: 60px;
+  background-color: #25D366;
+  border-radius: 50%;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
+  position: relative;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wa-floating-btn:hover {
+  background-color: #20BA5A;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+  transform: scale(1.05) translateY(-2px);
+}
+
+.wa-svg {
+  width: 32px;
+  height: 32px;
+}
+
+.wa-pulse-ring {
+  border: 3px solid #25D366;
+  border-radius: 50%;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  animation: wa-pulsate 1.8s ease-out infinite;
+  opacity: 0;
+  box-sizing: border-box;
+}
+
+@keyframes wa-pulsate {
+  0% { transform: scale(1.0); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0.0; }
+}
+
+.wa-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: #EF4444;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4);
+  border: 1.5px solid #ffffff;
+}
+
+/* Popover Chatbox */
+.wa-popover {
+  position: absolute;
+  bottom: 75px;
+  right: 0;
+  width: 330px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(14, 123, 79, 0.15);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wa-popover.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+.wa-popover-header {
+  background: linear-gradient(135deg, var(--teal-d), var(--teal));
+  color: #ffffff;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.wa-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border: 1.5px solid rgba(255,255,255,0.2);
+}
+
+.wa-header-info h4 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.wa-header-info p {
+  margin: 2px 0 0 0;
+  font-size: 11px;
+  color: rgba(255,255,255,0.85);
+  font-weight: 500;
+}
+
+.wa-popover-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.wa-popover-close:hover {
+  color: #ffffff;
+}
+
+.wa-popover-body {
+  padding: 20px;
+  background: var(--bg);
+}
+
+.wa-welcome {
+  font-size: 12.5px;
+  color: var(--ink2);
+  line-height: 1.45;
+  margin: 0 0 16px 0;
+  font-weight: 500;
+}
+
+.wa-chat-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  margin-bottom: 10px;
+  background: #ffffff;
+  border: 1.5px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.wa-chat-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.wa-chat-btn.lxmi:hover {
+  border-color: var(--teal);
+}
+
+.wa-chat-btn.ct:hover {
+  border-color: var(--gold);
+}
+
+.wa-btn-icon {
+  font-size: 20px;
+}
+
+.wa-btn-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.wa-btn-text strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.wa-btn-text span {
+  font-size: 11px;
+  color: var(--ink2);
+  margin-top: 1px;
+}
+
+.wa-popover-footer {
+  padding: 10px 16px;
+  background: #ffffff;
+  border-top: 1px solid var(--line);
+  font-size: 10.5px;
+  color: var(--ink3);
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  html, body {
+    padding-top: 38px !important;
+    padding-bottom: 38px !important;
+  }
+  header.top {
+    top: 38px !important;
+  }
+  .wa-widget-container {
+    bottom: 50px;
+    right: 16px;
+  }
+  .wa-popover {
+    width: 290px;
+    bottom: 70px;
+  }
+}
+
+/* ════════════ TICKER BANNERS & WHATSAPP WIDGET STYLES ════════════ */
+
+/* Ticker Banners */
+.today-ticker-banner {
+  position: fixed; top: 0; left: 0; width: 100%; height: 38px;
+  background: linear-gradient(90deg, var(--teal-d), var(--teal));
+  color: #ffffff; z-index: 1000; display: flex; align-items: center;
+  overflow: hidden; font-family: 'Inter', sans-serif;
+  border-bottom: 1.5px solid rgba(255,255,255,0.1);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.tomorrow-ticker-banner {
+  position: fixed; bottom: 0; left: 0; width: 100%; height: 38px;
+  background: linear-gradient(90deg, #0F172A, #1E293B);
+  color: #E2E8F0; z-index: 1000; display: flex; align-items: center;
+  overflow: hidden; font-family: 'Inter', sans-serif;
+  border-top: 1.5px solid rgba(255,255,255,0.1);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+.ticker-wrap { display: flex; width: 100%; overflow: hidden; position: relative; }
+.ticker-track {
+  display: flex; align-items: center; white-space: nowrap;
+  gap: 30px; padding-right: 30px; flex-shrink: 0;
+  animation: ticker-marquee 40s linear infinite;
+}
+.ticker-wrap:hover .ticker-track { animation-play-state: paused; }
+@keyframes ticker-marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+.ticker-label {
+  font-weight: 800; letter-spacing: 0.05em; padding: 2px 10px;
+  border-radius: var(--radius-sm); background: var(--gold); color: #ffffff;
+  font-size: 11px; margin-right: 15px; display: inline-block;
+  box-shadow: 0 2px 5px rgba(238,140,46,0.3); text-transform: uppercase;
+}
+.tomorrow-ticker-banner .ticker-label { background: var(--teal); box-shadow: 0 2px 5px rgba(14,123,79,0.3); }
+.ticker-item { display: inline-flex; align-items: center; gap: 12px; font-size: 12.5px; font-weight: 600; }
+.ticker-route { color: #ffffff; font-weight: 700; }
+.tomorrow-ticker-banner .ticker-route { color: var(--gold-s); }
+.ticker-price { background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: var(--radius-sm); font-size: 12px; color: rgba(255,255,255,0.9); }
+.tomorrow-ticker-banner .ticker-price { background: rgba(255,255,255,0.05); color: #CBD5E1; }
+.ticker-price.highlight { background: rgba(238,140,46,0.2); color: var(--gold); border: 1px solid rgba(238,140,46,0.4); font-weight: 700; }
+.tomorrow-ticker-banner .ticker-price.highlight { background: rgba(14,115,79,0.2); color: var(--teal-l); border: 1px solid rgba(14,115,79,0.4); }
+
+/* WhatsApp Widget */
+.wa-widget-container { position: fixed; bottom: 50px; right: 24px; z-index: 9999; font-family: 'Inter', sans-serif; }
+.wa-floating-btn {
+  width: 60px; height: 60px; background-color: #25D366; border-radius: 50%;
+  color: #ffffff; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(37,211,102,0.4); position: relative;
+  cursor: pointer; border: none; outline: none;
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+.wa-floating-btn:hover { background-color: #20BA5A; box-shadow: 0 6px 20px rgba(37,211,102,0.5); transform: scale(1.05) translateY(-2px); }
+.wa-svg { width: 32px; height: 32px; }
+.wa-pulse-ring {
+  border: 3px solid #25D366; border-radius: 50%; position: absolute;
+  height: 100%; width: 100%; animation: wa-pulsate 1.8s ease-out infinite;
+  opacity: 0; box-sizing: border-box;
+}
+@keyframes wa-pulsate {
+  0% { transform: scale(1.0); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0.0; }
+}
+.wa-badge {
+  position: absolute; top: -2px; right: -2px; background-color: #EF4444;
+  color: #ffffff; border-radius: 50%; width: 18px; height: 18px;
+  font-size: 11px; font-weight: 800; display: flex; align-items: center;
+  justify-content: center; box-shadow: 0 2px 5px rgba(239,68,68,0.4);
+  border: 1.5px solid #ffffff;
+}
+.wa-popover {
+  position: absolute; bottom: 75px; right: 0; width: 330px;
+  background: #ffffff; border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(14,123,79,0.15); border: 1px solid var(--line);
+  overflow: hidden; opacity: 0; transform: translateY(20px) scale(0.95);
+  pointer-events: none; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.wa-popover.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+.wa-popover-header {
+  background: linear-gradient(135deg, var(--teal-d), var(--teal));
+  color: #ffffff; padding: 16px 20px; display: flex; align-items: center;
+  gap: 12px; position: relative;
+}
+.wa-avatar {
+  width: 40px; height: 40px; border-radius: 50%; background: var(--gold);
+  color: #ffffff; font-weight: 800; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1); border: 1.5px solid rgba(255,255,255,0.2);
+}
+.wa-header-info h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 700; margin: 0; color: #ffffff; letter-spacing: -0.01em; }
+.wa-header-info p { margin: 2px 0 0 0; font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 500; }
+.wa-popover-close { position: absolute; top: 16px; right: 16px; color: rgba(255,255,255,0.7); background: transparent; border: none; font-size: 16px; cursor: pointer; padding: 4px; }
+.wa-popover-close:hover { color: #ffffff; }
+.wa-popover-body { padding: 20px; background: var(--bg); }
+.wa-welcome { font-size: 12.5px; color: var(--ink2); line-height: 1.45; margin: 0 0 16px 0; font-weight: 500; }
+.wa-chat-btn {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  border-radius: var(--radius-md); text-decoration: none; margin-bottom: 10px;
+  background: #ffffff; border: 1.5px solid var(--line);
+  box-shadow: var(--shadow-sm); transition: all 0.2s ease;
+}
+.wa-chat-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.wa-chat-btn.lxmi:hover { border-color: var(--teal); }
+.wa-chat-btn.ct:hover { border-color: var(--gold); }
+.wa-btn-icon { font-size: 20px; }
+.wa-btn-text { display: flex; flex-direction: column; text-align: left; }
+.wa-btn-text strong { font-size: 13px; font-weight: 700; color: var(--ink); }
+.wa-btn-text span { font-size: 11px; color: var(--ink2); margin-top: 1px; }
+.wa-popover-footer { padding: 10px 16px; background: #ffffff; border-top: 1px solid var(--line); font-size: 10.5px; color: var(--ink3); text-align: center; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; }
+
+@media (max-width: 768px) {
+  html, body { padding-top: 38px !important; padding-bottom: 38px !important; }
+  header.top { top: 38px !important; }
+  .wa-widget-container { bottom: 50px; right: 16px; }
+  .wa-popover { width: 290px; bottom: 70px; }
+}
+
 </style>
 </head>
 <body>
+
+<!-- Today's Fares Scrolling News Ticker -->
+<div class="today-ticker-banner">
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="today-ticker-track-1">
+      <div class="ticker-label">🚌 Today's Lowest Fares</div>
+      <span class="ticker-item">Loading rates...</span>
+    </div>
+    <div class="ticker-track" id="today-ticker-track-2" aria-hidden="true">
+      <div class="ticker-label">🚌 Today's Lowest Fares</div>
+      <span class="ticker-item">Loading rates...</span>
+    </div>
+  </div>
+</div>
+
+<!-- Tomorrow's Fares Scrolling News Ticker -->
+<div class="tomorrow-ticker-banner">
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="tomorrow-ticker-track-1">
+      <div class="ticker-label">📅 Tomorrow's Lowest Fares</div>
+      <span class="ticker-item">Loading rates...</span>
+    </div>
+    <div class="ticker-track" id="tomorrow-ticker-track-2" aria-hidden="true">
+      <div class="ticker-label">📅 Tomorrow's Lowest Fares</div>
+      <span class="ticker-item">Loading rates...</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- Today's Fares Scrolling News Ticker -->
+<div class="today-ticker-banner">
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="today-ticker-track-1">
+      <div class="ticker-label">Today's Lowest Fares:</div>
+      <span class="ticker-item">Loading rates...</span>
+    </div>
+    <div class="ticker-track" id="today-ticker-track-2" aria-hidden="true">
+      <div class="ticker-label">Today's Lowest Fares:</div>
+      <span class="ticker-item">Loading rates...</span>
+    </div>
+  </div>
+</div>
+
+<!-- Tomorrow's Fares Scrolling News Ticker -->
+<div class="tomorrow-ticker-banner">
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="tomorrow-ticker-track-1">
+      <div class="ticker-label">Tomorrow's Lowest Fares:</div>
+      <span class="ticker-item">Loading rates...</span>
+    </div>
+    <div class="ticker-track" id="tomorrow-ticker-track-2" aria-hidden="true">
+      <div class="ticker-label">Tomorrow's Lowest Fares:</div>
+      <span class="ticker-item">Loading rates...</span>
+    </div>
+  </div>
+</div>
 
 <!-- Offline/Slow network banner -->
 <div id="offline-banner" style="display:none; position:fixed; top:0; left:0; width:100%; background:var(--red); color:#fff; text-align:center; padding:10px 16px; font-weight:700; font-size:14px; z-index:99999; box-shadow:0 4px 12px rgba(239,68,68,0.3); border-bottom: 2px solid #dc2626;">
@@ -2877,6 +3422,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadCities();
   initFirebase();
   setupQR();
+  initTickerFares();
   
   // Offline & connection state tracking
   window.addEventListener('offline', () => {
@@ -5048,6 +5594,86 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// ════════ TICKER FARES SYSTEM ════════
+
+const POPULAR_ROUTE_KEYS = [
+  { key: '3-31',   from: 'Delhi',    to: 'Varanasi' },
+  { key: '31-3',   from: 'Varanasi', to: 'Delhi'    },
+  { key: '3-170',  from: 'Delhi',    to: 'Azamgarh' },
+  { key: '170-3',  from: 'Azamgarh', to: 'Delhi'    },
+  { key: '3-127',  from: 'Delhi',    to: 'Patna'    },
+  { key: '127-3',  from: 'Patna',    to: 'Delhi'    },
+  { key: '3-53',   from: 'Delhi',    to: 'Manali'   },
+  { key: '53-3',   from: 'Manali',   to: 'Delhi'    },
+  { key: '3-29',   from: 'Delhi',    to: 'Kanpur'   },
+  { key: '29-3',   from: 'Kanpur',   to: 'Delhi'    },
+];
+
+function getISTDateLabel(daysFromNow) {
+  const d = new Date(new Date().getTime() + (5.5 * 60 * 60 * 1000) + (daysFromNow * 86400000));
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  return `${d.getUTCDate()} ${months[d.getUTCMonth()]}`;
+}
+
+function buildTickerInnerHTML(faresMap, isToday) {
+  const label = isToday
+    ? `<div class="ticker-label">🚌 Today ${getISTDateLabel(0)}</div>`
+    : `<div class="ticker-label">📅 Tomorrow ${getISTDateLabel(1)}</div>`;
+  const items = POPULAR_ROUTE_KEYS.map(r => {
+    const f = faresMap[r.key];
+    if (!f) return '';
+    const parts = [];
+    if (f.seater)       parts.push(`<span class="ticker-price highlight">Seater ₹${f.seater}</span>`);
+    if (f.doubleSleeper) parts.push(`<span class="ticker-price">2-Slpr ₹${f.doubleSleeper}</span>`);
+    if (f.singleSleeper) parts.push(`<span class="ticker-price">1-Slpr ₹${f.singleSleeper}</span>`);
+    return `<span class="ticker-item"><span class="ticker-route">${r.from} → ${r.to}</span>${parts.join('')}</span>`;
+  }).join('<span style="margin:0 18px;opacity:0.4">|</span>');
+  return label + items;
+}
+
+function populateTicker(id1, id2, faresMap, isToday) {
+  const inner = buildTickerInnerHTML(faresMap, isToday);
+  const t1 = document.getElementById(id1);
+  const t2 = document.getElementById(id2);
+  if (t1) t1.innerHTML = inner;
+  if (t2) t2.innerHTML = inner;
+}
+
+async function initTickerFares() {
+  try {
+    const res = await fetch(`${API}/api/ticker-fares`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.success && data.fares) {
+      populateTicker('today-ticker-track-1', 'today-ticker-track-2', data.fares.today, true);
+      populateTicker('tomorrow-ticker-track-1', 'tomorrow-ticker-track-2', data.fares.tomorrow, false);
+    }
+  } catch (err) {
+    console.warn('[Ticker] Could not load ticker fares:', err.message);
+  }
+}
+
+// ════════ WHATSAPP WIDGET ════════
+
+function toggleWaPopover(e) {
+  if (e) e.stopPropagation();
+  const pop = document.getElementById('waPopover');
+  if (pop) pop.classList.toggle('open');
+  // Hide badge once opened
+  const badge = document.querySelector('.wa-badge');
+  if (badge && pop && pop.classList.contains('open')) badge.style.display = 'none';
+}
+
+document.addEventListener('click', function(e) {
+  const pop = document.getElementById('waPopover');
+  if (!pop) return;
+  const container = document.querySelector('.wa-widget-container');
+  if (container && !container.contains(e.target)) {
+    pop.classList.remove('open');
+  }
+});
+
 </script>
 
 <!-- Mock Razorpay Payment Modal -->
@@ -5095,5 +5721,84 @@ document.addEventListener('DOMContentLoaded', () => {
     <p style="color:var(--ink3); font-size:12px; margin:4px 0 0;">Connecting to operator B2B portals</p>
   </div>
 </div>
+<!-- Floating WhatsApp Booking Widget -->
+<div class="wa-widget-container">
+  <!-- Closeable Popover Chatbox -->
+  <div class="wa-popover" id="waPopover">
+    <div class="wa-popover-header">
+      <div class="wa-avatar">CT</div>
+      <div class="wa-header-info">
+        <h4>CheapTravel India Support</h4>
+        <p>Typically replies instantly</p>
+      </div>
+      <button class="wa-popover-close" onclick="toggleWaPopover(event)">✕</button>
+    </div>
+    <div class="wa-popover-body">
+      <p class="wa-welcome">Hello! Cheap Fare = Happy Journey. Book your bus ticket instantly with us on WhatsApp. Select an operator to chat:</p>
+      
+      <a href="https://wa.me/918853391184?text=Hi%20Laxmi%20Holidays%2C%20I%20want%20to%20book%20a%20bus%20ticket%20with%20CheapTravel%20India." target="_blank" class="wa-chat-btn lxmi">
+        <div class="wa-btn-icon">🚌</div>
+        <div class="wa-btn-text">
+          <strong>Laxmi Holidays</strong>
+          <span>Chat with +91 88533 91184</span>
+        </div>
+      </a>
+      
+      <a href="https://wa.me/918853521184?text=Hi%20CheapTravel%20India%2C%20I%20want%20to%20book%20a%20bus%20ticket%20at%20the%20lowest%20price." target="_blank" class="wa-chat-btn ct">
+        <div class="wa-btn-icon">🔥</div>
+        <div class="wa-btn-text">
+          <strong>CheapTravel India</strong>
+          <span>Chat with +91 88535 21184</span>
+        </div>
+      </a>
+    </div>
+    <div class="wa-popover-footer">
+      Comfort + Cheap Fare = Happy Journey
+    </div>
+  </div>
+  
+  <!-- Floating Button -->
+  <button class="wa-floating-btn" onclick="toggleWaPopover(event)" aria-label="Book on WhatsApp">
+    <div class="wa-pulse-ring"></div>
+    <svg viewBox="0 0 24 24" class="wa-svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.704 1.46h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" fill="currentColor"/>
+    </svg>
+    <span class="wa-badge">1</span>
+  </button>
+</div>
+
+<!-- Floating WhatsApp Booking Widget -->
+<div class="wa-widget-container">
+  <div class="wa-popover" id="waPopover">
+    <div class="wa-popover-header">
+      <div class="wa-avatar">CT</div>
+      <div class="wa-header-info">
+        <h4>CheapTravel India Support</h4>
+        <p>Typically replies instantly</p>
+      </div>
+      <button class="wa-popover-close" onclick="toggleWaPopover(event)">&#x2715;</button>
+    </div>
+    <div class="wa-popover-body">
+      <p class="wa-welcome">Hello! Cheap Fare = Happy Journey. Book your bus ticket instantly with us on WhatsApp. Select an operator to chat:</p>
+      <a href="https://wa.me/918853391184?text=Hi%20Laxmi%20Holidays%2C%20I%20want%20to%20book%20a%20bus%20ticket%20with%20CheapTravel%20India." target="_blank" class="wa-chat-btn lxmi">
+        <div class="wa-btn-icon">&#x1F68C;</div>
+        <div class="wa-btn-text"><strong>Laxmi Holidays</strong><span>Chat with +91 88533 91184</span></div>
+      </a>
+      <a href="https://wa.me/918853521184?text=Hi%20CheapTravel%20India%2C%20I%20want%20to%20book%20a%20bus%20ticket%20at%20the%20lowest%20price." target="_blank" class="wa-chat-btn ct">
+        <div class="wa-btn-icon">&#x1F525;</div>
+        <div class="wa-btn-text"><strong>CheapTravel India</strong><span>Chat with +91 88535 21184</span></div>
+      </a>
+    </div>
+    <div class="wa-popover-footer">Comfort + Cheap Fare = Happy Journey</div>
+  </div>
+  <button class="wa-floating-btn" onclick="toggleWaPopover(event)" aria-label="Book on WhatsApp">
+    <div class="wa-pulse-ring"></div>
+    <svg viewBox="0 0 24 24" class="wa-svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.704 1.46h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" fill="currentColor"/>
+    </svg>
+    <span class="wa-badge">1</span>
+  </button>
+</div>
+
 </body>
 </html>
