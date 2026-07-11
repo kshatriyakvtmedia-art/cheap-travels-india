@@ -7,7 +7,7 @@
 <meta name="description" content="Book affordable bus tickets from verified operators. Get 5% extra discount on partner buses. WhatsApp ticket in 90 seconds.">
 <meta name="theme-color" content="#0E7B4F">
 <!-- Razorpay SDK -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- Razorpay SDK removed: using WhatsApp-first booking flow -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
 <style>
@@ -1255,37 +1255,36 @@ input, select { font-family: inherit; }
       <div id="fare-breakup-rows"></div>
     </div>
 
-    <!-- Payment -->
-    <div class="checkout-section">
-      <h3><span class="step-badge">4</span> Payment via UPI</h3>
-      <div class="qr-wrap">
-        <div class="qr-box">
-          <svg width="180" height="180" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-            <rect width="256" height="256" fill="white"/>
-            <!-- QR corner squares -->
-            <rect x="20" y="20" width="72" height="72" rx="6" fill="none" stroke="#0E7B4F" stroke-width="10"/>
-            <rect x="36" y="36" width="40" height="40" rx="3" fill="#0E7B4F"/>
-            <rect x="164" y="20" width="72" height="72" rx="6" fill="none" stroke="#0E7B4F" stroke-width="10"/>
-            <rect x="180" y="36" width="40" height="40" rx="3" fill="#0E7B4F"/>
-            <rect x="20" y="164" width="72" height="72" rx="6" fill="none" stroke="#0E7B4F" stroke-width="10"/>
-            <rect x="36" y="180" width="40" height="40" rx="3" fill="#0E7B4F"/>
-            <!-- QR dots -->
-            <g id="qrdots" fill="#111"></g>
-          </svg>
-        </div>
-        <div class="upi-id-text">cheaptravel546@okhdfcbank</div>
-        <div style="font-size:12px;color:var(--ink3);margin-bottom:12px;">Scan &amp; pay the exact amount</div>
-        <div class="upi-apps-row">
-          <div class="upi-app-chip">GPay</div>
-          <div class="upi-app-chip">PhonePe</div>
-          <div class="upi-app-chip">Paytm</div>
-          <div class="upi-app-chip">BHIM</div>
-        </div>
+    <!-- WhatsApp Booking CTA -->
+    <div class="checkout-section" id="wa-booking-section">
+      <h3><span class="step-badge" style="background:var(--g);">4</span> Confirm &amp; Send Request</h3>
+
+      <div style="background:var(--g-ll);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:16px;border-left:3px solid var(--g);">
+        <b style="color:var(--g-d);">How it works</b><br>
+        Tap the button below — WhatsApp opens with your full booking details pre-filled. We'll receive your request and call you within <b>10 minutes</b> to confirm the seat.
       </div>
-      <div style="background:var(--g-ll);border-radius:10px;padding:10px 14px;font-size:12.5px;color:var(--ink2);line-height:1.5;margin-top:12px;">
-        ⚠️ After payment, click "I've Paid" below. Our agent will confirm and send your e-ticket to WhatsApp/Email within 10 minutes.
-      </div>
-      <button class="paid-btn" onclick="showTicket()">✅ I've Paid — Send My Ticket</button>
+
+      <!-- WhatsApp CTA button -->
+      <button id="wa-send-btn" onclick="submitBookingRequest()" style="
+        width: 100%; padding: 16px;
+        background: linear-gradient(135deg, #25D366, #1aad54);
+        color: #fff; border: none; border-radius: 14px;
+        font-size: 16px; font-weight: 800; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        box-shadow: 0 6px 22px rgba(37,211,102,0.38);
+        transition: transform .1s;
+        letter-spacing: 0.1px;
+      ">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="white" style="flex-shrink:0;">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.858L.057 23.716a.5.5 0 0 0 .625.635l6.047-1.515A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.812 9.812 0 0 1-5.031-1.384l-.36-.214-3.731.934.989-3.617-.234-.372A9.82 9.82 0 0 1 2.182 12C2.182 6.565 6.565 2.182 12 2.182S21.818 6.565 21.818 12 17.435 21.818 12 21.818z"/>
+        </svg>
+        Send Booking Request on WhatsApp
+      </button>
+
+      <p style="text-align:center;font-size:12px;color:var(--ink3);margin-top:10px;">
+        Free · No payment now · Seat confirmed after call
+      </p>
     </div>
   </div>
 </div>
@@ -1293,24 +1292,45 @@ input, select { font-family: inherit; }
 <!-- ════════════════════════════════════
   SCREEN: TICKET
 ════════════════════════════════════ -->
-<div class="screen" id="screen-ticket">
+<!-- ════════════════════════════════════
+  SCREEN: BOOKING SUBMITTED (Confirmation)
+════════════════════════════════════ -->
+<div class="screen" id="screen-ticket" style="background:var(--g-ll);">
   <div class="screen-body">
-    <div class="ticket-success-banner">
-      <div class="tick-circle">✅</div>
-      <div>
-        <div class="tick-title">Booking Confirmed!</div>
-        <div class="tick-sub" id="ticket-sub">Ticket sent to WhatsApp &amp; Email</div>
+
+    <!-- Success banner -->
+    <div style="background:linear-gradient(135deg,var(--g-d),var(--g));padding:28px 20px 24px;display:flex;align-items:flex-start;gap:16px;">
+      <div style="width:52px;height:52px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">📲</div>
+      <div style="flex:1;">
+        <div style="font-size:18px;font-weight:800;color:#fff;line-height:1.3;">Booking Request Sent!</div>
+        <div style="font-size:12.5px;color:rgba(255,255,255,.8);margin-top:4px;" id="ticket-sub">Our team will contact you shortly</div>
       </div>
-      <!-- Fixed/Prominent top download button -->
-      <button class="top-download-btn" id="tk-dl-btn" onclick="showToast('PDF ticket download started!')" style="margin-left: auto; background: #fff; color: var(--g-d); border-radius: 12px; padding: 8px 14px; font-weight: 800; font-size: 12px; border:none; cursor:pointer; box-shadow: var(--shadow);">
-        Download PDF
-      </button>
     </div>
 
-    <div class="ticket-card">
+    <!-- What happens next card -->
+    <div style="background:#fff;border-radius:16px;margin:14px 16px 0;padding:18px 16px;box-shadow:var(--shadow);">
+      <div style="font-size:13.5px;font-weight:800;color:var(--ink);margin-bottom:14px;">What happens next?</div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <div style="width:32px;height:32px;background:var(--g-l);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">1️⃣</div>
+          <div><b style="font-size:13.5px;color:var(--ink);">We received your request</b><div style="font-size:12px;color:var(--ink3);margin-top:2px;">Booking details sent to our WhatsApp</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <div style="width:32px;height:32px;background:var(--g-l);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">2️⃣</div>
+          <div><b style="font-size:13.5px;color:var(--ink);">Our agent calls you in 10 min</b><div style="font-size:12px;color:var(--ink3);margin-top:2px;">We confirm seat availability &amp; price</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <div style="width:32px;height:32px;background:var(--g-l);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">3️⃣</div>
+          <div><b style="font-size:13.5px;color:var(--ink);">Ticket sent on WhatsApp</b><div style="font-size:12px;color:var(--ink3);margin-top:2px;">E-ticket delivered within 30 minutes</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journey summary card -->
+    <div class="ticket-card" style="margin:12px 16px 0;">
       <div class="ticket-card-head">
         <img src="../images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" class="tk-logo">
-        <div class="pnr-badge" id="tk-pnr">PNR · —</div>
+        <div class="pnr-badge" id="tk-pnr" style="font-size:11px;">REF · —</div>
       </div>
       <div class="ticket-route">
         <div>
@@ -1325,27 +1345,32 @@ input, select { font-family: inherit; }
           <div class="tr-point" id="tk-dp">—</div>
         </div>
       </div>
-      
-      <!-- Boarding Pass Notches Divider -->
       <div class="ticket-divider"></div>
-
       <div class="ticket-detail-grid" id="tk-detail-grid">
         <div class="tk-cell"><div class="tk-lbl">Operator</div><div class="tk-val" id="tk-op">—</div></div>
         <div class="tk-cell"><div class="tk-lbl">Bus Type</div><div class="tk-val" id="tk-type">—</div></div>
         <div class="tk-cell"><div class="tk-lbl">Seat(s)</div><div class="tk-val" id="tk-seats">—</div></div>
-        <div class="tk-cell"><div class="tk-lbl">Amount Paid</div><div class="tk-val" id="tk-amount" style="color:var(--g);">—</div></div>
+        <div class="tk-cell"><div class="tk-lbl">Total (incl. GST)</div><div class="tk-val" id="tk-amount" style="color:var(--g-d);font-size:15px;">—</div></div>
       </div>
-      <div class="ticket-actions" style="padding: 16px 20px; flex-direction: column; gap: 10px;">
-        <button class="tk-action-btn tk-wa" onclick="shareTicketWA()" style="width: 100%; padding: 14px; font-size: 15px; background: #25D366; color: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; box-shadow: 0 4px 14px rgba(37,211,102,0.3);">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-          Send Ticket via WhatsApp
-        </button>
-      </div>
-    </div>
 
-    <div style="padding:0 16px 16px;">
-      <button onclick="goHome()" style="width:100%;padding:14px;background:var(--g-l);color:var(--g-d);border-radius:13px;font-size:14px;font-weight:700;border:none;cursor:pointer;">← Book Another Ticket</button>
+      <!-- Fare breakup on confirmation -->
+      <div style="padding:0 20px 16px;">
+        <div style="border-top:1px dashed var(--line);padding-top:14px;">
+          <div id="tk-fare-rows"></div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:10px;">
+        <button onclick="openWhatsApp()" style="width:100%;padding:14px;background:#25D366;color:#fff;border-radius:12px;font-size:15px;font-weight:800;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(37,211,102,.3);">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="white" style="flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.858L.057 23.716a.5.5 0 0 0 .625.635l6.047-1.515A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.812 9.812 0 0 1-5.031-1.384l-.36-.214-3.731.934.989-3.617-.234-.372A9.82 9.82 0 0 1 2.182 12C2.182 6.565 6.565 2.182 12 2.182S21.818 6.565 21.818 12 17.435 21.818 12 21.818z"/></svg>
+          Chat with us on WhatsApp
+        </button>
+        <button onclick="goHome()" style="width:100%;padding:13px;background:var(--g-l);color:var(--g-d);border-radius:12px;font-size:14px;font-weight:700;border:none;cursor:pointer;">← Book Another Ticket</button>
+      </div>
     </div>
+    <div style="height:24px;"></div>
+
   </div>
 </div>
 
@@ -1988,6 +2013,9 @@ function pickSeat(el, resId) {
   updateBookingBar(resId);
 }
 
+/* ═══════════════════════════════════════════════
+   BOOKING BAR — live seat selection summary
+═══════════════════════════════════════════════ */
 function updateBookingBar(resId) {
   const seatEl = document.getElementById(`bbar-seat-${resId}`);
   const fareEl = document.getElementById(`bbar-fare-${resId}`);
@@ -1995,116 +2023,170 @@ function updateBookingBar(resId) {
   if (!seatEl) return;
   if (selectedSeats.length === 0) {
     seatEl.textContent = 'No seat selected';
-    fareEl.innerHTML = `₹0 <small style="font-size:11px;color:var(--ink3);">/seat</small>`;
+    fareEl.innerHTML = `₹0 <small style="font-size:11px;color:var(--ink3);">/ seat</small>`;
     if (btnEl) btnEl.disabled = true;
   } else {
-    const total = selectedSeats.reduce((s,x) => s + x.payable, 0);
+    const baseAfterDiscount = selectedSeats.reduce((s,x) => s + x.payable, 0);
+    const gst = Math.round(baseAfterDiscount * 0.04);
+    const total = baseAfterDiscount + gst;
     seatEl.textContent = `Seats: ${selectedSeats.map(s=>s.seatNo).join(', ')}`;
-    fareEl.innerHTML = `₹${total} <small style="font-size:1function showTicket(pnr, ticketUrl) {
-  const totalBase = selectedSeats.reduce((s,x) => s + x.fare, 0);
+    fareEl.innerHTML = `₹${total} <small style="font-size:11px;color:var(--ink3);">incl. GST</small>`;
+    if (btnEl) btnEl.disabled = false;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   PROCEED TO CHECKOUT — build fare breakup with 4% GST
+═══════════════════════════════════════════════ */
+function proceedToCheckout(resId) {
+  if (selectedSeats.length === 0) { showToast('Please select at least one seat'); return; }
+
+  selectedBus = allBusesCache.find(b => b.resId === resId) || selectedBus;
+
+  // Build fare numbers (with 4% GST)
+  const totalBase     = selectedSeats.reduce((s,x) => s + x.fare, 0);
   const totalDiscount = selectedSeats.reduce((s,x) => s + x.discount, 0);
-  let totalPayable = selectedSeats.reduce((s,x) => s + x.payable, 0);
-  
-  let bonusApplied = 0;
-  if (currentUser && currentUser.bonus && currentUser.bonus > 0) {
-    bonusApplied = Math.min(currentUser.bonus, totalPayable);
-    totalPayable -= bonusApplied;
-    
-    // Deduct bonus
-    currentUser.bonus = Math.max(0, currentUser.bonus - bonusApplied);
-    localStorage.setItem('cti_user', JSON.stringify(currentUser));
-    
-    const users = JSON.parse(localStorage.getItem('cti_users') || '[]');
-    const idx = users.findIndex(u => u.email === currentUser.email);
-    if (idx !== -1) {
-      users[idx].bonus = currentUser.bonus;
-      localStorage.setItem('cti_users', JSON.stringify(users));
-    }
-    updateAuthUI();
-  }
+  const afterDiscount = totalBase - totalDiscount;
+  const gst           = Math.round(afterDiscount * 0.04);
+  const totalPayable  = afterDiscount + gst;
 
-  const seatNos = selectedSeats.map(s=>s.seatNo).join(', ');
-  if (!pnr) {
-    pnr = `CTI-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
-  }
-  const phone = document.getElementById('contact-phone').value || '+91 88535 21184';
+  // Store for WhatsApp send
+  window._checkoutFare = { totalBase, totalDiscount, afterDiscount, gst, totalPayable };
 
-  document.getElementById('tk-pnr').textContent = `PNR · ${pnr}`;
-  document.getElementById('tk-from').textContent = selectedFromName;
-  document.getElementById('tk-to').textContent = selectedToName;
-  document.getElementById('tk-dep').textContent = selectedBus ? selectedBus.departure : '—';
-  document.getElementById('tk-arr').textContent = selectedBus ? selectedBus.arrival : '—';
-  document.getElementById('tk-bp').textContent = selectedBP ? selectedBP.name : '—';
-  document.getElementById('tk-dp').textContent = selectedDP ? selectedDP.name : '—';
-  document.getElementById('tk-op').textContent = selectedBus ? selectedBus.operator : '—';
-  document.getElementById('tk-type').textContent = selectedBus ? selectedBus.busType : '—';
-  document.getElementById('tk-seats').textContent = seatNos || '—';
-  document.getElementById('tk-amount').textContent = `₹${totalPayable} (UPI)`;
-  document.getElementById('ticket-sub').textContent = `Ticket sent to WhatsApp (${phone})`;
+  // Trip summary header
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dp = selectedDate.split('-');
+  const dateDisplay = `${parseInt(dp[2])} ${months[parseInt(dp[1])-1]} ${dp[0]}`;
+  document.getElementById('checkout-sub').textContent = `${selectedFromName} → ${selectedToName}`;
+  document.getElementById('co-trip-summary').innerHTML =
+    `${selectedFromName} → ${selectedToName}<br>` +
+    `<span style="font-size:13px;font-weight:500;color:rgba(255,255,255,.8);">` +
+    `${selectedBus ? selectedBus.operator : ''} · ${dateDisplay} · ` +
+    `${selectedBus ? selectedBus.departure : ''} — ${selectedBus ? selectedBus.arrival : ''}</span>`;
 
-  const dlBtn = document.getElementById('tk-dl-btn');
-  if (dlBtn && ticketUrl) {
-    dlBtn.onclick = () => window.open(ticketUrl, '_blank');
-  }
+  // Build per-seat passenger input forms
+  const container = document.getElementById('passenger-inputs-container');
+  container.innerHTML = selectedSeats.map((seat, i) => `
+    <div style="border:1.5px solid var(--line);border-radius:12px;padding:14px 14px 10px;margin-bottom:12px;">
+      <div style="font-size:11.5px;font-weight:700;color:var(--g-d);margin-bottom:12px;">Seat ${seat.seatNo}</div>
+      <div class="form-field"><label>Full Name</label>
+        <input type="text" class="p-name" placeholder="e.g. Rahul Sharma" style="font-size:16px;"></div>
+      <div class="form-grid">
+        <div class="form-field"><label>Age</label>
+          <input type="number" class="p-age" placeholder="28" min="1" max="99" style="font-size:16px;"></div>
+        <div class="form-field"><label>Gender</label>
+          <select class="p-gender" style="font-size:16px;">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+    </div>`).join('');
 
-  // Track booking confirmation event to send details to the admin dashboard
-  if (selectedBus && selectedSeats.length > 0) {
-    const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
-    fetch('/api/track', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event: 'booking',
-        data: {
-          operator: selectedBus.operator,
-          route: `${selectedFromName} → ${selectedToName}`,
-          seats: seatNosStr,
-          amount: totalPayable,
-          pnr: pnr
-        }
-      })
-    }).catch(() => {});
-  }
-
-  showScreen('ticket');
-}row disc"><span>Cheap Travels discount</span><span>− ₹${totalDiscount}</span></div>` : '';
-  const bonusRow = bonusApplied > 0 ? `<div class="fare-row disc" style="color:#166534;font-weight:600;"><span>₹51 Signup Bonus Applied</span><span>− ₹${bonusApplied}</span></div>` : '';
+  // Fare breakup with 4% GST
+  const discountRow = totalDiscount > 0
+    ? `<div class="fare-row disc"><span>CheapTravels Discount (5%)</span><span>− ₹${totalDiscount}</span></div>` : '';
   document.getElementById('fare-breakup-rows').innerHTML = `
     <div class="fare-row"><span class="lbl">Base fare (${selectedSeats.length} seat${selectedSeats.length>1?'s':''})</span><span>₹${totalBase}</span></div>
     ${discountRow}
-    ${bonusRow}
-    <div class="fare-row"><span class="lbl">GST & Convenience</span><span>₹0</span></div>
+    <div class="fare-row"><span class="lbl">GST (4%)</span><span>+ ₹${gst}</span></div>
     <div class="fare-row total"><span>Total Payable</span><span>₹${totalPayable}</span></div>`;
+
+  showScreen('checkout');
+  document.getElementById('checkout-body').scrollTop = 0;
 }
 
-function showTicket() {
-  const totalBase = selectedSeats.reduce((s,x) => s + x.fare, 0);
-  const totalDiscount = selectedSeats.reduce((s,x) => s + x.discount, 0);
-  let totalPayable = selectedSeats.reduce((s,x) => s + x.payable, 0);
-  
-  let bonusApplied = 0;
-  if (currentUser && currentUser.bonus && currentUser.bonus > 0) {
-    bonusApplied = Math.min(currentUser.bonus, totalPayable);
-    totalPayable -= bonusApplied;
-    
-    // Deduct bonus
-    currentUser.bonus = Math.max(0, currentUser.bonus - bonusApplied);
-    localStorage.setItem('cti_user', JSON.stringify(currentUser));
-    
-    const users = JSON.parse(localStorage.getItem('cti_users') || '[]');
-    const idx = users.findIndex(u => u.email === currentUser.email);
-    if (idx !== -1) {
-      users[idx].bonus = currentUser.bonus;
-      localStorage.setItem('cti_users', JSON.stringify(users));
-    }
-    updateAuthUI();
-  }
+/* ═══════════════════════════════════════════════
+   SUBMIT BOOKING REQUEST — validate form, build
+   pre-filled WhatsApp message, open wa.me link
+═══════════════════════════════════════════════ */
+function submitBookingRequest() {
+  // 1. Validate passenger details
+  const nameInputs = document.querySelectorAll('.p-name');
+  const ageInputs  = document.querySelectorAll('.p-age');
+  let isValid = true;
+  nameInputs.forEach(inp => { if (!inp.value.trim()) isValid = false; });
+  ageInputs.forEach(inp  => { if (!inp.value.trim()) isValid = false; });
+  if (!isValid) { showToast('Please fill all passenger names and ages'); return; }
 
-  const seatNos = selectedSeats.map(s=>s.seatNo).join(', ');
-  const pnr = `CTI-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
-  const phone = document.getElementById('contact-phone').value || '+91 88535 21184';
+  const phone = document.getElementById('contact-phone').value.trim();
+  if (!phone) { showToast('Please enter your contact phone number'); return; }
 
-  document.getElementById('tk-pnr').textContent = `PNR · ${pnr}`;
+  // 2. Gather passenger list
+  const genderInputs = document.querySelectorAll('.p-gender');
+  const passengers = selectedSeats.map((seat, i) => ({
+    seatNo:  seat.seatNo,
+    name:    nameInputs[i]?.value.trim() || `Passenger ${i+1}`,
+    age:     ageInputs[i]?.value.trim() || '25',
+    gender:  genderInputs[i]?.value || 'Male'
+  }));
+
+  // 3. Get fare numbers
+  const fare   = window._checkoutFare || {};
+  const totalBase     = fare.totalBase     || selectedSeats.reduce((s,x) => s+x.fare, 0);
+  const totalDiscount = fare.totalDiscount || selectedSeats.reduce((s,x) => s+x.discount, 0);
+  const afterDiscount = fare.afterDiscount || (totalBase - totalDiscount);
+  const gst           = fare.gst           || Math.round(afterDiscount * 0.04);
+  const totalPayable  = fare.totalPayable  || (afterDiscount + gst);
+
+  // 4. Journey details
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dp = selectedDate.split('-');
+  const dateDisplay = `${parseInt(dp[2])} ${months[parseInt(dp[1])-1]} ${dp[0]}`;
+  const ref = `CTI-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
+
+  // 5. Build WhatsApp message
+  const passengerLines = passengers.map((p,i) =>
+    `${i+1}. ${p.name} | Age: ${p.age} | ${p.gender} | Seat ${p.seatNo}`
+  ).join('\n');
+
+  const discountLine = totalDiscount > 0 ? `\nDiscount (5%): -₹${totalDiscount}` : '';
+
+  const msg =
+`🚌 *New Booking Request — Cheap Travels India*
+
+📍 Route: *${selectedFromName} → ${selectedToName}*
+📅 Date: ${dateDisplay}
+🕐 Departure: ${selectedBus ? selectedBus.departure : '—'} | Arrival: ${selectedBus ? selectedBus.arrival : '—'}
+🏢 Operator: ${selectedBus ? selectedBus.operator : '—'} | ${selectedBus ? selectedBus.busType : '—'}
+🪑 Seats: ${selectedSeats.map(s=>s.seatNo).join(', ')}
+📌 Boarding: ${selectedBP ? selectedBP.name + ' @ ' + selectedBP.time : 'As per operator'}
+📌 Dropping: ${selectedDP ? selectedDP.name : 'As per operator'}
+
+👤 *Passengers:*
+${passengerLines}
+
+📞 Contact: ${phone}
+
+💰 *Fare Breakup:*
+Base Fare: ₹${totalBase}${discountLine}
+GST (4%): +₹${gst}
+*Total Payable: ₹${totalPayable}*
+
+🔖 Ref: ${ref}
+
+_Please call back to confirm and arrange payment._`;
+
+  // 6. Store ref for confirmation screen
+  window._lastBookingRef = ref;
+  window._lastTotalPayable = totalPayable;
+
+  // 7. Fire WhatsApp deep-link
+  const waNumber = '918853521184'; // +91 88535 21184
+  window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+
+  // 8. Show confirmation screen
+  showBookingSubmitted(ref, totalPayable, totalBase, totalDiscount, gst, passengers, phone);
+}
+
+/* ═══════════════════════════════════════════════
+   SHOW BOOKING SUBMITTED — populate & show confirmation screen
+═══════════════════════════════════════════════ */
+function showBookingSubmitted(ref, totalPayable, totalBase, totalDiscount, gst, passengers, phone) {
+  const seatNos = selectedSeats.map(s => s.seatNo).join(', ');
+
+  document.getElementById('tk-pnr').textContent = `REF · ${ref}`;
   document.getElementById('tk-from').textContent = selectedFromName;
   document.getElementById('tk-to').textContent = selectedToName;
   document.getElementById('tk-dep').textContent = selectedBus ? selectedBus.departure : '—';
@@ -2114,34 +2196,41 @@ function showTicket() {
   document.getElementById('tk-op').textContent = selectedBus ? selectedBus.operator : '—';
   document.getElementById('tk-type').textContent = selectedBus ? selectedBus.busType : '—';
   document.getElementById('tk-seats').textContent = seatNos || '—';
-  document.getElementById('tk-amount').textContent = `₹${totalPayable} (UPI)`;
-  document.getElementById('ticket-sub').textContent = `Ticket sent to WhatsApp (${phone})`;
+  document.getElementById('tk-amount').textContent = `₹${totalPayable}`;
+  document.getElementById('ticket-sub').textContent = `Team will contact ${phone} shortly`;
 
-  // Track booking confirmation event to send details to the admin dashboard
-  if (selectedBus && selectedSeats.length > 0) {
-    const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
-    fetch('/api/track', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event: 'booking',
-        data: {
-          operator: selectedBus.operator,
-          route: `${selectedFromName} → ${selectedToName}`,
-          seats: seatNosStr,
-          amount: totalPayable,
-          pnr: pnr
-        }
-      })
-    }).catch(() => {});
+  // Fare rows on confirmation screen
+  const discountRow = totalDiscount > 0
+    ? `<div class="fare-row disc"><span>CheapTravels Discount (5%)</span><span>− ₹${totalDiscount}</span></div>` : '';
+  const fareRows = document.getElementById('tk-fare-rows');
+  if (fareRows) {
+    fareRows.innerHTML = `
+      <div class="fare-row"><span class="lbl">Base Fare</span><span>₹${totalBase}</span></div>
+      ${discountRow}
+      <div class="fare-row"><span class="lbl">GST (4%)</span><span>+ ₹${gst}</span></div>
+      <div class="fare-row total"><span>Total Payable</span><span>₹${totalPayable}</span></div>`;
   }
+
+  // Silent tracking
+  fetch('/api/track', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      event: 'whatsapp_booking_request',
+      data: {
+        ref, operator: selectedBus?.operator,
+        route: `${selectedFromName} → ${selectedToName}`,
+        seats: seatNos, amount: totalPayable, phone
+      }
+    })
+  }).catch(() => {});
 
   showScreen('ticket');
 }
 
-function shareTicketWA() {
-  const text = `🎟 *Cheap Travels India Ticket*\n*${selectedFromName} → ${selectedToName}*\nDep: ${selectedBus?.departure} | Arr: ${selectedBus?.arrival}\nSeats: ${selectedSeats.map(s=>s.seatNo).join(', ')}\nTotal: ₹${selectedSeats.reduce((s,x)=>s+x.payable,0)}\n\nBook on cheaptravel.in`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+/* Shortcut: open business WhatsApp from confirmation screen */
+function openWhatsApp() {
+  window.open('https://wa.me/918853521184', '_blank');
 }
 
 /* ═══════════════════════════════════════════════
@@ -2298,7 +2387,7 @@ function setupQR() {
   dots.innerHTML = s;
 }
 
-// ═══════════ RAZORPAY & PAYMENT INTEGRATION ═══════════
+// ═══════════ PASSENGER DETAILS HELPER (retained) ═══════════
 function getPassengerDetails() {
   const passengerNames = document.querySelectorAll('.p-name');
   const passengerAges = document.querySelectorAll('.p-age');
@@ -2315,167 +2404,8 @@ function getPassengerDetails() {
   return passengers;
 }
 
-async function processPayment() {
-  const phone = document.getElementById('contact-phone').value.trim();
-  const email = document.getElementById('contact-email').value.trim();
-  if (!phone || !email) {
-    showToast("Please fill in contact phone and email first!");
-    return;
-  }
-  
-  const nameInputs = document.querySelectorAll('.p-name');
-  const ageInputs = document.querySelectorAll('.p-age');
-  let isValid = true;
-  nameInputs.forEach(input => {
-    if (!input.value.trim()) isValid = false;
-  });
-  ageInputs.forEach(input => {
-    if (!input.value.trim()) isValid = false;
-  });
-  if (!isValid) {
-    showToast("Please fill in all passenger details!");
-    return;
-  }
-
-  // Create booking order on backend first
-  let dbOrderId = null;
-  try {
-    const passengers = getPassengerDetails();
-    const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
-
-    const orderRes = await fetch(`/api/booking/create`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        provider: selectedBus.resId.startsWith('lx-') ? 'lxmi' : 'rdlh',
-        busExternalId: selectedBus.resId,
-        operator: selectedBus.operator,
-        busType: selectedBus.busType,
-        fromCity: selectedFromName,
-        toCity: selectedToName,
-        journeyDate: selectedDateDisplay,
-        departure: selectedBus.departure,
-        arrival: selectedBus.arrival,
-        seatNo: seatNosStr,
-        boardingPoint: selectedBP ? selectedBP.name : 'Contact Operator',
-        droppingPoint: selectedDP ? selectedDP.name : 'Contact Operator',
-        passengerName: passengers[0]?.name || 'Passenger 1',
-        passengerAge: passengers[0]?.age || 25,
-        passengerGender: passengers[0]?.gender || 'Male',
-        customerPhone: phone,
-        customerEmail: email,
-        baseFare: selectedSeats.reduce((sum, s) => sum + s.fare, 0),
-        ourMargin: 0,
-        customerDiscount: selectedSeats.reduce((sum, s) => sum + s.discount, 0),
-        totalPayable: totalPayable
-      })
-    });
-
-    const orderData = await orderRes.json();
-    if (!orderData.success) {
-      showToast("Failed to create booking order: " + (orderData.error || "Unknown error"));
-      return;
-    }
-    dbOrderId = orderData.orderId;
-  } catch (err) {
-    console.error("Order creation failed:", err);
-    showToast("An error occurred while creating booking. Please try again.");
-    return;
-  }
-
-  try {
-    const res = await fetch(`/api/payment/order`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount: totalPayable * 100, currency: 'INR' })
-    });
-    const orderData = await res.json();
-    if (!orderData.success) {
-      showToast("Failed to initiate payment. Please try again.");
-      return;
-    }
-
-    if (orderData.mocked) {
-      openRzpMock(orderData.amount / 100, dbOrderId);
-    } else {
-      const options = {
-        "key": orderData.keyId,
-        "amount": orderData.amount,
-        "currency": orderData.currency,
-        "name": "Cheap Travels India",
-        "description": "Bus Ticket Booking",
-        "order_id": orderData.orderId,
-        "handler": function (response) {
-          completeBooking(response.razorpay_payment_id, dbOrderId, response.razorpay_signature || 'sig_mock');
-        },
-        "prefill": {
-          "name": nameInputs[0].value.trim(),
-          "email": email,
-          "contact": phone
-        },
-        "theme": {
-          "color": "#0E7B4F"
-        }
-      };
-      const rzp = new Razorpay(options);
-      rzp.on('payment.failed', function (response) {
-        showToast("Payment failed: " + response.error.description);
-      });
-      rzp.open();
-    }
-  } catch (err) {
-    console.error("Payment initiation error:", err);
-    showToast("An error occurred during payment. Please try again.");
-  }
-}
-
-let currentDbOrderIdForMock = null;
-function openRzpMock(amount, dbOrderId) {
-  currentDbOrderIdForMock = dbOrderId;
-  document.getElementById('rzp-mock-amount').textContent = `₹${amount}`;
-  document.getElementById('rzp-mock-overlay').style.display = 'flex';
-}
-
-function closeRzpMock() {
-  document.getElementById('rzp-mock-overlay').style.display = 'none';
-}
-
-function simulateRzpSuccess() {
-  closeRzpMock();
-  completeBooking('pay_mock_' + Math.random().toString(36).substring(2, 10), currentDbOrderIdForMock, 'sig_mock');
-}
-
-async function completeBooking(paymentId, dbOrderId, signature) {
-  const passengers = getPassengerDetails();
-  const loadingOverlay = document.getElementById('loading-overlay');
-  if (loadingOverlay) loadingOverlay.style.display = 'flex';
-
-  try {
-    const verifyRes = await fetch(`/api/payment/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        orderId: dbOrderId,
-        paymentId: paymentId,
-        signature: signature,
-        passengers: passengers
-      })
-    });
-    
-    const verifyData = await verifyRes.json();
-    if (loadingOverlay) loadingOverlay.style.display = 'none';
-
-    if (verifyData.success) {
-      showTicket(verifyData.pnr, verifyData.ticketUrl);
-    } else {
-      showToast("Payment verification failed: " + (verifyData.error || "Please contact support."));
-    }
-  } catch (err) {
-    if (loadingOverlay) loadingOverlay.style.display = 'none';
-    console.error("Payment verification connection error:", err);
-    showToast("Payment verification failed. Please contact customer support.");
-  }
-}
+// processPayment / Razorpay functions removed — using WhatsApp-first flow instead.
+// submitBookingRequest() above handles the full booking request flow.
 
 // Nav Drawer functions
 function toggleNavDrawer() {
@@ -2530,46 +2460,6 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 
-<!-- Mock Razorpay Payment Modal -->
-<div class="auth-overlay" id="rzp-mock-overlay" style="display:none; align-items:center; justify-content:center; z-index:99999; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
-  <div class="auth-box" style="width:340px; padding:20px; border-top: 4px solid var(--g); position:relative; background:#fff; border-radius:14px; box-shadow: var(--shadow-md);">
-    <button class="auth-close" onclick="closeRzpMock()" style="position:absolute; top:12px; right:14px; font-size:18px; color:var(--ink3); background:none; border:none; cursor:pointer;">✕</button>
-    <div style="text-align:center; margin-bottom:16px;">
-      <h3 style="font-size:15px; font-weight:800; color:var(--g-d); margin-bottom:4px;">Razorpay Secure Checkout</h3>
-      <p style="font-size:12px; color:var(--ink2); margin:0;">Cheap Travels India · Payment Demo</p>
-    </div>
-    
-    <div style="background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:10px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center;">
-      <div>
-        <span style="font-size:10px; font-weight:700; color:var(--ink2); text-transform:uppercase;">Amount Payable</span>
-        <div style="font-size:16px; font-weight:800; color:var(--g-d); margin-top:2px;" id="rzp-mock-amount">₹0</div>
-      </div>
-      <span style="background:rgba(14, 123, 79, 0.1); color:var(--g-d); padding:3px 6px; border-radius:4px; font-size:9px; font-weight:700; letter-spacing:0.5px;">DEMO</span>
-    </div>
-
-    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
-      <div style="font-size:10px; font-weight:700; color:var(--ink2); text-transform:uppercase; letter-spacing:0.5px;">Select Payment Method</div>
-      <label style="display:flex; align-items:center; gap:8px; padding:10px; border:1.5px solid var(--g); background:var(--g-l); border-radius:10px; cursor:pointer;">
-        <input type="radio" name="rzp-method" checked style="accent-color:var(--g);">
-        <span style="font-size:13px; font-weight:700; color:var(--g-d);">UPI (GPay, PhonePe, Paytm)</span>
-      </label>
-      <label style="display:flex; align-items:center; gap:8px; padding:10px; border:1px solid var(--line); border-radius:10px; cursor:pointer; opacity:0.5;">
-        <input type="radio" name="rzp-method" disabled style="accent-color:var(--g);">
-        <span style="font-size:13px; font-weight:600; color:var(--ink);">Credit / Debit Card</span>
-      </label>
-    </div>
-
-    <button class="auth-submit" onclick="simulateRzpSuccess()" style="width:100%; padding:12px; background:var(--g); color:#fff; border-radius:10px; font-weight:800; font-size:14px; cursor:pointer; border:none; box-shadow: 0 4px 12px rgba(14,123,79,0.2);">Pay Securely (Demo) →</button>
-  </div>
-</div>
-
-<!-- Loading Payment Verification Overlay -->
-<div class="auth-overlay" id="loading-overlay" style="display:none; align-items:center; justify-content:center; z-index:99999; background:rgba(0,0,0,0.6);">
-  <div class="auth-box" style="width:300px; padding:30px; text-align:center; border-radius:16px; position:relative; background:#fff;">
-    <span style="display:inline-block; width:44px; height:44px; border:4px solid var(--g); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
-    <h3 style="margin-top:20px; font-weight:700; color:var(--g-d); font-size:16px;">Verifying payment...</h3>
-    <p style="color:var(--ink3); font-size:12px; margin:4px 0 0;">Connecting to operator B2B portals</p>
-  </div>
-</div>
+<!-- Razorpay modals removed — WhatsApp-first booking flow active -->
 </body>
 </html>
