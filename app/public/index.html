@@ -10,8 +10,7 @@
 <!-- Firebase SDKs (Compat version) -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<!-- Razorpay SDK -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- Razorpay SDK removed — using WhatsApp-first booking flow -->
 <!-- Core Web Vitals Telemetry (inspired by redBus performance monitoring) -->
 <script type="module">
   import { onCLS, onFID, onLCP, onINP, onTTFB } from 'https://unpkg.com/web-vitals@4/dist/web-vitals.attribution.js?module';
@@ -2882,23 +2881,32 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
           </div>
         </div>
 
-        <div class="section qr-section">
-          <h3><span class="step">2</span> Pay via UPI</h3>
-          <p>Scan the QR with any UPI app · Pay <b class="qr-payable">₹1,424</b> to <b class="qr-upi-id">cheaptravel546@okhdfcbank</b></p>
-          <div class="timer"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Hold expires in 07:23</div>
-          <div class="qr-box" style="display:inline-block; background:#fff; padding:6px; border-radius:14px; box-shadow:var(--shadow); margin:0 auto 14px; overflow:hidden; border: 1.5px solid var(--line);">
-            <img src="payment_qr.png" alt="Scan to pay" style="width:260px; height:auto; display:block; margin:0 auto; border-radius:10px;" loading="lazy">
+        <!-- WhatsApp Booking CTA Section -->
+        <div class="section" id="wa-booking-section">
+          <h3><span class="step">2</span> Confirm &amp; Send Request</h3>
+
+          <div style="background:#f0fdf4;border-radius:12px;padding:14px 16px;font-size:13px;color:#374151;line-height:1.6;margin-bottom:16px;border-left:3px solid var(--teal);">
+            <b style="color:var(--teal-d);">How it works</b><br>
+            Tap the button below — WhatsApp opens with your full booking details pre-filled. Our team will receive your request and call you within <b>10 minutes</b> to confirm the seat.
           </div>
-          <div class="upi-id">cheaptravel546@okhdfcbank</div>
-          <button class="copy-btn" onclick="copyUPI()"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy UPI ID</button>
-          <div class="upi-apps">
-            <div class="upi-app" style="color:#4285F4">GPay</div>
-            <div class="upi-app" style="color:#5F259F">PhonePe</div>
-            <div class="upi-app" style="color:#012E5E">Paytm</div>
-            <div class="upi-app" style="color:#EA4D4D">BHIM</div>
-          </div>
-          <button class="paid-btn" onclick="processPayment()">Pay Securely via Razorpay</button>
-          <p style="margin-top:14px;font-size:11.5px;color:var(--ink2)">By clicking confirm, you authorise Cheap Travels to issue the operator ticket on your behalf. Ticket delivery in &lt;90 sec via WhatsApp.</p>
+
+          <button onclick="submitBookingRequest()" id="wa-send-btn" style="
+            width: 100%; padding: 16px 24px;
+            background: linear-gradient(135deg, #25D366, #1aad54);
+            color: #fff; border: none; border-radius: 12px;
+            font-size: 16px; font-weight: 800; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            box-shadow: 0 6px 22px rgba(37,211,102,0.35);
+            transition: transform .1s, box-shadow .1s;
+          ">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="white" style="flex-shrink:0;">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.858L.057 23.716a.5.5 0 0 0 .625.635l6.047-1.515A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.812 9.812 0 0 1-5.031-1.384l-.36-.214-3.731.934.989-3.617-.234-.372A9.82 9.82 0 0 1 2.182 12C2.182 6.565 6.565 2.182 12 2.182S21.818 6.565 21.818 12 17.435 21.818 12 21.818z"/>
+            </svg>
+            Send Booking Request on WhatsApp
+          </button>
+
+          <p style="margin-top:10px;font-size:12px;color:var(--ink2);text-align:center;">Free · No payment now · Seat confirmed after our call</p>
         </div>
       </div>
 
@@ -2915,10 +2923,9 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
         <div class="sum-card">
           <h4>Fare breakup</h4>
           <div class="sum-row"><span class="lbl">Base fare</span><span>₹1,499</span></div>
-          <div class="sum-row disc"><span>Cheap Travels discount</span><span>− ₹75</span></div>
-          <div class="sum-row"><span class="lbl">GST</span><span>₹0</span></div>
-          <div class="sum-row"><span class="lbl">Convenience</span><span>₹0</span></div>
-          <div class="sum-row tot"><span>Total payable</span><span>₹1,424</span></div>
+          <div class="sum-row disc"><span>Cheap Travels discount</span><span id="summary-discount">− ₹0</span></div>
+          <div class="sum-row"><span class="lbl">GST (4%)</span><span id="summary-gst">₹0</span></div>
+          <div class="sum-row tot"><span>Total payable</span><span id="summary-total">₹0</span></div>
         </div>
         <div class="sum-card" style="background:linear-gradient(135deg,#0F766E,#0A4F4A);color:#fff">
           <h4 style="color:#fff;border-color:rgba(255,255,255,.2)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Cheap Travels Promise</h4>
@@ -3212,8 +3219,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initFirebase();
   setupQR();
   initTickerFares();
-  
-  // Offline & connection state tracking
+
   window.addEventListener('offline', () => {
     document.getElementById('offline-banner').style.display = 'block';
   });
@@ -4605,13 +4611,7 @@ document.addEventListener('keydown', e => {
 // ═══════════ CHECKOUT FLOW ═══════════
 function continueToCheckout() {
   if (!selectedBus || selectedSeats.length === 0) return;
-
-  // 🔒 Auth gate — must be signed in to book
-  if (!currentUser) {
-    pendingCheckout = true;
-    openAuth('signin');
-    return;
-  }
+  // No auth gate — go straight to checkout
   
   // Populate Checkout fields
   document.getElementById('view-results').classList.remove('active');
@@ -4621,13 +4621,22 @@ function continueToCheckout() {
   
   const totalBase = selectedSeats.reduce((sum, s) => sum + s.baseFare, 0);
   const totalDiscount = selectedSeats.reduce((sum, s) => sum + s.discount, 0);
-  let totalPayable = selectedSeats.reduce((sum, s) => sum + s.payable, 0);
-  
-  let bonusApplied = 0;
-  if (currentUser && currentUser.bonus && currentUser.bonus > 0) {
-    bonusApplied = Math.min(currentUser.bonus, totalPayable);
-    totalPayable -= bonusApplied;
-  }
+  const afterDiscount = totalBase - totalDiscount;
+  const gst = Math.round(afterDiscount * 0.04);
+  const totalPayable = afterDiscount + gst;
+
+  // Store for WhatsApp send
+  window._checkoutFare = { totalBase, totalDiscount, afterDiscount, gst, totalPayable };
+
+  // Update summary sidebar
+  const baseEl = document.querySelector('.sum-row .lbl');
+  const discEl = document.getElementById('summary-discount');
+  const gstEl  = document.getElementById('summary-gst');
+  const totEl  = document.getElementById('summary-total');
+  if (discEl) discEl.textContent = `− ₹${totalDiscount}`;
+  if (gstEl)  gstEl.textContent  = `₹${gst}`;
+  if (totEl)  totEl.textContent  = `₹${totalPayable}`;
+
   const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
   
   // Update breadcrumb text in checkout
@@ -5183,171 +5192,88 @@ function getPassengerDetails() {
   return passengers;
 }
 
-async function processPayment() {
+// ═══════════ WHATSAPP-FIRST BOOKING ═══════════
+function submitBookingRequest() {
   const phone = document.getElementById('contact-phone').value.trim();
-  const email = document.getElementById('contact-email').value.trim();
-  if (!phone || !email) {
-    alert("Please fill in contact phone and email first!");
-    return;
-  }
-  
+  if (!phone) { alert('Please enter your contact phone number first'); return; }
+
   const nameInputs = document.querySelectorAll('.passenger-name');
-  const ageInputs = document.querySelectorAll('.passenger-age');
+  const ageInputs  = document.querySelectorAll('.passenger-age');
   let isValid = true;
-  nameInputs.forEach(input => {
-    if (!input.value.trim()) isValid = false;
-  });
-  ageInputs.forEach(input => {
-    if (!input.value.trim()) isValid = false;
-  });
-  if (!isValid) {
-    alert("Please fill in all passenger details!");
-    return;
+  nameInputs.forEach(inp => { if (!inp.value.trim()) isValid = false; });
+  ageInputs.forEach(inp  => { if (!inp.value.trim()) isValid = false; });
+  if (!isValid) { alert('Please fill in all passenger names and ages'); return; }
+
+  // Gather passengers
+  const genderSelects = document.querySelectorAll('.passenger-gender');
+  const passengers = Array.from(nameInputs).map((inp, i) => ({
+    seatNo:  nameInputs[i].dataset.seat || selectedSeats[i]?.seatNo || `Seat ${i+1}`,
+    name:    nameInputs[i].value.trim() || `Passenger ${i+1}`,
+    age:     ageInputs[i]?.value.trim() || '25',
+    gender:  genderSelects[i]?.value || 'Male'
+  }));
+
+  // Fare numbers
+  const fare = window._checkoutFare || {};
+  const totalBase     = fare.totalBase     || selectedSeats.reduce((s,x) => s + x.baseFare, 0);
+  const totalDiscount = fare.totalDiscount || selectedSeats.reduce((s,x) => s + x.discount, 0);
+  const afterDiscount = fare.afterDiscount || (totalBase - totalDiscount);
+  const gst           = fare.gst           || Math.round(afterDiscount * 0.04);
+  const totalPayable  = fare.totalPayable  || (afterDiscount + gst);
+
+  // Journey details
+  const fromSelect = document.getElementById('from-select');
+  const toSelect   = document.getElementById('to-select');
+  const fromCity = fromSelect ? fromSelect.options[fromSelect.selectedIndex].text : '—';
+  const toCity   = toSelect   ? toSelect.options[toSelect.selectedIndex].text   : '—';
+  const dateRaw  = document.getElementById('depart-date')?.value || '';
+  const months   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let dateDisplay = dateRaw;
+  if (dateRaw) {
+    const dp = dateRaw.split('-');
+    dateDisplay = `${parseInt(dp[2])} ${months[parseInt(dp[1])-1]} ${dp[0]}`;
   }
+  const ref = `CTI-${Math.floor(100000 + Math.random() * 900000).toString(16).toUpperCase()}`;
 
-  // Create booking order on backend first
-  let dbOrderId = null;
-  try {
-    const passengers = getPassengerDetails();
-    const fromSelect = document.getElementById('from-select');
-    const toSelect = document.getElementById('to-select');
-    const fromCity = fromSelect.options[fromSelect.selectedIndex].text;
-    const toCity = toSelect.options[toSelect.selectedIndex].text;
-    const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
+  // Build WhatsApp message
+  const passengerLines = passengers.map((p,i) =>
+    `${i+1}. ${p.name} | Age: ${p.age} | ${p.gender} | Seat ${p.seatNo}`
+  ).join('\n');
+  const discountLine = totalDiscount > 0 ? `\nDiscount (5%): -₹${totalDiscount}` : '';
 
-    const orderRes = await fetch(`${API}/api/booking/create`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        provider: selectedBus.resId.startsWith('lx-') ? 'lxmi' : 'rdlh',
-        busExternalId: selectedBus.resId,
-        operator: selectedBus.operator,
-        busType: selectedBus.busType,
-        fromCity: fromCity,
-        toCity: toCity,
-        journeyDate: document.getElementById('depart-date').value,
-        departure: selectedBus.departure,
-        arrival: selectedBus.arrival,
-        seatNo: seatNosStr,
-        boardingPoint: selectedBoardingPoint ? selectedBoardingPoint.name : 'Contact Operator',
-        droppingPoint: selectedDroppingPoint ? selectedDroppingPoint.name : 'Contact Operator',
-        passengerName: passengers[0]?.name || 'Passenger 1',
-        passengerAge: passengers[0]?.age || 25,
-        passengerGender: passengers[0]?.gender || 'Male',
-        customerPhone: phone,
-        customerEmail: email,
-        baseFare: selectedSeats.reduce((sum, s) => sum + s.baseFare, 0),
-        ourMargin: 0,
-        customerDiscount: selectedSeats.reduce((sum, s) => sum + s.discount, 0),
-        totalPayable: totalPayable
-      })
-    });
+  const msg =
+`🚌 *New Booking Request — Cheap Travels India*
 
-    const orderData = await orderRes.json();
-    if (!orderData.success) {
-      alert("Failed to create booking order: " + (orderData.error || "Unknown error"));
-      return;
-    }
-    dbOrderId = orderData.orderId;
-  } catch (err) {
-    console.error("Order creation failed:", err);
-    alert("An error occurred while creating booking. Please try again.");
-    return;
-  }
+📍 Route: *${fromCity} → ${toCity}*
+📅 Date: ${dateDisplay}
+🕐 Departure: ${selectedBus ? selectedBus.departure : '—'} | Arrival: ${selectedBus ? selectedBus.arrival : '—'}
+🏢 Operator: ${selectedBus ? selectedBus.operator : '—'} | ${selectedBus ? selectedBus.busType : '—'}
+🪑 Seats: ${selectedSeats.map(s=>s.seatNo).join(', ')}
+📌 Boarding: ${selectedBoardingPoint ? selectedBoardingPoint.name : 'As per operator'}
+📌 Dropping: ${selectedDroppingPoint ? selectedDroppingPoint.name : 'As per operator'}
 
-  try {
-    const res = await fetch(`${API}/api/payment/order`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount: totalPayable * 100, currency: 'INR' })
-    });
-    const orderData = await res.json();
-    if (!orderData.success) {
-      alert("Failed to initiate payment. Please try again.");
-      return;
-    }
+👤 *Passengers:*
+${passengerLines}
 
-    if (orderData.mocked) {
-      openRzpMock(orderData.amount / 100, dbOrderId);
-    } else {
-      const options = {
-        "key": orderData.keyId,
-        "amount": orderData.amount,
-        "currency": orderData.currency,
-        "name": "Cheap Travels India",
-        "description": "Bus Ticket Booking",
-        "order_id": orderData.orderId,
-        "handler": function (response) {
-          completeBooking(response.razorpay_payment_id, dbOrderId, response.razorpay_signature || 'sig_mock');
-        },
-        "prefill": {
-          "name": nameInputs[0].value.trim(),
-          "email": email,
-          "contact": phone
-        },
-        "theme": {
-          "color": "#0E7B4F"
-        }
-      };
-      const rzp = new Razorpay(options);
-      rzp.on('payment.failed', function (response) {
-        alert("Payment failed: " + response.error.description);
-      });
-      rzp.open();
-    }
-  } catch (err) {
-    console.error("Payment initiation error:", err);
-    alert("An error occurred during payment. Please try again.");
-  }
+📞 Contact: ${phone}
+
+💰 *Fare Breakup:*
+Base Fare: ₹${totalBase}${discountLine}
+GST (4%): +₹${gst}
+*Total Payable: ₹${totalPayable}*
+
+🔖 Ref: ${ref}
+
+_Please call back to confirm and arrange payment._`;
+
+  const waNumber = '918853521184'; // +91 88535 21184
+  window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+
+  // Show ticket/confirmation screen
+  showTicket(null, null, ref, totalPayable, totalBase, totalDiscount, gst, phone);
 }
 
-let currentDbOrderIdForMock = null;
-function openRzpMock(amount, dbOrderId) {
-  currentDbOrderIdForMock = dbOrderId;
-  document.getElementById('rzp-mock-amount').textContent = `₹${amount}`;
-  document.getElementById('rzp-mock-overlay').style.display = 'flex';
-}
-
-function closeRzpMock() {
-  document.getElementById('rzp-mock-overlay').style.display = 'none';
-}
-
-function simulateRzpSuccess() {
-  closeRzpMock();
-  completeBooking('pay_mock_' + Math.random().toString(36).substring(2, 10), currentDbOrderIdForMock, 'sig_mock');
-}
-
-async function completeBooking(paymentId, dbOrderId, signature) {
-  const passengers = getPassengerDetails();
-  const loadingOverlay = document.getElementById('loading-overlay');
-  if (loadingOverlay) loadingOverlay.style.display = 'flex';
-
-  try {
-    const verifyRes = await fetch(`${API}/api/payment/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        orderId: dbOrderId,
-        paymentId: paymentId,
-        signature: signature,
-        passengers: passengers
-      })
-    });
-    
-    const verifyData = await verifyRes.json();
-    if (loadingOverlay) loadingOverlay.style.display = 'none';
-
-    if (verifyData.success) {
-      showTicket(verifyData.pnr, verifyData.ticketUrl);
-    } else {
-      alert("Payment verification failed: " + (verifyData.error || "Please contact support."));
-    }
-  } catch (err) {
-    if (loadingOverlay) loadingOverlay.style.display = 'none';
-    console.error("Payment verification connection error:", err);
-    alert("Payment verification failed. Please check your connection or contact customer support.");
-  }
-}
+// processPayment / Razorpay functions removed — using WhatsApp-first flow.
 
 // Add autofocus logic on page load
 document.addEventListener('DOMContentLoaded', () => {
@@ -5570,3 +5496,4 @@ document.addEventListener('click', function(e) {
 
 </body>
 </html>
+<!-- deploy Sat Jul 11 21:24:51 IST 2026 -->
