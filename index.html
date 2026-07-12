@@ -2510,11 +2510,11 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   <div class="bonus-popup-overlay" onclick="closeBonusPopup()"></div>
   <div class="bonus-popup-box">
     <button class="bonus-popup-close" onclick="closeBonusPopup()">✕</button>
-    <div class="bonus-gift-icon"><svg viewBox="0 0 24 24" width="64" height="64" stroke="var(--gold)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><path d="M20 12v10H4V12"></path><path d="M2 7h20v5H2z"></path><path d="M12 22V7"></path><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg></div>
-    <h3>Unlock ₹51 Sign-up Bonus!</h3>
-    <p>Create an account today to claim your <b>₹51 cash bonus</b> for your 1st ticket + get <b>5% regular discount</b> on Laxmi & Ram Dalal partner buses.</p>
-    <button class="bonus-popup-btn" onclick="claimBonus()">Claim ₹51 Bonus & Sign Up</button>
-    <button class="bonus-popup-link" onclick="closeBonusPopup()">Maybe Later</button>
+    <div id="bonus-icon" class="bonus-gift-icon"><svg viewBox="0 0 24 24" width="64" height="64" stroke="var(--gold)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><path d="M20 12v10H4V12"></path><path d="M2 7h20v5H2z"></path><path d="M12 22V7"></path><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg></div>
+    <h3 id="bonus-title">Unlock ₹51 Sign-up Bonus!</h3>
+    <p id="bonus-body">Create an account today to claim your <b>₹51 cash bonus</b> on your 1st ticket + get <b>5% discount</b> on every booking with our partner buses.</p>
+    <button id="bonus-cta" class="bonus-popup-btn" onclick="claimBonus()">Claim ₹51 Bonus → Sign Up Free</button>
+    <button class="bonus-popup-link" onclick="closeBonusPopup()" id="bonus-skip">Maybe Later</button>
   </div>
 </div>
 
@@ -5382,8 +5382,31 @@ function claimBonus() {
   openAuth('signup');
 }
 
+function showBonusPopup() {
+  // "Confirmed" state — shown after a new user signs in
+  const name = (currentUser && currentUser.name) ? currentUser.name.split(' ')[0] : '';
+  document.getElementById('bonus-icon').innerHTML = '<span style="font-size:64px;line-height:1;">🎉</span>';
+  document.getElementById('bonus-title').textContent = (name ? name + ', y' : 'Y') + 'our ₹51 Bonus is Locked In!';
+  document.getElementById('bonus-body').innerHTML =
+    'Your <b style="color:var(--teal-d);">₹51 welcome bonus</b> will be <b>automatically deducted from your first booking fare</b>. '
+    + 'Just book normally — we\'ll apply it when we confirm your ticket on WhatsApp. No code needed. 🙌'
+    + '<br><br>'
+    + '<span style="font-size:12.5px;color:var(--ink3);">Plus get <b>5% off</b> on every booking with our partner buses.</span>';
+  document.getElementById('bonus-cta').textContent = 'Book My First Bus →';
+  document.getElementById('bonus-cta').onclick = () => { closeBonusPopup(); window.scrollTo({top:0,behavior:'smooth'}); };
+  document.getElementById('bonus-skip').textContent = 'Got it, thanks!';
+  document.getElementById('bonus-popup').classList.add('open');
+}
+
 function closeBonusPopup() {
   document.getElementById('bonus-popup').classList.remove('open');
+  // Reset to default "pre-login" state for next time
+  document.getElementById('bonus-icon').innerHTML = '<svg viewBox="0 0 24 24" width="64" height="64" stroke="var(--gold)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><path d="M20 12v10H4V12"></path><path d="M2 7h20v5H2z"></path><path d="M12 22V7"></path><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>';
+  document.getElementById('bonus-title').textContent = 'Unlock ₹51 Sign-up Bonus!';
+  document.getElementById('bonus-body').innerHTML = 'Create an account today to claim your <b>₹51 cash bonus</b> on your 1st ticket + get <b>5% discount</b> on every booking with our partner buses.';
+  document.getElementById('bonus-cta').textContent = 'Claim ₹51 Bonus → Sign Up Free';
+  document.getElementById('bonus-cta').onclick = claimBonus;
+  document.getElementById('bonus-skip').textContent = 'Maybe Later';
 }
 
 // Scroll-reveal for story/services/fleet sections
