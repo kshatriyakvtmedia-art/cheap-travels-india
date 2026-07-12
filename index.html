@@ -629,6 +629,76 @@ header.top {
 /* Checkout / payment view */
 .view { display: none; }
 .view.active { display: block; }
+
+/* ── Payment QR Modal ── */
+.pay-qr-overlay {
+  display: none; position: fixed; inset: 0; z-index: 99999;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+  align-items: flex-end; justify-content: center;
+}
+.pay-qr-overlay.open { display: flex; }
+.pay-qr-sheet {
+  background: #fff; border-radius: 24px 24px 0 0;
+  width: 100%; max-width: 480px;
+  padding: 0 0 env(safe-area-inset-bottom, 16px);
+  animation: slideUp .28s cubic-bezier(.4,0,.2,1);
+  max-height: 96vh; overflow-y: auto;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.pay-qr-handle { width: 40px; height: 4px; background: #e2e8f0; border-radius: 4px; margin: 12px auto 0; }
+.pay-qr-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 16px 20px 12px; border-bottom: 1px solid #f1f5f9;
+}
+.pay-qr-header button { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--ink3); padding: 4px; line-height: 1; }
+.pay-qr-header h2 { font-size: 17px; font-weight: 800; color: var(--ink); margin: 0; }
+.pay-amount-band {
+  margin: 16px 20px 0;
+  background: linear-gradient(135deg, var(--teal-d), var(--teal));
+  border-radius: 16px; padding: 18px 22px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.pay-amount-band .lbl { font-size: 12px; color: rgba(255,255,255,.75); font-weight: 600; text-transform: uppercase; letter-spacing: .6px; }
+.pay-amount-band .val { font-size: 32px; font-weight: 800; color: #fff; line-height: 1.1; margin-top: 2px; }
+.pay-amount-band .ref-tag { font-size: 10.5px; color: rgba(255,255,255,.6); margin-top: 4px; }
+.pay-amount-band .lock-ico { font-size: 32px; opacity: .4; }
+.pay-qr-body { padding: 20px; text-align: center; }
+.pay-qr-box {
+  display: inline-block; border-radius: 16px;
+  padding: 14px; background: #fff;
+  box-shadow: 0 0 0 1px #e2e8f0, 0 8px 32px rgba(0,0,0,.1);
+  margin-bottom: 14px;
+}
+.pay-qr-box img { display: block; width: 200px; height: 200px; border-radius: 8px; }
+.pay-upi-row {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: #f8fafc; border-radius: 10px; padding: 10px 14px; margin-bottom: 18px;
+}
+.pay-upi-row .upi-val { font-size: 13.5px; font-weight: 700; color: var(--ink); letter-spacing: .3px; }
+.pay-upi-row .copy-btn {
+  background: var(--teal-light); color: var(--teal-d); border: none;
+  border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer;
+}
+.pay-apps { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+.pay-app-btn {
+  flex: 1; max-width: 100px; padding: 10px 6px; border-radius: 12px;
+  border: 1.5px solid #e2e8f0; background: #fff; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  font-size: 10.5px; font-weight: 700; color: var(--ink2);
+  text-decoration: none; transition: border-color .15s, background .15s;
+}
+.pay-app-btn:hover { border-color: var(--teal); background: var(--teal-light); color: var(--teal-d); }
+.pay-app-btn .app-icon { font-size: 22px; }
+.pay-done-btn {
+  width: 100%; padding: 16px;
+  background: linear-gradient(135deg, #25D366, #1aad54);
+  color: #fff; border: none; border-radius: 14px;
+  font-size: 16px; font-weight: 800; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  box-shadow: 0 6px 22px rgba(37,211,102,.35);
+  min-height: 54px; margin-bottom: 10px;
+}
+.pay-note { font-size: 11.5px; color: var(--ink3); text-align: center; line-height: 1.5; }
 .checkout-wrap { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; margin-top: 8px; }
 .section { background: #ffffff; border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); margin-bottom: 18px; border: 1px solid var(--line); }
 .section h3 { font-size: 17px; color: var(--teal-d); margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
@@ -2970,6 +3040,64 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   </div>
 </div>
 
+<!-- PAYMENT QR MODAL -->
+<div class="pay-qr-overlay" id="pay-qr-overlay" onclick="handlePayOverlayClick(event)">
+  <div class="pay-qr-sheet" id="pay-qr-sheet">
+    <div class="pay-qr-handle"></div>
+    <div class="pay-qr-header">
+      <button onclick="closePayQR()" aria-label="Close">✕</button>
+      <h2>Pay &amp; Confirm Booking</h2>
+    </div>
+
+    <div class="pay-amount-band">
+      <div>
+        <div class="lbl">Amount to Pay</div>
+        <div class="val">₹<span id="pqr-amount">0</span></div>
+        <div class="ref-tag">Ref: <span id="pqr-ref">—</span></div>
+      </div>
+      <div class="lock-ico">🔒</div>
+    </div>
+
+    <div class="pay-qr-body">
+      <p style="font-size:13px;color:var(--ink2);margin:0 0 14px;line-height:1.5;">
+        Scan QR with any UPI app · Pay ₹<span id="pqr-amount2">0</span> · Then tap button below
+      </p>
+
+      <div class="pay-qr-box">
+        <img id="pqr-img" src="" alt="UPI Payment QR" loading="lazy">
+      </div>
+
+      <div class="pay-upi-row">
+        <span class="upi-val">cheaptravel546@okhdfcbank</span>
+        <button class="copy-btn" onclick="copyUPI()">Copy</button>
+      </div>
+
+      <!-- Direct UPI app links -->
+      <div class="pay-apps">
+        <a class="pay-app-btn" id="pqr-gpay" href="#" target="_blank">
+          <span class="app-icon">🟢</span>Google Pay
+        </a>
+        <a class="pay-app-btn" id="pqr-phonepe" href="#" target="_blank">
+          <span class="app-icon">🟣</span>PhonePe
+        </a>
+        <a class="pay-app-btn" id="pqr-paytm" href="#" target="_blank">
+          <span class="app-icon">🔵</span>Paytm
+        </a>
+      </div>
+
+      <button class="pay-done-btn" onclick="paidSendWhatsApp()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.858L.057 23.716a.5.5 0 0 0 .625.635l6.047-1.515A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.812 9.812 0 0 1-5.031-1.384l-.36-.214-3.731.934.989-3.617-.234-.372A9.82 9.82 0 0 1 2.182 12C2.182 6.565 6.565 2.182 12 2.182S21.818 6.565 21.818 12 17.435 21.818 12 21.818z"/></svg>
+        I've Paid · Send Booking on WhatsApp
+      </button>
+
+      <p class="pay-note">
+        After paying, send the payment screenshot on WhatsApp.<br>
+        Ticket confirmed within <b>30 minutes</b> of payment.
+      </p>
+    </div>
+  </div>
+</div>
+
 <!-- TICKET VIEW -->
 <div class="view" id="view-ticket">
   <div class="page" style="margin-top:30px">
@@ -5274,6 +5402,7 @@ function submitBookingRequest() {
     `${i+1}. ${p.name} | Age: ${p.age} | ${p.gender} | Seat ${p.seatNo}`
   ).join('\n');
   const discountLine = totalDiscount > 0 ? `\nDiscount (5%): -₹${totalDiscount}` : '';
+  const upiLink = `upi://pay?pa=cheaptravel546@okhdfcbank&pn=CheapTravels%20India&am=${totalPayable}&cu=INR&tn=Booking%20${ref}`;
 
   const msg =
 `🚌 *New Booking Request — Cheap Travels India*
@@ -5296,15 +5425,63 @@ Base Fare: ₹${totalBase}${discountLine}
 GST (4%): +₹${gst}
 *Total Payable: ₹${totalPayable}*
 
-🔖 Ref: ${ref}
+💳 *Payment:*
+UPI ID: cheaptravel546@okhdfcbank
+Amount: ₹${totalPayable}
+👉 ${upiLink}
+_(Please send payment screenshot here after paying)_
 
-_Please call back to confirm and arrange payment._`;
+🔖 Ref: ${ref}`;
 
-  const waNumber = '918853521184'; // +91 88535 21184
-  window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+  // Store for after payment confirmation
+  window._pendingWaMsg = msg;
+  window._pendingRef   = ref;
+  window._pendingFare  = { totalPayable, totalBase, totalDiscount, gst };
+  window._pendingPhone = phone;
 
-  // Show ticket/confirmation screen
-  showTicket(null, null, ref, totalPayable, totalBase, totalDiscount, gst, phone);
+  // Show payment QR modal instead of opening WA directly
+  showPaymentQR(totalPayable, ref, upiLink);
+}
+
+function showPaymentQR(amount, ref, upiLink) {
+  document.getElementById('pqr-amount').textContent  = amount;
+  document.getElementById('pqr-amount2').textContent = amount;
+  document.getElementById('pqr-ref').textContent     = ref;
+
+  // Dynamic QR encoding the UPI payment string with exact amount
+  const upiString = `upi://pay?pa=cheaptravel546@okhdfcbank&pn=CheapTravels%20India&am=${amount}&cu=INR&tn=Booking%20${ref}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=6&color=0F766E&data=${encodeURIComponent(upiString)}`;
+  document.getElementById('pqr-img').src = qrUrl;
+
+  // UPI app deep links with pre-filled amount
+  const enc = encodeURIComponent(upiString);
+  document.getElementById('pqr-gpay').href    = `intent://pay?pa=cheaptravel546@okhdfcbank&pn=CheapTravels%20India&am=${amount}&cu=INR&tn=Booking%20${ref}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
+  document.getElementById('pqr-phonepe').href = `intent://pay?pa=cheaptravel546@okhdfcbank&pn=CheapTravels%20India&am=${amount}&cu=INR&tn=Booking%20${ref}#Intent;scheme=upi;package=com.phonepe.app;end`;
+  document.getElementById('pqr-paytm').href   = `intent://pay?pa=cheaptravel546@okhdfcbank&pn=CheapTravels%20India&am=${amount}&cu=INR&tn=Booking%20${ref}#Intent;scheme=upi;package=net.one97.paytm;end`;
+
+  document.getElementById('pay-qr-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePayQR() {
+  document.getElementById('pay-qr-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handlePayOverlayClick(e) {
+  if (e.target === document.getElementById('pay-qr-overlay')) closePayQR();
+}
+
+function copyUPI() {
+  navigator.clipboard.writeText('cheaptravel546@okhdfcbank').then(() => showToast('UPI ID copied!')).catch(() => {});
+}
+
+function paidSendWhatsApp() {
+  const waNumber = '918853521184';
+  window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(window._pendingWaMsg)}`, '_blank');
+  closePayQR();
+  const f = window._pendingFare || {};
+  showTicket(null, null, window._pendingRef, f.totalPayable, f.totalBase, f.totalDiscount, f.gst, window._pendingPhone);
 }
 
 // processPayment / Razorpay functions removed — using WhatsApp-first flow.
