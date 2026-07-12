@@ -2520,45 +2520,67 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 
 <!-- ════════════ AUTH MODAL ════════════ -->
 <div class="auth-overlay" id="auth-overlay">
-  <div class="auth-box" style="padding:40px 32px; max-width:380px;">
+  <div class="auth-box" style="padding:36px 28px; max-width:380px;">
     <button class="auth-close" onclick="closeAuth()">✕</button>
-    <img src="images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" class="auth-logo" style="margin-bottom:24px;">
-    <!-- Firebase Invisible reCAPTCHA Container -->
-    <div id="recaptcha-container"></div>
-    
-    <div id="otp-phone-pane">
-      <h3 style="font-size:18px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Verify Mobile Number</h3>
-      <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px;">Enter your mobile number to receive a 6-digit verification code. Register or login instantly!</p>
-      
-      <div class="auth-err" id="auth-mobile-err" style="display:none; color:var(--red); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
-      
-      <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:20px;">
-        <label style="font-size:11px; font-weight:700; color:var(--ink2);">MOBILE NUMBER</label>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <span style="font-size:15px; font-weight:700; color:var(--ink); background:var(--line); padding:10px 12px; border-radius:8px; border:1.5px solid var(--line);">+91</span>
-          <input type="tel" id="auth-mobile-input" placeholder="9876543210" maxlength="10" style="flex:1; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; outline:none; font-size:15px; font-weight:700; color:var(--ink);">
+    <img src="images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" class="auth-logo" style="margin-bottom:20px;">
+
+    <!-- Pane 1: Choose sign-in method -->
+    <div id="auth-pane-choose">
+      <h3 style="font-size:19px;font-weight:800;margin-bottom:6px;color:var(--teal-d);text-align:center;">Sign in to CheapBus</h3>
+      <p style="color:var(--ink2);font-size:13px;line-height:1.5;margin-bottom:24px;text-align:center;">Sign in to claim your <b style="color:var(--gold);">₹51 bonus</b> &amp; get 5% discount on every booking.</p>
+
+      <div id="auth-err-msg" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 14px;font-size:12.5px;font-weight:700;color:#DC2626;margin-bottom:16px;"></div>
+
+      <!-- Google Sign-In (primary) -->
+      <button onclick="signInWithGoogle()" id="google-signin-btn" style="
+        width:100%;display:flex;align-items:center;justify-content:center;gap:12px;
+        padding:13px 16px;border:1.5px solid #E2E8F0;border-radius:12px;
+        background:#fff;cursor:pointer;font-size:15px;font-weight:700;color:#1a1a1a;
+        box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:12px;min-height:50px;
+        transition:box-shadow .15s;">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#4285F4" d="M44.5 20H24v8.5h11.8C34.1 33.5 29.5 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.2 0 6.2 1.2 8.4 3.2l6-6C34.5 5.1 29.5 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c10.5 0 20-7.6 20-21 0-1.4-.1-2.7-.5-4z"/><path fill="#34A853" d="M6.3 14.7l7 5.1C15.1 16.1 19.2 13 24 13c3.2 0 6.2 1.2 8.4 3.2l6-6C34.5 5.1 29.5 3 24 3 16.3 3 9.7 7.9 6.3 14.7z"/><path fill="#FBBC05" d="M24 45c5.4 0 10.3-1.8 14.1-4.9l-6.5-5.3C29.5 36.6 26.9 37 24 37c-5.5 0-10.1-3.5-11.8-8.5l-7 5.4C8.8 41.1 15.9 45 24 45z"/><path fill="#EA4335" d="M44.5 20H24v8.5h11.8c-.8 2.3-2.3 4.3-4.3 5.7l6.5 5.3C41.8 36.1 45 30.5 45 24c0-1.4-.2-2.7-.5-4z"/></svg>
+        Continue with Google
+      </button>
+
+      <!-- Divider -->
+      <div style="display:flex;align-items:center;gap:10px;margin:4px 0 12px;">
+        <div style="flex:1;height:1px;background:var(--line);"></div>
+        <span style="font-size:12px;color:var(--ink3);font-weight:600;">OR</span>
+        <div style="flex:1;height:1px;background:var(--line);"></div>
+      </div>
+
+      <!-- Phone number (no OTP — identity only) -->
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+        <label style="font-size:11px;font-weight:700;color:var(--ink2);">MOBILE NUMBER</label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span style="font-size:14px;font-weight:700;color:var(--ink);background:var(--line);padding:11px 12px;border-radius:8px;border:1.5px solid var(--line);">+91</span>
+          <input type="tel" id="auth-mobile-input" placeholder="9876543210" maxlength="10"
+            style="flex:1;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;outline:none;font-size:15px;font-weight:700;color:var(--ink);"
+            onkeydown="if(event.key==='Enter') signInWithPhone()">
         </div>
       </div>
-      
-      <button class="auth-submit" onclick="sendMobileOtp()" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:750; cursor:pointer; font-size:14px;">Send Verification OTP →</button>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px;">
+        <label style="font-size:11px;font-weight:700;color:var(--ink2);">YOUR NAME</label>
+        <input type="text" id="auth-name-input" placeholder="Full name"
+          style="width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;outline:none;font-size:14px;font-weight:600;color:var(--ink);"
+          onkeydown="if(event.key==='Enter') signInWithPhone()">
+      </div>
+      <button onclick="signInWithPhone()" style="
+        width:100%;padding:13px;border:none;border-radius:12px;cursor:pointer;
+        background:linear-gradient(135deg,var(--teal-d),var(--teal));
+        color:#fff;font-size:14px;font-weight:800;min-height:50px;">
+        Continue with Phone →
+      </button>
+
+      <p style="font-size:11px;color:var(--ink3);text-align:center;margin-top:14px;line-height:1.5;">
+        By signing in you agree to our <a href="#" style="color:var(--teal);">Terms</a> &amp; <a href="#" style="color:var(--teal);">Privacy Policy</a>
+      </p>
     </div>
-    
-    <div id="otp-code-pane" style="display:none;">
-      <h3 style="font-size:18px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Enter Verification Code</h3>
-      <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px;">A 6-digit code has been sent to <b id="otp-sent-mobile" style="color:var(--ink);">+91 98765 43210</b>. Please enter it below.</p>
-      
-      <div class="auth-err" id="auth-otp-err" style="display:none; color:var(--red); font-size:12px; font-weight:700; margin-bottom:12px;"></div>
-      
-      <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:20px;">
-        <label style="font-size:11px; font-weight:700; color:var(--ink2);">6-DIGIT OTP CODE</label>
-        <input type="text" id="auth-otp-input" placeholder="e.g. 123456" maxlength="6" style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; outline:none; font-size:16px; font-weight:800; text-align:center; letter-spacing:4px; color:var(--ink);">
-      </div>
-      
-      <button class="auth-submit" onclick="verifyMobileOtp()" style="width:100%; padding:12px; background:linear-gradient(135deg, var(--teal), var(--teal-d)); color:#fff; border:none; border-radius:8px; font-weight:750; cursor:pointer; font-size:14px; margin-bottom:12px;">Verify & Login →</button>
-      
-      <div style="text-align:center; font-size:12px; color:var(--ink3);">
-        Didn't receive code? <span onclick="resetOtpFlow()" style="color:var(--teal); font-weight:700; cursor:pointer;">Go back and retry</span>
-      </div>
+
+    <!-- Pane 2: Loading spinner (while Google popup opens) -->
+    <div id="auth-pane-loading" style="display:none;text-align:center;padding:20px 0;">
+      <div style="width:40px;height:40px;border:3px solid var(--line);border-top-color:var(--teal);border-radius:50%;margin:0 auto 16px;animation:spin .7s linear infinite;"></div>
+      <p style="color:var(--ink2);font-size:13px;font-weight:600;">Opening Google Sign-In…</p>
     </div>
   </div>
 </div>
@@ -4439,19 +4461,58 @@ function switchSeatTab(resId, tabName) {
 // ═══════════ AUTH SYSTEM ═══════════
 let currentUser = null;
 let pendingCheckout = false;
+let _firebaseReady = false;
 
 // Restore session on load
 (function restoreSession() {
   const saved = localStorage.getItem('cti_user');
-  if (saved) {
-    currentUser = JSON.parse(saved);
-    updateAuthUI();
-  }
+  if (saved) { try { currentUser = JSON.parse(saved); updateAuthUI(); } catch(e){} }
 })();
 
+async function initFirebase() {
+  try {
+    const res = await fetch(`${API}/api/config/firebase`);
+    const config = await res.json();
+    if (config && config.apiKey && !firebase.apps.length) {
+      firebase.initializeApp(config);
+      // Listen for Google auth state changes
+      firebase.auth().onAuthStateChanged(async (fbUser) => {
+        if (fbUser && !currentUser) {
+          await _onFirebaseUser(fbUser);
+        }
+      });
+      _firebaseReady = true;
+    }
+  } catch(e) { console.warn('Firebase init skipped:', e.message); }
+}
+
+async function _onFirebaseUser(fbUser) {
+  const user = {
+    id: fbUser.uid,
+    name: fbUser.displayName || fbUser.email?.split('@')[0] || 'User',
+    email: fbUser.email || '',
+    phone: fbUser.phoneNumber || '',
+    photo: fbUser.photoURL || '',
+    isNew: fbUser.metadata.creationTime === fbUser.metadata.lastSignInTime
+  };
+  currentUser = user;
+  localStorage.setItem('cti_user', JSON.stringify(user));
+  updateAuthUI();
+  closeAuth();
+  if (user.isNew) showBonusPopup();
+  if (pendingCheckout) { pendingCheckout = false; continueToCheckout(); }
+}
+
 function openAuth(tab = 'signin') {
-  resetOtpFlow();
-  document.getElementById('auth-overlay').classList.add('open');
+  const el = document.getElementById('auth-overlay');
+  el.classList.add('open');
+  document.getElementById('auth-pane-choose').style.display = 'block';
+  document.getElementById('auth-pane-loading').style.display = 'none';
+  document.getElementById('auth-err-msg').style.display = 'none';
+  const mi = document.getElementById('auth-mobile-input');
+  if (mi) mi.value = '';
+  const ni = document.getElementById('auth-name-input');
+  if (ni) ni.value = '';
 }
 
 function closeAuth() {
@@ -4459,162 +4520,71 @@ function closeAuth() {
   pendingCheckout = false;
 }
 
-function resetOtpFlow() {
-  document.getElementById('otp-phone-pane').style.display = 'block';
-  document.getElementById('otp-code-pane').style.display = 'none';
-  document.getElementById('auth-mobile-input').value = '';
-  document.getElementById('auth-otp-input').value = '';
-  document.getElementById('auth-mobile-err').style.display = 'none';
-  document.getElementById('auth-otp-err').style.display = 'none';
+function _showAuthErr(msg) {
+  const el = document.getElementById('auth-err-msg');
+  el.textContent = msg; el.style.display = 'block';
 }
 
-async function initFirebase() {
-  try {
-    const res = await fetch(`${API}/api/config/firebase`);
-    const config = await res.json();
-    if (config.apiKey) {
-      firebase.initializeApp(config);
-      
-      // Setup invisible reCAPTCHA
-      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        size: 'invisible',
-        callback: (response) => {
-          // reCAPTCHA solved
-        }
-      });
-      console.log('Firebase App initialized successfully.');
-    } else {
-      console.warn('Firebase config empty. Phone auth may not work.');
-    }
-  } catch (err) {
-    console.error('Failed to initialize Firebase SDK:', err);
-  }
-}
-
-async function sendMobileOtp() {
-  const mobileInput = document.getElementById('auth-mobile-input').value.trim();
-  const errEl = document.getElementById('auth-mobile-err');
-  errEl.style.display = 'none';
-
-  if (!mobileInput || mobileInput.length !== 10 || isNaN(mobileInput)) {
-    errEl.textContent = 'Please enter a valid 10-digit mobile number.';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  const formattedMobile = `+91${mobileInput}`;
-
-  try {
-    const appVerifier = window.recaptchaVerifier;
-    if (!appVerifier) {
-      errEl.textContent = 'Firebase reCAPTCHA is not initialized yet. Please reload page.';
-      errEl.style.display = 'block';
+async function signInWithGoogle() {
+  if (!_firebaseReady) {
+    await initFirebase();
+    if (!_firebaseReady) {
+      _showAuthErr('Google Sign-In unavailable right now. Please use phone number below.');
       return;
     }
-    
-    const confirmationResult = await firebase.auth().signInWithPhoneNumber(formattedMobile, appVerifier);
-    window.confirmationResult = confirmationResult;
-    
-    document.getElementById('otp-phone-pane').style.display = 'none';
-    document.getElementById('otp-code-pane').style.display = 'block';
-    document.getElementById('otp-sent-mobile').textContent = `+91 ${mobileInput.slice(0,5)} ${mobileInput.slice(5)}`;
-    setTimeout(() => {
-      const codeInput = document.getElementById('auth-otp-input');
-      if (codeInput) codeInput.focus();
-    }, 100);
-  } catch (err) {
-    console.error("Firebase SMS error:", err);
-    errEl.textContent = err.message || 'Failed to send OTP via Firebase.';
-    errEl.style.display = 'block';
-    if (window.recaptchaVerifier) {
-      window.recaptchaVerifier.render().then(widgetId => {
-        grecaptcha.reset(widgetId);
-      }).catch(() => {});
+  }
+  document.getElementById('auth-pane-choose').style.display = 'none';
+  document.getElementById('auth-pane-loading').style.display = 'block';
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    const result = await firebase.auth().signInWithPopup(provider);
+    await _onFirebaseUser(result.user);
+  } catch(e) {
+    document.getElementById('auth-pane-choose').style.display = 'block';
+    document.getElementById('auth-pane-loading').style.display = 'none';
+    if (e.code !== 'auth/popup-closed-by-user') {
+      _showAuthErr(e.message || 'Google Sign-In failed. Try phone number instead.');
     }
   }
 }
 
-async function verifyMobileOtp() {
-  const mobileInput = document.getElementById('auth-mobile-input').value.trim();
-  const otpInput = document.getElementById('auth-otp-input').value.trim();
-  const errEl = document.getElementById('auth-otp-err');
-  errEl.style.display = 'none';
+function signInWithPhone() {
+  const phone = (document.getElementById('auth-mobile-input').value || '').trim();
+  const name  = (document.getElementById('auth-name-input').value  || '').trim();
+  document.getElementById('auth-err-msg').style.display = 'none';
 
-  if (!otpInput || otpInput.length !== 6 || isNaN(otpInput)) {
-    errEl.textContent = 'Please enter a valid 6-digit OTP code.';
-    errEl.style.display = 'block';
-    return;
+  if (!phone || phone.length !== 10 || isNaN(phone)) {
+    _showAuthErr('Enter a valid 10-digit mobile number.'); return;
   }
+  if (!name) { _showAuthErr('Please enter your name.'); return; }
 
-  try {
-    if (!window.confirmationResult) {
-      errEl.textContent = 'Verification session expired. Please start over.';
-      errEl.style.display = 'block';
-      return;
-    }
-    
-    const result = await window.confirmationResult.confirm(otpInput);
-    const idToken = await result.user.getIdToken();
-    
-    const res = await fetch(`${API}/api/auth/firebase`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ idToken })
-    });
-    const data = await res.json();
-    
-    if (data.success) {
-      const user = {
-        name: data.user.name,
-        phone: data.user.mobile,
-        email: data.user.email || '',
-        id: data.user.id
-      };
-      
-      currentUser = user;
-      localStorage.setItem('cti_user', JSON.stringify(user));
-      updateAuthUI();
-      closeAuth();
-      
-      // Check if profile needs completion
-      const isGuest = user.name && user.name.startsWith('Guest User');
-      const isEmailMissing = !user.email;
-      if (isGuest || isEmailMissing) {
-        triggerCompleteProfileCheck();
-      } else if (pendingCheckout) {
-        pendingCheckout = false;
-        continueToCheckout();
-      }
-    } else {
-      errEl.textContent = data.error || 'Failed to verify session with server.';
-      errEl.style.display = 'block';
-    }
-  } catch (err) {
-    console.error("Verification error:", err);
-    let friendlyMessage = 'Invalid verification code. Please try again.';
-    if (err && err.code) {
-      if (err.code === 'auth/invalid-verification-code') {
-        friendlyMessage = 'The verification code you entered is invalid. Please check and try again.';
-      } else if (err.code === 'auth/code-expired') {
-        friendlyMessage = 'The code has expired. Please go back and request a new one.';
-      } else if (err.code === 'auth/too-many-requests') {
-        friendlyMessage = 'Too many attempts. Please try again later.';
-      } else {
-        friendlyMessage = err.message || friendlyMessage;
-      }
-    }
-    errEl.textContent = friendlyMessage;
-    errEl.style.display = 'block';
-  }
+  // Trust-based phone identity — no OTP needed (WhatsApp confirms identity during booking)
+  const user = {
+    id: 'ph_' + phone,
+    name: name,
+    phone: '+91' + phone,
+    email: '',
+    photo: '',
+    isNew: !localStorage.getItem('cti_phone_' + phone)
+  };
+  localStorage.setItem('cti_phone_' + phone, '1');
+  currentUser = user;
+  localStorage.setItem('cti_user', JSON.stringify(user));
+  updateAuthUI();
+  closeAuth();
+  if (user.isNew) showBonusPopup();
+  if (pendingCheckout) { pendingCheckout = false; continueToCheckout(); }
 }
 
 function logoutUser() {
   currentUser = null;
   localStorage.removeItem('cti_user');
-  firebase.auth().signOut().catch(() => {});
+  try { firebase.auth().signOut(); } catch(e) {}
   fetch(`${API}/api/auth/logout`, { method: 'POST' }).catch(() => {});
   updateAuthUI();
-  document.getElementById('user-chip').classList.remove('open');
+  const chip = document.getElementById('user-chip');
+  if (chip) chip.classList.remove('open');
 }
 
 function updateAuthUI() {
