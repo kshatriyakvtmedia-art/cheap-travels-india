@@ -3390,41 +3390,52 @@ const API = window.location.protocol === 'file:' ? 'http://localhost:3000' : '';
 // Track page visit
 fetch(`${API}/api/track`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'visit', data: { page: location.pathname, ua: navigator.userAgent.substring(0, 80) } }) }).catch(() => {});
 
-// Premium Toast Notification
+// Toast — flashes on screen for 1s then auto-removes
 let _toastTimer;
 function showToast(message) {
-  let toast = document.getElementById('cti-toast');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'cti-toast';
-    toast.style.position = 'fixed';
-    toast.style.bottom = '24px';
-    toast.style.left = '50%';
-    toast.style.transform = 'translateX(-50%) translateY(100px)';
-    toast.style.background = 'var(--ink)';
-    toast.style.color = '#fff';
-    toast.style.padding = '10px 20px';
-    toast.style.borderRadius = '30px';
-    toast.style.boxShadow = 'var(--shadow-lg)';
-    toast.style.zIndex = '99999';
-    toast.style.fontSize = '13px';
-    toast.style.fontWeight = '600';
-    toast.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-    toast.style.pointerEvents = 'none';
-    toast.style.display = 'flex';
-    toast.style.alignItems = 'center';
-    toast.style.gap = '8px';
-    toast.style.maxWidth = 'calc(100vw - 48px)';
-    toast.style.textAlign = 'center';
-    toast.style.border = '1px solid rgba(255,255,255,0.1)';
-    document.body.appendChild(toast);
-  }
-  toast.innerHTML = `<span>⚠️</span> ${message}`;
-  toast.style.transform = 'translateX(-50%) translateY(0)';
   clearTimeout(_toastTimer);
+  const old = document.getElementById('cti-toast');
+  if (old) old.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'cti-toast';
+  toast.style.cssText = [
+    'position:fixed',
+    'top:50%',
+    'left:50%',
+    'transform:translate(-50%,-50%) scale(0.85)',
+    'background:rgba(15,23,42,0.93)',
+    'color:#fff',
+    'padding:14px 24px',
+    'border-radius:14px',
+    'box-shadow:0 8px 32px rgba(0,0,0,0.35)',
+    'z-index:999999',
+    'font-size:13.5px',
+    'font-weight:600',
+    'pointer-events:none',
+    'display:flex',
+    'align-items:center',
+    'gap:10px',
+    'max-width:calc(100vw - 48px)',
+    'text-align:center',
+    'opacity:0',
+    'transition:opacity 0.18s ease, transform 0.18s ease'
+  ].join(';');
+  toast.innerHTML = `<span style="font-size:18px">⚠️</span><span>${message}</span>`;
+  document.body.appendChild(toast);
+
+  // Trigger fade-in on next frame
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translate(-50%,-50%) scale(1)';
+  }));
+
+  // After 1s visible → fade out → remove
   _toastTimer = setTimeout(() => {
-    toast.style.transform = 'translateX(-50%) translateY(100px)';
-  }, 2000);
+    toast.style.opacity = '0';
+    toast.style.transform = 'translate(-50%,-50%) scale(0.9)';
+    setTimeout(() => { if (toast.parentNode) toast.remove(); }, 220);
+  }, 1000);
 }
 
 // Initialize on page load
