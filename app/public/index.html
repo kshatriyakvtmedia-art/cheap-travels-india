@@ -2146,12 +2146,14 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 .seat-panel.mobile-open .seat-tabs { flex-shrink: 0; margin: 0; padding: 0 16px; }
 .seat-panel.mobile-open .seat-content {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 12px 12px calc(210px + env(safe-area-inset-bottom, 0px));
+  overscroll-behavior: contain;
+  padding: 12px 12px calc(220px + env(safe-area-inset-bottom, 0px));
 }
 .seat-panel.mobile-open .seatmap { overflow: visible; padding: 12px 8px; }
-.seat-panel.mobile-open .seat-grid-container { overflow-x: auto; overflow-y: visible; }
+.seat-panel.mobile-open .seat-grid-container { overflow-x: auto; overflow-y: visible; touch-action: pan-x pan-y; }
 .seat-panel.mobile-open .booking-side { position: static; }
 .seat-panel.mobile-open .summary {
   position: fixed;
