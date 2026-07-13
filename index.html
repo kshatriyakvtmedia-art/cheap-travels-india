@@ -624,11 +624,36 @@ header.top {
   font-size: 11px; color: #475569; font-weight: 800;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  position: relative; overflow: hidden;
 }
 .seat:hover:not(.booked) { border-color: var(--teal); transform: scale(1.08); box-shadow: 0 4px 10px rgba(14,123,79,0.15); color: var(--teal); }
 .seat.booked { background: #E2E8F0; color: #94A3B8; border-color: #CBD5E1; cursor: not-allowed; box-shadow: none; }
 .seat.ladies { border-color: #EC4899; color: #DB2777; background: #FFF0F6; }
 .seat.selected { background: var(--teal); color: #ffffff; border-color: var(--teal); box-shadow: 0 4px 12px rgba(14, 123, 79, 0.3); transform: scale(1.06); }
+
+/* Sleeper / berth seats — visual distinction from regular seats */
+.seat.sleeper {
+  background: linear-gradient(180deg, #f0fdf9 0%, #d1fae5 100%);
+  border-color: #6ee7b7;
+  border-radius: 10px 10px 6px 6px;
+  color: #047857;
+}
+.seat.sleeper::after {
+  content: '';
+  position: absolute;
+  top: 35%;
+  left: 8%; right: 8%;
+  height: 1.5px;
+  background: rgba(110,231,183,0.7);
+  border-radius: 2px;
+  pointer-events: none;
+}
+.seat.sleeper.booked { background: #E2E8F0; border-color: #CBD5E1; color: #94A3B8; }
+.seat.sleeper.booked::after { background: rgba(148,163,184,0.4); }
+.seat.sleeper.ladies { background: linear-gradient(180deg, #fdf2f8 0%, #fce7f3 100%); border-color: #f9a8d4; color: #be185d; }
+.seat.sleeper.ladies::after { background: rgba(249,168,212,0.7); }
+.seat.sleeper.selected { background: linear-gradient(180deg, var(--teal-l) 0%, var(--teal) 100%); border-color: var(--teal-d); color: #fff; }
+.seat.sleeper.selected::after { background: rgba(255,255,255,0.35); }
 .legend2 { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink2); justify-content: center; width: 100%; font-weight: 600; }
 .lg-item { display: flex; align-items: center; gap: 6px; }
 .lg-box { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid #CBD5E1; background: #ffffff; }
@@ -660,6 +685,38 @@ header.top {
 }
 .continue-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(238, 140, 46, 0.4); }
 .continue-btn:disabled { background: #E2E8F0; color: var(--ink3); box-shadow: none; cursor: not-allowed; transform: none; }
+
+/* Seat selection backdrop (mobile popup) */
+#seat-backdrop {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 8997;
+}
+#seat-backdrop.open { display: block; }
+
+/* Mobile seat-panel drag handle + close button */
+.seat-modal-bar {
+  display: none;
+  align-items: center; justify-content: space-between;
+  padding: 12px 16px 8px;
+  flex-shrink: 0;
+}
+.seat-modal-handle {
+  width: 40px; height: 4px;
+  background: #e2e8f0; border-radius: 4px;
+  margin: 0 auto;
+  flex-shrink: 0;
+  display: block;
+}
+.seat-modal-close {
+  background: #f1f5f9; border: none; border-radius: 50%;
+  width: 32px; height: 32px; font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--ink2); flex-shrink: 0;
+}
 
 /* Checkout / payment view */
 .view { display: none; }
@@ -2063,49 +2120,69 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     width: 100% !important;
   }
 
-  /* Seat selection sticky bottom */
-  .seat-panel .booking-side {
-    position: static !important;
+  /* ── Mobile seat panel → bottom-sheet popup ── */
+  .bus.open .seat-panel {
+    position: fixed !important;
+    bottom: 0 !important; left: 0 !important; right: 0 !important; top: auto !important;
+    z-index: 8998 !important;
+    background: #fff !important;
+    border-radius: 22px 22px 0 0 !important;
+    max-height: 92vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-top: none !important;
+    animation: slideUp .28s cubic-bezier(.4,0,.2,1) !important;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.25) !important;
   }
+
+  /* Show drag handle bar on mobile */
+  .seat-modal-bar { display: flex !important; }
+
+  /* Tabs sit right below the bar */
+  .seat-tabs { flex-shrink: 0; margin: 0 !important; padding: 0 16px; }
+
+  /* Scrollable content area — this is the key */
+  .seat-content {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 12px 12px 20px !important;
+    padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Seatmap takes natural height; no overflow */
+  .seatmap { overflow: visible !important; padding: 12px 8px !important; }
+  .seat-grid-container { overflow-x: auto !important; overflow-y: visible !important; }
+
+  /* Summary + continue pinned to bottom of viewport (inside the sheet) */
+  .seat-panel .booking-side { position: static !important; }
   .seat-panel .summary {
     position: fixed !important;
-    bottom: 56px !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 1000 !important;
-    background: #ffffff !important;
-    margin: 0 !important;
+    bottom: 52px !important; left: 0 !important; right: 0 !important;
+    z-index: 8999 !important;
+    background: #fff !important; margin: 0 !important;
     border-radius: 0 !important;
     border-top: 1px solid var(--line) !important;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08) !important;
-    padding: 12px 16px !important;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.08) !important;
+    padding: 10px 16px !important;
   }
+  .seat-panel .summary .row { margin-bottom: 4px !important; font-size: 12.5px !important; }
+  .seat-panel .summary .row.total { font-size: 14px !important; padding-top: 6px !important; }
   .seat-panel .continue-btn {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 1000 !important;
-    border-radius: 0 !important;
-    margin: 0 !important;
-    padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px)) !important;
-    min-height: 56px !important;
-    font-size: 16px !important;
-    width: 100% !important;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important;
+    z-index: 8999 !important; border-radius: 0 !important; margin: 0 !important;
+    padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+    min-height: 52px !important; font-size: 15px !important; width: 100% !important;
+    box-shadow: none !important; display: flex !important;
+    align-items: center !important; justify-content: center !important;
   }
-  .seat-content {
-    padding-bottom: calc(180px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-  .seat {
-    width: 42px !important;
-    height: 42px !important;
-    min-height: 42px !important;
-    font-size: 12px !important;
-  }
+
+  /* Seat tile sizes in popup */
+  .seat { width: 40px !important; min-height: 40px !important; font-size: 11px !important; }
+  .seat-grid { gap: 6px 5px !important; }
 }
 
 /* OTP modal constraint and fields */
@@ -4131,6 +4208,11 @@ function displayFilteredBuses(buses, formattedDate) {
         </div>
         
         <div class="seat-panel" id="panel-${bus.resId}" data-active-tab="seats">
+          <div class="seat-modal-bar" id="seatbar-${bus.resId}">
+            <span class="seat-modal-handle"></span>
+            <span style="font-size:13px;font-weight:700;color:var(--ink);flex:1;text-align:center;padding:0 8px;">${bus.operatorName}</span>
+            <button class="seat-modal-close" onclick="closeSeatPanel('${bus.resId}')">✕</button>
+          </div>
           <div class="seat-tabs">
             <div class="seat-tab active" onclick="switchSeatTab('${bus.resId}', 'seats')">Seats</div>
             <div class="seat-tab" onclick="switchSeatTab('${bus.resId}', 'boarding')">Boarding Points</div>
@@ -4177,6 +4259,25 @@ function displayFilteredBuses(buses, formattedDate) {
 }
 
 // Seat layout loading
+function closeAllSeatPanels() {
+  document.querySelectorAll('.bus').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.view-seats').forEach(btn => {
+    btn.classList.remove('active');
+    btn.textContent = 'View Seats';
+  });
+  document.getElementById('seat-backdrop')?.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeSeatPanel(resId) {
+  const busCard = document.querySelector(`.bus[data-bus="${resId}"]`);
+  if (busCard) busCard.classList.remove('open');
+  const btn = busCard?.querySelector('.view-seats');
+  if (btn) { btn.classList.remove('active'); btn.textContent = 'View Seats'; }
+  document.getElementById('seat-backdrop')?.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 async function toggleSeatLive(resId, dateStr) {
   const busCard = document.querySelector(`.bus[data-bus="${resId}"]`);
   if (!busCard) return;
@@ -4189,15 +4290,22 @@ async function toggleSeatLive(resId, dateStr) {
     btn.classList.remove('active');
     btn.textContent = 'View Seats';
   });
-  
-  if (isOpen) return; // If it was already open, we just closed it
-  
+  document.getElementById('seat-backdrop')?.classList.remove('open');
+
+  if (isOpen) { document.body.style.overflow = ''; return; } // was already open, just closed it
+
   // Open this card
   busCard.classList.add('open');
   const btn = busCard.querySelector('.view-seats');
   btn.classList.add('active');
   btn.textContent = 'Hide Seats';
-  busCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Show backdrop only on mobile
+  if (window.innerWidth <= 768) {
+    document.getElementById('seat-backdrop')?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  } else {
+    busCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
   
   const panel = document.getElementById(`panel-${resId}`);
   if (panel) {
@@ -5770,6 +5878,9 @@ document.addEventListener('click', function(e) {
     <p style="color:var(--ink3); font-size:12px; margin:4px 0 0;">Connecting to operator B2B portals</p>
   </div>
 </div>
+<!-- Backdrop for mobile seat popup -->
+<div id="seat-backdrop" onclick="closeAllSeatPanels()"></div>
+
 <!-- Floating WhatsApp Booking Widget -->
 <div class="wa-widget-container">
   <div class="wa-popover" id="waPopover">
