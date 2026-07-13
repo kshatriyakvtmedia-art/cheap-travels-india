@@ -691,9 +691,7 @@ header.top {
   display: none;
   position: fixed; inset: 0;
   background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  z-index: 8997;
+  z-index: 8999;
 }
 #seat-backdrop.open { display: block; }
 
@@ -2120,69 +2118,60 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     width: 100% !important;
   }
 
-  /* ── Mobile seat panel → bottom-sheet popup ── */
-  .bus.open .seat-panel {
-    position: fixed !important;
-    bottom: 0 !important; left: 0 !important; right: 0 !important; top: auto !important;
-    z-index: 8998 !important;
-    background: #fff !important;
-    border-radius: 22px 22px 0 0 !important;
-    max-height: 92vh !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border-top: none !important;
-    animation: slideUp .28s cubic-bezier(.4,0,.2,1) !important;
-    box-shadow: 0 -8px 40px rgba(0,0,0,0.25) !important;
-  }
-
   /* Show drag handle bar on mobile */
   .seat-modal-bar { display: flex !important; }
-
-  /* Tabs sit right below the bar */
-  .seat-tabs { flex-shrink: 0; margin: 0 !important; padding: 0 16px; }
-
-  /* Scrollable content area — this is the key */
-  .seat-content {
-    flex: 1 !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    padding: 12px 12px 20px !important;
-    padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  /* Seatmap takes natural height; no overflow */
-  .seatmap { overflow: visible !important; padding: 12px 8px !important; }
-  .seat-grid-container { overflow-x: auto !important; overflow-y: visible !important; }
-
-  /* Summary + continue pinned to bottom of viewport (inside the sheet) */
-  .seat-panel .booking-side { position: static !important; }
-  .seat-panel .summary {
-    position: fixed !important;
-    bottom: 52px !important; left: 0 !important; right: 0 !important;
-    z-index: 8999 !important;
-    background: #fff !important; margin: 0 !important;
-    border-radius: 0 !important;
-    border-top: 1px solid var(--line) !important;
-    box-shadow: 0 -4px 12px rgba(0,0,0,0.08) !important;
-    padding: 10px 16px !important;
-  }
-  .seat-panel .summary .row { margin-bottom: 4px !important; font-size: 12.5px !important; }
-  .seat-panel .summary .row.total { font-size: 14px !important; padding-top: 6px !important; }
-  .seat-panel .continue-btn {
-    position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important;
-    z-index: 8999 !important; border-radius: 0 !important; margin: 0 !important;
-    padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px)) !important;
-    min-height: 52px !important; font-size: 15px !important; width: 100% !important;
-    box-shadow: none !important; display: flex !important;
-    align-items: center !important; justify-content: center !important;
-  }
 
   /* Seat tile sizes in popup */
   .seat { width: 40px !important; min-height: 40px !important; font-size: 11px !important; }
   .seat-grid { gap: 6px 5px !important; }
+}
+
+/* ── Mobile seat panel bottom-sheet (appended to body via JS) ── */
+.seat-panel.mobile-open {
+  position: fixed;
+  bottom: 0; left: 0; right: 0; top: auto;
+  z-index: 9000;
+  background: #fff;
+  border-radius: 22px 22px 0 0;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  border-top: none;
+  animation: slideUp .28s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.3);
+}
+.seat-panel.mobile-open .seat-tabs { flex-shrink: 0; margin: 0; padding: 0 16px; }
+.seat-panel.mobile-open .seat-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 12px calc(140px + env(safe-area-inset-bottom, 0px));
+}
+.seat-panel.mobile-open .seatmap { overflow: visible; padding: 12px 8px; }
+.seat-panel.mobile-open .seat-grid-container { overflow-x: auto; overflow-y: visible; }
+.seat-panel.mobile-open .booking-side { position: static; }
+.seat-panel.mobile-open .summary {
+  position: fixed;
+  bottom: 52px; left: 0; right: 0;
+  z-index: 9001;
+  background: #fff; margin: 0;
+  border-radius: 0;
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+  padding: 10px 16px;
+}
+.seat-panel.mobile-open .summary .row { margin-bottom: 4px; font-size: 12.5px; }
+.seat-panel.mobile-open .summary .row.total { font-size: 14px; padding-top: 6px; }
+.seat-panel.mobile-open .continue-btn {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 9001; border-radius: 0; margin: 0;
+  padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+  min-height: 52px; font-size: 15px; width: 100%;
+  box-shadow: none; display: flex;
+  align-items: center; justify-content: center;
 }
 
 /* OTP modal constraint and fields */
@@ -3547,11 +3536,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (cachedFrom && cachedTo && cachedDate) {
     performSearch();
-  } else {
-    // Render default buses on load
-    searchResultsBuses = defaultBuses;
-    renderBuses(defaultBuses, '30 May');
   }
+  // No default buses rendered — results section stays hidden until user searches
   
   // Show bonus signup popup to new users after 1.5 seconds
   setTimeout(() => {
@@ -4259,7 +4245,16 @@ function displayFilteredBuses(buses, formattedDate) {
 }
 
 // Seat layout loading
+function _returnPanelToCard(panel) {
+  if (panel && panel._origParent) {
+    panel._origParent.appendChild(panel);
+    panel._origParent = null;
+  }
+  panel?.classList.remove('mobile-open');
+}
+
 function closeAllSeatPanels() {
+  document.querySelectorAll('.seat-panel.mobile-open').forEach(p => _returnPanelToCard(p));
   document.querySelectorAll('.bus').forEach(b => b.classList.remove('open'));
   document.querySelectorAll('.view-seats').forEach(btn => {
     btn.classList.remove('active');
@@ -4270,6 +4265,8 @@ function closeAllSeatPanels() {
 }
 
 function closeSeatPanel(resId) {
+  const panel = document.getElementById(`panel-${resId}`);
+  _returnPanelToCard(panel);
   const busCard = document.querySelector(`.bus[data-bus="${resId}"]`);
   if (busCard) busCard.classList.remove('open');
   const btn = busCard?.querySelector('.view-seats');
@@ -4299,8 +4296,14 @@ async function toggleSeatLive(resId, dateStr) {
   const btn = busCard.querySelector('.view-seats');
   btn.classList.add('active');
   btn.textContent = 'Hide Seats';
-  // Show backdrop only on mobile
+  // On mobile: move panel to body to escape stacking context, then animate as bottom-sheet
   if (window.innerWidth <= 768) {
+    const panel = document.getElementById(`panel-${resId}`);
+    if (panel) {
+      panel._origParent = panel.parentNode;
+      document.body.appendChild(panel);
+      panel.classList.add('mobile-open');
+    }
     document.getElementById('seat-backdrop')?.classList.add('open');
     document.body.style.overflow = 'hidden';
   } else {
