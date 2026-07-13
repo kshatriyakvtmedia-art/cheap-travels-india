@@ -2148,7 +2148,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 12px 12px calc(140px + env(safe-area-inset-bottom, 0px));
+  padding: 12px 12px calc(210px + env(safe-area-inset-bottom, 0px));
 }
 .seat-panel.mobile-open .seatmap { overflow: visible; padding: 12px 8px; }
 .seat-panel.mobile-open .seat-grid-container { overflow-x: auto; overflow-y: visible; }
@@ -4228,10 +4228,10 @@ function displayFilteredBuses(buses, formattedDate) {
               </div>
               <div class="summary">
                 <div class="row"><span>Selected seat</span><span id="sel-seat-${bus.resId}">— none —</span></div>
-                <div class="row"><span>Base fare</span><span id="base-fare-${bus.resId}">₹0</span></div>
-                <div class="row discount"><span>Cheap Travels discount (5%)</span><span id="discount-${bus.resId}">− ₹0</span></div>
+                <div class="row"><span style="color:var(--ink3)">Others charge</span><span id="base-fare-${bus.resId}" style="text-decoration:line-through;color:var(--ink3)">₹—</span></div>
+                <div class="row discount"><span>Cheap Travels saves you</span><span id="discount-${bus.resId}" style="color:#16a34a;font-weight:700">₹0</span></div>
                 <div class="row"><span>Convenience fee</span><span>₹0</span></div>
-                <div class="row total"><span>Payable</span><span id="total-fare-${bus.resId}">₹0</span></div>
+                <div class="row total"><span>You pay</span><span id="total-fare-${bus.resId}">₹0</span></div>
               </div>
               <button class="continue-btn" id="continue-btn-${bus.resId}" disabled onclick="continueToCheckout()">Continue to Payment →</button>
             </div>
@@ -4429,8 +4429,8 @@ function renderSeatMap(resId, layoutData) {
   
   // Reset summary view
   document.getElementById(`sel-seat-${resId}`).textContent = '— none —';
-  document.getElementById(`base-fare-${resId}`).textContent = '₹0';
-  document.getElementById(`discount-${resId}`).textContent = '− ₹0';
+  document.getElementById(`base-fare-${resId}`).textContent = '₹—';
+  document.getElementById(`discount-${resId}`).textContent = '₹0';
   document.getElementById(`total-fare-${resId}`).textContent = '₹0';
   document.getElementById(`continue-btn-${resId}`).disabled = true;
 }
@@ -4461,8 +4461,8 @@ function pickSeatLive(el, resId) {
   // Update summary UI
   if (selectedSeats.length === 0) {
     document.getElementById(`sel-seat-${resId}`).textContent = '— none —';
-    document.getElementById(`base-fare-${resId}`).textContent = '₹0';
-    document.getElementById(`discount-${resId}`).textContent = '− ₹0';
+    document.getElementById(`base-fare-${resId}`).textContent = '₹—';
+    document.getElementById(`discount-${resId}`).textContent = '₹0';
     document.getElementById(`total-fare-${resId}`).textContent = '₹0';
     document.getElementById(`continue-btn-${resId}`).disabled = true;
   } else {
@@ -4472,7 +4472,7 @@ function pickSeatLive(el, resId) {
     
     document.getElementById(`sel-seat-${resId}`).textContent = selectedSeats.map(s => s.seatNo).join(', ');
     document.getElementById(`base-fare-${resId}`).textContent = `₹${totalBase}`;
-    document.getElementById(`discount-${resId}`).textContent = `− ₹${totalDiscount}`;
+    document.getElementById(`discount-${resId}`).textContent = `₹${totalDiscount}`;
     document.getElementById(`total-fare-${resId}`).textContent = `₹${totalPayable}`;
     document.getElementById(`continue-btn-${resId}`).disabled = false;
   }
@@ -4927,8 +4927,9 @@ document.addEventListener('keydown', e => {
 // ═══════════ CHECKOUT FLOW ═══════════
 function continueToCheckout() {
   if (!selectedBus || selectedSeats.length === 0) return;
-  // No auth gate — go straight to checkout
-  
+  // Close seat bottom-sheet before navigating to checkout
+  closeAllSeatPanels();
+
   // Populate Checkout fields
   document.getElementById('view-results').classList.remove('active');
   const chView = document.getElementById('view-checkout');
