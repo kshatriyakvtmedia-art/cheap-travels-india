@@ -400,6 +400,8 @@ header.top {
   box-shadow: var(--shadow-sm);
 }
 .swap:hover { transform: translateY(-50%) scale(1.1); background: var(--gold); color: #ffffff; }
+.swap-v { display: none; }
+.swap-h { display: inline; }
 .search-btn {
   padding: 18px 30px;
   background: linear-gradient(135deg, var(--gold) 0%, var(--gold-d) 100%);
@@ -1109,6 +1111,8 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     z-index: 10;
   }
   .search-btn { padding: 15px; font-size: 15px; min-height: 52px; }
+  .swap-h { display: none; }
+  .swap-v { display: inline; }
 
   /* Prevent iOS input zoom - font size must be >= 16px */
   .field-box select, .field-box input[type=date], .auth-field input, .input input, .input select {
@@ -1126,14 +1130,14 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   .bus {
     display: flex !important;
     flex-direction: column !important;
-    padding: 14px !important;
+    padding: 11px !important;
     border-radius: var(--radius-md) !important;
-    gap: 10px !important;
+    gap: 8px !important;
     position: relative !important;
     align-items: stretch !important;
   }
   .bus.featured {
-    padding-top: 36px !important;
+    padding-top: 32px !important;
   }
   .bus.featured::before {
     left: 0 !important;
@@ -1175,8 +1179,8 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     padding-top: 40px !important;
   }
   .bus-main > div:first-child h3 {
-    font-size: 16px !important;
-    font-weight: 800 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
     color: var(--ink) !important;
     line-height: 1.2 !important;
   }
@@ -1236,7 +1240,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     flex-direction: column !important;
   }
   .time-block:first-child .t {
-    font-size: 15px !important;
+    font-size: 14px !important;
     font-weight: 800 !important;
     color: var(--ink) !important;
   }
@@ -1283,7 +1287,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     flex-direction: column !important;
   }
   .time-block:last-child .t {
-    font-size: 15px !important;
+    font-size: 14px !important;
     font-weight: 800 !important;
     color: var(--ink) !important;
   }
@@ -1355,7 +1359,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     margin-bottom: 0 !important;
   }
   .fare {
-    font-size: 22px !important;
+    font-size: 19px !important;
     font-weight: 800 !important;
     color: var(--teal-d) !important;
   }
@@ -1368,8 +1372,8 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     margin-top: 0 !important;
   }
   .view-seats {
-    padding: 10px 20px !important;
-    font-size: 13px !important;
+    padding: 9px 16px !important;
+    font-size: 12px !important;
     font-weight: 700 !important;
     width: auto !important;
     text-align: center !important;
@@ -2344,8 +2348,17 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 .wa-popover-footer { padding: 10px 16px; background: #ffffff; border-top: 1px solid var(--line); font-size: 10.5px; color: var(--ink3); text-align: center; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; }
 
 @media (max-width: 768px) {
-  .wa-widget-container { bottom: 68px; right: 16px; }
-  .wa-popover { width: 290px; bottom: 70px; }
+  .wa-widget-container {
+    bottom: auto;
+    top: calc(60px + env(safe-area-inset-top, 0px));
+    right: 12px;
+  }
+  .wa-floating-btn { width: 42px; height: 42px; }
+  .wa-svg { width: 22px; height: 22px; }
+  .wa-pulse-ring { display: none; }
+  .wa-badge { width: 15px; height: 15px; font-size: 9px; top: -1px; right: -1px; }
+  .wa-popover { width: 280px; bottom: auto; top: 48px; right: 0; }
+  .wa-popover.open { transform: translateY(0) scale(1); }
 }
 
 </style>
@@ -2608,7 +2621,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
             </select>
             <div class="autocomplete-results" id="from-autocomplete" style="display:none;"></div>
           </div>
-          <div class="swap" style="cursor: pointer;" onclick="swapCities()">⇌</div>
+          <div class="swap" style="cursor: pointer;" onclick="swapCities()"><span class="swap-h">⇌</span><span class="swap-v">⇅</span></div>
         </div>
         <div class="field" style="position: relative;" id="field-to-container">
           <label for="to-search">TO</label>
@@ -2669,7 +2682,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
       <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg></div><div><b>24×7 Indian support</b><small>Hindi & English helpline</small></div></div>
     </div>
 
-    <div class="live-compare">
+    <div class="live-compare" id="live-compare-box" style="display:none">
       <div class="lc-title"><span class="live-dot"></span> Live rate-compare · Search a route to compare</div>
       <div class="cmp"><b>RedBus</b>₹1,499</div>
       <div class="cmp"><b>AbhiBus</b>₹1,480</div>
@@ -2677,8 +2690,15 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
       <div class="cmp us"><b>Cheap Travels</b>₹1,424 <small style="opacity:.8">(5% extra discount)</small></div>
     </div>
 
+    <!-- Empty state shown before first search -->
+    <div id="pre-search-state" style="text-align:center; padding: 32px 20px 40px; color:var(--ink3);">
+      <div style="font-size:48px; margin-bottom:12px;">🚌</div>
+      <div style="font-size:15px; font-weight:700; color:var(--ink2); margin-bottom:6px;">Find the cheapest bus tickets</div>
+      <div style="font-size:13px; color:var(--ink3); line-height:1.5;">Enter your origin, destination & date above<br>and tap <b style="color:var(--teal)">Search Buses</b></div>
+    </div>
+
     <!-- 📱 Mobile: Floating Filter Button -->
-    <button class="filter-fab" id="filter-fab" onclick="openFilterDrawer()">
+    <button class="filter-fab" id="filter-fab" style="display:none" onclick="openFilterDrawer()">
       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
       Filters
     </button>
@@ -2724,7 +2744,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
       </div>
     </div>
 
-    <div class="results">
+    <div class="results" id="results-section" style="display:none">
       <aside class="filters" id="desktop-filters">
         <h3>Filters</h3>
         <div class="f-group">
@@ -2759,7 +2779,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
         </div>
       </aside>
 
-      <div class="results-list">
+      <div class="results-list" id="results-list-wrap">
         <div class="sort-bar">
           <span class="label">Sort by:</span>
           <div class="sort-tab active" data-sort="best">Best Match</div>
@@ -3371,6 +3391,7 @@ const API = window.location.protocol === 'file:' ? 'http://localhost:3000' : '';
 fetch(`${API}/api/track`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'visit', data: { page: location.pathname, ua: navigator.userAgent.substring(0, 80) } }) }).catch(() => {});
 
 // Premium Toast Notification
+let _toastTimer;
 function showToast(message) {
   let toast = document.getElementById('cti-toast');
   if (!toast) {
@@ -3382,25 +3403,28 @@ function showToast(message) {
     toast.style.transform = 'translateX(-50%) translateY(100px)';
     toast.style.background = 'var(--ink)';
     toast.style.color = '#fff';
-    toast.style.padding = '12px 24px';
+    toast.style.padding = '10px 20px';
     toast.style.borderRadius = '30px';
     toast.style.boxShadow = 'var(--shadow-lg)';
-    toast.style.zIndex = '9999';
-    toast.style.fontSize = '13.5px';
+    toast.style.zIndex = '99999';
+    toast.style.fontSize = '13px';
     toast.style.fontWeight = '600';
     toast.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
     toast.style.pointerEvents = 'none';
     toast.style.display = 'flex';
     toast.style.alignItems = 'center';
     toast.style.gap = '8px';
+    toast.style.maxWidth = 'calc(100vw - 48px)';
+    toast.style.textAlign = 'center';
     toast.style.border = '1px solid rgba(255,255,255,0.1)';
     document.body.appendChild(toast);
   }
-  toast.innerHTML = `<span>🔔</span> ${message}`;
+  toast.innerHTML = `<span>⚠️</span> ${message}`;
   toast.style.transform = 'translateX(-50%) translateY(0)';
-  setTimeout(() => {
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => {
     toast.style.transform = 'translateX(-50%) translateY(100px)';
-  }, 3200);
+  }, 2000);
 }
 
 // Initialize on page load
@@ -3599,10 +3623,22 @@ async function performSearch() {
 
   lastSearchedRoute = `${fromName} → ${toName}`;
   
+  // Reveal results area and hide pre-search state on first search
+  const resultsSection = document.getElementById('results-section');
+  if (resultsSection) resultsSection.style.display = '';
+  const filterFab = document.getElementById('filter-fab');
+  if (filterFab) filterFab.style.display = '';
+  const preSearch = document.getElementById('pre-search-state');
+  if (preSearch) preSearch.style.display = 'none';
+  const liveCompare = document.getElementById('live-compare-box');
+  if (liveCompare) liveCompare.style.display = '';
+
   // Show loading indicator in results-list
   const listContainer = document.querySelector('.results-list');
   const sortBarEl = listContainer.querySelector('.sort-bar');
   const originalSortBar = sortBarEl ? sortBarEl.outerHTML : '';
+  setTimeout(() => listContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+
   listContainer.innerHTML = originalSortBar + `
     <div class="buses-cards-wrapper" style="margin-top: 14px;">
       <div style="text-align:center; padding: 14px 20px 24px; font-size:14px; font-weight:700; color:var(--teal); display:flex; align-items:center; justify-content:center; gap:8px;">
