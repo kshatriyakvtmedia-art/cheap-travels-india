@@ -2417,15 +2417,17 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 
 @media (max-width: 768px) {
   .wa-widget-container {
-    bottom: auto;
-    top: calc(60px + env(safe-area-inset-top, 0px));
-    right: 12px;
+    bottom: 80px;
+    top: auto;
+    left: 14px;
+    right: auto;
+    z-index: 7000;
   }
-  .wa-floating-btn { width: 42px; height: 42px; }
+  .wa-floating-btn { width: 44px; height: 44px; }
   .wa-svg { width: 22px; height: 22px; }
   .wa-pulse-ring { display: none; }
   .wa-badge { width: 15px; height: 15px; font-size: 9px; top: -1px; right: -1px; }
-  .wa-popover { width: 280px; bottom: auto; top: 48px; right: 0; }
+  .wa-popover { width: 280px; bottom: 52px; top: auto; left: 0; right: auto; }
   .wa-popover.open { transform: translateY(0) scale(1); }
 }
 
@@ -4929,8 +4931,26 @@ document.addEventListener('keydown', e => {
 // ═══════════ CHECKOUT FLOW ═══════════
 function continueToCheckout() {
   if (!selectedBus || selectedSeats.length === 0) return;
-  // Close seat bottom-sheet before navigating to checkout
-  closeAllSeatPanels();
+
+  // Hard-close the seat bottom-sheet immediately (position:fixed; can't rely on class cascade)
+  document.querySelectorAll('.seat-panel.mobile-open').forEach(p => {
+    p.classList.remove('mobile-open');
+    p.style.display = 'none';
+  });
+  document.getElementById('seat-backdrop')?.classList.remove('open');
+  document.body.style.overflow = '';
+  // Restore panel to its card lazily (user is leaving the results view anyway)
+  setTimeout(() => {
+    document.querySelectorAll('.seat-panel').forEach(p => {
+      if (p.style.display === 'none') p.style.display = '';
+      _returnPanelToCard(p);
+    });
+    document.querySelectorAll('.bus').forEach(b => b.classList.remove('open'));
+    document.querySelectorAll('.view-seats').forEach(btn => {
+      btn.classList.remove('active');
+      btn.textContent = 'View Seats';
+    });
+  }, 350);
 
   // Populate Checkout fields
   document.getElementById('view-results').classList.remove('active');
