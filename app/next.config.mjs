@@ -45,13 +45,20 @@ const nextConfig = {
   },
 
   async rewrites() {
-    return [
-      { source: '/',           destination: '/index.html' },
-      { source: '/admin',      destination: '/admin.html' },
-      { source: '/about',      destination: '/about.html' },
-      { source: '/mobile',     destination: '/mobile/index.html' },
-      { source: '/02-brain-map', destination: '/02-brain-map.html' },
-    ];
+    return {
+      // beforeFiles runs BEFORE App Router page matching — required so
+      // app/app/page.js doesn't shadow the HTML SPA at /
+      beforeFiles: [
+        { source: '/', destination: '/index.html' },
+      ],
+      afterFiles: [
+        { source: '/admin',        destination: '/admin.html' },
+        { source: '/about',        destination: '/about.html' },
+        { source: '/mobile',       destination: '/mobile/index.html' },
+        { source: '/02-brain-map', destination: '/02-brain-map.html' },
+      ],
+      fallback: [],
+    };
   },
 };
 
