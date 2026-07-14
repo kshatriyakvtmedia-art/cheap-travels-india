@@ -46,7 +46,7 @@ const nextConfig = {
 
   async rewrites() {
     return [
-      // / is now the Next.js home page (app/app/page.js) — no rewrite needed
+      { source: '/',           destination: '/index.html' },
       { source: '/admin',      destination: '/admin.html' },
       { source: '/about',      destination: '/about.html' },
       { source: '/mobile',     destination: '/mobile/index.html' },
