@@ -39,9 +39,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-<!-- Firebase SDKs (Compat version) -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<!-- Firebase SDKs removed — auth now uses email OTP via Resend -->
 <!-- Razorpay SDK removed — using WhatsApp-first booking flow -->
 <!-- Core Web Vitals Telemetry (inspired by redBus performance monitoring) -->
 <script type="module">
@@ -2510,52 +2508,30 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     <button class="auth-close" onclick="closeAuth()">✕</button>
     <img src="images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" class="auth-logo" style="margin-bottom:20px;">
 
-    <!-- Pane 1: Choose sign-in method -->
+    <!-- Pane 1: Email + Name -->
     <div id="auth-pane-choose">
       <h3 style="font-size:19px;font-weight:800;margin-bottom:6px;color:var(--teal-d);text-align:center;">Sign in to CheapBus</h3>
-      <p style="color:var(--ink2);font-size:13px;line-height:1.5;margin-bottom:24px;text-align:center;">Sign in to claim your <b style="color:var(--gold);">₹51 bonus</b> &amp; get 5% discount on every booking.</p>
+      <p style="color:var(--ink2);font-size:13px;line-height:1.5;margin-bottom:20px;text-align:center;">Sign in to claim your <b style="color:var(--gold);">₹51 bonus</b> &amp; get 5% discount on every booking.</p>
 
       <div id="auth-err-msg" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 14px;font-size:12.5px;font-weight:700;color:#DC2626;margin-bottom:16px;"></div>
 
-      <!-- Google Sign-In (primary) -->
-      <button onclick="signInWithGoogle()" id="google-signin-btn" style="
-        width:100%;display:flex;align-items:center;justify-content:center;gap:12px;
-        padding:13px 16px;border:1.5px solid #E2E8F0;border-radius:12px;
-        background:#fff;cursor:pointer;font-size:15px;font-weight:700;color:#1a1a1a;
-        box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:12px;min-height:50px;
-        transition:box-shadow .15s;">
-        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#4285F4" d="M44.5 20H24v8.5h11.8C34.1 33.5 29.5 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.2 0 6.2 1.2 8.4 3.2l6-6C34.5 5.1 29.5 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21c10.5 0 20-7.6 20-21 0-1.4-.1-2.7-.5-4z"/><path fill="#34A853" d="M6.3 14.7l7 5.1C15.1 16.1 19.2 13 24 13c3.2 0 6.2 1.2 8.4 3.2l6-6C34.5 5.1 29.5 3 24 3 16.3 3 9.7 7.9 6.3 14.7z"/><path fill="#FBBC05" d="M24 45c5.4 0 10.3-1.8 14.1-4.9l-6.5-5.3C29.5 36.6 26.9 37 24 37c-5.5 0-10.1-3.5-11.8-8.5l-7 5.4C8.8 41.1 15.9 45 24 45z"/><path fill="#EA4335" d="M44.5 20H24v8.5h11.8c-.8 2.3-2.3 4.3-4.3 5.7l6.5 5.3C41.8 36.1 45 30.5 45 24c0-1.4-.2-2.7-.5-4z"/></svg>
-        Continue with Google
-      </button>
-
-      <!-- Divider -->
-      <div style="display:flex;align-items:center;gap:10px;margin:4px 0 12px;">
-        <div style="flex:1;height:1px;background:var(--line);"></div>
-        <span style="font-size:12px;color:var(--ink3);font-weight:600;">OR</span>
-        <div style="flex:1;height:1px;background:var(--line);"></div>
-      </div>
-
-      <!-- Phone number (no OTP — identity only) -->
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
-        <label style="font-size:11px;font-weight:700;color:var(--ink2);">MOBILE NUMBER</label>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <span style="font-size:14px;font-weight:700;color:var(--ink);background:var(--line);padding:11px 12px;border-radius:8px;border:1.5px solid var(--line);">+91</span>
-          <input type="tel" id="auth-mobile-input" placeholder="9876543210" maxlength="10"
-            style="flex:1;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;outline:none;font-size:15px;font-weight:700;color:var(--ink);"
-            onkeydown="if(event.key==='Enter') signInWithPhone()">
-        </div>
+        <label style="font-size:11px;font-weight:700;color:var(--ink2);">EMAIL ADDRESS</label>
+        <input type="email" id="auth-email-input" placeholder="you@example.com"
+          style="width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;outline:none;font-size:14px;font-weight:600;color:var(--ink);box-sizing:border-box;"
+          onkeydown="if(event.key==='Enter') sendEmailOtpAuth()">
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px;">
         <label style="font-size:11px;font-weight:700;color:var(--ink2);">YOUR NAME</label>
         <input type="text" id="auth-name-input" placeholder="Full name"
-          style="width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;outline:none;font-size:14px;font-weight:600;color:var(--ink);"
-          onkeydown="if(event.key==='Enter') signInWithPhone()">
+          style="width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;outline:none;font-size:14px;font-weight:600;color:var(--ink);box-sizing:border-box;"
+          onkeydown="if(event.key==='Enter') sendEmailOtpAuth()">
       </div>
-      <button onclick="signInWithPhone()" style="
+      <button onclick="sendEmailOtpAuth()" id="auth-send-btn" style="
         width:100%;padding:13px;border:none;border-radius:12px;cursor:pointer;
         background:linear-gradient(135deg,var(--teal-d),var(--teal));
         color:#fff;font-size:14px;font-weight:800;min-height:50px;">
-        Continue with Phone →
+        Send OTP to Email →
       </button>
 
       <p style="font-size:11px;color:var(--ink3);text-align:center;margin-top:14px;line-height:1.5;">
@@ -2563,10 +2539,36 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
       </p>
     </div>
 
-    <!-- Pane 2: Loading spinner (while Google popup opens) -->
+    <!-- Pane 2: OTP verification -->
+    <div id="auth-pane-otp" style="display:none;">
+      <h3 style="font-size:19px;font-weight:800;margin-bottom:6px;color:var(--teal-d);text-align:center;">Check your email</h3>
+      <p id="auth-otp-hint" style="color:var(--ink2);font-size:13px;line-height:1.5;margin-bottom:20px;text-align:center;">We sent a 6-digit code to your email. It expires in 5 minutes.</p>
+
+      <div id="auth-err-msg-otp" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 14px;font-size:12.5px;font-weight:700;color:#DC2626;margin-bottom:16px;"></div>
+
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px;">
+        <label style="font-size:11px;font-weight:700;color:var(--ink2);">6-DIGIT CODE</label>
+        <input type="text" id="auth-otp-input" placeholder="123456" maxlength="6" inputmode="numeric"
+          style="width:100%;padding:14px 12px;border:1.5px solid var(--line);border-radius:8px;outline:none;font-size:22px;font-weight:800;letter-spacing:6px;color:var(--ink);text-align:center;box-sizing:border-box;"
+          onkeydown="if(event.key==='Enter') verifyEmailOtpAuth()">
+      </div>
+      <button onclick="verifyEmailOtpAuth()" id="auth-verify-btn" style="
+        width:100%;padding:13px;border:none;border-radius:12px;cursor:pointer;
+        background:linear-gradient(135deg,var(--teal-d),var(--teal));
+        color:#fff;font-size:14px;font-weight:800;min-height:50px;">
+        Verify Code →
+      </button>
+      <button onclick="_authShowPane('choose')" style="
+        width:100%;padding:10px;border:none;border-radius:12px;cursor:pointer;
+        background:transparent;color:var(--ink3);font-size:13px;margin-top:8px;">
+        ← Change email
+      </button>
+    </div>
+
+    <!-- Pane 3: Loading spinner -->
     <div id="auth-pane-loading" style="display:none;text-align:center;padding:20px 0;">
       <div style="width:40px;height:40px;border:3px solid var(--line);border-top-color:var(--teal);border-radius:50%;margin:0 auto 16px;animation:spin .7s linear infinite;"></div>
-      <p style="color:var(--ink2);font-size:13px;font-weight:600;">Opening Google Sign-In…</p>
+      <p id="auth-loading-msg" style="color:var(--ink2);font-size:13px;font-weight:600;">Sending OTP…</p>
     </div>
   </div>
 </div>
@@ -2747,17 +2749,13 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   <div class="page">
     <div class="trust-strip">
       <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div><div><b>Verified agent network</b><small>Direct inventory from operator portals</small></div></div>
-      <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg></div><div><b>5% extra discount</b><small>Cheaper than RedBus on same bus</small></div></div>
+      <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg></div><div><b>5% member discount</b><small>Direct operator rates, no OTA markup</small></div></div>
       <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></div><div><b>WhatsApp ticket</b><small>Branded e-ticket in &lt;90 sec</small></div></div>
       <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg></div><div><b>24×7 Indian support</b><small>Hindi & English helpline</small></div></div>
     </div>
 
     <div class="live-compare" id="live-compare-box" style="display:none">
-      <div class="lc-title"><span class="live-dot"></span> Live rate-compare · Search a route to compare</div>
-      <div class="cmp"><b>RedBus</b>₹1,499</div>
-      <div class="cmp"><b>AbhiBus</b>₹1,480</div>
-      <div class="cmp"><b>MMT</b>₹1,520</div>
-      <div class="cmp us"><b>Cheap Travels</b>₹1,424 <small style="opacity:.8">(5% extra discount)</small></div>
+      <div class="lc-title"><span class="live-dot"></span> Search a route to see prices</div>
     </div>
 
     <!-- Empty state shown before first search -->
@@ -3051,10 +3049,10 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
         </div>
         <div class="sum-card">
           <h4>Fare breakup</h4>
-          <div class="sum-row"><span class="lbl">Base fare</span><span>₹1,499</span></div>
-          <div class="sum-row disc"><span>Cheap Travels discount</span><span id="summary-discount">− ₹0</span></div>
-          <div class="sum-row"><span class="lbl">GST (4%)</span><span id="summary-gst">₹0</span></div>
-          <div class="sum-row tot"><span>Total payable</span><span id="summary-total">₹0</span></div>
+          <div class="sum-row"><span class="lbl">Base fare</span><span id="summary-base">—</span></div>
+          <div class="sum-row disc"><span>Member discount (5%)</span><span id="summary-discount">—</span></div>
+          <div class="sum-row"><span class="lbl">Convenience fee</span><span>₹0</span></div>
+          <div class="sum-row tot"><span>Total payable</span><span id="summary-total">—</span></div>
         </div>
         <div class="sum-card" style="background:linear-gradient(135deg,#0F766E,#0A4F4A);color:#fff">
           <h4 style="color:#fff;border-color:rgba(255,255,255,.2)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Cheap Travels Promise</h4>
@@ -3349,7 +3347,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 
   <!-- Bottom bar -->
   <div class="foot-bottom">
-    <div>© 2026 Cheap Travels India Pvt Ltd · CIN: U63040MH2026PTC000000</div>
+    <div>© 2026 Cheap Travels India</div>
     <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:flex-end;">
       <span>Made in India 🇮🇳</span>
       <span style="opacity:.4;">·</span>
@@ -3519,7 +3517,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('depart-date').value = `${yyyy}-${mm}-${dd}`;
 
   loadCities();
-  initFirebase();
   setupQR();
   initTickerFares();
 
@@ -4126,19 +4123,15 @@ function displayFilteredBuses(buses, formattedDate) {
   // Update live-compare prices based on first bus
   const firstBus = sortedBuses[0];
   const minFare = firstBus.minFare || 1200;
-  const redBusFare = minFare;
-  const abhiBusFare = Math.round(minFare * 0.99);
-  const mmtFare = Math.round(minFare * 1.01);
   const cheapTravelsFare = Math.round(minFare * 0.95);
-  
+  const savings = minFare - cheapTravelsFare;
+
   const liveComp = document.querySelector('.live-compare');
   if (liveComp) {
     liveComp.innerHTML = `
-      <div class="lc-title"><span class="live-dot"></span> Live rate-compare · ${lastSearchedRoute || 'Azamgarh → Delhi'} · Same operator</div>
-      <div class="cmp"><b>RedBus</b>₹${redBusFare}</div>
-      <div class="cmp"><b>AbhiBus</b>₹${abhiBusFare}</div>
-      <div class="cmp"><b>MMT</b>₹${mmtFare}</div>
-      <div class="cmp us"><b>Cheap Travels</b>₹${cheapTravelsFare} <small style="opacity:.8">(5% extra discount)</small></div>
+      <div class="lc-title"><span class="live-dot"></span> ${lastSearchedRoute || 'This route'} · Direct from operator</div>
+      <div class="cmp"><b>Our price</b>₹${cheapTravelsFare} <small style="opacity:.8">incl. 5% member discount</small></div>
+      <div class="cmp us"><b>You save</b>₹${savings} vs full agent price</div>
     `;
   }
   
@@ -4551,58 +4544,31 @@ function switchSeatTab(resId, tabName) {
 // ═══════════ AUTH SYSTEM ═══════════
 let currentUser = null;
 let pendingCheckout = false;
-let _firebaseReady = false;
-
 // Restore session on load
 (function restoreSession() {
   const saved = localStorage.getItem('cti_user');
   if (saved) { try { currentUser = JSON.parse(saved); updateAuthUI(); } catch(e){} }
 })();
 
-async function initFirebase() {
-  try {
-    const res = await fetch(`${API}/api/config/firebase`);
-    const config = await res.json();
-    if (config && config.apiKey && !firebase.apps.length) {
-      firebase.initializeApp(config);
-      // Listen for Google auth state changes
-      firebase.auth().onAuthStateChanged(async (fbUser) => {
-        if (fbUser && !currentUser) {
-          await _onFirebaseUser(fbUser);
-        }
-      });
-      _firebaseReady = true;
-    }
-  } catch(e) { console.warn('Firebase init skipped:', e.message); }
-}
-
-async function _onFirebaseUser(fbUser) {
-  const user = {
-    id: fbUser.uid,
-    name: fbUser.displayName || fbUser.email?.split('@')[0] || 'User',
-    email: fbUser.email || '',
-    phone: fbUser.phoneNumber || '',
-    photo: fbUser.photoURL || '',
-    isNew: fbUser.metadata.creationTime === fbUser.metadata.lastSignInTime
-  };
-  currentUser = user;
-  localStorage.setItem('cti_user', JSON.stringify(user));
-  updateAuthUI();
-  closeAuth();
-  if (user.isNew) showBonusPopup();
-  if (pendingCheckout) { pendingCheckout = false; continueToCheckout(); }
+// ── Auth pane helpers ──────────────────────────────────────────────────────
+function _authShowPane(name) {
+  ['choose', 'otp', 'loading'].forEach(p => {
+    const el = document.getElementById('auth-pane-' + p);
+    if (el) el.style.display = (p === name) ? 'block' : 'none';
+  });
 }
 
 function openAuth(tab = 'signin') {
-  const el = document.getElementById('auth-overlay');
-  el.classList.add('open');
-  document.getElementById('auth-pane-choose').style.display = 'block';
-  document.getElementById('auth-pane-loading').style.display = 'none';
-  document.getElementById('auth-err-msg').style.display = 'none';
-  const mi = document.getElementById('auth-mobile-input');
-  if (mi) mi.value = '';
+  document.getElementById('auth-overlay').classList.add('open');
+  _authShowPane('choose');
+  const ei = document.getElementById('auth-email-input');
+  if (ei) ei.value = '';
   const ni = document.getElementById('auth-name-input');
   if (ni) ni.value = '';
+  const oi = document.getElementById('auth-otp-input');
+  if (oi) oi.value = '';
+  const em = document.getElementById('auth-err-msg');
+  if (em) em.style.display = 'none';
 }
 
 function closeAuth() {
@@ -4612,65 +4578,114 @@ function closeAuth() {
 
 function _showAuthErr(msg) {
   const el = document.getElementById('auth-err-msg');
-  el.textContent = msg; el.style.display = 'block';
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
 }
 
-async function signInWithGoogle() {
-  if (!_firebaseReady) {
-    await initFirebase();
-    if (!_firebaseReady) {
-      _showAuthErr('Google Sign-In unavailable right now. Please use phone number below.');
-      return;
-    }
+function _showOtpErr(msg) {
+  const el = document.getElementById('auth-err-msg-otp');
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+
+// ── Step 1: send OTP ──────────────────────────────────────────────────────
+async function sendEmailOtpAuth() {
+  const email = (document.getElementById('auth-email-input')?.value || '').trim().toLowerCase();
+  const name  = (document.getElementById('auth-name-input')?.value  || '').trim();
+  const errEl = document.getElementById('auth-err-msg');
+  if (errEl) errEl.style.display = 'none';
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    _showAuthErr('Enter a valid email address.'); return;
   }
-  document.getElementById('auth-pane-choose').style.display = 'none';
-  document.getElementById('auth-pane-loading').style.display = 'block';
+
+  const btn = document.getElementById('auth-send-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+  _authShowPane('loading');
+  document.getElementById('auth-loading-msg').textContent = 'Sending OTP to ' + email + '…';
+
   try {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    const result = await firebase.auth().signInWithPopup(provider);
-    await _onFirebaseUser(result.user);
-  } catch(e) {
-    document.getElementById('auth-pane-choose').style.display = 'block';
-    document.getElementById('auth-pane-loading').style.display = 'none';
-    if (e.code !== 'auth/popup-closed-by-user') {
-      _showAuthErr(e.message || 'Google Sign-In failed. Try phone number instead.');
+    const res  = await fetch('/api/otp/send', {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body   : JSON.stringify({ email }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      _authShowPane('choose');
+      _showAuthErr(data.error || 'Could not send OTP. Try again.');
+    } else {
+      // Show OTP pane
+      _authShowPane('otp');
+      const hint = document.getElementById('auth-otp-hint');
+      if (hint) hint.textContent = `We sent a 6-digit code to ${email}. It expires in 5 minutes.`;
+      const oi = document.getElementById('auth-otp-input');
+      if (oi) { oi.value = ''; oi.focus(); }
+      const oe = document.getElementById('auth-err-msg-otp');
+      if (oe) oe.style.display = 'none';
+      // Store email for verify step
+      window._authEmail = email;
+      window._authName  = name;
     }
+  } catch(e) {
+    _authShowPane('choose');
+    _showAuthErr('Network error. Please try again.');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Send OTP to Email →'; }
   }
 }
 
-function signInWithPhone() {
-  const phone = (document.getElementById('auth-mobile-input').value || '').trim();
-  const name  = (document.getElementById('auth-name-input').value  || '').trim();
-  document.getElementById('auth-err-msg').style.display = 'none';
+// ── Step 2: verify OTP ────────────────────────────────────────────────────
+async function verifyEmailOtpAuth() {
+  const code = (document.getElementById('auth-otp-input')?.value || '').trim();
+  const oeEl = document.getElementById('auth-err-msg-otp');
+  if (oeEl) oeEl.style.display = 'none';
 
-  if (!phone || phone.length !== 10 || isNaN(phone)) {
-    _showAuthErr('Enter a valid 10-digit mobile number.'); return;
+  if (!/^\d{6}$/.test(code)) {
+    _showOtpErr('Enter the 6-digit code from your email.'); return;
   }
-  if (!name) { _showAuthErr('Please enter your name.'); return; }
 
-  // Trust-based phone identity — no OTP needed (WhatsApp confirms identity during booking)
-  const user = {
-    id: 'ph_' + phone,
-    name: name,
-    phone: '+91' + phone,
-    email: '',
-    photo: '',
-    isNew: !localStorage.getItem('cti_phone_' + phone)
-  };
-  localStorage.setItem('cti_phone_' + phone, '1');
-  currentUser = user;
-  localStorage.setItem('cti_user', JSON.stringify(user));
-  updateAuthUI();
-  closeAuth();
-  if (user.isNew) showBonusPopup();
-  if (pendingCheckout) { pendingCheckout = false; continueToCheckout(); }
+  const btn = document.getElementById('auth-verify-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Verifying…'; }
+  _authShowPane('loading');
+  document.getElementById('auth-loading-msg').textContent = 'Verifying code…';
+
+  try {
+    const res  = await fetch('/api/otp/verify', {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body   : JSON.stringify({ email: window._authEmail, code, name: window._authName }),
+    });
+    const data = await res.json();
+
+    if (!res.ok || !data.ok) {
+      _authShowPane('otp');
+      _showOtpErr(data.error || 'Invalid or expired code. Try again.');
+    } else {
+      // Signed in
+      const user = {
+        id   : data.user.id,
+        name : data.user.name || window._authName || data.user.email?.split('@')[0] || 'User',
+        email: data.user.email,
+        photo: '',
+      };
+      currentUser = user;
+      localStorage.setItem('cti_user', JSON.stringify(user));
+      updateAuthUI();
+      closeAuth();
+      if (data.isNew) showBonusPopup();
+      if (pendingCheckout) { pendingCheckout = false; continueToCheckout(); }
+    }
+  } catch(e) {
+    _authShowPane('otp');
+    _showOtpErr('Network error. Please try again.');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Verify Code →'; }
+  }
 }
 
 function logoutUser() {
   currentUser = null;
   localStorage.removeItem('cti_user');
-  try { firebase.auth().signOut(); } catch(e) {}
   fetch(`${API}/api/auth/logout`, { method: 'POST' }).catch(() => {});
   updateAuthUI();
   const chip = document.getElementById('user-chip');
@@ -4960,20 +4975,17 @@ function continueToCheckout() {
   
   const totalBase = selectedSeats.reduce((sum, s) => sum + s.baseFare, 0);
   const totalDiscount = selectedSeats.reduce((sum, s) => sum + s.discount, 0);
-  const afterDiscount = totalBase - totalDiscount;
-  const gst = Math.round(afterDiscount * 0.04);
-  const totalPayable = afterDiscount + gst;
+  const totalPayable = totalBase - totalDiscount;
 
   // Store for WhatsApp send
-  window._checkoutFare = { totalBase, totalDiscount, afterDiscount, gst, totalPayable };
+  window._checkoutFare = { totalBase, totalDiscount, totalPayable };
 
   // Update summary sidebar
-  const baseEl = document.querySelector('.sum-row .lbl');
+  const baseEl = document.getElementById('summary-base');
   const discEl = document.getElementById('summary-discount');
-  const gstEl  = document.getElementById('summary-gst');
   const totEl  = document.getElementById('summary-total');
-  if (discEl) discEl.textContent = `− ₹${totalDiscount}`;
-  if (gstEl)  gstEl.textContent  = `₹${gst}`;
+  if (baseEl) baseEl.textContent = `₹${totalBase}`;
+  if (discEl) discEl.textContent = totalDiscount > 0 ? `− ₹${totalDiscount}` : '—';
   if (totEl)  totEl.textContent  = `₹${totalPayable}`;
 
   const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
@@ -5076,8 +5088,7 @@ function continueToCheckout() {
       <div class="sum-row"><span class="lbl">Base fare (${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''})</span><span>₹${totalBase}</span></div>
       ${discountRow}
       ${bonusRow}
-      <div class="sum-row"><span class="lbl">GST</span><span>₹0</span></div>
-      <div class="sum-row"><span class="lbl">Convenience</span><span>₹0</span></div>
+      <div class="sum-row"><span class="lbl">Convenience fee</span><span>₹0</span></div>
       <div class="sum-row tot"><span>Total payable</span><span>₹${totalPayable}</span></div>
     `;
   }
@@ -5622,7 +5633,6 @@ ${passengerLines}
 
 💰 *Fare Breakup:*
 Base Fare: ₹${totalBase}${discountLine}
-GST (4%): +₹${gst}
 *Total Payable: ₹${totalPayable}*
 
 💳 *Payment:*
@@ -5707,25 +5717,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  const mobileInputEl = document.getElementById('auth-mobile-input');
-  if (mobileInputEl) {
-    mobileInputEl.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        sendMobileOtp();
-      }
-    });
-  }
-
-  const otpInputEl = document.getElementById('auth-otp-input');
-  if (otpInputEl) {
-    otpInputEl.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        verifyMobileOtp();
-      }
-    });
-  }
+  // Keyboard shortcuts for email OTP flow are already wired via onkeydown on the inputs
 });
 
 

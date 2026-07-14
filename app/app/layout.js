@@ -14,11 +14,10 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-        <link rel="icon" href="/favicon.png" sizes="512x512" type="image/png" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
         <link rel="icon" href="/favicon-16.png" sizes="16x16" type="image/png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
-        <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body>
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -70,7 +69,7 @@ export default function RootLayout({ children }) {
             </div>
           </div>
           <div className="max-w-7xl mx-auto px-4 py-4 border-t border-emerald-900/50 text-xs flex justify-between flex-wrap gap-2">
-            <div>© {new Date().getFullYear()} Cheap Travels India</div>
+            <div>© {new Date().getFullYear()} Cheap Travels India Pvt Ltd</div>
             <div>Made in India 🇮🇳 · Verified agent partners</div>
           </div>
         </footer>
