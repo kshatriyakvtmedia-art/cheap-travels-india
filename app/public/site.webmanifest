@@ -1,15 +1,21 @@
 {
   "name": "Cheap Travels India",
   "short_name": "CheapBus",
-  "description": "India's cheapest bus tickets — lower than redBus & MakeMyTrip",
+  "description": "India's cheapest bus tickets — direct operator rates, no OTA markup",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FAFBF9",
+  "background_color": "#0E7B4F",
   "theme_color": "#0E7B4F",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/favicon.png",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
