@@ -129,3 +129,16 @@ export async function markFailed(id) {
     data: { status: 'failed' }
   });
 }
+
+export async function updatePassenger(id, { name, age, gender, phone, email }) {
+  return await prisma.order.update({
+    where: { id },
+    data: {
+      passengerName: name || null,
+      passengerAge: age ? String(age) : null,
+      passengerGender: gender || null,
+      customerPhone: phone || null,
+      customerEmail: email || null,
+    },
+  });
+}
