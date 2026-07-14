@@ -1,19 +1,19 @@
 // Email OTP delivery via Resend.
-// Requires RESEND_API_KEY in .env — throws at startup if missing in production
-// so a misconfigured deploy fails loudly rather than silently dropping OTPs.
+//
+// RESEND_API_KEY validation is deferred to call time (inside getClient()),
+// not module load time, so `next build` never throws on import.
+// If the key is missing at request time the error surfaces immediately
+// with a clear message — no silent failure.
 
 import { Resend } from 'resend';
 
-const FROM   = process.env.RESEND_FROM_EMAIL || 'Cheap Travels India <otp@cheapbus.in>';
-const API_KEY = process.env.RESEND_API_KEY;
+const FROM = process.env.RESEND_FROM_EMAIL || 'Cheap Travels India <otp@cheapbus.in>';
 
-if (!API_KEY && process.env.NODE_ENV === 'production') {
-  throw new Error('FATAL: RESEND_API_KEY must be set in production. OTP email delivery will not work without it.');
-}
-
+/** Reads RESEND_API_KEY at call time so the build never throws on import. */
 function getClient() {
-  if (!API_KEY) throw new Error('RESEND_API_KEY is not configured.');
-  return new Resend(API_KEY);
+  const key = process.env.RESEND_API_KEY;
+  if (!key) throw new Error('RESEND_API_KEY environment variable is not set.');
+  return new Resend(key);
 }
 
 /**
