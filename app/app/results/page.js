@@ -44,18 +44,18 @@ function ResultsContent() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 mt-5">
-        {/* Live compare strip */}
+        {/* Savings strip */}
         <div className="rounded-2xl p-4 md:p-5 flex flex-wrap items-center gap-3 text-white shadow-card mb-5"
              style={{ background: 'linear-gradient(135deg, #0E7B4F, #094B30)' }}>
           <span className="font-head font-bold text-sm flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-brand-orange live-dot inline-block"></span>
-            Live rate-compare · {from} → {to}
+            <span className="w-2 h-2 rounded-full bg-brand-orange inline-block"></span>
+            {from} → {to} · Direct operator rates
           </span>
-          <Cmp name="RedBus" price={1499} />
-          <Cmp name="AbhiBus" price={1480} />
-          <Cmp name="MMT" price={1520} />
+          <span className="bg-white/10 border border-white/15 rounded-lg px-3 py-1.5 text-sm">
+            No OTA markup
+          </span>
           <span className="ml-auto px-3 py-1.5 rounded-lg bg-brand-orange text-brand-green-d font-bold text-sm">
-            CheapTravels lowest · save up to 30%
+            5% member discount on all tickets
           </span>
         </div>
 
@@ -103,13 +103,6 @@ export default function ResultsPage() {
   );
 }
 
-function Cmp({ name, price }) {
-  return (
-    <span className="bg-white/10 border border-white/15 rounded-lg px-3 py-1.5 text-sm">
-      <b className="text-brand-orange-s mr-1.5">{name}</b>₹{price.toLocaleString('en-IN')}
-    </span>
-  );
-}
 
 function BusCard({ bus, featured, from, to, date }) {
   const lowSeats = bus.seatsAvailable < 10;

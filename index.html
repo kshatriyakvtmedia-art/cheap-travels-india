@@ -2749,17 +2749,13 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   <div class="page">
     <div class="trust-strip">
       <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div><div><b>Verified agent network</b><small>Direct inventory from operator portals</small></div></div>
-      <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg></div><div><b>5% extra discount</b><small>Cheaper than RedBus on same bus</small></div></div>
+      <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg></div><div><b>5% member discount</b><small>Direct operator rates, no OTA markup</small></div></div>
       <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></div><div><b>WhatsApp ticket</b><small>Branded e-ticket in &lt;90 sec</small></div></div>
       <div class="ts"><div class="ts-ico"><svg viewBox="0 0 24 24" width="22" height="22" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg></div><div><b>24×7 Indian support</b><small>Hindi & English helpline</small></div></div>
     </div>
 
     <div class="live-compare" id="live-compare-box" style="display:none">
-      <div class="lc-title"><span class="live-dot"></span> Live rate-compare · Search a route to compare</div>
-      <div class="cmp"><b>RedBus</b>₹1,499</div>
-      <div class="cmp"><b>AbhiBus</b>₹1,480</div>
-      <div class="cmp"><b>MMT</b>₹1,520</div>
-      <div class="cmp us"><b>Cheap Travels</b>₹1,424 <small style="opacity:.8">(5% extra discount)</small></div>
+      <div class="lc-title"><span class="live-dot"></span> Search a route to see prices</div>
     </div>
 
     <!-- Empty state shown before first search -->
@@ -3053,10 +3049,10 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
         </div>
         <div class="sum-card">
           <h4>Fare breakup</h4>
-          <div class="sum-row"><span class="lbl">Base fare</span><span>₹1,499</span></div>
-          <div class="sum-row disc"><span>Cheap Travels discount</span><span id="summary-discount">− ₹0</span></div>
-          <div class="sum-row"><span class="lbl">GST (4%)</span><span id="summary-gst">₹0</span></div>
-          <div class="sum-row tot"><span>Total payable</span><span id="summary-total">₹0</span></div>
+          <div class="sum-row"><span class="lbl">Base fare</span><span id="summary-base">—</span></div>
+          <div class="sum-row disc"><span>Member discount (5%)</span><span id="summary-discount">—</span></div>
+          <div class="sum-row"><span class="lbl">Convenience fee</span><span>₹0</span></div>
+          <div class="sum-row tot"><span>Total payable</span><span id="summary-total">—</span></div>
         </div>
         <div class="sum-card" style="background:linear-gradient(135deg,#0F766E,#0A4F4A);color:#fff">
           <h4 style="color:#fff;border-color:rgba(255,255,255,.2)"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Cheap Travels Promise</h4>
@@ -3351,7 +3347,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 
   <!-- Bottom bar -->
   <div class="foot-bottom">
-    <div>© 2026 Cheap Travels India Pvt Ltd · CIN: U63040MH2026PTC000000</div>
+    <div>© 2026 Cheap Travels India</div>
     <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:flex-end;">
       <span>Made in India 🇮🇳</span>
       <span style="opacity:.4;">·</span>
@@ -4127,19 +4123,15 @@ function displayFilteredBuses(buses, formattedDate) {
   // Update live-compare prices based on first bus
   const firstBus = sortedBuses[0];
   const minFare = firstBus.minFare || 1200;
-  const redBusFare = minFare;
-  const abhiBusFare = Math.round(minFare * 0.99);
-  const mmtFare = Math.round(minFare * 1.01);
   const cheapTravelsFare = Math.round(minFare * 0.95);
-  
+  const savings = minFare - cheapTravelsFare;
+
   const liveComp = document.querySelector('.live-compare');
   if (liveComp) {
     liveComp.innerHTML = `
-      <div class="lc-title"><span class="live-dot"></span> Live rate-compare · ${lastSearchedRoute || 'Azamgarh → Delhi'} · Same operator</div>
-      <div class="cmp"><b>RedBus</b>₹${redBusFare}</div>
-      <div class="cmp"><b>AbhiBus</b>₹${abhiBusFare}</div>
-      <div class="cmp"><b>MMT</b>₹${mmtFare}</div>
-      <div class="cmp us"><b>Cheap Travels</b>₹${cheapTravelsFare} <small style="opacity:.8">(5% extra discount)</small></div>
+      <div class="lc-title"><span class="live-dot"></span> ${lastSearchedRoute || 'This route'} · Direct from operator</div>
+      <div class="cmp"><b>Our price</b>₹${cheapTravelsFare} <small style="opacity:.8">incl. 5% member discount</small></div>
+      <div class="cmp us"><b>You save</b>₹${savings} vs full agent price</div>
     `;
   }
   
@@ -4983,20 +4975,17 @@ function continueToCheckout() {
   
   const totalBase = selectedSeats.reduce((sum, s) => sum + s.baseFare, 0);
   const totalDiscount = selectedSeats.reduce((sum, s) => sum + s.discount, 0);
-  const afterDiscount = totalBase - totalDiscount;
-  const gst = Math.round(afterDiscount * 0.04);
-  const totalPayable = afterDiscount + gst;
+  const totalPayable = totalBase - totalDiscount;
 
   // Store for WhatsApp send
-  window._checkoutFare = { totalBase, totalDiscount, afterDiscount, gst, totalPayable };
+  window._checkoutFare = { totalBase, totalDiscount, totalPayable };
 
   // Update summary sidebar
-  const baseEl = document.querySelector('.sum-row .lbl');
+  const baseEl = document.getElementById('summary-base');
   const discEl = document.getElementById('summary-discount');
-  const gstEl  = document.getElementById('summary-gst');
   const totEl  = document.getElementById('summary-total');
-  if (discEl) discEl.textContent = `− ₹${totalDiscount}`;
-  if (gstEl)  gstEl.textContent  = `₹${gst}`;
+  if (baseEl) baseEl.textContent = `₹${totalBase}`;
+  if (discEl) discEl.textContent = totalDiscount > 0 ? `− ₹${totalDiscount}` : '—';
   if (totEl)  totEl.textContent  = `₹${totalPayable}`;
 
   const seatNosStr = selectedSeats.map(s => s.seatNo).join(', ');
@@ -5099,8 +5088,7 @@ function continueToCheckout() {
       <div class="sum-row"><span class="lbl">Base fare (${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''})</span><span>₹${totalBase}</span></div>
       ${discountRow}
       ${bonusRow}
-      <div class="sum-row"><span class="lbl">GST</span><span>₹0</span></div>
-      <div class="sum-row"><span class="lbl">Convenience</span><span>₹0</span></div>
+      <div class="sum-row"><span class="lbl">Convenience fee</span><span>₹0</span></div>
       <div class="sum-row tot"><span>Total payable</span><span>₹${totalPayable}</span></div>
     `;
   }
@@ -5645,7 +5633,6 @@ ${passengerLines}
 
 💰 *Fare Breakup:*
 Base Fare: ₹${totalBase}${discountLine}
-GST (4%): +₹${gst}
 *Total Payable: ₹${totalPayable}*
 
 💳 *Payment:*

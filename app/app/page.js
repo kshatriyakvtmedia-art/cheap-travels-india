@@ -43,8 +43,8 @@ export default function HomePage() {
       <div className="text-white py-14 px-4 relative overflow-hidden" style={{ background: 'linear-gradient(135deg,#094B30 0%,#0E7B4F 60%,#16a34a 100%)' }}>
         <div className="max-w-4xl mx-auto relative z-10">
           <div className="flex items-center gap-2 mb-4">
-            <span className="bg-brand-orange text-brand-green-d text-xs font-extrabold tracking-wide px-3 py-1 rounded-full">UP TO 30% OFF</span>
-            <span className="text-emerald-200 text-sm">vs RedBus · AbhiBus · MMT</span>
+            <span className="bg-brand-orange text-brand-green-d text-xs font-extrabold tracking-wide px-3 py-1 rounded-full">5% MEMBER DISCOUNT</span>
+            <span className="text-emerald-200 text-sm">Direct operator rates · No OTA markup</span>
           </div>
           <h1 className="font-head font-extrabold text-3xl md:text-5xl leading-tight mb-3">
             India's Most Affordable<br />Bus Tickets
@@ -129,13 +129,22 @@ export default function HomePage() {
         <div className="rounded-2xl p-5 text-white flex flex-wrap items-center justify-between gap-4"
              style={{ background: 'linear-gradient(135deg,#094B30,#0E7B4F)' }}>
           <div>
-            <div className="font-head font-bold text-lg">Save vs the competition</div>
-            <div className="text-emerald-200 text-sm mt-1">Verified prices · Direct operator rates</div>
+            <div className="font-head font-bold text-lg">Why book with us?</div>
+            <div className="text-emerald-200 text-sm mt-1">Direct from operator · No middleman fee</div>
           </div>
           <div className="flex gap-4 text-sm">
-            <Cmp name="RedBus" pct="25%" />
-            <Cmp name="AbhiBus" pct="20%" />
-            <Cmp name="MakeMyTrip" pct="28%" />
+            <div className="bg-white/10 rounded-lg px-3 py-2 text-center">
+              <div className="text-xs text-emerald-200">Convenience fee</div>
+              <div className="font-bold text-brand-orange">₹0</div>
+            </div>
+            <div className="bg-white/10 rounded-lg px-3 py-2 text-center">
+              <div className="text-xs text-emerald-200">Member discount</div>
+              <div className="font-bold text-brand-orange">5% off</div>
+            </div>
+            <div className="bg-white/10 rounded-lg px-3 py-2 text-center">
+              <div className="text-xs text-emerald-200">Ticket delivery</div>
+              <div className="font-bold text-brand-orange">WhatsApp</div>
+            </div>
           </div>
         </div>
       </div>
@@ -151,9 +160,3 @@ const Feature = ({ icon, title, desc }) => (
   </div>
 );
 
-const Cmp = ({ name, pct }) => (
-  <div className="bg-white/10 rounded-lg px-3 py-2 text-center">
-    <div className="text-xs text-emerald-200">{name}</div>
-    <div className="font-bold text-brand-orange">{pct} cheaper</div>
-  </div>
-);
