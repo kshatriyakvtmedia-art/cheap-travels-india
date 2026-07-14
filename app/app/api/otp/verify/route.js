@@ -5,26 +5,26 @@ import { signToken } from '@/lib/session.js';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-const MOBILE_RE  = /^[6-9]\d{9}$/;
-const MAX_TRIES  = 5;              // invalidate OTP after 5 wrong attempts
+const EMAIL_RE   = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_TRIES  = 5;
 const COOKIE_TTL = 7 * 24 * 60 * 60; // 7 days in seconds
 
-// Single generic error — no hints about whether the number exists, the code
-// was wrong, or the code expired. Prevents user-enumeration attacks.
+// Single generic error — no hints to prevent enumeration attacks
 const FAIL = () => NextResponse.json({ error: 'Invalid or expired code.' }, { status: 401 });
 
 export async function POST(req) {
-  const body   = await req.json().catch(() => ({}));
-  const mobile = String(body.mobile || '').replace(/\D/g, '').replace(/^91/, '').trim();
-  const code   = String(body.code   || '').trim();
+  const body  = await req.json().catch(() => ({}));
+  const email = String(body.email || '').trim().toLowerCase();
+  const code  = String(body.code  || '').trim();
+  const name  = String(body.name  || '').trim();
 
-  if (!MOBILE_RE.test(mobile) || !/^\d{6}$/.test(code)) return FAIL();
+  if (!EMAIL_RE.test(email) || !/^\d{6}$/.test(code)) return FAIL();
 
-  // Find the newest unexpired, unverified OTP that hasn't exceeded max attempts
+  // OTP records are stored with mobile = email (the email is the lookup key)
   const record = await prisma.otpVerification.findFirst({
     where: {
-      mobile,
-      verified : false,
+      mobile  : email,
+      verified: false,
       expiresAt: { gt: new Date() },
       attempts : { lt: MAX_TRIES },
     },
@@ -41,35 +41,35 @@ export async function POST(req) {
 
   if (record.code !== code) return FAIL();
 
-  // Mark verified so it can't be replayed
+  // Mark verified so it cannot be replayed
   await prisma.otpVerification.update({
     where: { id: record.id },
     data:  { verified: true },
   });
 
-  // Upsert user — new users get the ₹51 signup bonus flag
-  const existing = await prisma.user.findUnique({ where: { mobile } });
+  // Upsert user by email — new users get the ₹51 signup bonus flag
+  const existing = await prisma.user.findUnique({ where: { email } });
   const isNew    = !existing;
 
   const user = await prisma.user.upsert({
-    where:  { mobile },
+    where : { email },
     update: {},
     create: {
-      mobile,
+      email,
+      name         : name || `User ${email.split('@')[0]}`,
       role         : 'customer',
-      name         : `User ${mobile.slice(-4)}`,
-      bonusEligible: true,   // redeemed only on first confirmed order
+      bonusEligible: true,
     },
   });
 
   const token = signToken(
-    { sub: user.id, mobile: user.mobile, role: user.role },
+    { sub: user.id, email: user.email, role: user.role },
     '7d'
   );
 
   const res = NextResponse.json({
     ok  : true,
-    user: { id: user.id, mobile: user.mobile, role: user.role },
+    user: { id: user.id, email: user.email, name: user.name, role: user.role },
     isNew,
   });
 

@@ -6,27 +6,23 @@ import { randomInt } from 'crypto';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-const MOBILE_RE = /^[6-9]\d{9}$/;
 const EMAIL_RE  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const WINDOW_MS = 10 * 60 * 1000; // 10 minutes
-const MAX_SENDS = 3;               // max OTP sends per window
+const MAX_SENDS = 3;               // max OTP sends per window per email
 
 export async function POST(req) {
-  const body   = await req.json().catch(() => ({}));
-  const mobile = String(body.mobile || '').replace(/\D/g, '').replace(/^91/, '').trim();
-  const email  = String(body.email  || '').trim().toLowerCase();
+  const body  = await req.json().catch(() => ({}));
+  const email = String(body.email || '').trim().toLowerCase();
 
-  if (!MOBILE_RE.test(mobile)) {
-    return NextResponse.json({ error: 'Enter a valid 10-digit Indian mobile number.' }, { status: 400 });
-  }
   if (!EMAIL_RE.test(email)) {
     return NextResponse.json({ error: 'Enter a valid email address.' }, { status: 400 });
   }
 
-  // Rate-limit: count OTP records for this mobile in the last 10 minutes
+  // Rate-limit: count OTP records for this email in the last 10 minutes.
+  // We store email in the `mobile` column (string key — no schema change needed).
   const since = new Date(Date.now() - WINDOW_MS);
   const recentCount = await prisma.otpVerification.count({
-    where: { mobile, createdAt: { gte: since } },
+    where: { mobile: email, createdAt: { gte: since } },
   });
 
   if (recentCount >= MAX_SENDS) {
@@ -39,13 +35,13 @@ export async function POST(req) {
   const code      = randomInt(100_000, 1_000_000).toString();
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-  await prisma.otpVerification.create({ data: { mobile, code, expiresAt } });
+  // Store email in the `mobile` field — it is used only as a lookup key
+  await prisma.otpVerification.create({ data: { mobile: email, code, expiresAt } });
 
   // Throws in production if RESEND_API_KEY is not set — intentional
   const delivery = await sendEmailOtp(email, code);
   if (!delivery.ok) {
     console.error('[otp/send] email delivery failed:', delivery.error);
-    // Do not expose delivery failure details to the client
   }
 
   // Always return success — prevents enumeration of registered accounts
