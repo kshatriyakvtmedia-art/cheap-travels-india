@@ -38,6 +38,7 @@ function mapPrismaToSqlite(o) {
     customer_discount: o.customerDiscount,
     total_payable: o.totalPayable,
     status: o.status,
+    bonus_applied: o.bonusApplied,
     upi_utr: o.upiUtr,
     provider_pnr: o.providerPnr,
     held_until: o.heldUntil,
@@ -50,6 +51,7 @@ function mapSqliteToPrisma(o) {
   if (!o) return null;
   return {
     id: o.id,
+    userId: o.user_id ?? null,
     provider: o.provider,
     busExternalId: o.bus_external_id,
     operator: o.operator,
@@ -72,6 +74,7 @@ function mapSqliteToPrisma(o) {
     customerDiscount: o.customer_discount,
     totalPayable: o.total_payable,
     status: o.status || 'held',
+    bonusApplied: o.bonus_applied ?? false,
     upiUtr: o.upi_utr,
     providerPnr: o.provider_pnr,
     heldUntil: o.held_until,

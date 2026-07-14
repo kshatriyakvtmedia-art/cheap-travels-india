@@ -20,10 +20,11 @@ model User {
   email        String?    @unique
   mobile       String?    @unique
   passwordHash String?    @map("password_hash")
-  role         Role       @default(customer)
-  createdAt    DateTime   @default(now()) @map("created_at")
-  orders       Order[]
-  auditLogs    AuditLog[]
+  role          Role       @default(customer)
+  bonusEligible Boolean    @default(false) @map("bonus_eligible")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  orders        Order[]
+  auditLogs     AuditLog[]
 
   @@map("users")
 }
@@ -34,6 +35,7 @@ model OtpVerification {
   code      String
   expiresAt DateTime @map("expires_at")
   verified  Boolean  @default(false)
+  attempts  Int      @default(0)
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("otp_verifications")
@@ -71,6 +73,7 @@ model Order {
   customerDiscount    Float     @map("customer_discount")
   totalPayable        Float     @map("total_payable")
   status              String    @default("held")
+  bonusApplied        Boolean   @default(false) @map("bonus_applied")
   b2bBlockId          String?   @map("b2b_block_id")
   b2bBookingStatus    String?   @map("b2b_booking_status")
   upiUtr              String?   @map("upi_utr")
