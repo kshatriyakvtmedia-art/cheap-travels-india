@@ -2216,7 +2216,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   padding: 14px 20px 8px;
   background: #004d35;
 }
-.fare-section-hdr.tomorrow-hdr { background: #0d1117; border-top: 2px solid rgba(255,255,255,0.07); }
+.fare-section-hdr.tomorrow-hdr { background: linear-gradient(135deg, var(--gold-d) 0%, var(--gold) 100%); border-top: 2px solid rgba(255,255,255,0.2); }
 .fare-section-pill {
   font-size: 11px;
   font-weight: 900;
@@ -2228,7 +2228,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   border-radius: 30px;
   padding: 5px 16px;
 }
-.tomorrow-hdr .fare-section-pill { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.14); }
+.tomorrow-hdr .fare-section-pill { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.38); }
 
 /* Rail container */
 .fare-rail-section {
@@ -2242,8 +2242,8 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   box-shadow: 0 4px 20px rgba(0,0,0,0.22);
 }
 .fare-rail-section.tomorrow-rail {
-  background: linear-gradient(180deg, #0d1117 0%, #141e2d 100%);
-  box-shadow: 0 -2px 20px rgba(0,0,0,0.2);
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-d) 100%);
+  box-shadow: 0 -2px 20px rgba(194,108,22,0.45);
 }
 
 /* Draggable scroll wrapper */
@@ -2289,7 +2289,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   position: absolute; top: 0; left: 0; right: 0; height: 3px;
   background: linear-gradient(90deg, #f59e0b, #f97316);
 }
-.tomorrow-rail .fare-card::before { background: linear-gradient(90deg, #38bdf8, #818cf8); }
+.tomorrow-rail .fare-card::before { background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.55)); }
 
 /* Route title */
 .fc-route {
@@ -2302,7 +2302,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   overflow: hidden;
   margin-bottom: 8px;
 }
-.fc-emoji { font-size: 12px; margin-right: 4px; }
+.fc-emoji { display: inline-flex; align-items: center; margin-right: 5px; opacity: 0.75; vertical-align: middle; }
 
 /* Prices */
 .fc-prices { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
@@ -2320,7 +2320,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   color: #ffffff;
 }
 .fc-price-val.limited { color: #f59e0b; }
-.tomorrow-rail .fc-price-val.limited { color: #38bdf8; }
+.tomorrow-rail .fc-price-val.limited { color: #fffde0; }
 
 /* Book Now button */
 .fc-book-btn {
@@ -2339,8 +2339,8 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 }
 .fc-book-btn:hover { background: #fbbf24; }
 .fc-book-btn:active { transform: scale(0.97); }
-.tomorrow-rail .fc-book-btn { background: #38bdf8; }
-.tomorrow-rail .fc-book-btn:hover { background: #7dd3fc; }
+.tomorrow-rail .fc-book-btn { background: var(--teal-d); color: #fff; }
+.tomorrow-rail .fc-book-btn:hover { background: var(--teal); }
 
 @media (max-width: 768px) {
   .fare-section-hdr { padding: 10px 14px 6px; }
@@ -2877,7 +2877,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   
 <!-- ═══════════ TODAY & TOMORROW FARE CARD RAILS ═══════════ -->
 <div class="fare-section-hdr today-hdr">
-  <span class="fare-section-pill">&#x1F68C;&nbsp;Today's Fares</span>
+  <span class="fare-section-pill"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:5px"><rect x="1" y="3" width="22" height="13" rx="2"/><path d="M1 9h22"/><path d="M8 3v6"/><path d="M16 3v6"/></svg>Today's Fares</span>
 </div>
 <div class="fare-rail-section today-rail">
   <div class="fare-card-track-wrap" id="today-track-wrap">
@@ -2887,7 +2887,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   </div>
 </div>
 <div class="fare-section-hdr tomorrow-hdr">
-  <span class="fare-section-pill">&#x1F4C5;&nbsp;Tomorrow's Fares</span>
+  <span class="fare-section-pill"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:5px"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/></svg>Tomorrow's Fares</span>
 </div>
 <div class="fare-rail-section tomorrow-rail">
   <div class="fare-card-track-wrap" id="tomorrow-track-wrap">
@@ -3587,6 +3587,7 @@ async function loadCities() {
     {id:'91',name:'Meerut'}, {id:'11',name:'Ghaziabad'},
     {id:'12',name:'Noida'}, {id:'15',name:'Gurgaon'}, {id:'80',name:'Shimla'},
     {id:'67',name:'Haridwar'}, {id:'16',name:'Dehradun'}, {id:'20',name:'Chandigarh'},
+    {id:'127',name:'Patna'}, {id:'53',name:'Manali'},
   ];
   populateCitiesDropdowns();
 }
@@ -5777,16 +5778,18 @@ document.addEventListener('DOMContentLoaded', () => {
 // ════════ FARE CARD TICKER ════════
 
 const FARE_ROUTES = [
-  { key: '3-31',   from: 'Delhi',    to: 'Varanasi'  },
-  { key: '31-3',   from: 'Varanasi', to: 'Delhi'     },
-  { key: '3-170',  from: 'Delhi',    to: 'Azamgarh'  },
-  { key: '170-3',  from: 'Azamgarh', to: 'Delhi'     },
-  { key: '3-127',  from: 'Delhi',    to: 'Patna'     },
-  { key: '127-3',  from: 'Patna',    to: 'Delhi'     },
-  { key: '3-53',   from: 'Delhi',    to: 'Manali'    },
-  { key: '53-3',   from: 'Manali',   to: 'Delhi'     },
-  { key: '3-29',   from: 'Delhi',    to: 'Kanpur'    },
-  { key: '29-3',   from: 'Kanpur',   to: 'Delhi'     },
+  { key: '3-31',  from: 'Delhi', to: 'Varanasi'   },
+  { key: '3-170', from: 'Delhi', to: 'Azamgarh'   },
+  { key: '3-127', from: 'Delhi', to: 'Patna'       },
+  { key: '3-53',  from: 'Delhi', to: 'Manali'      },
+  { key: '3-29',  from: 'Delhi', to: 'Kanpur'      },
+  { key: '3-24',  from: 'Delhi', to: 'Lucknow'     },
+  { key: '3-23',  from: 'Delhi', to: 'Gorakhpur'   },
+  { key: '3-16',  from: 'Delhi', to: 'Dehradun'    },
+  { key: '3-67',  from: 'Delhi', to: 'Haridwar'    },
+  { key: '3-80',  from: 'Delhi', to: 'Shimla'      },
+  { key: '3-20',  from: 'Delhi', to: 'Chandigarh'  },
+  { key: '3-22',  from: 'Delhi', to: 'Agra'        },
 ];
 
 const MONTH_NAMES = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
@@ -5805,7 +5808,7 @@ function buildFareCard(route, fares, dateLabel, isToday) {
   const bookSearch = encodeURIComponent(route.from) + '/' + encodeURIComponent(route.to);
 
   return `<div class="fare-card" onclick="prefillSearch('${route.from}','${route.to}')">
-    <div class="fc-route"><span class="fc-emoji">&#x1F68C;</span>${route.from.toUpperCase()} &#x279C; ${route.to.toUpperCase()}</div>
+    <div class="fc-route"><span class="fc-emoji"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="22" height="13" rx="2"/><path d="M1 9h22"/><path d="M8 3v6"/><path d="M16 3v6"/></svg></span>${route.from.toUpperCase()} &#x279C; ${route.to.toUpperCase()}</div>
     <div class="fc-prices">
       <div class="fc-price-row"><span class="fc-price-label">Seater</span><span class="fc-price-val">${seater}</span></div>
       <div class="fc-price-row"><span class="fc-price-label">Dbl Sleeper</span><span class="fc-price-val">${dbl}</span></div>
@@ -5818,7 +5821,8 @@ function buildFareCard(route, fares, dateLabel, isToday) {
 function fillCardTrack(trackId, fares, dateLabel, isToday) {
   const track = document.getElementById(trackId);
   if (!track) return;
-  track.innerHTML = FARE_ROUTES.map(r => buildFareCard(r, fares, dateLabel, isToday)).join('');
+  const cards = FARE_ROUTES.map(r => buildFareCard(r, fares, dateLabel, isToday)).join('');
+  track.innerHTML = cards + cards; // duplicate for seamless ticker loop
 }
 
 function makeDraggable(wrapId) {
@@ -5841,6 +5845,22 @@ function makeDraggable(wrapId) {
   });
 }
 
+function startAutoScroll(wrapId) {
+  const wrap = document.getElementById(wrapId);
+  if (!wrap) return;
+  let paused = false;
+  wrap.addEventListener('mouseenter',  () => { paused = true; });
+  wrap.addEventListener('mouseleave',  () => { paused = false; });
+  wrap.addEventListener('touchstart',  () => { paused = true; },  { passive: true });
+  wrap.addEventListener('touchend',    () => { setTimeout(() => { paused = false; }, 1500); }, { passive: true });
+  setInterval(() => {
+    if (paused || wrap.classList.contains('dragging')) return;
+    wrap.scrollLeft += 1;
+    // Seamless loop: reset when first half has scrolled by
+    if (wrap.scrollLeft >= wrap.scrollWidth / 2) wrap.scrollLeft = 0;
+  }, 18);
+}
+
 function prefillSearch(from, to) {
   const fromSel = document.getElementById('from-select');
   const toSel   = document.getElementById('to-select');
@@ -5858,31 +5878,38 @@ function prefillSearch(from, to) {
 async function initTickerFares() {
   makeDraggable('today-track-wrap');
   makeDraggable('tomorrow-track-wrap');
+
+  const fallback = {
+    '3-31':  { seater:550,  doubleSleeper:750,  singleSleeper:1199 },
+    '3-170': { seater:499,  doubleSleeper:649,  singleSleeper:999  },
+    '3-127': { seater:649,  doubleSleeper:899,  singleSleeper:1399 },
+    '3-53':  { seater:799,  doubleSleeper:1099, singleSleeper:1599 },
+    '3-29':  { seater:500,  doubleSleeper:700,  singleSleeper:1350 },
+    '3-24':  { seater:350,  doubleSleeper:549,  singleSleeper:849  },
+    '3-23':  { seater:449,  doubleSleeper:649,  singleSleeper:999  },
+    '3-16':  { seater:349,  doubleSleeper:499,  singleSleeper:749  },
+    '3-67':  { seater:299,  doubleSleeper:449,  singleSleeper:699  },
+    '3-80':  { seater:599,  doubleSleeper:849,  singleSleeper:1299 },
+    '3-20':  { seater:299,  doubleSleeper:449,  singleSleeper:699  },
+    '3-22':  { seater:199,  doubleSleeper:299,  singleSleeper:449  },
+  };
+
   try {
     const res = await fetch(`${API}/api/ticker-fares`);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if (data.success && data.fares) {
-      fillCardTrack('today-card-track',    data.fares.today,    getISTDate(0), true);
-      fillCardTrack('tomorrow-card-track', data.fares.tomorrow, getISTDate(1), false);
-    }
+      fillCardTrack('today-card-track',    { ...fallback, ...data.fares.today    }, getISTDate(0), true);
+      fillCardTrack('tomorrow-card-track', { ...fallback, ...data.fares.tomorrow }, getISTDate(1), false);
+    } else { throw new Error('no fares'); }
   } catch (err) {
     console.warn('[FareTicker] Could not load ticker fares:', err.message);
-    const fallback = {
-      '3-31':  { seater:550,  doubleSleeper:750,  singleSleeper:1199 },
-      '31-3':  { seater:550,  doubleSleeper:750,  singleSleeper:1199 },
-      '3-170': { seater:499,  doubleSleeper:649,  singleSleeper:999  },
-      '170-3': { seater:499,  doubleSleeper:649,  singleSleeper:999  },
-      '3-127': { seater:649,  doubleSleeper:899,  singleSleeper:1399 },
-      '127-3': { seater:649,  doubleSleeper:899,  singleSleeper:1399 },
-      '3-53':  { seater:799,  doubleSleeper:1099, singleSleeper:1599 },
-      '53-3':  { seater:799,  doubleSleeper:1099, singleSleeper:1599 },
-      '3-29':  { seater:500,  doubleSleeper:700,  singleSleeper:1350 },
-      '29-3':  { seater:500,  doubleSleeper:700,  singleSleeper:1350 },
-    };
     fillCardTrack('today-card-track',    fallback, getISTDate(0), true);
     fillCardTrack('tomorrow-card-track', fallback, getISTDate(1), false);
   }
+
+  startAutoScroll('today-track-wrap');
+  startAutoScroll('tomorrow-track-wrap');
 }
 
 // ════════ WHATSAPP WIDGET ════════
