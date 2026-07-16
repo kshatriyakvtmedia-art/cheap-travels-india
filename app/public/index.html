@@ -1039,10 +1039,11 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 
 /* Autocomplete suggestions */
 .autocomplete-results {
-  position: fixed;
+  position: absolute;
+  pointer-events: all;
   background: #ffffff; border: 1.5px solid var(--line); border-top: none;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg); box-shadow: var(--shadow-lg);
-  max-height: 260px; overflow-y: auto; z-index: 99999;
+  max-height: 260px; overflow-y: auto; z-index: 1;
 }
 .autocomplete-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.03); display: flex; flex-direction: column; text-align: left; }
 .autocomplete-item:hover { background: var(--teal-light); }
@@ -2700,7 +2701,6 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
             <select id="from-select" onchange="updateFromState(this)" style="display: none;">
               <option value="170" data-state="Uttar Pradesh">Azamgarh</option>
             </select>
-            <div class="autocomplete-results" id="from-autocomplete" style="display:none;"></div>
           </div>
           <div class="swap" style="cursor: pointer;" onclick="swapCities()">
             <span class="swap-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 4 21 8 17 12"/><line x1="3" y1="8" x2="21" y2="8"/><polyline points="7 20 3 16 7 12"/><line x1="21" y1="16" x2="3" y2="16"/></svg></span>
@@ -2715,7 +2715,6 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
             <select id="to-select" onchange="updateToState(this)" style="display: none;">
               <option value="3" data-state="Delhi">Delhi</option>
             </select>
-            <div class="autocomplete-results" id="to-autocomplete" style="display:none;"></div>
           </div>
         </div>
         <div class="field">
@@ -5398,14 +5397,10 @@ function showAutocomplete(type) {
     const fieldBox = input.closest('.field-box');
     if (fieldBox) {
       const rect = fieldBox.getBoundingClientRect();
+      // Portal is fixed at viewport (0,0), so absolute coords = viewport coords
       div.style.top   = (rect.bottom + 1) + 'px';
       div.style.left  = rect.left + 'px';
       div.style.width = rect.width + 'px';
-    }
-    // Move to <body> so the dropdown escapes .hero (z-index:1) and
-    // .page (z-index:10) stacking contexts and paints above everything.
-    if (div.parentNode !== document.body) {
-      document.body.appendChild(div);
     }
     div.style.display = 'block';
   }
@@ -6034,6 +6029,11 @@ document.addEventListener('click', function(e) {
   </button>
 </div>
 
+<!-- Autocomplete portal: fixed at viewport origin, z-index max, pointer-events on children only -->
+<div id="ac-portal" style="position:fixed;top:0;left:0;width:0;height:0;overflow:visible;z-index:2147483647;pointer-events:none;">
+  <div class="autocomplete-results" id="from-autocomplete" style="display:none;"></div>
+  <div class="autocomplete-results" id="to-autocomplete"   style="display:none;"></div>
+</div>
 </body>
 </html>
 <!-- deploy Sat Jul 11 21:24:51 IST 2026 -->
