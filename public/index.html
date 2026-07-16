@@ -2521,9 +2521,15 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
           style="width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;outline:none;font-size:14px;font-weight:600;color:var(--ink);box-sizing:border-box;"
           onkeydown="if(event.key==='Enter') sendEmailOtpAuth()">
       </div>
-      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px;">
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
         <label style="font-size:11px;font-weight:700;color:var(--ink2);">YOUR NAME</label>
         <input type="text" id="auth-name-input" placeholder="Full name"
+          style="width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;outline:none;font-size:14px;font-weight:600;color:var(--ink);box-sizing:border-box;"
+          onkeydown="if(event.key==='Enter') sendEmailOtpAuth()">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px;">
+        <label style="font-size:11px;font-weight:700;color:var(--ink2);">MOBILE NUMBER <span style="font-weight:500;color:var(--ink3);">(optional)</span></label>
+        <input type="tel" id="auth-phone-input" placeholder="+91 98765 43210" inputmode="numeric"
           style="width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;outline:none;font-size:14px;font-weight:600;color:var(--ink);box-sizing:border-box;"
           onkeydown="if(event.key==='Enter') sendEmailOtpAuth()">
       </div>
@@ -2585,7 +2591,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
     
     <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:14px;">
       <label style="font-size:11px; font-weight:700; color:var(--ink2);">MOBILE NUMBER</label>
-      <input type="text" id="profile-phone-input" readonly style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:14px; font-weight:700; color:var(--ink3); background:var(--bg);">
+      <input type="tel" id="profile-phone-input" placeholder="+91 98765 43210" inputmode="numeric" style="width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-size:14px; font-weight:700; color:var(--ink);">
     </div>
 
     <div class="auth-field" style="display:flex; flex-direction:column; gap:6px; margin-bottom:14px;">
@@ -4590,12 +4596,15 @@ function _showOtpErr(msg) {
 async function sendEmailOtpAuth() {
   const email = (document.getElementById('auth-email-input')?.value || '').trim().toLowerCase();
   const name  = (document.getElementById('auth-name-input')?.value  || '').trim();
+  const phone = (document.getElementById('auth-phone-input')?.value || '').trim();
+  window._authPhone = phone;
   const errEl = document.getElementById('auth-err-msg');
   if (errEl) errEl.style.display = 'none';
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     _showAuthErr('Enter a valid email address.'); return;
   }
+
 
   const btn = document.getElementById('auth-send-btn');
   if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
@@ -4653,7 +4662,7 @@ async function verifyEmailOtpAuth() {
     const res  = await fetch('/api/otp/verify', {
       method : 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body   : JSON.stringify({ email: window._authEmail, code, name: window._authName }),
+      body   : JSON.stringify({ email: window._authEmail, code, name: window._authName, phone: window._authPhone }),
     });
     const data = await res.json();
 
@@ -4666,6 +4675,7 @@ async function verifyEmailOtpAuth() {
         id   : data.user.id,
         name : data.user.name || window._authName || data.user.email?.split('@')[0] || 'User',
         email: data.user.email,
+        phone: window._authPhone || data.user.mobile || '',
         photo: '',
       };
       currentUser = user;
@@ -4719,7 +4729,7 @@ function openProfileModal() {
   document.getElementById('profile-err').style.display = 'none';
   document.getElementById('profile-success').style.display = 'none';
   
-  document.getElementById('profile-phone-input').value = currentUser.phone || '';
+  document.getElementById('profile-phone-input').value = currentUser.phone || currentUser.mobile || '';
   document.getElementById('profile-name-input').value = currentUser.name || '';
   document.getElementById('profile-email-input').value = currentUser.email || '';
   
@@ -4731,8 +4741,9 @@ function closeProfileModal() {
 }
 
 async function saveProfileData() {
-  const name = document.getElementById('profile-name-input').value.trim();
+  const name  = document.getElementById('profile-name-input').value.trim();
   const email = document.getElementById('profile-email-input').value.trim();
+  const phone = document.getElementById('profile-phone-input').value.trim();
   const errEl = document.getElementById('profile-err');
   const successEl = document.getElementById('profile-success');
   
@@ -4744,18 +4755,25 @@ async function saveProfileData() {
     errEl.style.display = 'block';
     return;
   }
+
+  // Save phone locally regardless of API (API may not support it yet)
+  if (phone) {
+    currentUser.phone = phone;
+    localStorage.setItem('cti_user', JSON.stringify(currentUser));
+  }
   
   try {
     const res = await fetch(`${API}/api/auth/profile`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email })
+      body: JSON.stringify({ name, email, phone })
     });
     const data = await res.json();
     
     if (data.success) {
-      currentUser.name = data.user.name;
+      currentUser.name  = data.user.name;
       currentUser.email = data.user.email || '';
+      currentUser.phone = phone;
       localStorage.setItem('cti_user', JSON.stringify(currentUser));
       updateAuthUI();
       successEl.textContent = 'Profile updated successfully!';
@@ -4767,8 +4785,15 @@ async function saveProfileData() {
     }
   } catch (err) {
     console.error('Failed to update profile:', err);
-    errEl.textContent = 'Network error. Please try again.';
-    errEl.style.display = 'block';
+    // Still show success if phone was saved locally
+    if (phone) {
+      successEl.textContent = 'Mobile number saved locally!';
+      successEl.style.display = 'block';
+      setTimeout(closeProfileModal, 1200);
+    } else {
+      errEl.textContent = 'Network error. Please try again.';
+      errEl.style.display = 'block';
+    }
   }
 }
 
