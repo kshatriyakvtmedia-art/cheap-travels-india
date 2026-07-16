@@ -20,10 +20,11 @@ model User {
   email        String?    @unique
   mobile       String?    @unique
   passwordHash String?    @map("password_hash")
-  role         Role       @default(customer)
-  createdAt    DateTime   @default(now()) @map("created_at")
-  orders       Order[]
-  auditLogs    AuditLog[]
+  role          Role       @default(customer)
+  bonusEligible Boolean    @default(false) @map("bonus_eligible")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  orders        Order[]
+  auditLogs     AuditLog[]
 
   @@map("users")
 }
@@ -34,48 +35,58 @@ model OtpVerification {
   code      String
   expiresAt DateTime @map("expires_at")
   verified  Boolean  @default(false)
+  attempts  Int      @default(0)
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("otp_verifications")
 }
 
 model Order {
-  id               String    @id
-  userId           String?   @map("user_id")
-  user             User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
-  bookingReference String?   @map("booking_reference")
-  provider         String
-  busExternalId    String    @map("bus_external_id")
-  operator         String
-  busType          String    @map("bus_type")
-  fromCity         String    @map("from_city")
-  toCity           String    @map("to_city")
-  journeyDate      String    @map("journey_date")
-  departure        String
-  arrival          String
-  seatNo           String    @map("seat_no")
-  boardingPoint    String    @map("boarding_point")
-  droppingPoint    String    @map("dropping_point")
-  passengerName    String?   @map("passenger_name")
-  passengerAge     Int?      @map("passenger_age")
-  passengerGender  String?   @map("passenger_gender")
-  customerPhone    String?   @map("customer_phone")
-  customerEmail    String?   @map("customer_email")
-  baseFare         Float     @map("base_fare")
-  ourMargin        Float     @map("our_margin")
-  customerDiscount Float     @map("customer_discount")
-  totalPayable     Float     @map("total_payable")
-  status           String    @default("held")
-  upiUtr           String?   @map("upi_utr")
-  providerPnr      String?   @map("provider_pnr")
-  heldUntil        String    @map("held_until")
-  confirmedAt      DateTime? @map("confirmed_at")
-  createdAt        DateTime  @default(now()) @map("created_at")
-  payments         Payment[]
-  tickets          Ticket[]
+  id                  String    @id
+  userId              String?   @map("user_id")
+  user                User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  bookingReference    String?   @map("booking_reference")
+  provider            String
+  busExternalId       String    @map("bus_external_id")
+  operator            String
+  busType             String    @map("bus_type")
+  fromCity            String    @map("from_city")
+  toCity              String    @map("to_city")
+  fromCityId          String?   @map("from_city_id")
+  toCityId            String?   @map("to_city_id")
+  journeyDate         String    @map("journey_date")
+  journeyDateFormatted String?  @map("journey_date_formatted")
+  departure           String
+  arrival             String
+  seatNo              String    @map("seat_no")
+  boardingPoint       String    @map("boarding_point")
+  boardingPointId     String?   @map("boarding_point_id")
+  droppingPoint       String    @map("dropping_point")
+  droppingPointId     String?   @map("dropping_point_id")
+  passengerName       String?   @map("passenger_name")
+  passengerAge        Int?      @map("passenger_age")
+  passengerGender     String?   @map("passenger_gender")
+  customerPhone       String?   @map("customer_phone")
+  customerEmail       String?   @map("customer_email")
+  baseFare            Float     @map("base_fare")
+  ourMargin           Float     @map("our_margin")
+  customerDiscount    Float     @map("customer_discount")
+  totalPayable        Float     @map("total_payable")
+  status              String    @default("held")
+  bonusApplied        Boolean   @default(false) @map("bonus_applied")
+  b2bBlockId          String?   @map("b2b_block_id")
+  b2bBookingStatus    String?   @map("b2b_booking_status")
+  upiUtr              String?   @map("upi_utr")
+  providerPnr         String?   @map("provider_pnr")
+  heldUntil           String    @map("held_until")
+  confirmedAt         DateTime? @map("confirmed_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  payments            Payment[]
+  tickets             Ticket[]
 
   @@map("orders")
 }
+
 
 model Payment {
   id                   String   @id @default(uuid())
@@ -127,7 +138,7 @@ model AuditLog {
   entityId     String?  @map("entity_id")
   metadataJson Json?    @map("metadata_json")
   ipAddress    String?  @map("ip_address")
-  createdAt    DateTime @default(now()) @map("created_at")
+  createdAt    DateTime @map("created_at") @default(now())
 
   @@map("audit_logs")
 }
