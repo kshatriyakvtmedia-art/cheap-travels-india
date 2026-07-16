@@ -3588,6 +3588,10 @@ async function loadCities() {
     {id:'12',name:'Noida'}, {id:'15',name:'Gurgaon'}, {id:'80',name:'Shimla'},
     {id:'67',name:'Haridwar'}, {id:'16',name:'Dehradun'}, {id:'20',name:'Chandigarh'},
     {id:'127',name:'Patna'}, {id:'53',name:'Manali'},
+    {id:'68',name:'Rishikesh'}, {id:'81',name:'Dharamshala'},
+    {id:'35',name:'Amritsar'}, {id:'45',name:'Jammu'}, {id:'46',name:'Katra'},
+    {id:'21',name:'Mathura'}, {id:'40',name:'Jaipur'},
+    {id:'100',name:'Nainital'}, {id:'101',name:'Mussoorie'},
   ];
   populateCitiesDropdowns();
 }
@@ -5778,18 +5782,27 @@ document.addEventListener('DOMContentLoaded', () => {
 // ════════ FARE CARD TICKER ════════
 
 const FARE_ROUTES = [
-  { key: '3-31',  from: 'Delhi', to: 'Varanasi'   },
-  { key: '3-170', from: 'Delhi', to: 'Azamgarh'   },
-  { key: '3-127', from: 'Delhi', to: 'Patna'       },
-  { key: '3-53',  from: 'Delhi', to: 'Manali'      },
-  { key: '3-29',  from: 'Delhi', to: 'Kanpur'      },
-  { key: '3-24',  from: 'Delhi', to: 'Lucknow'     },
-  { key: '3-23',  from: 'Delhi', to: 'Gorakhpur'   },
-  { key: '3-16',  from: 'Delhi', to: 'Dehradun'    },
-  { key: '3-67',  from: 'Delhi', to: 'Haridwar'    },
-  { key: '3-80',  from: 'Delhi', to: 'Shimla'      },
-  { key: '3-20',  from: 'Delhi', to: 'Chandigarh'  },
-  { key: '3-22',  from: 'Delhi', to: 'Agra'        },
+  { key: '3-31',  from: 'Delhi', to: 'Varanasi'     },
+  { key: '3-170', from: 'Delhi', to: 'Azamgarh'     },
+  { key: '3-127', from: 'Delhi', to: 'Patna'         },
+  { key: '3-53',  from: 'Delhi', to: 'Manali'        },
+  { key: '3-29',  from: 'Delhi', to: 'Kanpur'        },
+  { key: '3-24',  from: 'Delhi', to: 'Lucknow'       },
+  { key: '3-23',  from: 'Delhi', to: 'Gorakhpur'     },
+  { key: '3-16',  from: 'Delhi', to: 'Dehradun'      },
+  { key: '3-67',  from: 'Delhi', to: 'Haridwar'      },
+  { key: '3-68',  from: 'Delhi', to: 'Rishikesh'     },
+  { key: '3-80',  from: 'Delhi', to: 'Shimla'        },
+  { key: '3-81',  from: 'Delhi', to: 'Dharamshala'   },
+  { key: '3-20',  from: 'Delhi', to: 'Chandigarh'    },
+  { key: '3-35',  from: 'Delhi', to: 'Amritsar'      },
+  { key: '3-45',  from: 'Delhi', to: 'Jammu'         },
+  { key: '3-46',  from: 'Delhi', to: 'Katra'         },
+  { key: '3-22',  from: 'Delhi', to: 'Agra'          },
+  { key: '3-21',  from: 'Delhi', to: 'Mathura'       },
+  { key: '3-40',  from: 'Delhi', to: 'Jaipur'        },
+  { key: '3-100', from: 'Delhi', to: 'Nainital'      },
+  { key: '3-101', from: 'Delhi', to: 'Mussoorie'     },
 ];
 
 const MONTH_NAMES = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
@@ -5892,6 +5905,15 @@ async function initTickerFares() {
     '3-80':  { seater:599,  doubleSleeper:849,  singleSleeper:1299 },
     '3-20':  { seater:299,  doubleSleeper:449,  singleSleeper:699  },
     '3-22':  { seater:199,  doubleSleeper:299,  singleSleeper:449  },
+    '3-68':  { seater:349,  doubleSleeper:499,  singleSleeper:799  },
+    '3-81':  { seater:699,  doubleSleeper:999,  singleSleeper:1499 },
+    '3-35':  { seater:649,  doubleSleeper:899,  singleSleeper:1399 },
+    '3-45':  { seater:699,  doubleSleeper:999,  singleSleeper:1499 },
+    '3-46':  { seater:799,  doubleSleeper:1099, singleSleeper:1599 },
+    '3-21':  { seater:149,  doubleSleeper:249,  singleSleeper:399  },
+    '3-40':  { seater:299,  doubleSleeper:449,  singleSleeper:699  },
+    '3-100': { seater:499,  doubleSleeper:699,  singleSleeper:1099 },
+    '3-101': { seater:399,  doubleSleeper:599,  singleSleeper:899  },
   };
 
   try {
