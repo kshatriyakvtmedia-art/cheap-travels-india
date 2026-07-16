@@ -1,17 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#0E7B4F"/>
+  <rect y="460" width="512" height="52" fill="#EE8C2E"/>
   <!-- Bus body -->
-  <rect x="3" y="7" width="26" height="15" rx="3" fill="#0E7B4F"/>
-  <!-- Windshield stripe -->
-  <rect x="3" y="7" width="26" height="3" rx="3" fill="#0B6040"/>
-  <!-- Windows -->
-  <rect x="6"  y="11" width="5" height="5" rx="1.5" fill="white" opacity="0.95"/>
-  <rect x="13.5" y="11" width="5" height="5" rx="1.5" fill="white" opacity="0.95"/>
-  <rect x="21" y="11" width="5" height="5" rx="1.5" fill="white" opacity="0.95"/>
-  <!-- Undercarriage -->
-  <rect x="3" y="20" width="26" height="3" rx="0" fill="#0B6040"/>
+  <path d="M80 200 Q80 170 110 170 L390 170 Q430 170 440 200 L450 310 Q450 330 430 330 L90 330 Q70 330 70 310 Z" fill="white"/>
+  <!-- Bus roof dome -->
+  <path d="M110 170 Q130 140 160 140 L360 140 Q390 140 400 170 Z" fill="white"/>
+  <!-- Windshield cutout -->
+  <path d="M370 170 L410 200 L420 250 L370 250 Z" fill="#0E7B4F"/>
   <!-- Wheels -->
-  <circle cx="9"  cy="25" r="3.5" fill="#0E7B4F"/>
-  <circle cx="9"  cy="25" r="1.8" fill="white"/>
-  <circle cx="23" cy="25" r="3.5" fill="#0E7B4F"/>
-  <circle cx="23" cy="25" r="1.8" fill="white"/>
+  <circle cx="160" cy="340" r="35" fill="white"/>
+  <circle cx="160" cy="340" r="18" fill="#0E7B4F"/>
+  <circle cx="340" cy="340" r="35" fill="white"/>
+  <circle cx="340" cy="340" r="18" fill="#0E7B4F"/>
+  <!-- CHEAP text -->
+  <text x="256" y="250" font-family="Arial Black, sans-serif" font-size="90" font-weight="900" fill="#0E7B4F" text-anchor="middle" letter-spacing="-2">CHEAP</text>
+  <!-- BUS text -->
+  <text x="256" y="315" font-family="Arial Black, sans-serif" font-size="72" font-weight="900" font-style="italic" fill="#0E7B4F" text-anchor="middle" letter-spacing="4">BUS</text>
 </svg>
