@@ -238,7 +238,9 @@ header.top {
 }
 .user-chip:focus-within .user-dropdown, .user-chip.open .user-dropdown { display: block; }
 .user-dropdown a, .user-dropdown button {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: 100%;
   text-align: left;
   padding: 12px 18px;
@@ -248,6 +250,7 @@ header.top {
   background: none;
   cursor: pointer;
   border-bottom: 1px solid var(--line);
+  box-sizing: border-box;
 }
 .user-dropdown a:last-child, .user-dropdown button:last-child { border-bottom: none; }
 .user-dropdown a:hover, .user-dropdown button:hover { background: var(--bg); }
@@ -2457,10 +2460,10 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
         <div class="user-avatar" id="user-avatar">U</div>
         <span id="user-name-display">User</span>
         <div class="user-dropdown">
-          <a href="#" onclick="event.preventDefault(); openProfileModal();">👤 My Profile</a>
-          <a href="#" onclick="event.preventDefault(); openBookingsModal();">🎟 My Bookings</a>
-          <a href="#" onclick="event.preventDefault(); openHelpModal();">💬 Help &amp; Support</a>
-          <button class="logout-row" onclick="logoutUser()">🚪 Sign Out</button>
+          <a href="#" onclick="event.preventDefault(); openProfileModal();"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> My Profile</a>
+          <a href="#" onclick="event.preventDefault(); openBookingsModal();"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><line x1="9" y1="2" x2="9" y2="22" stroke-dasharray="3 3"/></svg> My Bookings</a>
+          <a href="#" onclick="event.preventDefault(); openHelpModal();"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Help &amp; Support</a>
+          <button class="logout-row" onclick="logoutUser()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign Out</button>
         </div>
       </div>
       <!-- Hamburger (mobile only) -->
@@ -2493,7 +2496,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 <div class="bonus-popup" id="bonus-popup">
   <div class="bonus-popup-overlay" onclick="closeBonusPopup()"></div>
   <div class="bonus-popup-box">
-    <button class="bonus-popup-close" onclick="closeBonusPopup()">✕</button>
+    <button class="bonus-popup-close" onclick="closeBonusPopup()"<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     <div id="bonus-icon" class="bonus-gift-icon"><svg viewBox="0 0 24 24" width="64" height="64" stroke="var(--gold)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><path d="M20 12v10H4V12"></path><path d="M2 7h20v5H2z"></path><path d="M12 22V7"></path><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg></div>
     <h3 id="bonus-title">Unlock ₹51 Sign-up Bonus!</h3>
     <p id="bonus-body">Create an account today to claim your <b>₹51 cash bonus</b> on your 1st ticket + get <b>5% discount</b> on every booking with our partner buses.</p>
@@ -2505,7 +2508,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 <!-- ════════════ AUTH MODAL ════════════ -->
 <div class="auth-overlay" id="auth-overlay">
   <div class="auth-box" style="padding:36px 28px; max-width:380px;">
-    <button class="auth-close" onclick="closeAuth()">✕</button>
+    <button class="auth-close" onclick="closeAuth()"<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     <img src="images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" class="auth-logo" style="margin-bottom:20px;">
 
     <!-- Pane 1: Email + Name -->
@@ -2582,7 +2585,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 <!-- ════════════ PROFILE MODAL ════════════ -->
 <div class="auth-overlay" id="profile-overlay">
   <div class="auth-box" style="padding:40px 32px; max-width:400px;">
-    <button class="auth-close" onclick="closeProfileModal()">✕</button>
+    <button class="auth-close" onclick="closeProfileModal()"<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d); text-align:center;">My Profile</h3>
     <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:24px; text-align:center;">Manage your contact and passenger details for quick bookings.</p>
     
@@ -2633,7 +2636,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 <!-- ════════════ BOOKINGS HISTORY MODAL ════════════ -->
 <div class="auth-overlay" id="bookings-overlay">
   <div class="auth-box" style="padding:40px 32px; max-width:550px; width: 95%;">
-    <button class="auth-close" onclick="closeBookingsModal()">✕</button>
+    <button class="auth-close" onclick="closeBookingsModal()"<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d); text-align:center;">My Booking History</h3>
     <p style="color:var(--ink2); font-size:13px; line-height:1.4; margin-bottom:15px; text-align:center;">View your ticket bookings, PNR status, and journey details.</p>
     
@@ -2651,8 +2654,8 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 <!-- ════════════ HELP & SUPPORT MODAL ════════════ -->
 <div class="auth-overlay" id="help-overlay">
   <div class="auth-box" style="padding:40px 32px; max-width:400px; text-align:center;">
-    <button class="auth-close" onclick="closeHelpModal()">✕</button>
-    <div style="width:50px; height:50px; border-radius:50%; background:var(--green-s); color:var(--teal); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:24px;">💬</div>
+    <button class="auth-close" onclick="closeHelpModal()"<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <div style="width:50px; height:50px; border-radius:50%; background:var(--green-s); color:var(--teal); display:flex; align-items:center; justify-content:center; margin:0 auto 16px;"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
     <h3 style="font-size:20px; font-weight:800; margin-bottom:8px; color:var(--teal-d);">Help & Support</h3>
     <p style="color:var(--ink2); font-size:13px; line-height:1.5; margin-bottom:24px;">Have questions or need help with a refund or booking? Get in touch with us directly.</p>
     
@@ -2699,7 +2702,10 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
             </select>
             <div class="autocomplete-results" id="from-autocomplete" style="display:none;"></div>
           </div>
-          <div class="swap" style="cursor: pointer;" onclick="swapCities()"><span class="swap-h">⇌</span><span class="swap-v">⇅</span></div>
+          <div class="swap" style="cursor: pointer;" onclick="swapCities()">
+            <span class="swap-h"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 4 21 8 17 12"/><line x1="3" y1="8" x2="21" y2="8"/><polyline points="7 20 3 16 7 12"/><line x1="21" y1="16" x2="3" y2="16"/></svg></span>
+            <span class="swap-v"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 4 8 8 12 12"/><line x1="8" y1="8" x2="20" y2="8"/><polyline points="12 20 16 16 12 12"/><line x1="16" y1="16" x2="4" y2="16"/></svg></span>
+          </div>
         </div>
         <div class="field" style="position: relative;" id="field-to-container">
           <label for="to-search">TO</label>
@@ -2766,7 +2772,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
 
     <!-- Empty state shown before first search -->
     <div id="pre-search-state" style="text-align:center; padding: 32px 20px 40px; color:var(--ink3);">
-      <div style="font-size:48px; margin-bottom:12px;">🚌</div>
+      <div style="margin-bottom:12px; color:var(--teal); opacity:0.55;"><svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="22" height="13" rx="2"/><path d="M1 9h22"/><path d="M8 3v6"/><path d="M16 3v6"/><path d="M5 16v3"/><path d="M19 16v3"/><circle cx="7" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M6.5 16h11"/></svg></div>
       <div style="font-size:15px; font-weight:700; color:var(--ink2); margin-bottom:6px;">Find the cheapest bus tickets</div>
       <div style="font-size:13px; color:var(--ink3); line-height:1.5;">Enter your origin, destination & date above<br>and tap <b style="color:var(--teal)">Search Buses</b></div>
     </div>
@@ -2782,7 +2788,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
       <div class="filter-drawer-overlay" onclick="closeFilterDrawer()"></div>
       <div class="filter-drawer-panel">
         <div class="filter-drawer-handle"></div>
-        <button class="filter-drawer-close" onclick="closeFilterDrawer()">✕</button>
+        <button class="filter-drawer-close" onclick="closeFilterDrawer()"<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         <h3 style="font-size:16px;color:var(--teal-d);margin-bottom:16px;clear:both">Filters</h3>
         <div class="f-group">
           <h4>Bus Type</h4>
@@ -3074,7 +3080,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   <div class="pay-qr-sheet" id="pay-qr-sheet">
     <div class="pay-qr-handle"></div>
     <div class="pay-qr-header">
-      <button onclick="closePayQR()" aria-label="Close">✕</button>
+      <button onclick="closePayQR()" aria-label="Close"<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h2>Pay &amp; Confirm Booking</h2>
     </div>
 
@@ -3084,7 +3090,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
         <div class="val">₹<span id="pqr-amount">0</span></div>
         <div class="ref-tag">Ref: <span id="pqr-ref">—</span></div>
       </div>
-      <div class="lock-ico">🔒</div>
+      <div class="lock-ico"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
     </div>
 
     <div class="pay-qr-body">
@@ -3132,7 +3138,7 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   <div class="page" style="margin-top:30px">
     <div class="ticket-wrap">
       <div class="ticket-success" style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1.5px solid #fcd34d;">
-        <div class="success-tick" style="background:var(--gold);">🔒</div>
+        <div class="success-tick" style="background:var(--gold);"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
         <div>
           <h3 style="color:#92400e;">Seat Blocked · Payment Pending</h3>
           <p id="ticket-success-msg">Your seat is temporarily blocked. Send your <b>PNR + payment screenshot</b> on WhatsApp to get your ticket confirmed within 30 minutes.</p>
@@ -3495,7 +3501,7 @@ function showToast(message) {
     'opacity:0',
     'transition:opacity 0.18s ease, transform 0.18s ease'
   ].join(';');
-  toast.innerHTML = `<span style="font-size:18px">⚠️</span><span>${message}</span>`;
+  toast.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>${message}</span>`;
   document.body.appendChild(toast);
 
   // Trigger fade-in on next frame
@@ -3787,7 +3793,7 @@ async function performSearch() {
       listContainer.innerHTML = originalSortBar + `
         <div style="text-align:center; padding: 40px; color:var(--red);">
           <p style="font-weight:600; margin-bottom: 12px;">Error: ${data.error}</p>
-          <button onclick="performSearch()" style="background:var(--teal); color:#fff; padding:10px 20px; border-radius:var(--radius-md); font-weight:600; font-size:14px; box-shadow:var(--shadow-sm);">🔄 Retry Search</button>
+          <button onclick="performSearch()" style="background:var(--teal); color:#fff; padding:10px 20px; border-radius:var(--radius-md); font-weight:600; font-size:14px; box-shadow:var(--shadow-sm);display:inline-flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Retry Search</button>
         </div>
       `;
     }
@@ -3798,7 +3804,7 @@ async function performSearch() {
     listContainer.innerHTML = originalSortBar + `
       <div style="text-align:center; padding: 40px; color:var(--red);">
         <p style="font-weight:600; margin-bottom: 12px;">${msg}</p>
-        <button onclick="performSearch()" style="background:var(--teal); color:#fff; padding:10px 20px; border-radius:var(--radius-md); font-weight:600; font-size:14px; box-shadow:var(--shadow-sm);">🔄 Retry Search</button>
+        <button onclick="performSearch()" style="background:var(--teal); color:#fff; padding:10px 20px; border-radius:var(--radius-md); font-weight:600; font-size:14px; box-shadow:var(--shadow-sm);display:inline-flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Retry Search</button>
       </div>
     `;
   }
@@ -4200,7 +4206,7 @@ function displayFilteredBuses(buses, formattedDate) {
           <div class="seat-modal-bar" id="seatbar-${bus.resId}">
             <span class="seat-modal-handle"></span>
             <span style="font-size:13px;font-weight:700;color:var(--ink);flex:1;text-align:center;padding:0 8px;">${bus.operatorName}</span>
-            <button class="seat-modal-close" onclick="closeSeatPanel('${bus.resId}')">✕</button>
+            <button class="seat-modal-close" onclick="closeSeatPanel('${bus.resId}')"<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
           </div>
           <div class="seat-tabs">
             <div class="seat-tab active" onclick="switchSeatTab('${bus.resId}', 'seats')">Seats</div>
@@ -4894,7 +4900,7 @@ async function loadUserBookings() {
       if (data.bookings.length === 0) {
         container.innerHTML = `
           <div style="text-align:center; padding:40px 20px; color:var(--ink3);">
-            <div style="font-size:32px; margin-bottom:12px;">🎟</div>
+            <div style="margin-bottom:12px; color:var(--teal); opacity:0.5;"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><line x1="9" y1="2" x2="9" y2="22" stroke-dasharray="2 4"/></svg></div>
             <div style="font-weight:700; font-size:14px; color:var(--ink);">No bookings found</div>
             <p style="font-size:12px; margin:4px 0 0; line-height:1.4;">Your tickets will appear here once booked.</p>
           </div>
@@ -5544,7 +5550,7 @@ function claimBonus() {
 function showBonusPopup() {
   // "Confirmed" state — shown after a new user signs in
   const name = (currentUser && currentUser.name) ? currentUser.name.split(' ')[0] : '';
-  document.getElementById('bonus-icon').innerHTML = '<span style="font-size:64px;line-height:1;">🎉</span>';
+  document.getElementById('bonus-icon').innerHTML = '<svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/><circle cx="4.5" cy="4.5" r="1.2" fill="var(--gold)" stroke="none"/><circle cx="19.5" cy="5.5" r="0.8" fill="var(--gold)" stroke="none"/><circle cx="3" cy="15" r="0.8" fill="var(--gold)" stroke="none"/><circle cx="21" cy="15" r="1" fill="var(--gold)" stroke="none"/></svg>';
   document.getElementById('bonus-title').textContent = (name ? name + ', y' : 'Y') + 'our ₹51 Bonus is Locked In!';
   document.getElementById('bonus-body').innerHTML =
     'Your <b style="color:var(--teal-d);">₹51 welcome bonus</b> will be <b>automatically deducted from your first booking fare</b>. '
@@ -5893,7 +5899,7 @@ document.addEventListener('click', function(e) {
 <!-- Mock Razorpay Payment Modal -->
 <div class="auth-overlay" id="rzp-mock-overlay" style="display:none; align-items:center; justify-content:center; z-index:99999;">
   <div class="auth-box" style="width:360px; padding:24px; border-top: 4px solid var(--teal); position:relative;">
-    <button class="auth-close" onclick="closeRzpMock()" style="top:12px; right:14px;">✕</button>
+    <button class="auth-close" onclick="closeRzpMock()" style="top:12px; right:14px;"<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     <div style="text-align:center; margin-bottom:20px;">
       <h3 style="font-size:16px; font-weight:800; color:var(--teal-d); margin-bottom:4px;">Razorpay Secure Checkout</h3>
       <p style="font-size:12px; color:var(--ink2); margin:0;">Cheap Travels India · Payment Demo</p>
