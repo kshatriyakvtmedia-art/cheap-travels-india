@@ -5397,6 +5397,11 @@ function showAutocomplete(type) {
       div.style.left  = rect.left + 'px';
       div.style.width = rect.width + 'px';
     }
+    // Move to <body> so the dropdown escapes .hero (z-index:1) and
+    // .page (z-index:10) stacking contexts and paints above everything.
+    if (div.parentNode !== document.body) {
+      document.body.appendChild(div);
+    }
     div.style.display = 'block';
   }
 
@@ -5489,14 +5494,17 @@ function selectAutocompleteCity(type, id, fullName, state) {
 window.addEventListener('scroll', function() { hideAutocomplete('from'); hideAutocomplete('to'); }, { passive: true });
 window.addEventListener('resize', function() { hideAutocomplete('from'); hideAutocomplete('to'); }, { passive: true });
 
-// Click away listener to close autocompletes
+// Click away listener to close autocompletes.
+// Must also check the dropdown divs themselves since they are appended to body.
 document.addEventListener('click', function(e) {
   const fromContainer = document.getElementById('field-from-container');
-  const toContainer = document.getElementById('field-to-container');
-  if (fromContainer && !fromContainer.contains(e.target)) {
+  const toContainer   = document.getElementById('field-to-container');
+  const fromAC        = document.getElementById('from-autocomplete');
+  const toAC          = document.getElementById('to-autocomplete');
+  if (fromContainer && !fromContainer.contains(e.target) && !(fromAC && fromAC.contains(e.target))) {
     hideAutocomplete('from');
   }
-  if (toContainer && !toContainer.contains(e.target)) {
+  if (toContainer && !toContainer.contains(e.target) && !(toAC && toAC.contains(e.target))) {
     hideAutocomplete('to');
   }
 });
