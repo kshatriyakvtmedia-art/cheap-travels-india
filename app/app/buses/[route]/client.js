@@ -287,7 +287,6 @@ function SeatPopup({ bus, layout, selectedSeat, setSelectedSeat, boarding, setBo
               </div>
               <div style={{ width: 36, height: 14, background: '#cbd5e1', borderRadius: 4, margin: '0 auto 16px' }} />
               {layout ? (
-                {/* 2+1 sleeper = always 3 cols. Left 2 berths / aisle / right 1 berth */}
                 <div style={{ display: 'grid', gap: 10, maxWidth: 220, margin: '0 auto', gridTemplateColumns: 'repeat(3, 1fr)', gridAutoRows: '72px' }}>
                   {layout.seats.map(s => (
                     <button
