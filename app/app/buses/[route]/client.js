@@ -287,13 +287,14 @@ function SeatPopup({ bus, layout, selectedSeat, setSelectedSeat, boarding, setBo
               </div>
               <div style={{ width: 36, height: 14, background: '#cbd5e1', borderRadius: 4, margin: '0 auto 16px' }} />
               {layout ? (
-                <div style={{ display: 'grid', gap: 6, maxWidth: 260, margin: '0 auto', gridTemplateColumns: `repeat(${layout.cols || 5}, 1fr)` }}>
+                <div style={{ display: 'grid', gap: 8, maxWidth: 210, margin: '0 auto', gridTemplateColumns: `repeat(${layout.cols || 3}, 1fr)`, gridAutoRows: '64px' }}>
                   {layout.seats.map(s => (
                     <button
                       key={s.no}
                       disabled={s.status === 'booked'}
                       onClick={() => setSelectedSeat(s.no)}
                       className={`seat-btn ${s.sleeper ? 'sleeper' : ''} ${s.status === 'booked' ? 'booked' : ''} ${s.status === 'ladies' ? 'ladies' : ''} ${selectedSeat === s.no ? 'selected' : ''}`}
+                      style={{ height: '64px', aspectRatio: 'unset' }}
                     >
                       {s.no}
                     </button>

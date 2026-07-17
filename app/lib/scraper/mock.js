@@ -92,14 +92,15 @@ const BUSES = [
   },
 ];
 
+// 2+1 sleeper layout: 3 seats per row (2 left + 1 right), 7 rows = 21 lower berths
 const SEAT_LAYOUTS = {
-  'lxm-001': { rows: 7, cols: 5, sleeper: true, prefix: 'L', booked: [2, 5, 9, 12, 18, 21, 24, 30], ladies: [8, 15] },
-  'lxm-002': { rows: 7, cols: 5, sleeper: true, prefix: 'L', booked: [1, 3, 7, 11, 14, 17, 22, 25, 28, 32, 35], ladies: [6, 16] },
-  'rdl-001': { rows: 7, cols: 5, sleeper: true, prefix: 'L', booked: [1, 4, 7, 10, 13, 19, 22, 25, 28, 31], ladies: [3, 12] },
-  'rdl-002': { rows: 7, cols: 5, sleeper: true, prefix: 'L', booked: [2, 6, 9, 16, 20, 23, 27], ladies: [5, 18] },
+  'lxm-001': { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [2, 5, 8, 11, 17], ladies: [4, 14] },
+  'lxm-002': { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [1, 3, 7, 10, 13, 18, 20], ladies: [6, 15] },
+  'rdl-001': { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [1, 4, 9, 12, 16, 19], ladies: [3, 11] },
+  'rdl-002': { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [2, 6, 9, 14, 18], ladies: [5, 13] },
 };
 
-const FALLBACK_LAYOUT = { rows: 6, cols: 5, sleeper: true, prefix: 'L', booked: [2, 5, 9, 12], ladies: [8] };
+const FALLBACK_LAYOUT = { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [2, 5, 9], ladies: [4] };
 
 export async function fetchBuses({ from, to, date }) {
   await new Promise(r => setTimeout(r, 320));
