@@ -47,7 +47,7 @@ export default function PaymentPage() {
       if (o.status === 'confirmed' || o.status === 'failed') {
         clearInterval(id);
         setPolling(false);
-        router.push(`/confirmation/${bookingId}`);
+        router.push(`/booking/${bookingId}`);
       }
     }, 4000);
     return () => clearInterval(id);

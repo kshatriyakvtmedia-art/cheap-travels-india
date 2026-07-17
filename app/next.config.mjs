@@ -44,6 +44,17 @@ const nextConfig = {
     ];
   },
 
+  async redirects() {
+    return [
+      // Old confirmation URL → canonical booking URL
+      { source: '/confirmation/:id', destination: '/booking/:id', permanent: true },
+      // Old results URL → homepage (from/to not available in old query-param form for slug conversion)
+      { source: '/results', destination: '/', permanent: false },
+      // Old seat-selection URL → homepage (busId alone can't reconstruct the route slug)
+      { source: '/select-seats/:busId', destination: '/', permanent: false },
+    ];
+  },
+
   async rewrites() {
     return {
       // beforeFiles runs BEFORE App Router page matching — required so

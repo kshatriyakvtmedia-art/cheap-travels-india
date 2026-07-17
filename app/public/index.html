@@ -365,6 +365,11 @@ header.top {
   display: flex; align-items: center; gap: 6px;
   font-weight: 600;
 }
+.hb-gold {
+  background: rgba(238, 140, 46, 0.18);
+  border-color: rgba(238, 140, 46, 0.45);
+  color: #ffe9b8;
+}
 
 /* Search card */
 .search-card {
@@ -2687,10 +2692,22 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
       <h1>Affordable bus tickets, <span>delivered with trust</span></h1>
       <p>Verified agent inventory · live rate-compare · ticket pushed in 90 seconds.</p>
       <div class="hero-badges">
-        <div class="hb"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Direct from operator</div>
-        <div class="hb"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Up to 5% extra discount</div>
-        <div class="hb"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> WhatsApp ticket push</div>
-        <div class="hb"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Auto-refund if not issued in 30 min</div>
+        <div class="hb">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Direct from operator
+        </div>
+        <div class="hb hb-gold">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><text x="3" y="17" font-family="Arial,sans-serif" font-size="15" font-weight="900">₹</text></svg>
+          Save up to 5% vs MakeMyTrip
+        </div>
+        <div class="hb">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          WhatsApp ticket in 90 sec
+        </div>
+        <div class="hb">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          Auto-refund if unissued in 30 min
+        </div>
       </div>
       <div class="search-card">
         <div class="field" style="position: relative;" id="field-from-container">
@@ -3713,16 +3730,38 @@ async function performSearch() {
   if (!fromId) { showToast('Please select a FROM city'); return; }
   if (!toId)   { showToast('Please select a TO city');   return; }
   if (!dateInput) { showToast('Please pick a travel date'); return; }
-  
+
+  const fromName = document.getElementById('from-select').options[document.getElementById('from-select').selectedIndex].text;
+  const toName   = document.getElementById('to-select').options[document.getElementById('to-select').selectedIndex].text;
+
+  // Navigate to the canonical route URL — handles direct load, back/forward, SEO
+  const toUrlSlug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const routeSlug = `${toUrlSlug(fromName)}-to-${toUrlSlug(toName)}`;
+  window.location.href = `/buses/${routeSlug}?date=${dateInput}`;
+}
+
+// Legacy performSearch_inline kept for reference — no longer called
+async function performSearch_inline_legacy() {
+  resolveInputToSelect('from');
+  resolveInputToSelect('to');
+
+  const fromId    = document.getElementById('from-select').value;
+  const toId      = document.getElementById('to-select').value;
+  const dateInput = document.getElementById('depart-date').value;
+
+  if (!fromId) { showToast('Please select a FROM city'); return; }
+  if (!toId)   { showToast('Please select a TO city');   return; }
+  if (!dateInput) { showToast('Please pick a travel date'); return; }
+
   // Cache the search query in sessionStorage for persistence across reloads
   sessionStorage.setItem('last_search_from', fromId);
   sessionStorage.setItem('last_search_to', toId);
   sessionStorage.setItem('last_search_date', dateInput);
-  
+
   // Format YYYY-MM-DD -> DD/MM/YYYY
   const parts = dateInput.split('-');
   const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
-  
+
   const fromName = document.getElementById('from-select').options[document.getElementById('from-select').selectedIndex].text;
   const toName = document.getElementById('to-select').options[document.getElementById('to-select').selectedIndex].text;
   
