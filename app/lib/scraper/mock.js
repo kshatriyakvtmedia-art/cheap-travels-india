@@ -99,14 +99,25 @@ const SEAT_LAYOUTS = {
 };
 
 export async function fetchBuses({ from, to, date }) {
-  // mimic network delay so the UI has something to feel
   await new Promise(r => setTimeout(r, 300));
-  return TODAY_BUSES;
+  // Adapt boarding/dropping city names to match the actual searched route
+  return TODAY_BUSES.map(b => ({
+    ...b,
+    boardingPoints: [
+      { ...b.boardingPoints[0], name: `${from} Bus Stand`, address: `Main bus stand, ${from}` },
+      ...b.boardingPoints.slice(1),
+    ],
+    droppingPoints: [
+      { ...b.droppingPoints[0], name: `${to} Bus Terminal`, address: `Main terminal, ${to}` },
+    ],
+  }));
 }
+
+const FALLBACK_LAYOUT = { rows: 6, cols: 5, sleeper: true, prefix: 'L', booked: [2, 5, 9, 12], ladies: [8, 15] };
 
 export async function fetchSeats(busExternalId) {
   await new Promise(r => setTimeout(r, 150));
-  const cfg = SEAT_LAYOUTS[busExternalId];
+  const cfg = SEAT_LAYOUTS[busExternalId] || FALLBACK_LAYOUT;
   if (!cfg) return null;
   const seats = [];
   const total = cfg.rows * cfg.cols;

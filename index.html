@@ -5448,7 +5448,9 @@ function closeFilterDrawer() {
 // ═══════════ SEARCHABLE CITY INLINE AUTOCOMPLETE LOGIC ═══════════
 let activeCityType = null;
 
+let _acLastShown = 0;
 function showAutocomplete(type) {
+  _acLastShown = Date.now();
   const otherType = type === 'from' ? 'to' : 'from';
   hideAutocomplete(otherType);
 
@@ -5556,9 +5558,19 @@ function selectAutocompleteCity(type, id, fullName, state) {
   hideAutocomplete(type);
 }
 
-// Close autocomplete on scroll/resize (fixed-position dropdown doesn't track scroll)
-window.addEventListener('scroll', function() { hideAutocomplete('from'); hideAutocomplete('to'); }, { passive: true });
-window.addEventListener('resize', function() { hideAutocomplete('from'); hideAutocomplete('to'); }, { passive: true });
+// Close autocomplete on scroll — but guard against mobile keyboard open (fires resize+scroll
+// immediately after showAutocomplete, which would instantly hide the dropdown)
+window.addEventListener('scroll', function() {
+  if (Date.now() - _acLastShown > 800) { hideAutocomplete('from'); hideAutocomplete('to'); }
+}, { passive: true });
+// On resize, reposition the open dropdown rather than hiding — soft keyboard open on mobile
+// shrinks the viewport and fires resize, which used to close the dropdown before the user
+// could tap any city. Now we just reposition it.
+window.addEventListener('resize', function() {
+  if (activeCityType && document.getElementById(`${activeCityType}-autocomplete`)?.style.display !== 'none') {
+    showAutocomplete(activeCityType);
+  }
+}, { passive: true });
 
 // Click away listener to close autocompletes.
 // Must also check the dropdown divs themselves since they are appended to body.
