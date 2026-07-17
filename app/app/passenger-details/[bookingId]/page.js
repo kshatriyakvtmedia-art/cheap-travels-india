@@ -41,16 +41,21 @@ export default function PassengerDetailsPage() {
     e.preventDefault();
     setError('');
     setSaving(true);
-    const res = await fetch(`/api/orders/${bookingId}/passenger`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
-    });
-    const data = await res.json();
-    if (data.ok) {
-      router.push(`/payment/${bookingId}`);
-    } else {
-      setError(data.error || 'Failed to save details. Please try again.');
+    try {
+      const res = await fetch(`/api/orders/${bookingId}/passenger`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        router.push(`/payment/${bookingId}`);
+      } else {
+        setError(data.error || 'Failed to save details. Please try again.');
+        setSaving(false);
+      }
+    } catch (err) {
+      setError('Network error — please check your connection and try again.');
       setSaving(false);
     }
   };
