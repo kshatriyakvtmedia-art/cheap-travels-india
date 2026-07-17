@@ -3684,12 +3684,35 @@ function swapCities() {
 }
 
 // Perform bus search
+function resolveInputToSelect(type) {
+  const input  = document.getElementById(`${type}-search`);
+  const select = document.getElementById(`${type}-select`);
+  if (!input || !select || select.value) return;
+  const q = input.value.trim().toLowerCase();
+  if (!q) return;
+  const match = citiesList.find(c => c.name.toLowerCase() === q);
+  if (!match) return;
+  let opt = Array.from(select.options).find(o => o.value === String(match.id));
+  if (!opt) {
+    opt = document.createElement('option');
+    opt.value = match.id; opt.textContent = match.name;
+    select.appendChild(opt);
+  }
+  select.value = match.id;
+}
+
 async function performSearch() {
-  const fromId = document.getElementById('from-select').value;
-  const toId = document.getElementById('to-select').value;
+  // Auto-resolve typed city names in case user didn't pick from dropdown
+  resolveInputToSelect('from');
+  resolveInputToSelect('to');
+
+  const fromId    = document.getElementById('from-select').value;
+  const toId      = document.getElementById('to-select').value;
   const dateInput = document.getElementById('depart-date').value;
-  
-  if (!fromId || !toId || !dateInput) return;
+
+  if (!fromId) { showToast('Please select a FROM city'); return; }
+  if (!toId)   { showToast('Please select a TO city');   return; }
+  if (!dateInput) { showToast('Please pick a travel date'); return; }
   
   // Cache the search query in sessionStorage for persistence across reloads
   sessionStorage.setItem('last_search_from', fromId);
@@ -5396,11 +5419,15 @@ function showAutocomplete(type) {
   if (div && input) {
     const fieldBox = input.closest('.field-box');
     if (fieldBox) {
-      const rect = fieldBox.getBoundingClientRect();
-      // Portal is fixed at viewport (0,0), so absolute coords = viewport coords
-      div.style.top   = (rect.bottom + 1) + 'px';
-      div.style.left  = rect.left + 'px';
-      div.style.width = rect.width + 'px';
+      const rect   = fieldBox.getBoundingClientRect();
+      const vh     = window.innerHeight;
+      const top    = rect.bottom + 1;
+      // On mobile the keyboard shrinks the viewport — cap dropdown height so it stays visible
+      const maxH   = Math.max(120, vh - top - 8);
+      div.style.top       = top + 'px';
+      div.style.left      = rect.left + 'px';
+      div.style.width     = rect.width + 'px';
+      div.style.maxHeight = maxH + 'px';
     }
     div.style.display = 'block';
   }
