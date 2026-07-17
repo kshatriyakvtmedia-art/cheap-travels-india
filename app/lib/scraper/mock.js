@@ -1,124 +1,130 @@
-// Mock inventory used when no provider credentials are configured.
-// Returned shape matches what the real Laxmi scraper returns — UI works either way.
-const TODAY_BUSES = [
+// Mock inventory — only Ram Dalal and Laxmi Holidays, the two real operators.
+// Used when LXMI_USERNAME / LXMI_PASSWORD are not set in env.
+// Boarding/dropping city names are adapted at query time to match the actual from/to.
+
+const BUSES = [
   {
-    externalId: 'lxm-az-del-001',
+    externalId: 'lxm-001',
     provider: 'laxmi',
-    operator: 'Laxmi Holidays Pvt Ltd',
-    busType: 'NON-AC Sleeper (2+1)',
-    departure: '18:30',
-    arrival: '09:00',
-    durationMins: 870,
-    netFare: 1190,
+    operator: 'Laxmi Holidays',
+    busType: 'AC Sleeper (2+1)',
+    departure: '19:00',
+    arrival: '07:30',
+    durationMins: 750,
+    netFare: 900,
     providerCommissionPct: 20,
-    seatsAvailable: 26,
-    rating: 4.4,
-    ratingCount: 1284,
-    amenities: ['Direct', 'Live tracking', 'Mineral water'],
+    seatsAvailable: 22,
+    rating: 4.5,
+    ratingCount: 3120,
+    amenities: ['Direct', 'Charging point', 'Blanket', 'Mineral water'],
     boardingPoints: [
-      { id: 'bp1', name: 'Azamgarh Bus Stand', address: 'Main bus stand, near LIC office', time: '18:30' },
-      { id: 'bp2', name: 'Mubarakpur Crossing', address: 'Highway dhaba, opp HP pump', time: '19:10' },
-      { id: 'bp3', name: 'Phulpur', address: 'Phulpur tiraha', time: '20:25' },
+      { id: 'lxm-bp1', name: 'PLACEHOLDER_FROM Bus Stand', address: 'Main bus stand', time: '19:00' },
+      { id: 'lxm-bp2', name: 'PLACEHOLDER_FROM Crossing', address: 'Highway dhaba', time: '19:45' },
     ],
     droppingPoints: [
-      { id: 'dp1', name: 'Anand Vihar ISBT', address: 'Gate 4, Anand Vihar', time: '09:00' },
-      { id: 'dp2', name: 'Akshardham', address: 'Akshardham Metro', time: '08:30' },
+      { id: 'lxm-dp1', name: 'PLACEHOLDER_TO ISBT', address: 'Main ISBT', time: '07:30' },
     ],
   },
   {
-    externalId: 'lxm-az-del-002',
+    externalId: 'lxm-002',
     provider: 'laxmi',
-    operator: 'Hans Travels (India) Pvt Ltd',
+    operator: 'Laxmi Holidays',
+    busType: 'NON-AC Sleeper (2+1)',
+    departure: '21:30',
+    arrival: '09:00',
+    durationMins: 690,
+    netFare: 700,
+    providerCommissionPct: 20,
+    seatsAvailable: 14,
+    rating: 4.3,
+    ratingCount: 1850,
+    amenities: ['Direct', 'Live tracking'],
+    boardingPoints: [
+      { id: 'lxm2-bp1', name: 'PLACEHOLDER_FROM Bus Stand', address: 'Main bus stand', time: '21:30' },
+    ],
+    droppingPoints: [
+      { id: 'lxm2-dp1', name: 'PLACEHOLDER_TO Terminus', address: 'Main terminus', time: '09:00' },
+      { id: 'lxm2-dp2', name: 'PLACEHOLDER_TO Metro Gate', address: 'Metro station entry', time: '08:45' },
+    ],
+  },
+  {
+    externalId: 'rdl-001',
+    provider: 'laxmi',
+    operator: 'Ram Dalal Travels',
     busType: 'AC Sleeper (2+1)',
-    departure: '19:45',
-    arrival: '09:30',
-    durationMins: 825,
-    netFare: 1450,
-    providerCommissionPct: 18,
-    seatsAvailable: 7,
+    departure: '18:00',
+    arrival: '06:30',
+    durationMins: 750,
+    netFare: 850,
+    providerCommissionPct: 20,
+    seatsAvailable: 9,
     rating: 4.6,
-    ratingCount: 2140,
-    amenities: ['Direct', 'Charging point', 'Blanket'],
+    ratingCount: 2740,
+    amenities: ['WiFi', 'USB charging', 'CCTV', 'Blanket'],
     boardingPoints: [
-      { id: 'bp1', name: 'Azamgarh Bus Stand', address: 'Main bus stand', time: '19:45' },
-      { id: 'bp2', name: 'Mubarakpur', address: 'Main chowk', time: '20:20' },
+      { id: 'rdl-bp1', name: 'PLACEHOLDER_FROM Bus Stand', address: 'Main bus stand', time: '18:00' },
+      { id: 'rdl-bp2', name: 'PLACEHOLDER_FROM Naka', address: 'Highway naka', time: '18:40' },
     ],
     droppingPoints: [
-      { id: 'dp1', name: 'Kashmere Gate', address: 'ISBT Kashmere Gate', time: '09:30' },
+      { id: 'rdl-dp1', name: 'PLACEHOLDER_TO ISBT', address: 'Main ISBT', time: '06:30' },
     ],
   },
   {
-    externalId: 'lxm-az-del-003',
+    externalId: 'rdl-002',
     provider: 'laxmi',
-    operator: 'UP State Roadways (Volvo)',
-    busType: 'AC Seater 2+2',
-    departure: '21:00',
-    arrival: '09:50',
-    durationMins: 770,
-    netFare: 1000,
-    providerCommissionPct: 15,
-    seatsAvailable: 18,
+    operator: 'Ram Dalal Travels',
+    busType: 'NON-AC Sleeper (2+1)',
+    departure: '20:30',
+    arrival: '08:00',
+    durationMins: 690,
+    netFare: 650,
+    providerCommissionPct: 20,
+    seatsAvailable: 17,
     rating: 4.2,
-    ratingCount: 892,
-    amenities: ['Volvo 9400', 'Govt. operated'],
+    ratingCount: 980,
+    amenities: ['Direct', 'Mineral water'],
     boardingPoints: [
-      { id: 'bp1', name: 'Azamgarh Bus Depot', address: 'UPSRTC depot', time: '21:00' },
+      { id: 'rdl2-bp1', name: 'PLACEHOLDER_FROM Bus Stand', address: 'Main bus stand', time: '20:30' },
     ],
     droppingPoints: [
-      { id: 'dp1', name: 'ISBT Anand Vihar', address: 'Anand Vihar', time: '09:50' },
-    ],
-  },
-  {
-    externalId: 'lxm-az-del-004',
-    provider: 'laxmi',
-    operator: 'Shrinath Tourist Agency',
-    busType: 'AC Sleeper (2+1)',
-    departure: '17:00',
-    arrival: '08:30',
-    durationMins: 930,
-    netFare: 1690,
-    providerCommissionPct: 22,
-    seatsAvailable: 12,
-    rating: 4.7,
-    ratingCount: 3420,
-    amenities: ['WiFi', 'USB', 'CCTV', 'Snack pack'],
-    boardingPoints: [
-      { id: 'bp1', name: 'Azamgarh Bus Stand', address: 'Main stand', time: '17:00' },
-    ],
-    droppingPoints: [
-      { id: 'dp1', name: 'Sarai Kale Khan', address: 'Sarai Kale Khan ISBT', time: '08:30' },
+      { id: 'rdl2-dp1', name: 'PLACEHOLDER_TO Bus Terminal', address: 'Main terminal', time: '08:00' },
     ],
   },
 ];
 
 const SEAT_LAYOUTS = {
-  'lxm-az-del-001': { rows: 6, cols: 5, sleeper: true, prefix: 'L', booked: [2,5,9,12,18,21,24], ladies: [8,15] },
-  'lxm-az-del-002': { rows: 6, cols: 5, sleeper: true, prefix: 'L', booked: [1,2,3,4,7,10,11,14,17,19,22,25], ladies: [6,16] },
-  'lxm-az-del-003': { rows: 10, cols: 4, sleeper: false, prefix: 'S', booked: [3,8,11,17,22,28,33,36], ladies: [1,2,19,20] },
-  'lxm-az-del-004': { rows: 6, cols: 5, sleeper: true, prefix: 'L', booked: [1,4,7,10,13,16,19,22,25,28], ladies: [3,12] },
+  'lxm-001': { rows: 7, cols: 5, sleeper: true, prefix: 'L', booked: [2, 5, 9, 12, 18, 21, 24, 30], ladies: [8, 15] },
+  'lxm-002': { rows: 7, cols: 5, sleeper: true, prefix: 'L', booked: [1, 3, 7, 11, 14, 17, 22, 25, 28, 32, 35], ladies: [6, 16] },
+  'rdl-001': { rows: 7, cols: 5, sleeper: true, prefix: 'L', booked: [1, 4, 7, 10, 13, 19, 22, 25, 28, 31], ladies: [3, 12] },
+  'rdl-002': { rows: 7, cols: 5, sleeper: true, prefix: 'L', booked: [2, 6, 9, 16, 20, 23, 27], ladies: [5, 18] },
 };
 
+const FALLBACK_LAYOUT = { rows: 6, cols: 5, sleeper: true, prefix: 'L', booked: [2, 5, 9, 12], ladies: [8] };
+
 export async function fetchBuses({ from, to, date }) {
-  await new Promise(r => setTimeout(r, 300));
-  // Adapt boarding/dropping city names to match the actual searched route
-  return TODAY_BUSES.map(b => ({
+  await new Promise(r => setTimeout(r, 320));
+  return BUSES.map(b => ({
     ...b,
-    boardingPoints: [
-      { ...b.boardingPoints[0], name: `${from} Bus Stand`, address: `Main bus stand, ${from}` },
-      ...b.boardingPoints.slice(1),
-    ],
-    droppingPoints: [
-      { ...b.droppingPoints[0], name: `${to} Bus Terminal`, address: `Main terminal, ${to}` },
-    ],
+    boardingPoints: b.boardingPoints.map(p => ({
+      ...p,
+      name: p.name.replace('PLACEHOLDER_FROM', from),
+      address: p.address.replace('Main bus stand', `Main bus stand, ${from}`),
+    })),
+    droppingPoints: b.droppingPoints.map(p => ({
+      ...p,
+      name: p.name.replace('PLACEHOLDER_TO', to),
+      address: p.address.replace('Main ISBT', `Main ISBT, ${to}`)
+                        .replace('Main terminus', `Main terminus, ${to}`)
+                        .replace('Metro station entry', `Metro station, ${to}`)
+                        .replace('Main terminal', `Main terminal, ${to}`)
+                        .replace('Main terminal', `Main terminal, ${to}`),
+    })),
   }));
 }
 
-const FALLBACK_LAYOUT = { rows: 6, cols: 5, sleeper: true, prefix: 'L', booked: [2, 5, 9, 12], ladies: [8, 15] };
-
 export async function fetchSeats(busExternalId) {
-  await new Promise(r => setTimeout(r, 150));
+  await new Promise(r => setTimeout(r, 180));
   const cfg = SEAT_LAYOUTS[busExternalId] || FALLBACK_LAYOUT;
-  if (!cfg) return null;
   const seats = [];
   const total = cfg.rows * cfg.cols;
   for (let i = 1; i <= total; i++) {
@@ -132,7 +138,6 @@ export async function fetchSeats(busExternalId) {
 }
 
 export async function placeProviderBooking(order) {
-  // Mock booking — returns a fake PNR. Real Laxmi scraper would do this for real.
   await new Promise(r => setTimeout(r, 800));
   const pnr = 'LXM-' + Math.random().toString(36).slice(2, 8).toUpperCase();
   return { ok: true, pnr };
