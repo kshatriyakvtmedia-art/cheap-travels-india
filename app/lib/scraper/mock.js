@@ -92,15 +92,20 @@ const BUSES = [
   },
 ];
 
-// 2+1 sleeper layout: 3 seats per row (2 left + 1 right), 7 rows = 21 lower berths
+// 2+1 sleeper layout: 3 berths per row (left-left-right), 7 rows = 21 lower berths
+// Each bus has a clearly different occupancy so they don't look identical
 const SEAT_LAYOUTS = {
-  'lxm-001': { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [2, 5, 8, 11, 17], ladies: [4, 14] },
-  'lxm-002': { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [1, 3, 7, 10, 13, 18, 20], ladies: [6, 15] },
-  'rdl-001': { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [1, 4, 9, 12, 16, 19], ladies: [3, 11] },
-  'rdl-002': { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [2, 6, 9, 14, 18], ladies: [5, 13] },
+  // Laxmi AC — mostly full, 6 booked, 1 ladies
+  'lxm-001': { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [1, 3, 6, 9, 15, 18], ladies: [12] },
+  // Laxmi NON-AC — mostly empty, 3 booked
+  'lxm-002': { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [2, 8, 19], ladies: [5, 14] },
+  // Ram Dalal AC — heavily booked (only 9 left shown in bus card)
+  'rdl-001': { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [1, 2, 4, 6, 7, 9, 10, 13, 16, 19, 20, 21], ladies: [3, 11] },
+  // Ram Dalal NON-AC — half empty
+  'rdl-002': { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [3, 7, 12, 17], ladies: [9] },
 };
 
-const FALLBACK_LAYOUT = { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [2, 5, 9], ladies: [4] };
+const FALLBACK_LAYOUT = { rows: 7, cols: 3, sleeper: true, prefix: 'L', booked: [2, 5], ladies: [8] };
 
 export async function fetchBuses({ from, to, date }) {
   await new Promise(r => setTimeout(r, 320));

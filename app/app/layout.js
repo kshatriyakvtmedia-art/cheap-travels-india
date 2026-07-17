@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
         <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-6">
             <Link href="/" className="flex items-center">
-              <Image src="/images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" width={170} height={48} priority style={{ height: 48, width: 'auto' }} />
+              <Image src="/images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" width={170} height={48} priority style={{ height: 34, width: 'auto' }} />
             </Link>
             <nav className="hidden md:flex gap-6 text-sm font-medium text-gray-500">
               <Link href="/" className="text-brand-green font-semibold">Bus Tickets</Link>
