@@ -1,23 +1,31 @@
 // Playwright scraper for Laxmi Holidays B2B portal (lxmi.laxmiholidays.com).
 //
-// The actual selectors below are PLACEHOLDERS — they need to be confirmed by
-// running this scraper against the live portal with Chrome connected to the
-// session, then adjusted to match the real DOM. The structure of the code is
-// production-ready; the selectors are the part to refine once we map the portal.
-//
-// To activate: set LXMI_USERNAME and LXMI_PASSWORD in env. With them blank, the
-// aggregator falls back to lib/scraper/mock.js.
+// Credentials are stored encrypted in the `providers` DB table (not env vars).
+// Selectors below are PLACEHOLDERS — confirm against the live portal DOM before
+// enabling in production.
 
 import { chromium } from 'playwright';
+import { prisma } from '../db.js';
+import { decrypt } from '../crypto.js';
 
-const LOGIN_URL = process.env.LAXMI_LOGIN_URL || 'https://lxmi.laxmiholidays.com/';
-const USER = process.env.LXMI_USERNAME || '';
-const PASS = process.env.LXMI_PASSWORD || '';
-
-// Cache the browser context across requests so we don't re-login on every search.
+let _creds = null; // { user, pass, loginUrl }
 let _ctx = null;
 let _ctxExpiresAt = 0;
-const CTX_TTL_MS = 1000 * 60 * 25; // 25 minutes — most B2B sessions last 30+
+const CTX_TTL_MS = 1000 * 60 * 25; // 25 minutes
+
+async function getCredentials() {
+  if (_creds) return _creds;
+  const row = await prisma.provider.findFirst({
+    where: { providerName: { contains: 'Laxmi' } },
+  });
+  if (!row?.encryptedUsername) throw new Error('Laxmi credentials not found in DB');
+  _creds = {
+    user: decrypt(row.encryptedUsername),
+    pass: decrypt(row.encryptedPassword),
+    loginUrl: row.portalUrl || 'https://lxmi.laxmiholidays.com',
+  };
+  return _creds;
+}
 
 async function getContext() {
   const now = Date.now();
@@ -36,11 +44,12 @@ async function getContext() {
 }
 
 async function login(ctx) {
+  const { user, pass, loginUrl } = await getCredentials();
   const page = await ctx.newPage();
-  await page.goto(LOGIN_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.goto(loginUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
   // PLACEHOLDER selectors — confirm against actual portal:
-  await page.fill('input[name="username"], input[type="text"]', USER);
-  await page.fill('input[name="password"], input[type="password"]', PASS);
+  await page.fill('input[name="username"], input[type="text"]', user);
+  await page.fill('input[name="password"], input[type="password"]', pass);
   await Promise.all([
     page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {}),
     page.click('button[type="submit"], input[type="submit"]'),
@@ -50,11 +59,11 @@ async function login(ctx) {
 
 /** Search buses for a route+date. Returns canonical Bus[] shape (same as mock). */
 export async function fetchBuses({ from, to, date }) {
-  if (!USER || !PASS) throw new Error('LXMI_USERNAME / LXMI_PASSWORD not set');
+  const { loginUrl } = await getCredentials();
   const ctx = await getContext();
   const page = await ctx.newPage();
   try {
-    await page.goto(LOGIN_URL.replace(/\/$/, '') + '/Booking/Bus', { waitUntil: 'domcontentloaded' });
+    await page.goto(loginUrl.replace(/\/$/, '') + '/Booking/Bus', { waitUntil: 'domcontentloaded' });
     // PLACEHOLDER — most B2B bus portals have something like:
     //   <input id="fromCity">, <input id="toCity">, <input id="travelDate" type="date">
     await page.fill('#fromCity', from);
@@ -113,11 +122,11 @@ export async function fetchBuses({ from, to, date }) {
 
 /** Fetch the seat layout for one bus. */
 export async function fetchSeats(busExternalId) {
-  if (!USER || !PASS) throw new Error('LXMI_USERNAME / LXMI_PASSWORD not set');
+  const { loginUrl } = await getCredentials();
   const ctx = await getContext();
   const page = await ctx.newPage();
   try {
-    await page.goto(`${LOGIN_URL.replace(/\/$/, '')}/Booking/Seat?busId=${encodeURIComponent(busExternalId)}`);
+    await page.goto(`${loginUrl.replace(/\/$/, '')}/Booking/Seat?busId=${encodeURIComponent(busExternalId)}`);
     await page.waitForSelector('.seat', { timeout: 15000 });
     const data = await page.evaluate(() => {
       const seats = Array.from(document.querySelectorAll('.seat')).map(s => ({
@@ -143,11 +152,11 @@ export async function fetchSeats(busExternalId) {
 
 /** Actually book a held seat on the provider portal. Called ONLY after payment is confirmed. */
 export async function placeProviderBooking(order) {
-  if (!USER || !PASS) throw new Error('LXMI_USERNAME / LXMI_PASSWORD not set');
+  const { loginUrl } = await getCredentials();
   const ctx = await getContext();
   const page = await ctx.newPage();
   try {
-    await page.goto(`${LOGIN_URL.replace(/\/$/, '')}/Booking/Seat?busId=${encodeURIComponent(order.bus_external_id)}`);
+    await page.goto(`${loginUrl.replace(/\/$/, '')}/Booking/Seat?busId=${encodeURIComponent(order.bus_external_id)}`);
     await page.click(`[data-seat-no="${order.seat_no}"]`);
     await page.fill('#passengerName', order.passenger_name || '');
     await page.fill('#passengerAge', String(order.passenger_age || 0));
@@ -178,5 +187,5 @@ function diffMins(t1, t2) {
 }
 
 export function isConfigured() {
-  return !!(USER && PASS);
+  return true; // Credentials loaded from DB on first use
 }
