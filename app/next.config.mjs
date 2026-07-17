@@ -8,37 +8,44 @@ const nextConfig = {
   async headers() {
     return [
       {
+        // Security + cache headers applied to every route.
+        // Cache-Control: no-cache means the browser must revalidate before
+        // using a cached copy — so every deploy is picked up on next refresh
+        // without users needing to manually clear cache.
         source: '/(.*)',
         headers: [
-          // Prevent clickjacking
           { key: 'X-Frame-Options', value: 'DENY' },
-          // Prevent MIME sniffing
           { key: 'X-Content-Type-Options', value: 'nosniff' },
-          // HTTPS only (1 year, subdomains, preload)
           { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
-          // Referrer: send origin only on cross-site, full URL same-site
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          // Lock down browser feature APIs
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=()' },
-          // CSP: kept loose on script-src because public/index.html uses inline scripts.
-          // Tighten once the frontend moves to Next.js pages with nonce support.
           {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              // unsafe-inline required by inline scripts in public/index.html
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com data:",
-              // data: for inline QR images; https: for external images (bus operators etc.)
               "img-src 'self' data: https: blob:",
-              // API calls: own origin + WhatsApp Cloud API + QR generator
               "connect-src 'self' https://graph.facebook.com https://api.qrserver.com",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
             ].join('; '),
           },
+          // Explicit no-cache on HTML so browsers always revalidate.
+          // Vercel edge cache is invalidated automatically on every deploy,
+          // so a fresh deploy is visible to everyone on next page load.
+          { key: 'Cache-Control', value: 'no-cache, must-revalidate' },
+        ],
+      },
+      {
+        // Content-hashed bundles (/_next/static/) CAN be cached forever:
+        // a new deploy changes the hash → new filename → cache miss naturally.
+        // This overrides the no-cache set above for these paths.
+        source: '/_next/static/(.*)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
         ],
       },
     ];
