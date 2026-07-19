@@ -1,11 +1,22 @@
 // Provider aggregator. Calls every configured scraper in parallel and merges results.
 
 import * as laxmi from './laxmi.js';
-import * as ramdal from './ramdal.js';
 import * as mock from './mock.js';
 
-const PROVIDERS = [laxmi, ramdal];
-const BY_NAME = { laxmi, ramdal };
+// Only Laxmi Holidays — real scraper when selectors are confirmed, mock otherwise.
+const PROVIDERS = [laxmi];
+const BY_NAME = { laxmi };
+
+// Hard cap: if a provider doesn't respond in 4s, cut it and use mock.
+const SCRAPER_TIMEOUT_MS = 4000;
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`scraper timeout (${ms}ms)`)), ms)
+    ),
+  ]);
+}
 
 export async function aggregateBuses({ from, to, date }) {
   const active = PROVIDERS.filter(p => p.isConfigured?.());
@@ -13,7 +24,7 @@ export async function aggregateBuses({ from, to, date }) {
     return mock.fetchBuses({ from, to, date });
   }
   const results = await Promise.allSettled(
-    active.map(p => p.fetchBuses({ from, to, date }))
+    active.map(p => withTimeout(p.fetchBuses({ from, to, date }), SCRAPER_TIMEOUT_MS))
   );
   const merged = [];
   for (const r of results) {

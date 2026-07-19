@@ -8,6 +8,10 @@ import { chromium } from 'playwright';
 import { prisma } from '../db.js';
 import { decrypt } from '../crypto.js';
 
+// Set to true once the TicketSimply portal selectors are confirmed against the real DOM.
+// Until then, fetchBuses/fetchSeats return [] so the aggregator falls back to mock instantly.
+const SELECTORS_CONFIRMED = false;
+
 let _creds = null; // { user, pass, loginUrl }
 let _ctx = null;
 let _ctxExpiresAt = 0;
@@ -37,6 +41,7 @@ async function getContext() {
     userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36',
     viewport: { width: 1366, height: 900 },
   });
+  ctx.setDefaultTimeout(3000); // fail fast — aggregator has a 4s hard cap
   await login(ctx);
   _ctx = ctx;
   _ctxExpiresAt = now + CTX_TTL_MS;
@@ -59,6 +64,7 @@ async function login(ctx) {
 
 /** Search buses for a route+date. Returns canonical Bus[] shape (same as mock). */
 export async function fetchBuses({ from, to, date }) {
+  if (!SELECTORS_CONFIRMED) return []; // Skip Playwright until selectors are verified
   const { loginUrl } = await getCredentials();
   const ctx = await getContext();
   const page = await ctx.newPage();
@@ -122,6 +128,7 @@ export async function fetchBuses({ from, to, date }) {
 
 /** Fetch the seat layout for one bus. */
 export async function fetchSeats(busExternalId) {
+  if (!SELECTORS_CONFIRMED) return null; // Aggregator falls back to mock
   const { loginUrl } = await getCredentials();
   const ctx = await getContext();
   const page = await ctx.newPage();
