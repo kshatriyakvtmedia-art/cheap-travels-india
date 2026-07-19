@@ -3,12 +3,12 @@
 import * as laxmi from './laxmi.js';
 import * as mock from './mock.js';
 
-// Only Laxmi Holidays — real scraper when selectors are confirmed, mock otherwise.
 const PROVIDERS = [laxmi];
 const BY_NAME = { laxmi };
 
-// Hard cap: if a provider doesn't respond in 4s, cut it and use mock.
-const SCRAPER_TIMEOUT_MS = 4000;
+// 15s: allows the ~8s Playwright login on cold start to complete.
+// Mock kicks in only if a provider truly fails or takes longer than this.
+const SCRAPER_TIMEOUT_MS = 15000;
 function withTimeout(promise, ms) {
   return Promise.race([
     promise,
