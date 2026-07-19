@@ -11,7 +11,7 @@ export default function BusResultsClient({ route, date }) {
   const [error, setError] = useState(null);
   const [sort, setSort] = useState('departure');
 
-  // Seat popup state
+  // Inline seat panel state
   const [activeBus, setActiveBus] = useState(null);
   const [seatLayout, setSeatLayout] = useState(null);
   const [selectedSeat, setSelectedSeat] = useState(null);
@@ -40,19 +40,24 @@ export default function BusResultsClient({ route, date }) {
   })();
 
   const openSeats = (bus) => {
+    if (activeBus?.externalId === bus.externalId) {
+      // Toggle off
+      setActiveBus(null);
+      setSelectedSeat(null);
+      setSeatLayout(null);
+      return;
+    }
     setActiveBus(bus);
     setSelectedSeat(null);
     setSeatLayout(null);
     setSeatTab('seats');
     setBoarding(bus.boardingPoints?.[0] || null);
     setDropping(bus.droppingPoints?.[0] || null);
-    fetch(`/api/seats/${encodeURIComponent(bus.externalId)}`)
+    fetch(`/api/seats/${encodeURIComponent(bus.externalId)}?provider=${bus.provider || 'laxmi'}`)
       .then(r => r.json())
       .then(setSeatLayout)
       .catch(() => {});
   };
-
-  const closeSeats = () => { setActiveBus(null); setSelectedSeat(null); };
 
   const proceed = async () => {
     if (!selectedSeat || !activeBus) return;
@@ -96,25 +101,6 @@ export default function BusResultsClient({ route, date }) {
 
   return (
     <div className="bg-brand-surface min-h-screen pb-12">
-      {/* ── Seat selection popup ── */}
-      {activeBus && (
-        <SeatPopup
-          bus={activeBus}
-          layout={seatLayout}
-          selectedSeat={selectedSeat}
-          setSelectedSeat={setSelectedSeat}
-          boarding={boarding}
-          setBoarding={setBoarding}
-          dropping={dropping}
-          setDropping={setDropping}
-          creating={creating}
-          proceed={proceed}
-          onClose={closeSeats}
-          seatTab={seatTab}
-          setSeatTab={setSeatTab}
-        />
-      )}
-
       {/* Route bar */}
       <div className="bg-brand-green text-white py-4">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center gap-3">
@@ -134,21 +120,23 @@ export default function BusResultsClient({ route, date }) {
              style={{ background: 'linear-gradient(135deg,#0E7B4F,#094B30)' }}>
           <span className="font-head font-bold text-sm flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-brand-orange inline-block" />
-            {from} → {to} · Direct operator rates
+            {from} → {to} · Direct from operator
           </span>
           <span className="bg-white/10 border border-white/15 rounded-lg px-3 py-1.5 text-sm">No OTA markup</span>
-          <span className="ml-auto px-3 py-1.5 rounded-lg bg-brand-orange text-brand-green-d font-bold text-sm">
-            5% member discount on all tickets
-          </span>
+          {buses?.length > 0 && (
+            <span className="ml-auto px-3 py-1.5 rounded-lg bg-brand-orange text-brand-green-d font-bold text-sm">
+              Our price ₹{Math.min(...buses.map(b => b.displayedFare)).toLocaleString('en-IN')} incl. 5% member discount
+            </span>
+          )}
         </div>
 
         {/* Sort bar */}
         <div className="card flex items-center gap-3 px-4 py-2.5 mb-3 overflow-x-auto">
           <span className="label whitespace-nowrap">Sort:</span>
-          {['departure', 'price', 'duration', 'rating'].map(k => (
+          {[['departure','Departure ↑'],['price','Price ↑'],['duration','Duration ↑'],['rating','Rating ↓']].map(([k,l]) => (
             <button key={k} onClick={() => setSort(k)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap ${sort === k ? 'bg-brand-green text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
-              {k[0].toUpperCase() + k.slice(1)}
+              {l}
             </button>
           ))}
         </div>
@@ -163,7 +151,31 @@ export default function BusResultsClient({ route, date }) {
 
         <div className="space-y-3">
           {sorted?.map((b, i) => (
-            <BusCard key={b.externalId} bus={b} featured={i === 0} onViewSeats={() => openSeats(b)} />
+            <div key={b.externalId}>
+              <BusCard
+                bus={b}
+                featured={i === 0}
+                seatsOpen={activeBus?.externalId === b.externalId}
+                onViewSeats={() => openSeats(b)}
+              />
+              {/* Inline seat panel — expands below the bus card */}
+              {activeBus?.externalId === b.externalId && (
+                <SeatPanel
+                  bus={activeBus}
+                  layout={seatLayout}
+                  selectedSeat={selectedSeat}
+                  setSelectedSeat={setSelectedSeat}
+                  boarding={boarding}
+                  setBoarding={setBoarding}
+                  dropping={dropping}
+                  setDropping={setDropping}
+                  creating={creating}
+                  proceed={proceed}
+                  seatTab={seatTab}
+                  setSeatTab={setSeatTab}
+                />
+              )}
+            </div>
           ))}
         </div>
 
@@ -177,26 +189,33 @@ export default function BusResultsClient({ route, date }) {
   );
 }
 
-function BusCard({ bus, featured, onViewSeats }) {
+function BusCard({ bus, featured, seatsOpen, onViewSeats }) {
   const lowSeats = bus.seatsAvailable < 10;
 
   return (
-    <div className={`card p-4 md:p-5 grid md:grid-cols-[1fr_auto] gap-4 relative overflow-hidden ${featured ? 'border-l-4 border-brand-orange' : ''}`}>
-      {featured && (
+    <div className={`card p-4 md:p-5 grid md:grid-cols-[1fr_auto] gap-4 relative overflow-hidden
+      ${featured ? 'border-l-4 border-brand-orange' : ''}
+      ${seatsOpen ? 'rounded-b-none border-b-0' : ''}`}>
+      {featured && !seatsOpen && (
         <span className="absolute top-0 right-0 bg-brand-orange text-brand-green-d text-[10px] font-extrabold tracking-wider px-3 py-1 rounded-bl-lg">BEST PRICE</span>
       )}
       <div>
-        <h3 className="font-bold text-base md:text-lg">{bus.operator}</h3>
-        <div className="flex flex-wrap gap-1.5 mt-2 mb-3">
+        {/* Operator + badge */}
+        <div className="flex items-center gap-2 mb-1">
+          <h3 className="font-bold text-base md:text-lg">{bus.operator}</h3>
+          <span className="chip bg-emerald-50 text-emerald-700 font-bold text-[11px]">Direct Partner 5% Off</span>
+        </div>
+        <div className="flex flex-wrap gap-1.5 mb-3">
           <span className="chip bg-gray-100 text-gray-600">{bus.busType}</span>
           {(bus.amenities || []).map(a => (
             <span key={a} className="chip bg-gray-100 text-gray-600">{a}</span>
           ))}
         </div>
+        {/* Times */}
         <div className="grid grid-cols-[auto_1fr_auto] gap-3 items-center mb-2">
           <div>
             <div className="font-head font-bold text-xl">{bus.departure}</div>
-            <div className="text-xs text-gray-500">{bus.boardingPoints?.[0]?.name}</div>
+            <div className="text-xs text-gray-500">{bus.boardingPoints?.[0]?.name || from}</div>
           </div>
           <div className="flex flex-col items-center gap-1">
             <span className="chip bg-gray-100 text-gray-600 text-xs">{minsToHr(bus.durationMins)}</span>
@@ -207,17 +226,18 @@ function BusCard({ bus, featured, onViewSeats }) {
           </div>
           <div className="text-right">
             <div className="font-head font-bold text-xl">{bus.arrival}</div>
-            <div className="text-xs text-gray-500">{bus.droppingPoints?.[0]?.name}</div>
+            <div className="text-xs text-gray-500">{bus.droppingPoints?.[0]?.name || to}</div>
           </div>
         </div>
         <div className="flex items-center gap-3 text-xs">
           {bus.rating && <span className="chip bg-emerald-100 text-emerald-700 font-bold">★ {bus.rating}</span>}
-          {bus.ratingCount && <span className="text-gray-500">{bus.ratingCount.toLocaleString('en-IN')} ratings</span>}
+          {bus.ratingCount > 0 && <span className="text-gray-500">{bus.ratingCount.toLocaleString('en-IN')} ratings</span>}
           <span className={lowSeats ? 'text-red-600 font-semibold' : 'text-emerald-600 font-semibold'}>
             {bus.seatsAvailable} seats left
           </span>
         </div>
       </div>
+      {/* Price + CTA */}
       <div className="flex md:flex-col justify-between items-end gap-3 md:pl-4 md:border-l border-dashed border-gray-200 md:min-w-[160px]">
         <div className="text-right">
           <div className="text-xs text-gray-400 line-through">₹{bus.strikeFare.toLocaleString('en-IN')}</div>
@@ -228,116 +248,112 @@ function BusCard({ bus, featured, onViewSeats }) {
             SAVE ₹{(bus.strikeFare - bus.displayedFare).toLocaleString('en-IN')}
           </div>
         </div>
-        <button onClick={onViewSeats} className="btn-primary text-sm py-2.5 px-5">View Seats</button>
+        <button
+          onClick={onViewSeats}
+          className={seatsOpen ? 'btn-secondary text-sm py-2.5 px-5' : 'btn-primary text-sm py-2.5 px-5'}>
+          {seatsOpen ? 'Hide Seats' : 'View Seats'}
+        </button>
       </div>
     </div>
   );
 }
 
-// ── Seat popup — bottom sheet on all screens ──
-function SeatPopup({ bus, layout, selectedSeat, setSelectedSeat, boarding, setBoarding, dropping, setDropping, creating, proceed, onClose, seatTab, setSeatTab }) {
+// ── Inline seat panel — expands below the bus card, same page ──
+function SeatPanel({ bus, layout, selectedSeat, setSelectedSeat, boarding, setBoarding, dropping, setDropping, creating, proceed, seatTab, setSeatTab }) {
+  const cols = layout?.cols || 3;
+
   return (
-    <>
-      <style>{`@keyframes slideUpSheet{from{transform:translateY(100%)}to{transform:translateY(0)}}`}</style>
+    <div className="card rounded-t-none border-t border-dashed border-gray-200 overflow-hidden">
+      {/* Tabs */}
+      <div style={{ display: 'flex', borderBottom: '1px solid #e5e7eb', overflowX: 'auto' }}>
+        {[['seats','Seats'],['boarding','Boarding Points'],['dropping','Dropping Points'],['policy','Policy']].map(([k, l]) => (
+          <button key={k} onClick={() => setSeatTab(k)} style={{
+            padding: '12px 18px', background: 'none', border: 'none',
+            borderBottom: seatTab === k ? '2px solid #0E7B4F' : '2px solid transparent',
+            color: seatTab === k ? '#0E7B4F' : '#64748b',
+            fontWeight: seatTab === k ? 700 : 400,
+            fontSize: 14, cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+          }}>{l}</button>
+        ))}
+      </div>
 
-      {/* Backdrop */}
-      <div onClick={onClose}
-        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 8999, backdropFilter: 'blur(2px)' }} />
+      {/* Body: 2-col on desktop */}
+      <div className="grid md:grid-cols-[1fr_320px] gap-0">
 
-      {/* Sheet */}
-      <div style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: '#fff', borderRadius: '22px 22px 0 0',
-        maxHeight: '92vh', display: 'flex', flexDirection: 'column',
-        overflow: 'hidden', zIndex: 9000,
-        animation: 'slideUpSheet 0.28s cubic-bezier(0.4,0,0.2,1)',
-        boxShadow: '0 -8px 40px rgba(0,0,0,0.3)',
-        maxWidth: 640, margin: '0 auto',
-      }}>
-        {/* Handle + close */}
-        <div style={{ padding: '12px 16px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative' }}>
-          <div style={{ width: 40, height: 4, background: '#e2e8f0', borderRadius: 4 }} />
-          <button onClick={onClose} style={{ position: 'absolute', right: 16, background: '#f1f5f9', border: 'none', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', color: '#64748b', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
-        </div>
+        {/* LEFT — seat grid / boarding / dropping / policy */}
+        <div style={{ padding: '20px', borderRight: '1px dashed #e5e7eb' }}>
 
-        {/* Bus name */}
-        <div style={{ padding: '0 16px 10px', borderBottom: '1px solid #f1f5f9', flexShrink: 0 }}>
-          <div style={{ fontWeight: 800, fontSize: 16, color: '#0c2e1e' }}>{bus.operator}</div>
-          <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>{bus.busType} · {bus.departure} → {bus.arrival}</div>
-        </div>
-
-        {/* Tabs */}
-        <div style={{ display: 'flex', borderBottom: '1px solid #e5e7eb', flexShrink: 0, overflowX: 'auto' }}>
-          {[['seats', 'Seats'], ['boarding', 'Boarding'], ['dropping', 'Dropping'], ['policy', 'Policy']].map(([k, l]) => (
-            <button key={k} onClick={() => setSeatTab(k)} style={{
-              padding: '10px 16px', background: 'none', border: 'none',
-              borderBottom: seatTab === k ? '2px solid #0E7B4F' : '2px solid transparent',
-              color: seatTab === k ? '#0E7B4F' : '#64748b', fontWeight: seatTab === k ? 700 : 400,
-              fontSize: 14, cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
-            }}>{l}</button>
-          ))}
-        </div>
-
-        {/* Scrollable body */}
-        <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain', padding: '16px 16px 220px' }}>
           {seatTab === 'seats' && (
-            <div style={{ background: '#f8fafc', borderRadius: 16, padding: 16, border: '1.5px dashed #e2e8f0' }}>
-              <div style={{ textAlign: 'center', fontSize: 11, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700, marginBottom: 8 }}>
-                {layout?.sleeper ? 'Sleeper Coach' : 'Seater Coach'}
-              </div>
-              <div style={{ width: 36, height: 14, background: '#cbd5e1', borderRadius: 4, margin: '0 auto 16px' }} />
-              {layout ? (
-                <div style={{ display: 'grid', gap: 10, maxWidth: 220, margin: '0 auto', gridTemplateColumns: 'repeat(3, 1fr)', gridAutoRows: '72px' }}>
-                  {layout.seats.map(s => (
-                    <button
-                      key={s.no}
-                      disabled={s.status === 'booked'}
-                      onClick={() => setSelectedSeat(s.no)}
-                      className={`seat-btn ${s.status === 'booked' ? 'booked' : ''} ${s.status === 'ladies' ? 'ladies' : ''} ${selectedSeat === s.no ? 'selected' : ''}`}
-                      style={{ height: '72px', aspectRatio: 'unset', width: '100%', flexDirection: 'column', gap: 2, fontSize: 11, fontWeight: 700 }}
-                    >
-                      {s.no}
-                    </button>
+            <div>
+              <div style={{ background: '#f8fafc', borderRadius: 14, padding: 20, border: '1.5px dashed #e2e8f0', display: 'inline-block', minWidth: 240 }}>
+                <div style={{ textAlign: 'center', fontSize: 11, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700, marginBottom: 10 }}>
+                  SEAT LAYOUT
+                </div>
+                {/* Driver icon */}
+                <div style={{ width: 36, height: 14, background: '#cbd5e1', borderRadius: 4, margin: '0 auto 16px' }} />
+                {layout ? (
+                  <div style={{
+                    display: 'grid',
+                    gap: 8,
+                    gridTemplateColumns: `repeat(${cols}, 1fr)`,
+                    gridAutoRows: '64px',
+                    maxWidth: cols === 3 ? 220 : cols * 72,
+                    margin: '0 auto',
+                  }}>
+                    {layout.seats.map(s => (
+                      <button
+                        key={s.no}
+                        disabled={s.status === 'booked'}
+                        onClick={() => setSelectedSeat(s.no)}
+                        className={`seat-btn ${s.status === 'booked' ? 'booked' : ''} ${s.status === 'ladies' ? 'ladies' : ''} ${selectedSeat === s.no ? 'selected' : ''}`}
+                        style={{ height: '64px', aspectRatio: 'unset', width: '100%', fontSize: 11, fontWeight: 700 }}
+                      >
+                        {s.no}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ textAlign: 'center', color: '#94a3b8', padding: '32px 16px', fontSize: 14 }}>
+                    <div style={{ width: 28, height: 28, borderRadius: '50%', border: '3px solid #0E7B4F', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite', margin: '0 auto 8px' }} />
+                    Loading seats…
+                  </div>
+                )}
+                {/* Legend */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12, marginTop: 16, fontSize: 11, color: '#64748b' }}>
+                  {[['Available',''],['Ladies','ladies'],['Booked','booked'],['Selected','selected']].map(([label, cls]) => (
+                    <span key={label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <span className={`seat-btn ${cls}`} style={{ width: 14, height: 14, minHeight: 14, fontSize: 0, padding: 0, pointerEvents: 'none' }} />
+                      {label}
+                    </span>
                   ))}
                 </div>
-              ) : (
-                <div style={{ textAlign: 'center', color: '#94a3b8', padding: '32px 0', fontSize: 14 }}>
-                  <div style={{ width: 28, height: 28, borderRadius: '50%', border: '3px solid #0E7B4F', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite', margin: '0 auto 8px' }} />
-                  Loading seats…
-                </div>
-              )}
-              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12, marginTop: 16, fontSize: 11, color: '#64748b' }}>
-                {[['Available', ''], ['Ladies', 'ladies'], ['Booked', 'booked'], ['Selected', 'selected']].map(([label, cls]) => (
-                  <span key={label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <span className={`seat-btn ${cls}`} style={{ width: 14, height: 14, minHeight: 14, fontSize: 0, padding: 0, pointerEvents: 'none' }} />
-                    {label}
-                  </span>
-                ))}
               </div>
             </div>
           )}
 
           {seatTab === 'boarding' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {bus.boardingPoints?.map(p => (
+              <h4 style={{ fontWeight: 700, fontSize: 14, marginBottom: 4, color: '#0c2e1e' }}>Pick Boarding Point</h4>
+              {bus.boardingPoints?.length ? bus.boardingPoints.map(p => (
                 <button key={p.id} onClick={() => setBoarding(p)} style={{ textAlign: 'left', padding: 14, borderRadius: 12, border: boarding?.id === p.id ? '2px solid #0E7B4F' : '1.5px solid #e5e7eb', background: boarding?.id === p.id ? '#f0faf4' : '#fff', cursor: 'pointer', width: '100%' }}>
                   <div style={{ fontWeight: 700, fontSize: 14, color: '#0c2e1e' }}>{p.name}</div>
-                  <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>{p.address}</div>
+                  {p.address && <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>{p.address}</div>}
                   <div style={{ fontSize: 13, color: '#0E7B4F', fontWeight: 700, marginTop: 4 }}>{p.time}</div>
                 </button>
-              ))}
+              )) : <p style={{ color: '#94a3b8', fontSize: 14 }}>Contact operator for boarding details.</p>}
             </div>
           )}
 
           {seatTab === 'dropping' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {bus.droppingPoints?.map(p => (
+              <h4 style={{ fontWeight: 700, fontSize: 14, marginBottom: 4, color: '#0c2e1e' }}>Pick Dropping Point</h4>
+              {bus.droppingPoints?.length ? bus.droppingPoints.map(p => (
                 <button key={p.id} onClick={() => setDropping(p)} style={{ textAlign: 'left', padding: 14, borderRadius: 12, border: dropping?.id === p.id ? '2px solid #0E7B4F' : '1.5px solid #e5e7eb', background: dropping?.id === p.id ? '#f0faf4' : '#fff', cursor: 'pointer', width: '100%' }}>
                   <div style={{ fontWeight: 700, fontSize: 14, color: '#0c2e1e' }}>{p.name}</div>
-                  <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>{p.address}</div>
+                  {p.address && <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>{p.address}</div>}
                   <div style={{ fontSize: 13, color: '#0E7B4F', fontWeight: 700, marginTop: 4 }}>{p.time}</div>
                 </button>
-              ))}
+              )) : <p style={{ color: '#94a3b8', fontSize: 14 }}>Contact operator for dropping details.</p>}
             </div>
           )}
 
@@ -350,23 +366,60 @@ function SeatPopup({ bus, layout, selectedSeat, setSelectedSeat, boarding, setBo
           )}
         </div>
 
-        {/* Fixed bottom bar */}
-        <div style={{ position: 'sticky', bottom: 0, left: 0, right: 0, background: '#fff', borderTop: '1px solid #f1f5f9', padding: '12px 16px calc(12px + env(safe-area-inset-bottom, 0px))', flexShrink: 0 }}>
-          {/* Mini fare row */}
-          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 8, fontSize: 13, marginBottom: 10 }}>
-            <span style={{ color: '#64748b' }}>Seat: <strong style={{ color: selectedSeat ? '#0E7B4F' : '#94a3b8' }}>{selectedSeat || '—'}</strong></span>
-            <span style={{ color: '#e2e8f0' }}>·</span>
-            <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: 12 }}>₹{bus.strikeFare.toLocaleString('en-IN')}</span>
-            <strong style={{ color: '#0c2e1e', fontSize: 15 }}>₹{bus.displayedFare.toLocaleString('en-IN')}</strong>
-            <span style={{ background: '#dcfce7', color: '#15803d', borderRadius: 6, padding: '2px 7px', fontSize: 11, fontWeight: 700 }}>
-              SAVE ₹{bus.customerDiscount.toLocaleString('en-IN')}
-            </span>
+        {/* RIGHT — pick boarding + fare summary + CTA */}
+        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {/* Boarding point quick-pick (always visible on right) */}
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 13, color: '#0c2e1e', marginBottom: 8 }}>Pick boarding point</div>
+            {bus.boardingPoints?.length ? bus.boardingPoints.map(p => (
+              <button key={p.id} onClick={() => setBoarding(p)} style={{
+                display: 'block', width: '100%', textAlign: 'left',
+                padding: '10px 12px', borderRadius: 10, marginBottom: 6,
+                border: boarding?.id === p.id ? '2px solid #0E7B4F' : '1.5px solid #e5e7eb',
+                background: boarding?.id === p.id ? '#f0faf4' : '#fff',
+                cursor: 'pointer',
+              }}>
+                <div style={{ fontWeight: 700, fontSize: 13, color: '#0c2e1e' }}>{p.name}</div>
+                {p.address && <div style={{ fontSize: 11, color: '#64748b', marginTop: 1 }}>Please contact operator for exact boarding point details.</div>}
+                <div style={{ fontSize: 12, color: '#0E7B4F', fontWeight: 700, marginTop: 3 }}>{p.time}</div>
+              </button>
+            )) : (
+              <div style={{ fontSize: 13, color: '#94a3b8', padding: '10px 0' }}>Contact operator for boarding details.</div>
+            )}
           </div>
+
+          {/* Fare summary box */}
+          <div style={{ border: '1.5px solid #e5e7eb', borderRadius: 12, padding: 14, background: '#f8fafc' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 6 }}>
+              <span style={{ color: '#64748b' }}>Selected seat</span>
+              <span style={{ fontWeight: 700, color: selectedSeat ? '#0E7B4F' : '#94a3b8' }}>{selectedSeat || '— none —'}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 6 }}>
+              <span style={{ color: '#64748b' }}>Others charge</span>
+              <span style={{ textDecoration: 'line-through', color: '#94a3b8' }}>₹{bus.strikeFare.toLocaleString('en-IN')}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 6, color: '#0E7B4F' }}>
+              <span style={{ fontWeight: 600 }}>Cheap Travels saves you</span>
+              <span style={{ fontWeight: 700 }}>₹{bus.customerDiscount.toLocaleString('en-IN')}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 10 }}>
+              <span style={{ color: '#64748b' }}>Convenience fee</span>
+              <span style={{ color: '#64748b' }}>₹0</span>
+            </div>
+            <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 10, display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ fontWeight: 800, fontSize: 15 }}>You pay</span>
+              <span style={{ fontWeight: 800, fontSize: 15, color: '#0c2e1e' }}>
+                {selectedSeat ? `₹${bus.displayedFare.toLocaleString('en-IN')}` : '₹0'}
+              </span>
+            </div>
+          </div>
+
+          {/* CTA */}
           <button
             onClick={proceed}
             disabled={!selectedSeat || creating}
             style={{
-              width: '100%', padding: '15px 16px', borderRadius: 14,
+              width: '100%', padding: '15px 16px', borderRadius: 12,
               background: (!selectedSeat || creating) ? '#e2e8f0' : 'linear-gradient(135deg,#EE8C2E,#d97706)',
               color: (!selectedSeat || creating) ? '#94a3b8' : '#1a3c25',
               border: 'none', fontWeight: 800, fontSize: 15,
@@ -374,14 +427,15 @@ function SeatPopup({ bus, layout, selectedSeat, setSelectedSeat, boarding, setBo
               boxShadow: (!selectedSeat || creating) ? 'none' : '0 4px 16px rgba(238,140,46,0.4)',
               transition: 'all 0.15s',
             }}>
-            {creating ? 'Holding seat…' : selectedSeat ? `Continue to Passenger Details · ₹${bus.displayedFare.toLocaleString('en-IN')}` : 'Select a seat to continue'}
+            {creating ? 'Holding seat…' : selectedSeat ? 'Continue to Passenger Details →' : 'Select a seat to continue'}
           </button>
-          <p style={{ fontSize: 11, color: '#94a3b8', textAlign: 'center', marginTop: 6 }}>
-            Seat held for 8 min · Booking confirmed only after payment
+          <p style={{ fontSize: 11, color: '#94a3b8', textAlign: 'center', marginTop: -4 }}>
+            Seat held for 8 min · Confirmed after payment
           </p>
         </div>
+
       </div>
-    </>
+    </div>
   );
 }
 
