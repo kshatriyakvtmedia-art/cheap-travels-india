@@ -9,7 +9,7 @@ export async function GET(req) {
   const u = new URL(req.url);
   const from = (u.searchParams.get('from') || 'Azamgarh').trim();
   const to = (u.searchParams.get('to') || 'Delhi').trim();
-  const date = (u.searchParams.get('date') || new Date().toISOString().slice(0, 10)).trim();
+  const date = (u.searchParams.get('date') || new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })).trim();
 
   try {
     const buses = await aggregateBuses({ from, to, date });

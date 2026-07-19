@@ -16,7 +16,7 @@ export function generateMetadata({ params }) {
 
 export default function BusResultsPage({ params, searchParams }) {
   const { from, to } = parseRouteSlug(params.route);
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
   const date = (searchParams.date && /^\d{4}-\d{2}-\d{2}$/.test(searchParams.date))
     ? searchParams.date
     : today;
