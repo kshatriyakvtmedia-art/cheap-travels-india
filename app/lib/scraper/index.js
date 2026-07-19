@@ -46,7 +46,10 @@ export async function aggregateBuses({ from, to, date }) {
 
 export async function fetchSeatsForBus(busExternalId, provider) {
   const mod = BY_NAME[provider];
-  if (mod?.isConfigured?.()) return mod.fetchSeats(busExternalId);
+  if (mod?.isConfigured?.()) {
+    const data = await mod.fetchSeats(busExternalId);
+    if (data) return data;
+  }
   return mock.fetchSeats(busExternalId);
 }
 
