@@ -510,10 +510,22 @@ async function searchOperatorBuses(opKey, fromId, toId, date) {
   await ensureSession(opKey);
   console.log(`Searching buses for ${op.name} from ID ${fromId} to ID ${toId} on ${date}...`);
 
+  let cleanDate = date;
+  if (date.includes('-')) {
+    const parts = date.split('-');
+    if (parts[0].length === 4) {
+      cleanDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+  }
+  const [d, m, y] = cleanDate.split('/');
+
   const queryParams = new URLSearchParams();
   queryParams.append("searchbus[from]", fromId);
   queryParams.append("searchbus[to]", toId);
-  queryParams.append("searchbus[depart]", date);
+  queryParams.append("searchbus[depart]", cleanDate);
+  queryParams.append("searchbus[depart(3i)]", d);
+  queryParams.append("searchbus[depart(2i)]", m);
+  queryParams.append("searchbus[depart(1i)]", y);
   queryParams.append("searchbus[code]", "");
   queryParams.append("get_all_services", "false");
   queryParams.append("rountrip_return", "");
@@ -625,11 +637,23 @@ async function blockSeatOnB2B(opKey, { realResId, fromId, toId, date, seatNos, b
 
   console.log(`[B2B Block] Blocking seat(s) ${seatNos} on ${op.name} (res ${realResId})...`);
 
+  let cleanDate = date;
+  if (date.includes('-')) {
+    const parts = date.split('-');
+    if (parts[0].length === 4) {
+      cleanDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+  }
+  const [d, m, y] = cleanDate.split('/');
+
   // Step 1: Re-initialize the session route via a quick search (required by TicketSimply before seat ops)
   const initParams = new URLSearchParams();
   initParams.append('searchbus[from]', fromId);
   initParams.append('searchbus[to]', toId);
-  initParams.append('searchbus[depart]', date);
+  initParams.append('searchbus[depart]', cleanDate);
+  initParams.append('searchbus[depart(3i)]', d);
+  initParams.append('searchbus[depart(2i)]', m);
+  initParams.append('searchbus[depart(1i)]', y);
   initParams.append('searchbus[code]', '');
   initParams.append('get_all_services', 'false');
   initParams.append('rountrip_return', '');
@@ -660,7 +684,7 @@ async function blockSeatOnB2B(opKey, { realResId, fromId, toId, date, seatNos, b
   blockBody.append('res_id', realResId);
   blockBody.append('booking_from', fromId);
   blockBody.append('booking_to', toId);
-  blockBody.append('booking_date', date);
+  blockBody.append('booking_date', cleanDate);
   blockBody.append('boarding_stage', boardingPointId || '');
   blockBody.append('dropping_stage', droppingPointId || '');
   blockBody.append('pickup_confirm_phone', customerPhone || '');
@@ -900,20 +924,53 @@ app.get('/api/search', apiLimiter, async (req, res) => {
       }
     });
 
-    // Relaxed filter: only drop buses whose route name explicitly belongs to a *different*
+    // Relaxed filter: only drop buses whose route name or boarding points explicitly belong to a *different*
     // origin city — not our searched city. This avoids dropping valid buses whose boarding
     // point names don't literally contain the city name (e.g. "Cantt Bus Stand" vs "Varanasi").
-    // Buses that came from a specific operator search with matched city IDs are trusted by default.
     let realBuses = rawBuses.filter(bus => {
-      // If the bus has real (non-fallback) boarding points, trust the B2B portal result
-      const hasRealBoardingPoints = bus.boardingPoints.some(bp => bp.id !== 'fallback-bp');
-      if (hasRealBoardingPoints) return true;
-
-      // For fallback boarding point buses, verify routeName at least contains origin city
       const orig = fromName.toLowerCase();
-      const routeMatches = bus.routeName.toLowerCase().includes(orig);
-      const boardingMatches = bus.boardingPoints.some(bp => bp.name.toLowerCase().includes(orig));
-      return routeMatches || boardingMatches;
+      
+      // If the route name or any boarding point contains our searched origin city, it is definitely valid.
+      // Also handle common aliases (Banaras/Kashi for Varanasi, Prayagraj/Allahabad).
+      const routeContainsOrig = bus.routeName.toLowerCase().includes(orig) || 
+                                (orig === 'varanasi' && (bus.routeName.toLowerCase().includes('banaras') || bus.routeName.toLowerCase().includes('kashi'))) ||
+                                (orig === 'prayagraj' && bus.routeName.toLowerCase().includes('allahabad')) ||
+                                (orig === 'allahabad' && bus.routeName.toLowerCase().includes('prayagraj'));
+                                
+      const boardingContainsOrig = bus.boardingPoints.some(bp => 
+        bp.name.toLowerCase().includes(orig) ||
+        (orig === 'varanasi' && (bp.name.toLowerCase().includes('banaras') || bp.name.toLowerCase().includes('kashi'))) ||
+        (orig === 'prayagraj' && bp.name.toLowerCase().includes('allahabad')) ||
+        (orig === 'allahabad' && bp.name.toLowerCase().includes('prayagraj'))
+      );
+
+      if (routeContainsOrig || boardingContainsOrig) {
+        return true;
+      }
+
+      // If it doesn't mention our origin, let's see if it explicitly mentions a DIFFERENT origin city.
+      const majorCities = ['varanasi', 'banaras', 'kashi', 'delhi', 'agra', 'allahabad', 'prayagraj', 'lucknow', 'kanpur', 'mumbai', 'pune', 'jaipur', 'gorakhpur', 'ayodhya', 'azamgarh', 'mathura'];
+      
+      const mentionsDifferentCity = majorCities.some(city => {
+        if (city === orig) return false;
+        if (orig === 'varanasi' && (city === 'banaras' || city === 'kashi')) return false;
+        if (orig === 'prayagraj' && city === 'allahabad') return false;
+        if (orig === 'allahabad' && city === 'prayagraj') return false;
+
+        const routeHasCity = bus.routeName.toLowerCase().includes(city);
+        const boardingHasCity = bus.boardingPoints.some(bp => bp.name.toLowerCase().includes(city));
+        
+        return routeHasCity || boardingHasCity;
+      });
+
+      if (mentionsDifferentCity) {
+        // It belongs to a different route! Filter it out.
+        return false;
+      }
+
+      // Default fallback: if it doesn't mention any other major cities, trust it if it has real boarding points.
+      const hasRealBoardingPoints = bus.boardingPoints.some(bp => bp.id !== 'fallback-bp');
+      return hasRealBoardingPoints;
     });
 
     let buses = realBuses;
@@ -1038,12 +1095,24 @@ app.get('/api/layout/:resId', async (req, res) => {
       return res.status(400).json({ success: false, error: `Invalid city IDs for ${op.name} layout search: from=${from}, to=${to}` });
     }
 
+    let cleanDate = date;
+    if (date.includes('-')) {
+      const parts = date.split('-');
+      if (parts[0].length === 4) {
+        cleanDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+      }
+    }
+    const [d, m, y] = cleanDate.split('/');
+
     // Pre-initialize B2B session route by performing a quick search first
-    console.log(`Pre-initializing ${op.name} session route: From ID ${fromId} to ID ${toId} on ${date}...`);
+    console.log(`Pre-initializing ${op.name} session route: From ID ${fromId} to ID ${toId} on ${cleanDate}...`);
     const initParams = new URLSearchParams();
     initParams.append("searchbus[from]", fromId);
     initParams.append("searchbus[to]", toId);
-    initParams.append("searchbus[depart]", date);
+    initParams.append("searchbus[depart]", cleanDate);
+    initParams.append("searchbus[depart(3i)]", d);
+    initParams.append("searchbus[depart(2i)]", m);
+    initParams.append("searchbus[depart(1i)]", y);
     initParams.append("searchbus[code]", "");
     initParams.append("get_all_services", "false");
     initParams.append("rountrip_return", "");
@@ -1070,7 +1139,7 @@ app.get('/api/layout/:resId', async (req, res) => {
       }
     });
 
-    const layoutUrl = `${op.url}/ibooking/bookings/select_seat/${realResId}?searchbus_params[from]=${fromId}&searchbus_params[to]=${toId}&searchbus_params[depart]=${date}&searchbus_params[terminal]=0&searchbus_params[code]=&booking_return_date=`;
+    const layoutUrl = `${op.url}/ibooking/bookings/select_seat/${realResId}?searchbus_params[from]=${fromId}&searchbus_params[to]=${toId}&searchbus_params[depart]=${cleanDate}&searchbus_params[terminal]=0&searchbus_params[code]=&booking_return_date=`;
     
     const layoutRes = await fetchWithTimeoutAndRetry(layoutUrl, {
       headers: {

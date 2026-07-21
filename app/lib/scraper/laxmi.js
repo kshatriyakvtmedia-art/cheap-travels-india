@@ -91,9 +91,12 @@ function cityId(name) {
 
 // YYYY-MM-DD → DD/MM/YYYY
 function fmtDate(iso) {
-  const [y, m, d] = String(iso).split('-');
+  const str = String(iso);
+  if (str.includes('/')) return str;
+  const [y, m, d] = str.split('-');
   return `${d}/${m}/${y}`;
 }
+
 
 // "732/ 977/ 1026" → [732, 977, 1026]
 function parseFares(fareStr) {
