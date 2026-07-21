@@ -5160,6 +5160,9 @@ function continueToCheckout() {
     });
   }, 350);
 
+  // Update browser URL route to /checkout without reload
+  history.pushState({ view: 'checkout' }, '', '/checkout');
+
   // Populate Checkout fields
   document.getElementById('view-results').classList.remove('active');
   const chView = document.getElementById('view-checkout');
@@ -5667,6 +5670,20 @@ window.addEventListener('resize', function() {
     showAutocomplete(activeCityType);
   }
 }, { passive: true });
+
+// Handle back-button navigation between Checkout and Search Results
+window.addEventListener('popstate', function(e) {
+  const chView = document.getElementById('view-checkout');
+  const resultsView = document.getElementById('view-results');
+  
+  if (e.state && e.state.view === 'checkout') {
+    if (chView) chView.classList.add('active');
+    if (resultsView) resultsView.classList.remove('active');
+  } else {
+    if (chView) chView.classList.remove('active');
+    if (resultsView) resultsView.classList.add('active');
+  }
+});
 
 // Click away listener to close autocompletes.
 // Must also check the dropdown divs themselves since they are appended to body.
