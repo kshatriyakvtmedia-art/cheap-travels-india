@@ -2183,6 +2183,83 @@ footer.site { background: var(--teal-d); color: #D1EFEA; padding: 60px 24px 40px
   align-items: center; justify-content: center;
 }
 
+/* Desktop popup modal adjustments */
+@media (min-width: 769px) {
+  .seat-panel.mobile-open {
+    bottom: auto !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 850px !important;
+    height: 85vh !important;
+    max-height: 680px !important;
+    border-radius: 20px !important;
+    animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 0 12px 60px rgba(0,0,0,0.35) !important;
+  }
+  .seat-panel.mobile-open .seat-modal-bar {
+    display: flex !important;
+    border-bottom: 1px solid var(--line);
+    padding: 12px 20px;
+    align-items: center;
+    background: #f8fafc;
+  }
+  .seat-panel.mobile-open .seat-content {
+    display: flex !important;
+    flex-direction: row !important;
+    padding: 24px !important;
+    gap: 24px !important;
+    overflow-y: auto !important;
+  }
+  .seat-panel.mobile-open .seatmap {
+    flex: 1.2 !important;
+    margin: 0 !important;
+    background: #fafafa;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px !important;
+    display: flex;
+    flex-direction: column;
+  }
+  .seat-panel.mobile-open .seat-grid-container {
+    flex: 1;
+    overflow: auto !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+  }
+  .seat-panel.mobile-open .booking-side {
+    flex: 0.8 !important;
+    width: auto !important;
+    position: relative !important;
+    border-left: 1px solid var(--line);
+    padding-left: 24px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .seat-panel.mobile-open .summary {
+    position: static !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 16px 0 !important;
+    margin-top: auto !important;
+    background: transparent !important;
+  }
+  .seat-panel.mobile-open .continue-btn {
+    position: static !important;
+    margin-top: 12px !important;
+    width: 100% !important;
+    padding: 14px !important;
+  }
+}
+@keyframes zoomIn {
+  from { opacity: 0; transform: translate(-50%, -46%) scale(0.96); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+
 /* OTP modal constraint and fields */
 #auth-overlay .auth-box, #profile-overlay .auth-box, #bookings-overlay .auth-box {
   width: 90vw !important;
@@ -3719,29 +3796,6 @@ function resolveInputToSelect(type) {
 }
 
 async function performSearch() {
-  // Auto-resolve typed city names in case user didn't pick from dropdown
-  resolveInputToSelect('from');
-  resolveInputToSelect('to');
-
-  const fromId    = document.getElementById('from-select').value;
-  const toId      = document.getElementById('to-select').value;
-  const dateInput = document.getElementById('depart-date').value;
-
-  if (!fromId) { showToast('Please select a FROM city'); return; }
-  if (!toId)   { showToast('Please select a TO city');   return; }
-  if (!dateInput) { showToast('Please pick a travel date'); return; }
-
-  const fromName = document.getElementById('from-select').options[document.getElementById('from-select').selectedIndex].text;
-  const toName   = document.getElementById('to-select').options[document.getElementById('to-select').selectedIndex].text;
-
-  // Navigate to the canonical route URL — handles direct load, back/forward, SEO
-  const toUrlSlug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  const routeSlug = `${toUrlSlug(fromName)}-to-${toUrlSlug(toName)}`;
-  window.location.href = `/buses/${routeSlug}?date=${dateInput}`;
-}
-
-// Legacy performSearch_inline kept for reference — no longer called
-async function performSearch_inline_legacy() {
   resolveInputToSelect('from');
   resolveInputToSelect('to');
 
@@ -4447,6 +4501,45 @@ async function toggleSeatLive(resId, dateStr) {
   }
 }
 
+function makeContainerDraggable(wrap) {
+  if (!wrap) return;
+  let isDown = false;
+  let startX, startY;
+  let scrollLeft, scrollTop;
+  
+  wrap.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return; // Left click only
+    if (e.target.closest('.seat')) return; // Allow selecting seats without dragging
+    isDown = true;
+    wrap.style.cursor = 'grabbing';
+    startX = e.pageX - wrap.offsetLeft;
+    startY = e.pageY - wrap.offsetTop;
+    scrollLeft = wrap.scrollLeft;
+    scrollTop = wrap.scrollTop;
+  });
+  
+  const endDrag = () => {
+    isDown = false;
+    wrap.style.cursor = 'grab';
+  };
+  
+  wrap.addEventListener('mouseleave', endDrag);
+  wrap.addEventListener('mouseup', endDrag);
+  
+  wrap.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - wrap.offsetLeft;
+    const y = e.pageY - wrap.offsetTop;
+    const walkX = (x - startX) * 1.5;
+    const walkY = (y - startY) * 1.5;
+    wrap.scrollLeft = scrollLeft - walkX;
+    wrap.scrollTop = scrollTop - walkY;
+  });
+  
+  wrap.style.cursor = 'grab';
+}
+
 function renderSeatMap(resId, layoutData) {
   const grid = document.getElementById(`grid-${resId}`);
   if (!grid) return;
@@ -4501,6 +4594,9 @@ function renderSeatMap(resId, layoutData) {
   });
   
   grid.innerHTML = html;
+  
+  // Make the seat grid container draggable for horizontal/vertical dragging
+  makeContainerDraggable(grid.parentElement);
   
   // Reset summary view
   document.getElementById(`sel-seat-${resId}`).textContent = '— none —';
