@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp public/index.html index.html)",
+      "Bash(cp public/index.html app/public/index.html)",
+      "Bash(git commit -m ' *)",
+      "Bash(awk -F: '$2 > 3860 && $2 < 3960')",
+      "Bash(curl -sI \"https://cheapbus.in/_next/static/chunks/polyfills.js\")",
+      "Bash(curl -sI \"https://cheapbus.in/_next/static/chunks/webpack-3ca6c26f01e66938.js\")",
+      "Bash(curl -s \"https://cheapbus.in/\")",
+      "Bash(node -e ' *)",
+      "Bash(npx next *)",
+      "Bash(rm -f /tmp/rdlh_jar.txt)",
+      "Bash(curl -s https://rdlh.ticketsimply.com/ -A 'Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36' -c /tmp/rdlh_jar.txt)",
+      "Read(//tmp/**)",
+      "Bash(grep -v \"^$\")",
+      "Bash(python3 -c ' *)",
+      "Bash(curl -s https://rdlh.ticketsimply.com/account/validate_login -A 'Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36' -b /tmp/rdlh_jar.txt -c /tmp/rdlh_jar.txt -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' -H 'X-Requested-With: XMLHttpRequest' -H 'Accept: text/javascript, */*; q=0.01' -H 'Referer: https://rdlh.ticketsimply.com/' --data-urlencode authenticity_token=__TRACKED_VAR__ --data-urlencode login=cheap --data-urlencode password=cheapdalal546)",
+      "Bash(curl -s https://rdlh.ticketsimply.com/account/signin -A 'Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36' -b /tmp/rdlh_jar.txt -c /tmp/rdlh_jar.txt -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' -H 'X-Requested-With: XMLHttpRequest' -H 'Accept: application/json, */*; q=0.01' -H 'Referer: https://rdlh.ticketsimply.com/' --data-urlencode login=cheap --data-urlencode password=cheapdalal546 --data-urlencode login_flag= -L)",
+      "Bash(curl -v https://rdlh.ticketsimply.com/ -A 'Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36' -c /tmp/rdlh_jar2.txt -o /dev/null)",
+      "Bash(npm run *)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(# Check server log to understand why API is slow *)",
+      "Read(//private/tmp/**)",
+      "Bash(cat /tmp/nextdev3.log | tail -20)",
+      "Bash(curl -s \"http://localhost:3000/api/seats/rdl-001?provider=laxmi\")"
+    ]
+  }
+}

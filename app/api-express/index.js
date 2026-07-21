@@ -34,6 +34,9 @@ const apiLimiter = rateLimit({
   message: { success: false, error: "Too many requests from this IP. Please try again after 15 minutes." }
 });
 
+// Global cache for reservation commissions (B2B net-to-gross pricing conversion)
+const busCommissionCache = new Map();
+
 // Serve static frontend files from public directory with proper caching headers
 app.use(express.static(path.join(__dirname, '..', 'public'), {
   maxAge: '1d',
@@ -355,6 +358,33 @@ try {
   console.error("Failed to load static routes_data.json:", err.message);
 }
 
+// Normalize city names to ignore spaces, punctuation, casing, and suffixes like (UP), (H.P)
+function cleanCityName(name) {
+  if (!name) return "";
+  return name.toLowerCase()
+    .replace(/\s+/g, '')
+    .replace(/\([^)]*\)/g, '')
+    .replace(/[^a-z0-9]/g, '');
+}
+
+// Stage fare resolver: returns highest fare if destination matches route final destination
+function getStageMinFare(routeName, toName, fareParts) {
+  if (fareParts.length === 0) return 0;
+  if (fareParts.length === 1) return fareParts[0];
+
+  const routeLower = (routeName || "").toLowerCase();
+  const toLower = (toName || "").toLowerCase();
+
+  const parts = routeLower.split(/\bto\b/i);
+  if (parts.length > 1) {
+    const destPart = parts[1].trim();
+    if (destPart.includes(toLower)) {
+      return Math.max(...fareParts);
+    }
+  }
+  return Math.min(...fareParts);
+}
+
 // Helper to resolve generic city dropdown values to operator-specific names and IDs
 function resolveCityNamesAndIds(fromVal, toVal) {
   let fromName = '';
@@ -413,25 +443,28 @@ function resolveCityNamesAndIds(fromVal, toVal) {
     lxmiToId = toVal;
   }
 
-  // Cross-reference IDs by name
+  // Cross-reference IDs by name with loose comparison
+  const cleanFrom = cleanCityName(fromName);
+  const cleanTo = cleanCityName(toName);
+
   if (fromName) {
     if (!lxmiFromId) {
-      const c = (OPERATORS.lxmi.cities || []).find(x => x.name.toLowerCase() === fromName.toLowerCase());
+      const c = (OPERATORS.lxmi.cities || []).find(x => cleanCityName(x.name) === cleanFrom);
       if (c) lxmiFromId = c.id;
     }
     if (!rdlhFromId) {
-      const c = (OPERATORS.rdlh.cities || []).find(x => x.name.toLowerCase() === fromName.toLowerCase());
+      const c = (OPERATORS.rdlh.cities || []).find(x => cleanCityName(x.name) === cleanFrom);
       if (c) rdlhFromId = c.id;
     }
   }
 
   if (toName) {
     if (!lxmiToId) {
-      const c = (OPERATORS.lxmi.cities || []).find(x => x.name.toLowerCase() === toName.toLowerCase());
+      const c = (OPERATORS.lxmi.cities || []).find(x => cleanCityName(x.name) === cleanTo);
       if (c) lxmiToId = c.id;
     }
     if (!rdlhToId) {
-      const c = (OPERATORS.rdlh.cities || []).find(x => x.name.toLowerCase() === toName.toLowerCase());
+      const c = (OPERATORS.rdlh.cities || []).find(x => cleanCityName(x.name) === cleanTo);
       if (c) rdlhToId = c.id;
     }
   }
@@ -505,7 +538,7 @@ app.get('/api/cities', async (req, res) => {
 // (Laxmi and Ram Dalal Holidays integration below)
 
 // Helper: search buses for a specific operator B2B portal
-async function searchOperatorBuses(opKey, fromId, toId, date) {
+async function searchOperatorBuses(opKey, fromId, toId, date, toName = '') {
   const op = OPERATORS[opKey];
   await ensureSession(opKey);
   console.log(`Searching buses for ${op.name} from ID ${fromId} to ID ${toId} on ${date}...`);
@@ -555,7 +588,7 @@ async function searchOperatorBuses(opKey, fromId, toId, date) {
   if (searchRes.status === 401) {
     console.log(`Session expired for ${op.name} during search (401), re-authenticating...`);
     await performLogin(opKey);
-    return searchOperatorBuses(opKey, fromId, toId, date);
+    return searchOperatorBuses(opKey, fromId, toId, date, toName);
   }
 
   const searchText = await searchRes.text();
@@ -565,7 +598,7 @@ async function searchOperatorBuses(opKey, fromId, toId, date) {
   if (trimmedText.startsWith('<!DOCTYPE') || trimmedText.startsWith('<html') || searchRes.status === 302 || trimmedText.includes('signin')) {
     console.log(`Received login/redirect HTML from ${op.name} during search. Re-authenticating...`);
     await performLogin(opKey);
-    return searchOperatorBuses(opKey, fromId, toId, date);
+    return searchOperatorBuses(opKey, fromId, toId, date, toName);
   }
 
   let searchJson;
@@ -574,7 +607,7 @@ async function searchOperatorBuses(opKey, fromId, toId, date) {
   } catch (err) {
     console.warn(`JSON parse failed for ${op.name} search response. Re-authenticating...`);
     await performLogin(opKey);
-    return searchOperatorBuses(opKey, fromId, toId, date);
+    return searchOperatorBuses(opKey, fromId, toId, date, toName);
   }
 
   if (!searchJson.data) {
@@ -589,8 +622,15 @@ async function searchOperatorBuses(opKey, fromId, toId, date) {
     
     const fareStr = summary.fare || "";
     const fareParts = fareStr.split('/').map(f => parseFloat(f.trim())).filter(f => !isNaN(f));
-    const minFare = fareParts.length > 0 ? Math.min(...fareParts) : 0;
-    const maxFare = fareParts.length > 0 ? Math.max(...fareParts) : 0;
+    const commissionPct = parseFloat(details.commission_arr || details.commission || 0);
+
+    // Resolve stage fare (min vs max depending on searched destination)
+    const rawMinFare = getStageMinFare(summary.number || details.number, toName, fareParts);
+    const rawMaxFare = fareParts.length > 0 ? Math.max(...fareParts) : 0;
+
+    // Convert from net to gross customer B2C fares
+    const minFare = commissionPct > 0 ? Math.round(rawMinFare / (1 - commissionPct / 100)) : rawMinFare;
+    const maxFare = commissionPct > 0 ? Math.round(rawMaxFare / (1 - commissionPct / 100)) : rawMaxFare;
 
     const actualOperator = (!details.is_own_route && details.service_name && details.service_name.length > 0)
       ? details.service_name[0]
@@ -610,6 +650,7 @@ async function searchOperatorBuses(opKey, fromId, toId, date) {
       fareString: fareStr,
       minFare: minFare,
       maxFare: maxFare,
+      commission: commissionPct, // Cache this for layout B2B net-to-gross mapping
       boardingPoints: (summary.boarding_stage_detail_arr || []).map(bp => ({
         id: bp[0],
         time: bp[1],
@@ -879,7 +920,7 @@ app.get('/api/search', apiLimiter, async (req, res) => {
     // Query Laxmi if IDs exist
     if (lxmiFromId && lxmiToId) {
       searchPromises.push(
-        searchOperatorBuses('lxmi', lxmiFromId, lxmiToId, date)
+        searchOperatorBuses('lxmi', lxmiFromId, lxmiToId, date, toName)
           .catch(err => {
             console.error("Laxmi Holidays search failed:", err.message);
             return [];
@@ -892,7 +933,7 @@ app.get('/api/search', apiLimiter, async (req, res) => {
     // Query Ram Dalal if IDs exist
     if (rdlhFromId && rdlhToId) {
       searchPromises.push(
-        searchOperatorBuses('rdlh', rdlhFromId, rdlhToId, date)
+        searchOperatorBuses('rdlh', rdlhFromId, rdlhToId, date, toName)
           .catch(err => {
             console.error("Ram Dalal search failed:", err.message);
             return [];
@@ -1000,6 +1041,12 @@ app.get('/api/search', apiLimiter, async (req, res) => {
     });
 
     let buses = Array.from(uniqueBusesMap.values());
+
+    // Cache bus commissions for the layout API B2C fare conversion
+    buses.forEach(bus => {
+      const numResId = bus.resId.replace('lx-', '').replace('rd-', '');
+      busCommissionCache.set(numResId, bus.commission);
+    });
 
     console.log(`[Search] ${fromName} → ${toName} on ${date}: lxmi=${lxmiBuses.length}, rdlh=${rdlhBuses.length}, raw=${rawBuses.length}, afterFilter=${realBuses.length}`);
     trackEvent('search', { from: fromName, to: toName, date, realCount: realBuses.length, totalCount: buses.length });
@@ -1270,6 +1317,19 @@ app.get('/api/layout/:resId', async (req, res) => {
         if (row > maxRow) maxRow = row;
         if (col > maxCol) maxCol = col;
 
+        // Retrieve cached commission rate
+        const cachedComm = busCommissionCache.get(realResId);
+        const commissionPct = cachedComm !== undefined ? cachedComm : (opKey === 'lxmi' ? 15 : 12);
+
+        let scrapedFare = parseFloat(seatwiseFareHash[seatNo] || 0);
+        if (scrapedFare === 0 && title) {
+          const fareMatch = title.match(/Rs\.?\s*(\d+)/i) || title.match(/Fare:\s*(\d+)/i);
+          if (fareMatch) {
+            scrapedFare = parseFloat(fareMatch[1]);
+          }
+        }
+        const grossFare = commissionPct > 0 ? Math.round(scrapedFare / (1 - commissionPct / 100)) : scrapedFare;
+
         seats.push({
           seatNo,
           available: isAvailable,
@@ -1280,9 +1340,33 @@ app.get('/api/layout/:resId', async (req, res) => {
           col: col,
           rowspan,
           colspan,
-          fare: parseFloat(seatwiseFareHash[seatNo] || 0)
+          fare: grossFare
         });
       });
+    });
+
+    // Parse real boarding points from dropdown options
+    const boardingPoints = [];
+    $('#boarding_stage_id option').each((idx, opt) => {
+      const val = $(opt).attr('value');
+      const text = $(opt).text().trim();
+      if (!val || val === '' || text.toLowerCase().includes('--select--') || text.toLowerCase().includes('select boarding')) return;
+      const textParts = text.split(/\s*-\s*/);
+      const name = textParts[0] || text;
+      const time = textParts[1] || "";
+      boardingPoints.push({ id: val, name, time, landmark: '' });
+    });
+
+    // Parse real dropping points from dropdown options
+    const droppingPoints = [];
+    $('#drop_off_stage_id option').each((idx, opt) => {
+      const val = $(opt).attr('value');
+      const text = $(opt).text().trim();
+      if (!val || val === '' || text.toLowerCase().includes('--select--') || text.toLowerCase().includes('select dropping')) return;
+      const textParts = text.split(/\s*-\s*/);
+      const name = textParts[0] || text;
+      const time = textParts[1] || "";
+      droppingPoints.push({ id: val, name, time, landmark: '' });
     });
 
     res.json({
@@ -1291,7 +1375,9 @@ app.get('/api/layout/:resId', async (req, res) => {
       maxRow: maxRow + 1,
       maxCol: maxCol + 1,
       ladiesAdjacent,
-      gentsAdjacent
+      gentsAdjacent,
+      boardingPoints,
+      droppingPoints
     });
   } catch (error) {
     console.error("API /layout error:", error.message);

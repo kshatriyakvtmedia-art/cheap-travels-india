@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheap Travels India — Instagram Growth Audit & Strategy | KV TechMedia</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Palette matched to website hero: forest green + beige bg + orange accent */
+    --navy:#164A30; --blue:#256F49; --blue2:#2E7D54; --sky:#E7F1EA; --sky2:#F5EEE2;
+    --saffron:#E08A3C; --saffron2:#EDA662; --gold:#D99B2B; --cream:#FBF6EE;
+    --green:#1E7D4F; --green2:#249A60; --wa:#25D366; --wa2:#128C7E;
+    --ink:#1C2B22; --muted:#5f6f64; --line:#E7DDCB; --white:#fff;
+    --good:#1E7D4F; --bad:#C4462F; --amber:#D99B2B; --violet:#5E8A57; --pink:#C77D4A;
+    --card:#ffffff; --shadow:0 6px 22px rgba(22,74,48,.09); --shadow2:0 10px 30px rgba(22,74,48,.15);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Poppins','Noto Sans Devanagari',system-ui,sans-serif;color:var(--ink);background:var(--sky2);line-height:1.62;font-size:14.5px}
+  .hi{font-family:'Noto Sans Devanagari','Poppins',sans-serif}
+  a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
+  .wrap{display:flex;min-height:100vh}
+
+  /* SIDEBAR */
+  .side{width:284px;flex-shrink:0;background:linear-gradient(180deg,#1B5637,#123c26);color:#dbe7de;position:sticky;top:0;height:100vh;overflow-y:auto;padding:0 0 30px}
+  .brand{padding:18px 16px 16px;border-bottom:1px solid rgba(255,255,255,.12)}
+  .brand .logo-img{width:100%;background:#fff;border-radius:12px;padding:12px 14px;display:block;box-shadow:0 4px 14px rgba(0,0,0,.22)}
+  .brand h1{font-size:16px;color:#fff;line-height:1.15;font-weight:800}
+  .brand h1 span{color:var(--saffron)}
+  .brand .tag{font-size:10px;color:#a8ceb6;letter-spacing:1px;text-transform:uppercase;margin-top:11px}
+  .brand .tag b{color:var(--saffron2)}
+  .nav{padding:14px 12px}
+  .nav a{display:flex;align-items:center;gap:11px;color:#cfe3d6;padding:10px 14px;border-radius:9px;font-size:13.3px;font-weight:500;margin-bottom:2px;cursor:pointer;transition:.15s}
+  .nav a .n{width:23px;height:23px;border-radius:6px;background:rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+  .nav a:hover{background:rgba(255,255,255,.09);color:#fff;text-decoration:none}
+  .nav a.active{background:var(--blue);color:#fff}
+  .nav a.active .n{background:rgba(0,0,0,.22)}
+  .foot{padding:16px 22px;font-size:11px;color:#9cc4aa;line-height:1.6;border-top:1px solid rgba(255,255,255,.1);margin-top:8px}
+  .cta-side{margin:14px 16px 0;background:linear-gradient(135deg,var(--wa),var(--wa2));border-radius:12px;padding:13px 15px;color:#fff}
+  .cta-side b{font-size:13px;display:block;margin-bottom:6px}
+  .cta-side a{display:block;color:#fff;font-weight:700;font-size:13px;background:rgba(255,255,255,.18);border-radius:8px;padding:7px 10px;margin-top:6px;text-align:center}
+  .cta-side a:hover{background:rgba(255,255,255,.3);text-decoration:none}
+
+  /* MAIN */
+  .main{flex:1;min-width:0;padding:38px 46px 90px;max-width:1140px}
+  .page{display:none;animation:fade .3s ease} .page.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .kicker{font-size:10.5px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--saffron);display:inline-block;margin-bottom:8px}
+  h2.pt{font-size:30px;line-height:1.12;font-weight:800;letter-spacing:-.6px;margin-bottom:6px}
+  .sub{color:var(--muted);font-size:14px;max-width:780px;margin-bottom:22px}
+  h3{font-size:19px;font-weight:700;margin:30px 0 12px;letter-spacing:-.3px}
+  h4{font-size:15px;font-weight:700;margin-bottom:6px}
+  p{margin-bottom:12px} .lede{font-size:15px}
+
+  /* HERO */
+  .hero{background:linear-gradient(120deg,#1B5637 0%,#2E7D54 60%,#3E9469 100%);color:#fff;border-radius:20px;padding:34px 36px;margin-bottom:22px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-50px;top:-50px;width:210px;height:210px;border-radius:50%;background:rgba(224,138,60,.16)}
+  .hero::before{content:"";position:absolute;right:60px;bottom:-70px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.06)}
+  .hero .kick{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--saffron2);margin-bottom:12px}
+  .hero h2{font-size:32px;line-height:1.12;font-weight:800;letter-spacing:-.7px;margin-bottom:14px;max-width:730px;position:relative}
+  .hero p{color:#e9f4ec;font-size:14.5px;max-width:740px;margin-bottom:0;position:relative}
+  .hero b{color:#fff} .hero .hi{color:var(--saffron2)}
+  .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;position:relative}
+  .cta a{background:#fff;color:var(--navy);padding:10px 17px;border-radius:9px;font-weight:700;font-size:13px}
+  .cta a.wa{background:var(--wa);color:#fff}
+  .cta a.ghost{background:rgba(255,255,255,.14);color:#fff}
+  .cta a:hover{text-decoration:none;transform:translateY(-1px)}
+
+  /* GRID + CARDS */
+  .grid{display:grid;gap:14px;margin:14px 0}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:860px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:17px 18px;box-shadow:var(--shadow)}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow)}
+  .stat .num{font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1}
+  .stat .lbl{font-size:11px;color:var(--muted);margin-top:7px;line-height:1.4}
+  .num.good{color:var(--good)} .num.bad{color:var(--bad)} .num.saffron{color:var(--saffron)} .num.blue{color:var(--blue)} .num.violet{color:var(--violet)} .num.gold{color:#d99b00}
+  .src{font-size:11px;color:var(--muted);font-style:italic;margin:6px 0 0}
+
+  /* PILLS */
+  .pill{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:4px 10px;border-radius:20px;margin-bottom:8px}
+  .pill.blue{background:var(--sky);color:var(--blue)} .pill.saffron{background:#FFEEDD;color:var(--saffron)}
+  .pill.green{background:#E1F6EA;color:var(--good)} .pill.wa{background:#E1F8EC;color:var(--wa2)}
+  .pill.violet{background:#EEEAFF;color:var(--violet)} .pill.gold{background:#FFF4D6;color:#b7791f}
+  .pill.red{background:#FBE7E7;color:var(--bad)} .pill.navy{background:#E4EAFA;color:var(--navy)}
+
+  /* TABLE */
+  table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);margin:14px 0}
+  th{background:#1B5637;color:#fff;text-align:left;padding:11px 13px;font-weight:600;font-size:12px}
+  td{padding:10px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  tr:nth-child(even) td{background:#f7faff}
+  .mono{font-variant-numeric:tabular-nums;font-weight:600}
+  .tag-good{color:var(--good);font-weight:700} .tag-bad{color:var(--bad);font-weight:700}
+
+  /* CALLOUT */
+  .callout{border-left:4px solid var(--blue);background:var(--sky);border-radius:0 12px 12px 0;padding:16px 18px;margin:18px 0}
+  .callout.saffron{border-color:var(--saffron);background:#FFF2E6}
+  .callout.green{border-color:var(--good);background:#E4F6EC}
+  .callout.violet{border-color:var(--violet);background:#EEEAFF}
+  .callout.red{border-color:var(--bad);background:#FBECEC}
+  .callout b{color:var(--ink)}
+
+  /* EXPAND CARDS */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 18px}
+  .fbtn{background:#fff;border:1px solid var(--line);border-radius:20px;padding:7px 15px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;box-shadow:var(--shadow)}
+  .fbtn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .xcard{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden;border-left:4px solid var(--saffron)}
+  .xhead{padding:16px 18px;cursor:pointer;display:flex;gap:14px;align-items:flex-start;justify-content:space-between}
+  .xhead:hover{background:#fff8f1}
+  .xhead .no{width:30px;height:30px;border-radius:8px;background:#FFEEDD;color:var(--saffron);font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
+  .xhead .htitle{font-weight:700;font-size:15px;margin-bottom:3px}
+  .xhead .hmeta{font-size:11.5px;color:var(--muted)}
+  .xhead .chev{color:var(--muted);font-size:13px;transition:.2s;flex-shrink:0;margin-top:4px}
+  .xcard.open .chev{transform:rotate(180deg)}
+  .xbody{display:none;padding:0 18px 18px;border-top:1px solid var(--line)}
+  .xcard.open .xbody{display:block}
+  .blk{margin-top:14px}
+  .bh{font-size:10px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--saffron);margin-bottom:7px;display:flex;align-items:center;gap:7px}
+  .bh .dot{width:6px;height:6px;border-radius:50%;background:var(--saffron)}
+  .hookbox{background:#1B5637;color:#fff;border-radius:11px;padding:14px 16px}
+  .hookbox .vis{font-size:11.5px;color:#a8ceb6;margin-bottom:6px}
+  .hookbox .line{font-size:16px;font-weight:600;line-height:1.4}
+  .capbox{background:#F5F9FF;border:1px solid var(--line);border-radius:10px;padding:13px 15px;font-size:12.5px;white-space:pre-wrap;line-height:1.6;position:relative}
+  .copybtn{position:absolute;top:10px;right:10px;background:var(--blue);color:#fff;border:none;border-radius:7px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer}
+  .copybtn:hover{background:var(--navy)} .copybtn.done{background:var(--good)}
+  .tagbox{font-size:12px;color:var(--blue);font-weight:500;line-height:1.7;margin-top:8px}
+  .thumbtag{display:inline-block;background:var(--ink);color:#fff;font-weight:800;letter-spacing:.5px;padding:8px 14px;border-radius:8px;font-size:13px}
+
+  /* FLOW */
+  .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;margin:14px 0}
+  .flow .step{background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 13px;box-shadow:var(--shadow);font-weight:600}
+  .flow .step.on{background:var(--wa);color:#fff;border-color:var(--wa)}
+  .flow .arr{color:var(--saffron);font-weight:800;font-size:16px}
+  ul.clean{list-style:none;margin:6px 0 12px} ul.clean li{padding:7px 0 7px 26px;position:relative;font-size:13.7px;border-bottom:1px dashed var(--line)}
+  ul.clean li:before{content:"→";position:absolute;left:0;color:var(--saffron);font-weight:800}
+  ul.clean li:last-child{border-bottom:none}
+  ul.check li:before{content:"✓";color:var(--good)}
+  ul.cross li:before{content:"✕";color:var(--bad)}
+
+  /* ROUTE CARDS */
+  .rcard{background:#fff;border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow);padding:15px 16px;position:relative;overflow:hidden}
+  .rcard .route{font-size:15.5px;font-weight:800;letter-spacing:-.2px;margin-bottom:3px}
+  .rcard .route .arw{color:var(--saffron)}
+  .rcard .why{font-size:12.5px;color:var(--muted);margin:6px 0 10px}
+  .rcard .rmeta{display:flex;gap:8px;flex-wrap:wrap;font-size:11px;font-weight:700}
+  .rchip{background:var(--sky);color:var(--blue);padding:3px 9px;border-radius:20px}
+  .rchip.g{background:#E1F6EA;color:var(--good)} .rchip.o{background:#FFEEDD;color:var(--saffron)}
+  .tier-h{display:flex;align-items:center;gap:10px;margin:26px 0 6px}
+  .tier-h .tn{font-size:12px;font-weight:800;color:#fff;padding:4px 12px;border-radius:20px}
+  .tier-h .tn.t1{background:var(--saffron)} .tier-h .tn.t2{background:var(--blue)} .tier-h .tn.t3{background:var(--violet)}
+
+  /* COPY CHIP for bio etc */
+  .copyrow{display:flex;gap:10px;align-items:stretch;margin-bottom:10px}
+  .copyrow .val{flex:1;background:#F5F9FF;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px;white-space:pre-wrap;line-height:1.55}
+  .copyrow .cbtn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:0 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+  .copyrow .cbtn:hover{background:var(--navy)} .copyrow .cbtn.done{background:var(--good)}
+
+  /* MENU TOGGLE (mobile) */
+  .menu-toggle{display:none;position:fixed;top:14px;left:14px;z-index:50;background:var(--navy);color:#fff;border:none;border-radius:9px;padding:9px 13px;font-size:16px;box-shadow:var(--shadow2);cursor:pointer}
+  @media(max-width:860px){
+    .menu-toggle{display:block}
+    .side{position:fixed;left:-300px;z-index:40;transition:.25s} .side.open{left:0}
+    .main{padding:64px 20px 80px}
+    .hero{padding:26px 22px} .hero h2{font-size:25px}
+    h2.pt{font-size:25px}
+  }
+  .two{columns:2;column-gap:26px} @media(max-width:860px){.two{columns:1}}
+  .hookline{background:#fff;border:1px solid var(--line);border-left:3px solid var(--saffron);border-radius:0 9px 9px 0;padding:10px 13px;margin-bottom:8px;font-size:13px;box-shadow:var(--shadow);position:relative}
+  .badge{display:inline-block;font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;background:var(--gold);color:#5a3d00;margin-left:6px}
+</style>
+</head>
+<body>
+<button class="menu-toggle" onclick="document.querySelector('.side').classList.toggle('open')">☰</button>
+<div class="wrap">
+  <aside class="side">
+    <div class="brand">
+      <img class="logo-img" src="https://cheap-travels-india.vercel.app/images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" onerror="this.outerHTML='<h1 style=\'color:#fff\'>Cheap Travels <span style=\'color:#E08A3C\'>India</span></h1>'">
+      <div class="tag">Instagram Growth Audit &amp; Strategy · <b>KV TechMedia</b></div>
+    </div>
+    <nav class="nav" id="nav">
+      <a data-p="overview" class="active"><span class="n">1</span> Executive Summary</a>
+      <a data-p="audit"><span class="n">2</span> The Full Audit</a>
+      <a data-p="profile"><span class="n">3</span> Profile &amp; Bio Fixes</a>
+      <a data-p="positioning"><span class="n">4</span> vs RedBus &amp; AbhiBus</a>
+      <a data-p="routes"><span class="n">5</span> Route Playbook</a>
+      <a data-p="content"><span class="n">6</span> Content Strategy</a>
+      <a data-p="funnel"><span class="n">7</span> Call/WhatsApp Funnel</a>
+      <a data-p="ads"><span class="n">8</span> Ads &amp; Poster Plan</a>
+      <a data-p="calendar"><span class="n">9</span> 90-Day Execution</a>
+      <a data-p="scripts"><span class="n">10</span> Reel Scripts (Hindi+Eng)</a>
+      <a data-p="statics"><span class="n">11</span> Static Post Ideas</a>
+      <a data-p="bank"><span class="n">12</span> Caption &amp; Hook Bank</a>
+    </nav>
+    <div class="cta-side">
+      <b>🎟️ Live booking lines</b>
+      <a href="tel:+918853391184">📞 Call 8853391184</a>
+      <a href="https://wa.me/918853521184" target="_blank">💬 WhatsApp 8853521184</a>
+    </div>
+    <div class="foot">
+      Prepared by <b style="color:#cfe0f7">KV TechMedia</b> for Cheap Travels India.<br>
+      Data: Apify scrape of @cheaptravelindia__, 6 Jul 2026 · 37 recent posts analysed.
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+  <!-- ===================== 1. OVERVIEW ===================== -->
+  <section class="page show" id="overview">
+    <div class="hero">
+      <img src="https://cheap-travels-india.vercel.app/images/logos/CheapTravel_India_Logo_Transparent.png" alt="Cheap Travels India" style="height:44px;background:#fff;border-radius:9px;padding:7px 12px;margin-bottom:16px;display:block;position:relative" onerror="this.style.display='none'">
+      <div class="kick">Confidential Growth Playbook · Cheap Travels India · KV TechMedia</div>
+      <h2>You post every single day. The account still won't grow. Here's exactly why — and the fix.</h2>
+      <p>In one month you shipped <b>37 posts</b> to <b>3,056 followers</b> — yet your median reel gets only <b>~540 views</b>, likes sit in the <b>20s</b>, and comments are <b>almost always zero</b>. The reach isn't dying because your buses aren't good. It's dying because <b>every caption is the same copy-pasted phone number and route list</b>, there's no hook, no story, and no reason to follow or message. This playbook turns your daily effort into <span class="hi">real followers, real WhatsApp bookings, and Purvanchal's most trusted "sasti booking, pakka ticket" brand.</span></p>
+      <div class="cta">
+        <a href="https://www.instagram.com/cheaptravelindia__/" target="_blank">@cheaptravelindia__ ↗</a>
+        <a class="wa" href="https://wa.me/918853521184" target="_blank">💬 WhatsApp booking</a>
+        <a class="ghost" href="https://cheap-travels-india.vercel.app/" target="_blank">Website ↗</a>
+      </div>
+    </div>
+
+    <div class="grid g4">
+      <div class="stat"><div class="num bad">3,056</div><div class="lbl">Followers — despite <b>295 posts</b>. Posting hard, growing slow.</div></div>
+      <div class="stat"><div class="num saffron">~540</div><div class="lbl">MEDIAN reel views. Most reels never cross 1,000 plays.</div></div>
+      <div class="stat"><div class="num bad">0</div><div class="lbl">Comments on ~90% of posts — no community, no conversation.</div></div>
+      <div class="stat"><div class="num good">2,611</div><div class="lbl">Best reel views (Varanasi–Ranchi, 10s). Short + route = win.</div></div>
+    </div>
+    <p class="src">Source: Apify scrape of @cheaptravelindia__ (37 posts, 8 Jun – 6 Jul 2026), captured 6 Jul 2026.</p>
+
+    <h3>The one-paragraph diagnosis</h3>
+    <p class="lede">Cheap Travels India has a <b>genuinely strong business</b> — a real "5% cheaper than RedBus" promise, authorized partnerships with <b>Laxmi Holidays, RamDalal &amp; Natraj</b>, WhatsApp ticket delivery in 90 seconds, cargo service, and a founder (Samar Pratap Singh) rooted in Varanasi. The Instagram is where it leaks. Look at the data and one thing screams out: <b>almost every post uses the identical caption</b> — the same "Varanasi Bus Service | All India…" block or the same phone/WhatsApp/email lines with a giant list of 25 routes. Instagram treats repeated captions as low-quality/spam and throttles reach, and viewers get no hook, no fare, no story — so they never save, comment, or follow. Meanwhile the account isn't even a <b>Professional/Business</b> account, the display name is keyword spam ("Holiday Package ! Tour Package !…"), the bio never mentions Varanasi or the "cheaper than RedBus" hook, and a caption still points to a dead <i>www.cheaptravel.com</i>. The fix isn't "post more" — you already post plenty. It's a <b>unique hook + fare-reveal per reel, a rebuilt profile, a route-first content system, and a WhatsApp booking funnel</b> that converts the views you already get.</p>
+
+    <h3>What this playbook gives you</h3>
+    <div class="grid g2">
+      <div class="card"><span class="pill saffron">Section 2–3</span><h4>The honest audit + a fixed profile</h4><p style="margin:0">A full Apify breakdown of what's working and what's killing reach, plus a <b>ready-to-paste bio, display name, highlights plan and link setup</b> — click to copy each one.</p></div>
+      <div class="card"><span class="pill blue">Section 4–5</span><h4>How to beat the giants + where to fight</h4><p style="margin:0">Your real moat against <b>RedBus &amp; AbhiBus</b>, and a <b>route playbook</b> ranking exactly which routes to make reels, posters and ads for — by demand and your own proof.</p></div>
+      <div class="card"><span class="pill green">Section 6–8</span><h4>A content + booking engine</h4><p style="margin:0">Content pillars, a fare-reveal reel format, the <b>caption system that replaces copy-paste</b>, a call/WhatsApp funnel, and a geo-targeted ad + poster plan built to drive <b>messages, not just views</b>.</p></div>
+      <div class="card"><span class="pill violet">Section 9–10</span><h4>90-day execution + copy bank</h4><p style="margin:0">A week-by-week plan to reach <b>10K followers &amp; steady daily bookings</b>, plus a bank of ready hooks, captions and hashtags you can copy straight into Instagram.</p></div>
+    </div>
+
+    <div class="callout saffron" style="margin-top:22px">
+      <b>The core idea.</b> Stop posting "buses." Start posting <b>routes, fares and trust</b>. Every reel names one route, shows one price on screen (<span class="hi">"Varanasi → Delhi ₹650 se shuru"</span>), proves you're 5% cheaper than RedBus, and ends with one line: <span class="hi">"Seat book karni hai? WhatsApp karo — ticket 90 second mein."</span> It stops feeling like a poster and starts feeling like <b>the cheapest, most trustworthy travel agent in your pocket.</b>
+    </div>
+  </section>
+
+  <!-- ===================== 2. AUDIT ===================== -->
+  <section class="page" id="audit">
+    <span class="kicker">Section 2 · The Data</span>
+    <h2 class="pt">The Full Audit</h2>
+    <p class="sub">We scraped @cheaptravelindia__ with Apify — the account profile plus your 37 most recent posts (8 June – 6 July 2026) — and scored every reel against your own channel. Here is what the numbers actually say, no sugar-coating.</p>
+
+    <h3>Account snapshot</h3>
+    <div class="grid g4">
+      <div class="stat"><div class="num blue">3,056</div><div class="lbl">Followers</div></div>
+      <div class="stat"><div class="num">295</div><div class="lbl">Total posts (you're not lazy — this is a <b>conversion</b> problem)</div></div>
+      <div class="stat"><div class="num">92</div><div class="lbl">Following · 26 Highlights</div></div>
+      <div class="stat"><div class="num bad">Personal</div><div class="lbl">NOT a Professional/Business account — losing insights &amp; CTA buttons</div></div>
+    </div>
+
+    <h3>Engagement reality check</h3>
+    <div class="grid g4">
+      <div class="stat"><div class="num saffron">~540</div><div class="lbl">Median reel views (last 37 posts)</div></div>
+      <div class="stat"><div class="num">~22</div><div class="lbl">Median likes per post</div></div>
+      <div class="stat"><div class="num bad">~0.7%</div><div class="lbl">Engagement rate — very low for the reach you get</div></div>
+      <div class="stat"><div class="num bad">~0</div><div class="lbl">Comments on almost every post</div></div>
+    </div>
+    <div class="callout red"><b>The single biggest finding.</b> Of your last 37 posts, the vast majority carry a <b>near-identical caption</b> — either the "🚌 Varanasi Bus Service | All India Bus &amp; Cargo…" block with the same 25-route list, or just the "📞 Book Your Seats / Cargo Now" phone lines. Instagram's system reads duplicate captions as spam and <b>quietly caps how many new people each post reaches</b>. This one habit is likely costing you the most growth — and it's the easiest thing to fix.</div>
+
+    <h3>What's working ✅ vs what's hurting ❌</h3>
+    <div class="grid g2">
+      <div class="card"><span class="pill green">Keep doing</span>
+        <ul class="clean check" style="margin:0">
+          <li><b>Short reels (8–20s)</b> — your best performers are all short.</li>
+          <li><b>Route-named reels</b> — Varanasi–Delhi, Ranchi/Jamshedpur, Bihar/Kolkata pull the most views.</li>
+          <li><b>Hindi captions</b> — your Hindi Natraj/Kashi posts get strong likes.</li>
+          <li><b>WhatsApp link in bio</b> — correct instinct; we'll sharpen it.</li>
+          <li><b>Daily posting</b> — consistency is there; we just need to fix quality.</li>
+        </ul>
+      </div>
+      <div class="card"><span class="pill red">Stop / fix now</span>
+        <ul class="clean cross" style="margin:0">
+          <li><b>Copy-paste captions</b> on nearly every post — kills reach.</li>
+          <li><b>No hook &amp; no fare on screen</b> — viewer has no reason to stop or save.</li>
+          <li><b>Phone number leads the caption</b> — value should come first.</li>
+          <li><b>3–4 min reels</b> (e.g. the 216s Kashi package = 144 views) — long dies.</li>
+          <li><b>Dead link "www.cheaptravel.com"</b> in captions — send them to WhatsApp/site instead.</li>
+          <li><b>Personal account</b> — switch to Professional for reach data &amp; buttons.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Your top performers — and why they won</h3>
+    <p class="sub" style="margin-bottom:8px">Ranked by views. The pattern is unmistakable: <b>short, one route, Hindi, a clear place name people recognise.</b></p>
+    <table>
+      <tr><th>Reel</th><th>Views</th><th>Likes</th><th>Len</th><th>Why it won</th></tr>
+      <tr><td><a href="https://www.instagram.com/reel/DZU3588iTRJ/" target="_blank">Varanasi–Ranchi–Jamshedpur (Banaras)</a></td><td class="mono">2,611</td><td class="mono">57</td><td class="mono">11s</td><td>Short + high-demand migrant route</td></tr>
+      <tr><td><a href="https://www.instagram.com/reel/DaK21iBR6yR/" target="_blank">Delhi–Bihar–Kolkata–Varanasi</a></td><td class="mono">1,711</td><td class="mono">45</td><td class="mono">21s</td><td>Multi-city labour corridor</td></tr>
+      <tr><td><a href="https://www.instagram.com/reel/DZlsGU_CuV2/" target="_blank">Varanasi–Delhi (8.5s)</a></td><td class="mono">1,368</td><td class="mono">25</td><td class="mono">9s</td><td>Shortest = most plays per view</td></tr>
+      <tr><td><a href="https://www.instagram.com/reel/DZcmXXVRRzW/" target="_blank">Varanasi–Delhi · Laxmi Holidays</a></td><td class="mono">1,203</td><td class="mono">91</td><td class="mono">15s</td><td><b>Most likes of any post</b></td></tr>
+      <tr><td><a href="https://www.instagram.com/reel/DZNNpSaCsab/" target="_blank">Varanasi Bus Service (pinned)</a></td><td class="mono">1,139</td><td class="mono">51</td><td class="mono">16s</td><td>Solid pinned anchor</td></tr>
+      <tr><td><a href="https://www.instagram.com/reel/DaCVWFMRhVV/" target="_blank">No-caption 5-second clip</a></td><td class="mono">907</td><td class="mono">25</td><td class="mono">5s</td><td>3,462 plays — raw &amp; short travels</td></tr>
+    </table>
+    <div class="callout"><b>Read this carefully:</b> your best-liked post ever (91 likes, Varanasi–Delhi, Laxmi Holidays, 15s) proves the winning formula is already in your hands — <b>one recognisable route + operator name + short + Hindi</b>. We just need every post to look like that one, with a fresh hook and a fare on screen.</div>
+  </section>
+
+  <!-- ===================== 3. PROFILE ===================== -->
+  <section class="page" id="profile">
+    <span class="kicker">Section 3 · The Fix</span>
+    <h2 class="pt">Profile &amp; Bio Fixes</h2>
+    <p class="sub">Your profile is the shop window. Right now it doesn't say <b>where</b> you are, <b>why</b> you're cheaper, or <b>what to do</b>. Below is a complete, ready-to-paste rebuild — tap <b>Copy</b> on any block and paste it straight into Instagram.</p>
+
+    <h3>1 · Switch to a Professional account (do this first, 30 seconds)</h3>
+    <div class="callout green"><b>Settings → Account type and tools → Switch to Professional → Business → category "Travel Company".</b> This unlocks reach/insights data, the <b>Call</b> and <b>WhatsApp</b> action buttons on your profile, and the ability to run ads and see which reels convert. You're currently a personal account — you're flying blind and missing free CTA buttons.</div>
+
+    <h3>2 · Fix the display name (the searchable name field)</h3>
+    <p>Right now it reads <b>"Holiday Package ! Tour Package ! Group Tour ! Explore With Us !"</b> — that's keyword spam that looks untrustworthy and wastes your most searchable field. Instagram search matches the <b>name</b> field, so put your brand + your #1 keyword there.</p>
+    <div class="copyrow"><div class="val">Cheap Travels India · Bus Tickets</div><button class="cbtn" data-copy="Cheap Travels India · Bus Tickets">Copy</button></div>
+    <p class="src">Why: "Cheap Travels India" builds the brand; "Bus Tickets" makes you show up when people search bus booking. Clean, trustworthy, searchable.</p>
+
+    <h3>3 · New bio — 3 options (pick one, copy, paste)</h3>
+    <p>Your current bio — <i>"Travel More, Pay Less✨ / All India Bus Tickets at Best Prices🚍"</i> — is fine but generic. It hides your two biggest weapons: <b>Varanasi roots</b> and <b>"cheaper than RedBus."</b> Instagram bios allow ~150 characters and line breaks.</p>
+
+    <div class="grid g3">
+      <div class="card"><span class="pill saffron">Option A · Price-led</span>
+        <div class="copyrow" style="margin-top:8px"><div class="val">🚍 Bus tickets up to 5% cheaper than RedBus
+✅ Direct from operator · Laxmi · RamDalal
+📲 WhatsApp ticket in 90 sec
+👇 Book now — sasti booking, pakka ticket</div></div>
+        <button class="cbtn" style="width:100%;padding:9px;border-radius:9px" data-copy="🚍 Bus tickets up to 5% cheaper than RedBus
+✅ Direct from operator · Laxmi · RamDalal
+📲 WhatsApp ticket in 90 sec
+👇 Book now — sasti booking, pakka ticket">Copy Option A</button>
+      </div>
+      <div class="card"><span class="pill blue">Option B · Trust-led</span>
+        <div class="copyrow" style="margin-top:8px"><div class="val">🚍 All-India bus tickets · Varanasi based
+💸 5% extra discount vs apps
+🎟️ E-ticket + PNR on WhatsApp
+📦 Cargo/parcel too · 👇 Book on WhatsApp</div></div>
+        <button class="cbtn" style="width:100%;padding:9px;border-radius:9px" data-copy="🚍 All-India bus tickets · Varanasi based
+💸 5% extra discount vs apps
+🎟️ E-ticket + PNR on WhatsApp
+📦 Cargo/parcel too · 👇 Book on WhatsApp">Copy Option B</button>
+      </div>
+      <div class="card"><span class="pill gold">Option C · Hindi-first</span>
+        <div class="copyrow" style="margin-top:8px"><div class="val">🚍 सस्ती बस टिकट, पक्का टिकट
+💸 RedBus से 5% तक सस्ता
+📲 WhatsApp पर 90 सेकंड में टिकट
+🙏 वाराणसी से पूरे भारत तक 👇</div></div>
+        <button class="cbtn" style="width:100%;padding:9px;border-radius:9px" data-copy="🚍 सस्ती बस टिकट, पक्का टिकट
+💸 RedBus से 5% तक सस्ता
+📲 WhatsApp पर 90 सेकंड में टिकट
+🙏 वाराणसी से पूरे भारत तक 👇">Copy Option C</button>
+      </div>
+    </div>
+    <p class="src">Recommendation: <b>Option C (Hindi-first)</b> for your Purvanchal/migrant audience, or <b>Option A</b> if you want the price hook to lead. Test one for 3 weeks, then swap and compare profile-visit → follow rate.</p>
+
+    <h3>4 · The link in bio</h3>
+    <p>You already use a WhatsApp link — good. Make it a <b>pre-filled WhatsApp message</b> so every tap starts a booking, not a blank chat. Even better: use a free link-hub (Instagram lets you add up to 5 links) with WhatsApp + Call + Website.</p>
+    <div class="copyrow"><div class="val">https://wa.me/918853521184?text=Hi%20Cheap%20Travels%2C%20mujhe%20bus%20ticket%20book%20karni%20hai.%20Route%3A%20____%20Date%3A%20____</div><button class="cbtn" data-copy="https://wa.me/918853521184?text=Hi%20Cheap%20Travels%2C%20mujhe%20bus%20ticket%20book%20karni%20hai.%20Route%3A%20____%20Date%3A%20____">Copy link</button></div>
+    <p class="src">This opens WhatsApp with "Hi Cheap Travels, mujhe bus ticket book karni hai. Route: ___ Date: ___" already typed — massively lowers friction to message you.</p>
+
+    <h3>5 · Highlights — reorganise your 26 into 6 clean covers</h3>
+    <div class="grid g3">
+      <div class="card"><h4>🎟️ Book Now</h4><p style="margin:0;font-size:12.5px">How to book in 3 steps + WhatsApp link sticker. Pin first.</p></div>
+      <div class="card"><h4>💸 Fares &amp; Offers</h4><p style="margin:0;font-size:12.5px">Route fares, "5% cheaper" proof, current discounts.</p></div>
+      <div class="card"><h4>🛣️ Routes</h4><p style="margin:0;font-size:12.5px">Varanasi–Delhi, Katra, Manali, Ranchi — one story each.</p></div>
+      <div class="card"><h4>⭐ Reviews</h4><p style="margin:0;font-size:12.5px">Screenshots of happy customers &amp; delivered e-tickets = trust.</p></div>
+      <div class="card"><h4>📦 Cargo</h4><p style="margin:0;font-size:12.5px">Parcel service — a whole second revenue line most miss.</p></div>
+      <div class="card"><h4>🙏 Kashi &amp; Tours</h4><p style="margin:0;font-size:12.5px">Ayodhya/Prayagraj/Kashi packages + boat &amp; cab.</p></div>
+    </div>
+    <div class="callout saffron"><b>One-account rule:</b> you appear to run both <b>@cheaptravelindia__</b> and <b>@cheaptravelindiabus___</b>. Split audiences = slower growth for both. Pick <b>one</b> as the main brand account, funnel all effort there, and point the other's bio to it. Consistency compounds; two half-fed accounts don't.</div>
+  </section>
+
+  <!-- ===================== 4. POSITIONING ===================== -->
+  <section class="page" id="positioning">
+    <span class="kicker">Section 4 · Positioning</span>
+    <h2 class="pt">How You Beat RedBus &amp; AbhiBus</h2>
+    <p class="sub">You said you want to compete with the giants. Be clear-eyed: <b>RedBus holds ~70% of online bus ticketing</b> and handles <b>~2 lakh bookings a day</b>; AbhiBus lists <b>6,200+ operators</b>. You will not out-tech them. But they have a soft underbelly — and it's exactly where you're strong.</p>
+
+    <div class="grid g4">
+      <div class="stat"><div class="num">~70%</div><div class="lbl">RedBus share of online bus ticketing — the giant</div></div>
+      <div class="stat"><div class="num">2 lakh</div><div class="lbl">RedBus bookings per day (app-first, urban)</div></div>
+      <div class="stat"><div class="num saffron">₹0</div><div class="lbl">Human help RedBus gives a first-time rural traveller</div></div>
+      <div class="stat"><div class="num good">5%</div><div class="lbl">Your price edge — real, and the giants can't match per-ticket</div></div>
+    </div>
+
+    <h3>Don't fight their game. Win yours.</h3>
+    <table>
+      <tr><th>What the giants do</th><th>Where they're weak</th><th>Your counter-move</th></tr>
+      <tr><td>App-first, self-service booking</td><td>First-time / rural / older travellers find apps confusing &amp; distrust online payment</td><td class="tag-good">Human on WhatsApp/call, pay after or via UPI, Hindi support</td></tr>
+      <tr><td>English, metro-centric UX</td><td>Weak emotional pull in Purvanchal / Bihar / small towns</td><td class="tag-good">Hindi-first, "apna banaras wala", regional trust</td></tr>
+      <tr><td>Convenience fee added</td><td>Final price often higher than agent</td><td class="tag-good">5% cheaper on the same bus + no confusing fees</td></tr>
+      <tr><td>No relationship after booking</td><td>No one to call if bus is late / seat issue</td><td class="tag-good">Real person who picks up, refund SLA, repeat WhatsApp</td></tr>
+      <tr><td>Buses only</td><td>Don't do parcels for the migrant worker</td><td class="tag-good">Cargo/parcel on the same routes = recurring income</td></tr>
+    </table>
+
+    <div class="callout green"><b>Your positioning in one line:</b> &nbsp;<span class="hi" style="font-weight:600">"Aapke phone mein baitha, sabse sasta aur bharosemand travel agent — RedBus se 5% sasta, aur baat karne ke liye ek insaan."</span> You are not "a smaller RedBus." You are the <b>trusted human alternative</b> for the millions who don't want an app — they want the cheapest fare and someone who picks up the phone.</div>
+
+    <h3>Who you're really for (and where to win first)</h3>
+    <div class="grid g3">
+      <div class="card"><span class="pill saffron">Core audience</span><h4>The Purvanchal migrant</h4><p style="margin:0">Workers &amp; students travelling <b>Delhi ⇄ Varanasi / Azamgarh / Gorakhpur / Jaunpur / Bihar</b>. Price-sensitive, Hindi, book by phone/WhatsApp, distrust apps. <b>This is your beachhead.</b></p></div>
+      <div class="card"><span class="pill blue">Second audience</span><h4>The pilgrim &amp; family</h4><p style="margin:0">Kashi, Ayodhya, Prayagraj, Katra (Vaishno Devi). Emotional, seasonal, book in groups — perfect for WhatsApp handling and packages.</p></div>
+      <div class="card"><span class="pill violet">Third audience</span><h4>The hill-holiday traveller</h4><p style="margin:0">Delhi ⇄ Manali / Shimla / Kasol / Dharamshala. Younger, higher fare, summer &amp; long-weekend spikes — great for ads.</p></div>
+    </div>
+    <div class="callout"><b>Focus wins.</b> You cannot advertise "All India" to everyone — that's why the copy-paste 25-route posts flop. Win the <b>Purvanchal corridor</b> first (you already over-index there), become <i>the</i> name for Delhi–Varanasi–Bihar bus + cargo, then expand to pilgrimage and hills.</p></div>
+  </section>
+
+  <!-- ===================== 5. ROUTES ===================== -->
+  <section class="page" id="routes">
+    <span class="kicker">Section 5 · Where to fight</span>
+    <h2 class="pt">Route Playbook — What to Post, Poster &amp; Advertise</h2>
+    <p class="sub">This is the answer to your core question: <b>which routes should we make reels, posters and ads for?</b> We combined your own best-performing content with real market demand (UPSRTC runs 40,000+ daily trips in UP; Delhi–Lucknow &amp; Anand Vihar–Gorakhpur are among India's busiest; Ayodhya saw ~23 crore visitors in H1 2025). Routes are grouped into 3 tiers by priority.</p>
+
+    <div data-filter-group>
+    <div class="filters">
+      <button class="fbtn active" data-f="all">All routes</button>
+      <button class="fbtn" data-f="reel">Best for Reels</button>
+      <button class="fbtn" data-f="ad">Best for Ads</button>
+      <button class="fbtn" data-f="poster">Best for Posters</button>
+      <button class="fbtn" data-f="cargo">Cargo</button>
+      <button class="fbtn" data-f="season">Seasonal</button>
+    </div>
+
+    <div class="tier-h"><span class="tn t1">TIER 1</span><h3 style="margin:0">Own these now — high demand + your proof</h3></div>
+    <div class="grid g2">
+      <div class="rcard" data-cat="reel ad poster"><div class="route">Delhi <span class="arw">⇄</span> Varanasi</div><div class="why">Your #1 corridor and best content. Pilgrims, students, workers, business — year-round volume. BharatBenz AC sleeper ₹650–1,200.</div><div class="rmeta"><span class="rchip g">Your top performer</span><span class="rchip">Daily demand</span><span class="rchip o">Ad-ready</span></div></div>
+      <div class="rcard" data-cat="reel ad poster cargo"><div class="route">Delhi <span class="arw">⇄</span> Gorakhpur</div><div class="why">Among India's busiest bus routes (Anand Vihar–Gorakhpur). Huge migrant base. Big cargo/parcel demand too.</div><div class="rmeta"><span class="rchip">Top-3 busiest</span><span class="rchip g">Migrant corridor</span><span class="rchip o">Cargo</span></div></div>
+      <div class="rcard" data-cat="reel ad poster"><div class="route">Delhi <span class="arw">⇄</span> Lucknow</div><div class="why">One of the single most popular bus routes in the country. Mix of business + family travel; strong for ads.</div><div class="rmeta"><span class="rchip">#1 popular</span><span class="rchip o">Ad-ready</span></div></div>
+      <div class="rcard" data-cat="reel ad cargo"><div class="route">Delhi <span class="arw">⇄</span> Azamgarh / Jaunpur / Mau</div><div class="why">Deep Purvanchal labour migration. Under-served by apps, over-served by trust. You already rank here — press the advantage.</div><div class="rmeta"><span class="rchip g">Your moat</span><span class="rchip o">Cargo</span></div></div>
+      <div class="rcard" data-cat="reel poster"><div class="route">Ayodhya <span class="arw">→</span> Varanasi <span class="arw">→</span> Ranchi/Tata</div><div class="why">You're an <b>authorized Natraj partner</b> on this exact route — a genuine unique selling point. Ranchi/Jamshedpur reels already pull your highest views.</div><div class="rmeta"><span class="rchip g">Exclusive partner</span><span class="rchip">2,611 views</span></div></div>
+      <div class="rcard" data-cat="reel ad cargo"><div class="route">Delhi / Varanasi <span class="arw">⇄</span> Patna · Bihar · Kolkata</div><div class="why">Massive migrant + trade corridor. Your Delhi–Bihar–Kolkata reel hit 1,711 views. Cargo potential is large.</div><div class="rmeta"><span class="rchip">High volume</span><span class="rchip o">Cargo</span></div></div>
+    </div>
+
+    <div class="tier-h"><span class="tn t2">TIER 2</span><h3 style="margin:0">Seasonal &amp; pilgrimage — high margin, run ads on peaks</h3></div>
+    <div class="grid g2">
+      <div class="rcard" data-cat="ad poster season"><div class="route">Delhi <span class="arw">⇄</span> Katra (Vaishno Devi)</div><div class="why">129+ daily buses; peaks in <b>Mar–Jun &amp; Oct–Nov (Navratri, Diwali)</b>. High-intent pilgrims, higher fares — ideal ad target in season.</div><div class="rmeta"><span class="rchip o">Seasonal ads</span><span class="rchip">Volvo AC</span></div></div>
+      <div class="rcard" data-cat="ad poster season"><div class="route">Delhi <span class="arw">⇄</span> Manali / Shimla / Kasol</div><div class="why">Summer + long-weekend + honeymoon spikes. Younger, higher-value travellers who respond to reels &amp; ads.</div><div class="rmeta"><span class="rchip o">Summer peak</span><span class="rchip">High fare</span></div></div>
+      <div class="rcard" data-cat="reel poster season"><div class="route">Kashi <span class="arw">·</span> Ayodhya <span class="arw">·</span> Prayagraj Circuit</div><div class="why">Ayodhya: ~23 crore visitors H1 2025; Ram Mandir surge continues. Package + bus + cab combos convert well on WhatsApp.</div><div class="rmeta"><span class="rchip g">Tourism boom</span><span class="rchip">Packages</span></div></div>
+      <div class="rcard" data-cat="ad poster season"><div class="route">Delhi <span class="arw">⇄</span> Haridwar / Rishikesh / Katra</div><div class="why">Weekend spiritual + adventure travel; steady demand, strong for festival-timed ads.</div><div class="rmeta"><span class="rchip o">Weekend</span><span class="rchip">Devotional</span></div></div>
+    </div>
+
+    <div class="tier-h"><span class="tn t3">TIER 3</span><h3 style="margin:0">Cargo &amp; secondary — recurring revenue, low competition</h3></div>
+    <div class="grid g2">
+      <div class="rcard" data-cat="cargo"><div class="route">Delhi <span class="arw">→</span> Purvanchal Cargo (Azamgarh, Gorakhpur, Mau, Ghazipur)</div><div class="why">Parcel/cargo is <b>repeat B2B income</b> the apps ignore. Same buses, same routes — pure margin. Make it a content pillar.</div><div class="rmeta"><span class="rchip g">Recurring</span><span class="rchip">Low competition</span></div></div>
+      <div class="rcard" data-cat="reel"><div class="route">Delhi <span class="arw">⇄</span> Indore · Ujjain · Pune</div><div class="why">Secondary but real demand (Ujjain–Mahakal pilgrims). Keep as occasional reels, not core focus.</div><div class="rmeta"><span class="rchip">Occasional</span></div></div>
+    </div>
+    </div>
+
+    <div class="callout saffron"><b>The rule for choosing what to post:</b> if a route is <span class="tag-good">Tier 1</span>, it deserves a reel <b>every week</b> and its own poster. <span class="tag-good">Tier 2</span> gets reels + ads <b>only around its peak season</b>. <span class="tag-good">Tier 3</span> gets an occasional reel. Stop giving all 25 routes equal weight in one caption — <b>one reel = one route = one fare = one CTA.</b></div>
+  </section>
+
+  <!-- ===================== 6. CONTENT ===================== -->
+  <section class="page" id="content">
+    <span class="kicker">Section 6 · The Engine</span>
+    <h2 class="pt">Content Strategy</h2>
+    <p class="sub">The goal isn't "more posts" — you already post daily. It's making each post <b>reach new people and drive a message</b>. That comes from 6 content pillars, one repeatable reel format, and killing the copy-paste caption forever.</p>
+
+    <h3>The 6 content pillars</h3>
+    <table>
+      <tr><th>Pillar</th><th>Job</th><th>Format</th><th>Cadence</th></tr>
+      <tr><td><span class="pill saffron" style="margin:0">Fare Reveal</span></td><td>Reach + saves (your core engine)</td><td>Route + price on screen, 10–20s</td><td class="mono">3 / week</td></tr>
+      <tr><td><span class="pill green" style="margin:0">Cheaper-than-RedBus</span></td><td>Trust + differentiation</td><td>Side-by-side price compare, 15s</td><td class="mono">1 / week</td></tr>
+      <tr><td><span class="pill blue" style="margin:0">Route Spotlight</span></td><td>SEO + relatability by city</td><td>One route, boarding points, timing</td><td class="mono">2 / week</td></tr>
+      <tr><td><span class="pill gold" style="margin:0">Pilgrimage / Emotion</span></td><td>Shares + family reach</td><td>Kashi/Ayodhya visuals + Hindi voice</td><td class="mono">1 / week</td></tr>
+      <tr><td><span class="pill navy" style="margin:0">Trust &amp; Proof</span></td><td>Conversion (the fence-sitters)</td><td>E-ticket delivery, refund SLA, review screenshot</td><td class="mono">1 / week</td></tr>
+      <tr><td><span class="pill violet" style="margin:0">Cargo / Parcel</span></td><td>Second revenue line</td><td>"Delhi se gaon parcel" explainer</td><td class="mono">1 / 2 weeks</td></tr>
+    </table>
+
+    <h3>The one reel format that replaces everything</h3>
+    <div class="callout"><b>Every reel, same 4 beats:</b> <b>(1) Hook 0–3s</b> — big route name + fare on screen, spoken problem/price. <b>(2) Proof 3–10s</b> — operator (Laxmi/RamDalal), AC sleeper, "RedBus se sasta". <b>(3) Detail 10–18s</b> — timing/boarding point or seat availability. <b>(4) CTA final 3s</b> — "WhatsApp karo, ticket 90 second mein." Keep it under 20 seconds.</div>
+    <div class="grid g3">
+      <div class="card"><span class="pill red">Weak ❌ (what you do now)</span><p style="margin:0">Bus B-roll + caption = phone number + 25-route list. No hook, no price, no reason to stop.</p></div>
+      <div class="card"><span class="pill green">Strong ✅</span><p style="margin:0" class="hi">On-screen: <b>"वाराणसी → दिल्ली ₹650 से"</b>. Voice: "AC sleeper, aaj raat ki seat available — RedBus se sasti."</p></div>
+      <div class="card"><span class="pill green">Strong ✅</span><p style="margin:0" class="hi">On-screen: <b>"RedBus ₹1499 · Hum ₹1424"</b>. Voice: "Same bus, same seat — 5% sasta. WhatsApp karo."</p></div>
+    </div>
+
+    <h3>Kill the copy-paste — the new caption system</h3>
+    <p>Never paste the 25-route block again. Use this <b>4-line template</b> and change only the route + fare. It gives a hook, a value, a CTA and clean hashtags — everything the old caption lacked.</p>
+    <div class="capbox"><button class="copybtn" data-copy="वाराणसी → दिल्ली 🚍 AC Sleeper ₹650 से शुरू
+आज रात की सीट available — RedBus से 5% सस्ता, ticket WhatsApp पर 90 sec में।
+📲 Seat book karni hai? WhatsApp: 8853521184 · Call: 8853391184
+#VaranasiToDelhi #busbooking #laxmiholidays #cheaptravelindia #banaras">Copy</button><span class="captxt">वाराणसी → दिल्ली 🚍 AC Sleeper ₹650 से शुरू
+आज रात की सीट available — RedBus से 5% सस्ता, ticket WhatsApp पर 90 sec में।
+📲 Seat book karni hai? WhatsApp: 8853521184 · Call: 8853391184
+#VaranasiToDelhi #busbooking #laxmiholidays #cheaptravelindia #banaras</span></div>
+    <p class="src">Line 1 = hook (route + fare). Line 2 = value (cheaper + fast). Line 3 = CTA (WhatsApp/call). Line 4 = 4–6 route-specific hashtags. Swap the city + price for every route. That's it.</p>
+
+    <h3>Hashtag rule</h3>
+    <ul class="clean">
+      <li>Use <b>5–8 hashtags</b>, not 30. Mix 3 route-specific (#VaranasiToDelhi #gorakhpur), 2 category (#busbooking #bustickets), 1 brand (#cheaptravelindia).</li>
+      <li>Drop spammy/irrelevant tags (#viralpost, #viralsong) — they attract bots, not bookers, and can suppress reach.</li>
+      <li>Fix the broken ones: you've been using "#viralreeĺs" (special character) — it indexes nowhere.</li>
+    </ul>
+    <div class="callout green"><b>Post fewer, better.</b> Two sharp fare-reveal reels beat five copy-paste posters. Aim for <b>5–6 quality posts/week</b> with unique captions, plus daily Stories (which don't need to be polished) for the "always-on" presence.</div>
+  </section>
+
+  <!-- ===================== 7. FUNNEL ===================== -->
+  <section class="page" id="funnel">
+    <span class="kicker">Section 7 · Conversion</span>
+    <h2 class="pt">The Call / WhatsApp Booking Funnel</h2>
+    <p class="sub">You asked the most important question: <b>how do we get more calls and messages to actually book?</b> Reach is worthless if it doesn't turn into a WhatsApp "Hi". Here's the funnel that converts a scroll into a booking.</p>
+
+    <div class="flow">
+      <span class="step">Reel reach (new people)</span><span class="arr">→</span>
+      <span class="step">Profile visit</span><span class="arr">→</span>
+      <span class="step on">WhatsApp "Hi"</span><span class="arr">→</span>
+      <span class="step on">Fare quote</span><span class="arr">→</span>
+      <span class="step">Booking + e-ticket</span>
+    </div>
+
+    <h3>The 7 levers that turn views into WhatsApp messages</h3>
+    <div class="grid g2">
+      <div class="card"><span class="pill saffron">Lever 1</span><h4>Put the CTA on the video, not just the caption</h4><p style="margin:0">Last frame of every reel: <b>"WhatsApp 8853521184 — ticket 90 sec"</b> with a WhatsApp icon. Most viewers never read captions.</p></div>
+      <div class="card"><span class="pill saffron">Lever 2</span><h4>Pre-filled WhatsApp link everywhere</h4><p style="margin:0">Bio link + Story sticker open a chat with "Route: ___ Date: ___" pre-typed. Removing typing friction is the single biggest conversion win.</p></div>
+      <div class="card"><span class="pill saffron">Lever 3</span><h4>Reply in under 5 minutes</h4><p style="margin:0">Speed = trust for a first-timer sending money. Use WhatsApp <b>quick-reply templates</b> for fares so you answer instantly.</p></div>
+      <div class="card"><span class="pill saffron">Lever 4</span><h4>Comment-to-DM automation</h4><p style="margin:0">"Comment <b>FARE</b> and we'll DM the price." Comments boost reach <i>and</i> capture leads. (Manychat/free tools do this.)</p></div>
+      <div class="card"><span class="pill saffron">Lever 5</span><h4>Story funnel daily</h4><p style="margin:0">Poll ("Delhi ya Varanasi?"), then a "DM to book" sticker. Stories reach your warmest audience — your existing followers.</p></div>
+      <div class="card"><span class="pill saffron">Lever 6</span><h4>Proof kills hesitation</h4><p style="margin:0">Post delivered e-tickets, PNRs, and "refund in 30 min" screenshots. A nervous buyer needs to see others trusted you.</p></div>
+      <div class="card"><span class="pill saffron">Lever 7</span><h4>Save the number after every booking</h4><p style="margin:0">Broadcast list (with consent) for festival fares &amp; return-journey reminders. Repeat bookings are your cheapest growth.</p></div>
+    </div>
+
+    <h3>WhatsApp quick-reply template (paste into WhatsApp Business)</h3>
+    <div class="capbox"><button class="copybtn" data-copy="🙏 Cheap Travels India mein aapka swagat hai!
+Aapka route aur date bhejiye — main abhi best fare aur seat bhejta hoon.
+✅ Direct operator (Laxmi/RamDalal), RedBus se ~5% sasta
+🎟️ Payment ke baad e-ticket + PNR 90 sec mein WhatsApp par
+📞 8853391184 · 📲 8853521184">Copy</button><span class="captxt">🙏 Cheap Travels India mein aapka swagat hai!
+Aapka route aur date bhejiye — main abhi best fare aur seat bhejta hoon.
+✅ Direct operator (Laxmi/RamDalal), RedBus se ~5% sasta
+🎟️ Payment ke baad e-ticket + PNR 90 sec mein WhatsApp par
+📞 8853391184 · 📲 8853521184</span></div>
+    <div class="callout"><b>Set up WhatsApp Business (free):</b> greeting message, away message, quick replies, catalogue of routes+fares, and labels (New lead / Booked / Repeat). This alone will noticeably lift your booking rate from the same traffic.</div>
+  </section>
+
+  <!-- ===================== 8. ADS ===================== -->
+  <section class="page" id="ads">
+    <span class="kicker">Section 8 · Paid + Posters</span>
+    <h2 class="pt">Ads &amp; Poster Plan</h2>
+    <p class="sub">Where to spend money and design effort for maximum bookings. The strategy: <b>organic reels build the brand, WhatsApp ads capture demand, posters lock in the routes.</b> Even a small daily budget beats boosting random posts.</p>
+
+    <h3>The ad play — "Click to WhatsApp" beats everything for you</h3>
+    <div class="callout green"><b>Run Instagram/Facebook "Click to WhatsApp" ads</b>, not "boost post." These send the tap straight into a WhatsApp chat — your entire funnel is built for that. Objective: <b>Messages</b>. Start at ₹150–300/day per route, scale what books.</div>
+    <table>
+      <tr><th>Campaign</th><th>Target geo</th><th>When</th><th>Why it converts</th></tr>
+      <tr><td><b>Delhi → Varanasi/Purvanchal</b></td><td>Delhi NCR — areas with high Purvanchali population (e.g. outer Delhi, industrial belts)</td><td>Always-on + festival spikes (Chhath, Holi, Diwali)</td><td>Home-bound migrants searching cheap fare</td></tr>
+      <tr><td><b>Reverse: Varanasi/Gorakhpur → Delhi</b></td><td>Varanasi, Gorakhpur, Azamgarh, Jaunpur</td><td>Post-festival return waves</td><td>Return journeys are half your demand</td></tr>
+      <tr><td><b>Katra / Vaishno Devi</b></td><td>Delhi + Punjab + Haryana</td><td>Navratri, Oct–Nov, summer</td><td>High-intent pilgrims, higher ticket value</td></tr>
+      <tr><td><b>Manali / Shimla</b></td><td>Delhi NCR, age 20–35</td><td>Apr–Jun + long weekends</td><td>Holiday planners respond to reels+ads</td></tr>
+      <tr><td><b>Ayodhya / Kashi package</b></td><td>UP + Bihar + Delhi, age 35+</td><td>Year-round, festival peaks</td><td>Ram Mandir surge; group WhatsApp bookings</td></tr>
+    </table>
+    <ul class="clean">
+      <li><b>Use your best organic reels as the ad creative</b> — the Varanasi–Delhi 91-like reel already proved it converts. Don't make new ad-only creative first; promote what worked.</li>
+      <li><b>Retarget</b> profile visitors &amp; video viewers with a "Still deciding? Seat almost full" message ad.</li>
+      <li><b>Track per route:</b> cost per WhatsApp message, then cost per booking. Kill routes that don't book; double down on those that do.</li>
+    </ul>
+
+    <h3>Poster set to design (one per Tier-1 route)</h3>
+    <p>Clean, reusable poster templates in your brand colours — <b>navy + saffron + green</b>. Same layout every time so the brand is instantly recognisable in the feed.</p>
+    <div class="grid g3">
+      <div class="card"><span class="pill saffron">Poster type 1</span><h4>Route + Fare</h4><p style="margin:0;font-size:12.5px">Big route name, "₹650 se", AC sleeper icon, WhatsApp CTA. One per Tier-1 route.</p></div>
+      <div class="card"><span class="pill green">Poster type 2</span><h4>Price Compare</h4><p style="margin:0;font-size:12.5px">"RedBus ₹1499 · Hum ₹1424 — same bus." The trust bomb.</p></div>
+      <div class="card"><span class="pill blue">Poster type 3</span><h4>Trust Badge</h4><p style="margin:0;font-size:12.5px">"Ticket 90 sec · Refund 30 min · Direct operator." Proof.</p></div>
+      <div class="card"><span class="pill gold">Poster type 4</span><h4>Festival Timing</h4><p style="margin:0;font-size:12.5px">"Chhath special — Delhi to Gorakhpur, seats filling." Seasonal urgency.</p></div>
+      <div class="card"><span class="pill violet">Poster type 5</span><h4>Cargo</h4><p style="margin:0;font-size:12.5px">"Delhi se gaon parcel — safe &amp; sasta." The ignored revenue line.</p></div>
+      <div class="card"><span class="pill navy">Poster type 6</span><h4>Pilgrimage Package</h4><p style="margin:0;font-size:12.5px">"Kashi-Ayodhya-Prayagraj 4N/5D" with a from-price + WhatsApp.</p></div>
+    </div>
+    <div class="callout saffron"><b>Design once, reuse forever.</b> Build these 6 as editable templates (Canva). Then a new route poster takes 2 minutes — swap city + fare. Consistency of look is what makes people remember <i>Cheap Travels India</i> specifically.</div>
+  </section>
+
+  <!-- ===================== 9. CALENDAR ===================== -->
+  <section class="page" id="calendar">
+    <span class="kicker">Section 9 · Execution</span>
+    <h2 class="pt">90-Day Execution Plan</h2>
+    <p class="sub">A realistic month-by-month plan to go from <b>3,056 followers &amp; ~0 comments</b> to <b>10K+ followers and a steady daily flow of WhatsApp bookings.</b> Do the Month 1 setup once; the rest compounds.</p>
+
+    <h3>Weekly posting rhythm (repeat every week)</h3>
+    <div class="grid g4">
+      <div class="stat"><div class="num blue">5–6</div><div class="lbl">Feed posts / week (unique captions, never copy-paste)</div></div>
+      <div class="stat"><div class="num saffron">3</div><div class="lbl">Fare-reveal reels / week (your core engine)</div></div>
+      <div class="stat"><div class="num good">Daily</div><div class="lbl">Stories — polls, fares, "DM to book" stickers</div></div>
+      <div class="stat"><div class="num violet">1</div><div class="lbl">Proof/review post / week (converts fence-sitters)</div></div>
+    </div>
+    <div class="callout"><b>Best time to post:</b> your winners went out mornings; keep a consistent <b>9:30–10:30 AM</b> slot and one <b>7–9 PM</b> slot. The algorithm rewards predictability. Push festival wishes to Stories, not feed.</div>
+
+    <h3>Month by month</h3>
+    <div class="filters" data-filter-group id="calFilter">
+      <button class="fbtn active" data-f="all">All months</button>
+      <button class="fbtn" data-f="m1">Month 1</button>
+      <button class="fbtn" data-f="m2">Month 2</button>
+      <button class="fbtn" data-f="m3">Month 3</button>
+    </div>
+    <div id="calWrap"></div>
+
+    <h3>KPIs to watch every week</h3>
+    <ul class="clean">
+      <li><b>Followers gained / week</b> — the real scoreboard (target: 3K → 10K+ in 90 days).</li>
+      <li><b>WhatsApp messages / week</b> — the money metric. Track how many reels drove a "Hi".</li>
+      <li><b>Bookings / week</b> and <b>cost per booking</b> from ads — the bottom line.</li>
+      <li><b>Saves &amp; shares per reel</b> — the signal that drives non-follower reach.</li>
+      <li><b>Comments per reel</b> — from ~0 today; every reel must ask ONE question to spark them.</li>
+    </ul>
+  </section>
+
+  <!-- ===================== 10. REEL SCRIPTS ===================== -->
+  <section class="page" id="scripts">
+    <span class="kicker">Section 10 · Ready to shoot</span>
+    <h2 class="pt">Reel Scripts — Hindi + English</h2>
+    <p class="sub">8 complete reel scripts. Each one tells you <b>exactly what to shoot, what text to put on screen, what to say</b> (in both Hindi and English), the <b>price to show</b>, and the caption to paste. Simple and direct — hand it to whoever makes the reel. Tap a card to open it.</p>
+    <div class="callout saffron"><b>Rule for all reels:</b> keep it <b>under 20 seconds</b>, put the <b>route name + price big on screen in the first 2 seconds</b>, and end every reel with the <b>WhatsApp number</b>. Prices below are examples from your posts — change them to your live fares before posting.</div>
+    <div id="scriptWrap"></div>
+  </section>
+
+  <!-- ===================== 11. STATIC POSTS ===================== -->
+  <section class="page" id="statics">
+    <span class="kicker">Section 11 · Design &amp; post</span>
+    <h2 class="pt">Static Post Ideas — with Pricing</h2>
+    <p class="sub">8 single-image posts you can make in Canva in minutes. Each tells you <b>what to put on the image</b> (in Hindi + English), the <b>price to show</b>, the <b>caption</b>, and <b>what to do</b>. Great for days you can't shoot a reel. Tap a card to open it.</p>
+    <div class="callout green"><b>Keep every poster the same look:</b> green background, white/beige card, orange price, logo top-left, WhatsApp number bottom. Same design every time = people start recognising Cheap Travels India instantly.</div>
+    <div id="staticWrap"></div>
+  </section>
+
+  <!-- ===================== 12. BANK ===================== -->
+  <section class="page" id="bank">
+    <span class="kicker">Section 12 · Copy &amp; paste</span>
+    <h2 class="pt">Caption &amp; Hook Bank</h2>
+    <p class="sub">Ready-to-use hooks, full captions and hashtag sets. Tap any to copy straight into Instagram. Swap the route + fare and post — no more copy-paste blocks.</p>
+
+    <h3>10 scroll-stopping hooks (first line / on-screen text)</h3>
+    <div class="two">
+      <div class="hookline hi">वाराणसी → दिल्ली ₹650 से — आज रात की सीट खाली है 🚍</div>
+      <div class="hookline hi">RedBus ₹1499. हम ₹1424. Same bus, same seat. 🤝</div>
+      <div class="hookline hi">दिल्ली से गोरखपुर — घर जाना है? Seat अभी book करो 🙏</div>
+      <div class="hookline hi">App पर टिकट मत काटो — पहले ये fare देख लो 💸</div>
+      <div class="hookline hi">बनारस से रांची/टाटा — सीधी बस, हम authorized partner हैं ✅</div>
+      <div class="hookline hi">Ticket 90 second में WhatsApp पर — कैसे? देखो 👇</div>
+      <div class="hookline hi">दिल्ली से मनाली ₹— से, AC sleeper, पहाड़ बुला रहे हैं 🏔️</div>
+      <div class="hookline hi">Chhath पर घर जाना है? Delhi–Gorakhpur seats भर रही हैं 🪔</div>
+      <div class="hookline hi">कटरा (वैष्णो देवी) की बस ₹— से — Navratri special 🛕</div>
+      <div class="hookline hi">Delhi से गाँव parcel भेजना है? सस्ता &amp; safe cargo 📦</div>
+    </div>
+
+    <h3>Ready captions by pillar</h3>
+    <div id="capBank"></div>
+
+    <h3>Hashtag sets (copy the one that fits the route)</h3>
+    <div class="grid g2">
+      <div class="capbox"><button class="copybtn" data-copy="#VaranasiToDelhi #banaras #kashi #busbooking #bustickets #laxmiholidays #cheaptravelindia">Copy</button><span class="captxt">#VaranasiToDelhi #banaras #kashi #busbooking #bustickets #laxmiholidays #cheaptravelindia</span></div>
+      <div class="capbox"><button class="copybtn" data-copy="#DelhiToGorakhpur #gorakhpur #purvanchal #busbooking #busservice #ramdalalholidays #cheaptravelindia">Copy</button><span class="captxt">#DelhiToGorakhpur #gorakhpur #purvanchal #busbooking #busservice #ramdalalholidays #cheaptravelindia</span></div>
+      <div class="capbox"><button class="copybtn" data-copy="#DelhiToKatra #vaishnodevi #katra #navratri #busbooking #volvobus #cheaptravelindia">Copy</button><span class="captxt">#DelhiToKatra #vaishnodevi #katra #navratri #busbooking #volvobus #cheaptravelindia</span></div>
+      <div class="capbox"><button class="copybtn" data-copy="#DelhiToManali #manali #shimla #himachal #busbooking #acsleeper #cheaptravelindia">Copy</button><span class="captxt">#DelhiToManali #manali #shimla #himachal #busbooking #acsleeper #cheaptravelindia</span></div>
+    </div>
+
+    <div class="callout green" style="margin-top:22px"><b>That's the whole system.</b> Fix the profile (Section 3), post one route + one fare + one CTA per reel (Section 6), funnel every tap to WhatsApp (Section 7), advertise the Tier-1 routes (Sections 5 &amp; 8), and run the 90-day plan (Section 9). Do this and the reach you already earn finally turns into <span class="hi">followers, messages, and bookings.</span></div>
+    <p class="src" style="margin-top:18px">Prepared by KV TechMedia · Data: Apify scrape of @cheaptravelindia__, 6 Jul 2026 · Market data: UPSRTC, redBus, AbhiBus, UP Tourism (2025).</p>
+  </section>
+
+  <script>
+  // ---- Calendar render ----
+  const cal=[
+    {m:'m1',tag:'Month 1 · Fix & Foundation',color:'saffron',focus:'Rebuild the base so every future post performs better.',big:'Switch to Professional account, new bio + name, reorganise highlights, kill copy-paste captions, set up WhatsApp Business.',todo:['Switch to Professional/Business account','Paste new display name + bio, set pre-filled WhatsApp link','Rebuild 26 highlights into 6 clean covers','Start the 4-line caption template on every post — no more 25-route block','Set up WhatsApp Business: greeting, quick replies, route+fare catalogue','Post 3 fare-reveal reels/week on Tier-1 routes (Varanasi–Delhi, Gorakhpur, Lucknow)','Post 5+ proof screenshots to a Reviews highlight']},
+    {m:'m2',tag:'Month 2 · Reach & Convert',color:'blue',focus:'Scale what works and turn on paid.',big:'Launch Click-to-WhatsApp ads on 2 Tier-1 routes; add comment-to-DM; double down on best formats.',todo:['Identify your 3 best-performing reel formats from Month 1 insights','Launch Click-to-WhatsApp ads: Delhi→Varanasi + Delhi→Gorakhpur (₹150–300/day)','Use your top organic reel as the ad creative','Add comment-to-DM ("Comment FARE") on every reel','Run daily Story funnel: poll → "DM to book" sticker','Design the 6 poster templates in Canva (brand colours)','Track cost per WhatsApp message per route']},
+    {m:'m3',tag:'Month 3 · Scale & Seasonal',color:'violet',focus:'Compound growth and capture seasonal peaks.',big:'Expand to Tier-2 pilgrimage/hill routes with seasonal ads; build repeat-booking engine.',todo:['Add Tier-2 ad campaigns timed to season (Katra/Navratri, Manali/summer)','Launch Kashi–Ayodhya–Prayagraj package content + WhatsApp group bookings','Build a broadcast list (with consent) for festival fares & return reminders','Push cargo/parcel as a weekly pillar — new revenue line','Publish weekly "route of the week" + price-compare reel','Review KPIs: followers, messages, bookings, cost per booking','Target: 10K+ followers, predictable daily WhatsApp bookings']}
+  ];
+  document.getElementById('calWrap').innerHTML=cal.map(c=>`
+    <div class="xcard" data-cat="${c.m}" style="border-left-color:var(--${c.color==='saffron'?'saffron':c.color==='blue'?'blue':'violet'})">
+      <div class="xhead"><div style="display:flex;gap:14px;align-items:flex-start">
+        <div class="no" style="background:${c.color==='saffron'?'#FFEEDD':c.color==='blue'?'var(--sky)':'#EEEAFF'};color:var(--${c.color==='saffron'?'saffron':c.color==='blue'?'blue':'violet'})">${c.m.toUpperCase().replace('M','')}</div>
+        <div><div class="htitle">${c.tag}</div><div class="hmeta">${c.focus}</div></div>
+      </div><div class="chev">▼</div></div>
+      <div class="xbody">
+        <div class="blk"><div class="bh"><span class="dot"></span>Big swing this month</div><p style="margin:0">${c.big}</p></div>
+        <div class="blk"><div class="bh"><span class="dot"></span>Checklist</div><ul class="clean check" style="margin:0">${c.todo.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+      </div>
+    </div>`).join('');
+
+  // ---- Caption bank render ----
+  const caps=[
+    {p:'Fare Reveal',t:'saffron',txt:`वाराणसी → दिल्ली 🚍 AC Sleeper ₹650 से शुरू
+आज रात की सीट available — RedBus से 5% सस्ता, ticket WhatsApp पर 90 sec में।
+📲 Book: WhatsApp 8853521184 · Call 8853391184
+#VaranasiToDelhi #busbooking #laxmiholidays #cheaptravelindia #banaras`},
+    {p:'Cheaper-than-RedBus',t:'green',txt:`Same bus. Same seat. सिर्फ़ price अलग 👇
+RedBus ₹1499 · Cheap Travels India ₹1424 (5% सस्ता)
+कोई extra convenience fee नहीं — direct operator से।
+📲 WhatsApp 8853521184 पर seat book करो, ticket 90 sec में।
+#busbooking #cheaptravelindia #redbus #bustickets #laxmiholidays`},
+    {p:'Route Spotlight',t:'blue',txt:`दिल्ली → गोरखपुर 🚍 Daily bus (Laxmi Holidays)
+Boarding: Anand Vihar / Kashmiri Gate · Seats: AC Sleeper & Seater
+घर जाना है? अभी seat पक्की करो — सस्ता &amp; भरोसेमंद।
+📲 WhatsApp 8853521184 · 📞 8853391184
+#DelhiToGorakhpur #gorakhpur #purvanchal #busbooking #cheaptravelindia`},
+    {p:'Pilgrimage / Emotion',t:'gold',txt:`काशी · अयोध्या · प्रयागराज 🙏 4N/5D package
+Bus + cab + hotel — सब हमारे साथ, बजट में।
+परिवार के साथ दर्शन की पूरी व्यवस्था, एक WhatsApp पर।
+📲 8853521184 पर "KASHI" भेजें — पूरा plan मिलेगा।
+#kashi #ayodhya #prayagraj #rammandir #cheaptravelindia`},
+    {p:'Trust & Proof',t:'navy',txt:`Ticket book किया — 90 second में WhatsApp पर e-ticket + PNR ✅
+अगर operator ने 30 min में ticket issue नहीं किया → full refund.
+यही है सस्ती booking, पक्का ticket का वादा।
+📲 अगली seat: WhatsApp 8853521184 · Call 8853391184
+#cheaptravelindia #busbooking #trusted #eticket #bustickets`},
+    {p:'Cargo / Parcel',t:'violet',txt:`दिल्ली से गाँव parcel भेजना है? 📦
+हमारी bus cargo service — safe, सस्ता, समय पर।
+Azamgarh · Gorakhpur · Mau · Ghazipur · Varanasi तक।
+📲 Rate जानने के लिए WhatsApp 8853521184 पर "CARGO" भेजें।
+#cargo #parcel #delhi #purvanchal #cheaptravelindia`}
+  ];
+  document.getElementById('capBank').innerHTML=caps.map(c=>`
+    <div class="card" style="margin-bottom:12px"><span class="pill ${c.t}">${c.p}</span>
+    <div class="capbox" style="margin-top:8px"><button class="copybtn" data-copy="${c.txt.replace(/"/g,'&quot;')}">Copy</button><span class="captxt">${c.txt}</span></div></div>`).join('');
+
+  // ---- Reel scripts render ----
+  const scripts=[
+    {t:'Varanasi → Delhi · Fare Reveal', tag:'saffron', price:'₹650 se', len:'12 sec',
+     does:'Your #1 route. Shows a low price fast to stop the scroll and pull a WhatsApp message.',
+     shoot:'Film 5–6 sec of the AC sleeper bus (outside + inside berth). Add big text on top. Record voice on phone.',
+     scenes:[
+       {t:'0–2s',os:['Varanasi → Delhi','वाराणसी → दिल्ली'],vo:['Going to Delhi? Look at this price.','दिल्ली जाना है? ये price देखो।']},
+       {t:'2–7s',os:['AC Sleeper · ₹650 se','AC स्लीपर · ₹650 से'],vo:['AC sleeper bus, tonight’s seat is available.','AC sleeper bus, आज रात की seat available है।']},
+       {t:'7–11s',os:['5% cheaper than RedBus','RedBus से 5% सस्ता'],vo:['Same bus — but 5% cheaper with us.','वही bus — पर हमारे साथ 5% सस्ता।']},
+       {t:'11–12s',os:['WhatsApp 8853521184','WhatsApp 8853521184'],vo:['WhatsApp now, ticket in 90 seconds.','अभी WhatsApp करो, ticket 90 second में।']}
+     ],
+     caption:`वाराणसी → दिल्ली 🚍 AC Sleeper ₹650 से
+आज रात की seat available — RedBus से 5% सस्ता, ticket 90 sec में।
+📲 WhatsApp 8853521184 · 📞 8853391184
+#VaranasiToDelhi #busbooking #banaras #cheaptravelindia`,
+     doThis:'Post as a Reel at 9:30 AM. In the caption ask “Kaunsi date chahiye?” so people comment.'},
+
+    {t:'Same Bus, 5% Cheaper · Price Compare', tag:'green', price:'₹1499 → ₹1424', len:'14 sec',
+     does:'Builds trust. Shows people they literally pay less with you for the exact same bus.',
+     shoot:'Screen-record the RedBus price, then show your price as text. Or just make two price boxes on screen.',
+     scenes:[
+       {t:'0–3s',os:['Same bus. Different price.','वही bus. अलग price.'],vo:['Same bus, same seat — only the price is different.','वही bus, वही seat — बस price अलग है।']},
+       {t:'3–8s',os:['RedBus ₹1499','RedBus ₹1499'],vo:['On the app it’s fifteen hundred.','App पर pandrah sau ka hai.']},
+       {t:'8–12s',os:['Cheap Travels ₹1424','Cheap Travels ₹1424'],vo:['With us, seventy-five rupees less. No extra fee.','हमारे साथ पचहत्तर रुपये कम। कोई extra fee नहीं।']},
+       {t:'12–14s',os:['WhatsApp 8853521184','WhatsApp 8853521184'],vo:['Book on WhatsApp, ticket in 90 seconds.','WhatsApp पर book करो, ticket 90 second में।']}
+     ],
+     caption:`Same bus. Same seat. सिर्फ़ price अलग 👇
+RedBus ₹1499 · Cheap Travels India ₹1424 (5% सस्ता, कोई extra fee नहीं)
+📲 WhatsApp 8853521184 पर book करो, ticket 90 sec में।
+#busbooking #cheaptravelindia #redbus #bustickets`,
+     doThis:'Pin this reel to your profile. It answers the #1 question — “why book from you, not the app?”'},
+
+    {t:'Delhi → Gorakhpur · Ghar Jaana Hai', tag:'blue', price:'₹800 se', len:'13 sec',
+     does:'Emotional + high-demand migrant route. Great around Chhath, Holi, Diwali.',
+     shoot:'Bus leaving at night + a warm “reaching home” shot. Add route text. Speak simply.',
+     scenes:[
+       {t:'0–3s',os:['Delhi → Gorakhpur','दिल्ली → गोरखपुर'],vo:['Want to go home to Gorakhpur?','गोरखपुर घर जाना है?']},
+       {t:'3–8s',os:['Daily bus · ₹800 se','रोज़ बस · ₹800 से'],vo:['Daily bus, AC and sleeper, seats available.','रोज़ की bus, AC और sleeper, seat available।']},
+       {t:'8–11s',os:['Boarding: Anand Vihar','Boarding: आनंद विहार'],vo:['Boarding at Anand Vihar and Kashmiri Gate.','Boarding आनंद विहार और कश्मीरी गेट से।']},
+       {t:'11–13s',os:['WhatsApp 8853521184','WhatsApp 8853521184'],vo:['Book your seat now on WhatsApp.','अभी WhatsApp पर seat book करो।']}
+     ],
+     caption:`दिल्ली → गोरखपुर 🚍 रोज़ की बस, ₹800 से
+घर जाना है? AC/Sleeper seat अभी पक्की करो — सस्ता &amp; भरोसेमंद।
+📲 WhatsApp 8853521184 · 📞 8853391184
+#DelhiToGorakhpur #gorakhpur #purvanchal #cheaptravelindia`,
+     doThis:'Before Chhath/Diwali, boost this as a Click-to-WhatsApp ad targeting Delhi. Seats sell out — say so.'},
+
+    {t:'Ayodhya → Varanasi → Ranchi · Authorized Partner', tag:'gold', price:'Cargo + Seat', len:'15 sec',
+     does:'Your unique route — you are the authorized Natraj partner. No competitor can copy this.',
+     shoot:'Show the Natraj bus + a parcel/box. Add route + “Authorized Partner” badge text.',
+     scenes:[
+       {t:'0–3s',os:['Ayodhya → Varanasi → Ranchi','अयोध्या → वाराणसी → रांची'],vo:['Direct bus, Ayodhya to Ranchi via Varanasi.','सीधी bus, अयोध्या से रांची, वाराणसी होते हुए।']},
+       {t:'3–8s',os:['Natraj — Authorized Partner','नटराज — Authorized Partner'],vo:['We are the authorized Natraj partner on this route.','इस route पर हम नटराज के authorized partner हैं।']},
+       {t:'8–12s',os:['Bus + Cargo/Parcel','बस + कार्गो/पार्सल'],vo:['Book a seat, or send a parcel — both.','seat book करो, या parcel भेजो — दोनों।']},
+       {t:'12–15s',os:['WhatsApp 8853521184','WhatsApp 8853521184'],vo:['Message us to book now.','अभी WhatsApp करके book करो।']}
+     ],
+     caption:`अयोध्या → वाराणसी → रांची/टाटा 🚍📦
+नटराज बस — हम इस route के authorized partner हैं। Seat + Cargo दोनों।
+📲 WhatsApp 8853521184 · 📞 8853391184
+#ranchi #jamshedpur #ayodhya #varanasi #cheaptravelindia`,
+     doThis:'Use the word “Authorized Partner” loudly — it’s your proof. Ranchi reels already get your most views.'},
+
+    {t:'Ticket in 90 Seconds · How It Works', tag:'navy', price:'Trust reel', len:'15 sec',
+     does:'Removes fear for first-time buyers. Shows booking is fast, safe, and refundable.',
+     shoot:'Screen-record a WhatsApp chat: “Hi” → fare → pay → e-ticket arrives. Add step text.',
+     scenes:[
+       {t:'0–3s',os:['Book a bus in 90 seconds','90 सेकंड में बस book'],vo:['Booking a bus is this easy.','बस book करना इतना आसान है।']},
+       {t:'3–8s',os:['1. WhatsApp your route','1. WhatsApp पर route भेजो'],vo:['Send your route and date on WhatsApp.','WhatsApp पर route और date भेजो।']},
+       {t:'8–12s',os:['2. Pay · 3. Get e-ticket','2. Pay · 3. e-ticket मिलेगा'],vo:['Pay, and get your e-ticket with PNR in 90 seconds.','Pay करो, 90 second में e-ticket और PNR मिल जाएगा।']},
+       {t:'12–15s',os:['Not issued in 30 min? Full refund','30 min में नहीं? Full refund'],vo:['If the ticket isn’t issued in 30 minutes, full refund.','अगर 30 min में ticket नहीं मिला, तो full refund।']}
+     ],
+     caption:`बस book करना = 90 सेकंड ✅
+1️⃣ WhatsApp पर route+date भेजो 2️⃣ Pay करो 3️⃣ e-ticket+PNR तुरंत
+30 min में ticket नहीं? Full refund. सस्ती booking, पक्का ticket।
+📲 8853521184
+#cheaptravelindia #busbooking #eticket #trusted`,
+     doThis:'Save this to a Highlight called “Book Now”. Send it to anyone who says “kaise book karein?”'},
+
+    {t:'Delhi → Katra · Vaishno Devi Special', tag:'saffron', price:'₹900 se', len:'14 sec',
+     does:'High-intent pilgrimage route. Run it hard in Navratri and Oct–Nov.',
+     shoot:'Katra/temple visuals + Volvo bus. Add “Jai Mata Di” + route + price text.',
+     scenes:[
+       {t:'0–3s',os:['Delhi → Katra 🛕','दिल्ली → कटरा 🛕'],vo:['Going for Vaishno Devi darshan?','वैष्णो देवी दर्शन के लिए जाना है?']},
+       {t:'3–8s',os:['Volvo AC · ₹900 se','Volvo AC · ₹900 से'],vo:['Volvo AC bus, comfortable overnight journey.','Volvo AC bus, आरामदायक रात का सफर।']},
+       {t:'8–11s',os:['Navratri seats filling fast','Navratri की seats तेज़ी से भर रहीं'],vo:['Navratri seats are filling fast — book early.','Navratri की seats जल्दी भर रही हैं — पहले book करो।']},
+       {t:'11–14s',os:['WhatsApp 8853521184','WhatsApp 8853521184'],vo:['Jai Mata Di — book on WhatsApp now.','जय माता दी — अभी WhatsApp पर book करो।']}
+     ],
+     caption:`दिल्ली → कटरा (वैष्णो देवी) 🛕 Volvo AC ₹900 से
+Navratri special — seats तेज़ी से भर रही हैं। अभी पक्की करो।
+📲 WhatsApp 8853521184 · 📞 8853391184
+#DelhiToKatra #vaishnodevi #katra #navratri #cheaptravelindia`,
+     doThis:'Only push this in season (Navratri/Oct–Nov/summer). Add “seats filling” urgency each time.'},
+
+    {t:'Delhi → Manali · Hills Are Calling', tag:'violet', price:'₹1100 se', len:'13 sec',
+     does:'Younger, higher-fare audience. Great for summer and long weekends.',
+     shoot:'Manali/mountain clips + Volvo bus interior. Add route + price + vibe text.',
+     scenes:[
+       {t:'0–3s',os:['Delhi → Manali 🏔️','दिल्ली → मनाली 🏔️'],vo:['Weekend plan? The mountains are calling.','Weekend plan? पहाड़ बुला रहे हैं।']},
+       {t:'3–8s',os:['Volvo AC Sleeper · ₹1100 se','Volvo AC स्लीपर · ₹1100 से'],vo:['Volvo AC sleeper, leave tonight, wake up in Manali.','Volvo AC sleeper, आज रात निकलो, सुबह मनाली।']},
+       {t:'8–11s',os:['Cheaper than the apps','Apps से सस्ता'],vo:['Better price than the apps, real human support.','apps से better price, असली human support।']},
+       {t:'11–13s',os:['WhatsApp 8853521184','WhatsApp 8853521184'],vo:['Message us and grab your seat.','WhatsApp करो और seat पक्की करो।']}
+     ],
+     caption:`दिल्ली → मनाली 🏔️ Volvo AC Sleeper ₹1100 से
+आज रात निकलो, सुबह पहाड़ों में। Apps से सस्ता, human support।
+📲 WhatsApp 8853521184 · 📞 8853391184
+#DelhiToManali #manali #himachal #cheaptravelindia`,
+     doThis:'Post Thursday/Friday evenings — that’s when weekend trips get planned. Boost on long weekends.'},
+
+    {t:'Delhi → Gaon · Cargo/Parcel', tag:'green', price:'₹ per kg', len:'14 sec',
+     does:'Opens a second income line the apps ignore — recurring parcel business.',
+     shoot:'Show a sealed parcel + the bus loading it. Add “Cargo Service” + cities text.',
+     scenes:[
+       {t:'0–3s',os:['Send a parcel Delhi → gaon 📦','दिल्ली से गाँव parcel भेजो 📦'],vo:['Need to send something home from Delhi?','दिल्ली से घर कुछ भेजना है?']},
+       {t:'3–8s',os:['Safe · Fast · Cheap','Safe · तेज़ · सस्ता'],vo:['Our bus cargo is safe, fast and cheap.','हमारी bus cargo safe, तेज़ और सस्ती है।']},
+       {t:'8–11s',os:['Azamgarh · Gorakhpur · Mau','आज़मगढ़ · गोरखपुर · मऊ'],vo:['We deliver across Purvanchal and Varanasi.','पूरे पूर्वांचल और वाराणसी तक पहुंचाते हैं।']},
+       {t:'11–14s',os:['WhatsApp “CARGO” 8853521184','WhatsApp “CARGO” 8853521184'],vo:['WhatsApp the word CARGO for rates.','rate जानने के लिए WhatsApp पर CARGO भेजो।']}
+     ],
+     caption:`दिल्ली से गाँव parcel भेजना है? 📦
+Bus cargo — safe, तेज़, सस्ता। Azamgarh · Gorakhpur · Mau · Varanasi तक।
+📲 Rate के लिए WhatsApp पर “CARGO” भेजें — 8853521184
+#cargo #parcel #delhi #purvanchal #cheaptravelindia`,
+     doThis:'Post cargo once a week. Many customers don’t know you do this — remind them and win repeat orders.'}
+  ];
+  document.getElementById('scriptWrap').innerHTML=scripts.map((s,i)=>`
+    <div class="xcard">
+      <div class="xhead"><div style="display:flex;gap:14px;align-items:flex-start">
+        <div class="no">${i+1}</div>
+        <div><div class="htitle">${s.t}</div><div class="hmeta">${s.len} · ${s.does}</div></div>
+      </div><div class="chev">▼</div></div>
+      <div class="xbody">
+        <div class="blk"><div class="bh"><span class="dot"></span>What to shoot (simple)</div><p style="margin:0">${s.shoot}</p></div>
+        <div class="blk"><div class="bh"><span class="dot"></span>Show this price on screen</div><span class="thumbtag">${s.price}</span></div>
+        <div class="blk"><div class="bh"><span class="dot"></span>Scene-by-scene · text + voiceover</div>
+          <table><tr><th style="width:64px">Time</th><th>On-screen text</th><th>What to say (voiceover)</th></tr>
+          ${s.scenes.map(sc=>`<tr><td class="mono">${sc.t}</td><td><b>${sc.os[0]}</b><br><span class="hi" style="color:var(--muted)">${sc.os[1]}</span></td><td>${sc.vo[0]}<br><span class="hi" style="color:var(--muted)">${sc.vo[1]}</span></td></tr>`).join('')}
+          </table>
+        </div>
+        <div class="blk"><div class="bh"><span class="dot"></span>Caption (tap to copy)</div>
+          <div class="capbox"><button class="copybtn" data-copy="${s.caption.replace(/"/g,'&quot;')}">Copy</button><span class="captxt">${s.caption}</span></div>
+        </div>
+        <div class="callout green" style="margin:14px 0 0"><b>✅ Do this:</b> ${s.doThis}</div>
+      </div>
+    </div>`).join('');
+
+  // ---- Static posts render ----
+  const statics=[
+    {t:'Route Fare Card', tag:'saffron', price:'₹650',
+     put:[['Big: “VARANASI → DELHI”','बड़ा: “वाराणसी → दिल्ली”'],['Price: “₹650 se”, “AC Sleeper”','Price: “₹650 से”, “AC Sleeper”'],['Bottom: WhatsApp 8853521184','नीचे: WhatsApp 8853521184']],
+     caption:`वाराणसी → दिल्ली 🚍 AC Sleeper ₹650 से — RedBus से 5% सस्ता।
+📲 WhatsApp 8853521184 पर आज ही seat book करो।
+#VaranasiToDelhi #busbooking #cheaptravelindia`,
+     doThis:'Make one of these for each Tier-1 route (Varanasi, Gorakhpur, Lucknow). Same design, change city+price.'},
+    {t:'Price Compare Poster', tag:'green', price:'₹1499 → ₹1424',
+     put:[['Two boxes: “RedBus ₹1499” vs “Us ₹1424”','दो box: “RedBus ₹1499” vs “हम ₹1424”'],['Big line: “Same bus. 5% cheaper.”','बड़ी line: “वही bus. 5% सस्ता।”'],['No extra fee ✓','कोई extra fee नहीं ✓']],
+     caption:`Same bus, same seat — सिर्फ़ price अलग। RedBus ₹1499 · हम ₹1424.
+📲 WhatsApp 8853521184
+#cheaptravelindia #busbooking #redbus`,
+     doThis:'This is your strongest trust post. Repost it once a month with a different route’s prices.'},
+    {t:'Weekly Fare List', tag:'blue', price:'Multi-route',
+     put:[['Title: “This Week’s Fares”','Title: “इस हफ़्ते के किराए”'],['List 5 routes + “from ₹” price each','5 routes + “₹ से” price हर एक'],['Footer: “WhatsApp for live seats”','Footer: “live seat के लिए WhatsApp”']],
+     caption:`इस हफ़्ते के best किराए 🚍 (from prices)
+Varanasi–Delhi ₹650 · Gorakhpur ₹800 · Katra ₹900 · Manali ₹1100
+📲 Live seat &amp; fare: WhatsApp 8853521184
+#busbooking #cheaptravelindia #bustickets`,
+     doThis:'Post every Monday. People screenshot fare lists and share them — free reach.'},
+    {t:'Trust Badges Post', tag:'navy', price:'Trust',
+     put:[['3 badges: “Ticket in 90 sec”, “Refund in 30 min”, “Direct operator”','3 badge: “90 sec में ticket”, “30 min में refund”, “Direct operator”'],['Line: “Sasti booking, pakka ticket”','Line: “सस्ती booking, पक्का ticket”']],
+     caption:`क्यों book करें हमसे? ✅ Ticket 90 sec ✅ Refund 30 min ✅ Direct operator, 5% सस्ता।
+सस्ती booking, पक्का ticket। 📲 8853521184
+#trusted #cheaptravelindia #busbooking`,
+     doThis:'Use this to answer nervous first-time buyers. Add it to your “Book Now” Highlight.'},
+    {t:'Kashi–Ayodhya–Prayagraj Package', tag:'gold', price:'₹9,850/pp',
+     put:[['Title: “Kashi · Ayodhya · Prayagraj 4N/5D”','Title: “काशी · अयोध्या · प्रयागराज 4N/5D”'],['“₹9,850 per person (6 pax)” + “Bus+Cab+Hotel”','“₹9,850 प्रति व्यक्ति (6 pax)” + “Bus+Cab+Hotel”'],['WhatsApp “KASHI” to book','book के लिए WhatsApp “KASHI”']],
+     caption:`काशी · अयोध्या · प्रयागराज 🙏 4N/5D — ₹9,850 per person से (6 pax)
+Bus + Cab + Hotel सब शामिल, बजट में परिवार के साथ दर्शन।
+📲 WhatsApp पर “KASHI” भेजें — 8853521184
+#kashi #ayodhya #prayagraj #rammandir #cheaptravelindia`,
+     doThis:'Ayodhya tourism is booming — post this weekly. Package posts bring bigger-value WhatsApp leads.'},
+    {t:'Cargo Rate Card', tag:'green', price:'₹ per kg',
+     put:[['Title: “Bus Cargo / Parcel”','Title: “Bus Cargo / पार्सल”'],['Cities: Azamgarh, Gorakhpur, Mau, Varanasi','Cities: आज़मगढ़, गोरखपुर, मऊ, वाराणसी'],['“Safe · Fast · Cheap” + WhatsApp “CARGO”','“Safe · तेज़ · सस्ता” + WhatsApp “CARGO”']],
+     caption:`दिल्ली से गाँव parcel भेजो 📦 Safe, तेज़, सस्ता।
+Azamgarh · Gorakhpur · Mau · Varanasi तक। 📲 WhatsApp “CARGO” 8853521184
+#cargo #parcel #purvanchal #cheaptravelindia`,
+     doThis:'A whole second business most followers don’t know about. Post it at least twice a month.'},
+    {t:'Katra Navratri Special', tag:'saffron', price:'₹900 se',
+     put:[['“Jai Mata Di 🛕 Delhi → Katra”','“जय माता दी 🛕 दिल्ली → कटरा”'],['“Volvo AC ₹900 se · Navratri Special”','“Volvo AC ₹900 से · Navratri Special”'],['“Seats filling fast” + WhatsApp','“Seats भर रही हैं” + WhatsApp']],
+     caption:`जय माता दी 🛕 दिल्ली → कटरा, Volvo AC ₹900 से — Navratri Special.
+Seats तेज़ी से भर रही हैं। 📲 WhatsApp 8853521184
+#vaishnodevi #katra #navratri #cheaptravelindia`,
+     doThis:'Only in season. Change the festival name (Navratri/Diwali) to keep it timely.'},
+    {t:'How to Book in 3 Steps', tag:'violet', price:'Guide',
+     put:[['“Book in 3 steps” + 1-2-3','“3 step में book” + 1-2-3'],['1 WhatsApp route · 2 Pay · 3 Get e-ticket','1 WhatsApp route · 2 Pay · 3 e-ticket'],['Big WhatsApp number','बड़ा WhatsApp number']],
+     caption:`बस book करना = 3 step 👇 1️⃣ WhatsApp route+date 2️⃣ Pay 3️⃣ e-ticket+PNR तुरंत।
+30 min में नहीं मिला? Full refund. 📲 8853521184
+#howtobook #cheaptravelindia #busbooking`,
+     doThis:'Pin as a carousel or single post. New followers should see exactly how easy booking is.'}
+  ];
+  document.getElementById('staticWrap').innerHTML=statics.map((s,i)=>`
+    <div class="xcard">
+      <div class="xhead"><div style="display:flex;gap:14px;align-items:flex-start">
+        <div class="no">${i+1}</div>
+        <div><div class="htitle">${s.t}</div><div class="hmeta">Price to show: ${s.price}</div></div>
+      </div><div class="chev">▼</div></div>
+      <div class="xbody">
+        <div class="blk"><div class="bh"><span class="dot"></span>What to put on the image</div>
+          <table><tr><th>English</th><th>हिंदी</th></tr>
+          ${s.put.map(p=>`<tr><td>${p[0]}</td><td class="hi">${p[1]}</td></tr>`).join('')}
+          </table>
+        </div>
+        <div class="blk"><div class="bh"><span class="dot"></span>Caption (tap to copy)</div>
+          <div class="capbox"><button class="copybtn" data-copy="${s.caption.replace(/"/g,'&quot;')}">Copy</button><span class="captxt">${s.caption}</span></div>
+        </div>
+        <div class="callout green" style="margin:14px 0 0"><b>✅ Do this:</b> ${s.doThis}</div>
+      </div>
+    </div>`).join('');
+  </script>
+
+</main>
+</div>
+<script>
+  // Navigation
+  const nav=document.getElementById('nav');
+  nav.addEventListener('click',e=>{
+    const a=e.target.closest('a[data-p]'); if(!a)return;
+    document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');
+    const p=a.dataset.p;
+    document.querySelectorAll('.page').forEach(pg=>pg.classList.toggle('show',pg.id===p));
+    document.getElementById('main').scrollTop=0; window.scrollTo(0,0);
+    document.querySelector('.side').classList.remove('open');
+  });
+  // Expandable cards (delegated)
+  document.addEventListener('click',e=>{
+    const h=e.target.closest('.xhead'); if(h){h.parentElement.classList.toggle('open');}
+  });
+  // Filters (delegated)
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('.fbtn'); if(!b)return;
+    const wrap=b.closest('[data-filter-group]'); if(!wrap)return;
+    wrap.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const f=b.dataset.f;
+    wrap.querySelectorAll('[data-cat]').forEach(c=>{
+      c.style.display=(f==='all'||c.dataset.cat.includes(f))?'':'none';
+    });
+  });
+  // Copy buttons
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('.copybtn,.cbtn'); if(!b)return;
+    const t=b.getAttribute('data-copy')||b.parentElement.querySelector('.val,.captxt')?.innerText||'';
+    navigator.clipboard.writeText(t).then(()=>{
+      const o=b.innerText; b.innerText='✓ Copied'; b.classList.add('done');
+      setTimeout(()=>{b.innerText=o;b.classList.remove('done');},1600);
+    });
+  });
+</script>
+</body>
+</html>

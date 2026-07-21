@@ -4552,6 +4552,14 @@ function renderSeatMap(resId, layoutData) {
   
   // Find current bus details
   const bus = searchResultsBuses.find(b => b.resId == resId);
+  if (bus) {
+    if (layoutData.boardingPoints && layoutData.boardingPoints.length > 0) {
+      bus.boardingPoints = layoutData.boardingPoints;
+    }
+    if (layoutData.droppingPoints && layoutData.droppingPoints.length > 0) {
+      bus.droppingPoints = layoutData.droppingPoints;
+    }
+  }
   selectedBus = bus;
   selectedSeats = [];
   
