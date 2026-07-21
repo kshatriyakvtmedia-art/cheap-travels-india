@@ -847,11 +847,15 @@ async function searchOperatorBuses(opKey, fromId, toId, date) {
     const minFare = fareParts.length > 0 ? Math.min(...fareParts) : 0;
     const maxFare = fareParts.length > 0 ? Math.max(...fareParts) : 0;
 
+    const actualOperator = (!details.is_own_route && details.service_name && details.service_name.length > 0)
+      ? details.service_name[0]
+      : op.name;
+
     return {
       resId: `${prefix}${summary.res_id || details.res_id}`,
       routeId: summary.route_id || details.route_id,
-      operator: op.name,
-      routeName: summary.number || details.number || `${op.name} Service`,
+      operator: actualOperator,
+      routeName: summary.number || details.number || `${actualOperator} Service`,
       busType: summary.bus_type || details.bus_type || "AC Sleeper 2+1",
       departure: summary.depature || details.departure_time || "00:00 AM",
       arrival: summary.arrival ? (summary.arrival.includes('T') ? summary.arrival.split('T')[1].substring(0, 5) : summary.arrival.substring(0, 5)) : "00:00",
@@ -1239,7 +1243,29 @@ app.get('/api/search', apiLimiter, async (req, res) => {
       return hasRealBoardingPoints;
     });
 
-    let buses = realBuses;
+    // Deduplicate buses by their numerical reservation ID (shared across TicketSimply portals)
+    const uniqueBusesMap = new Map();
+    realBuses.forEach(bus => {
+      const numResId = bus.resId.replace('lx-', '').replace('rd-', '');
+      const existing = uniqueBusesMap.get(numResId);
+      if (!existing) {
+        uniqueBusesMap.set(numResId, bus);
+      } else {
+        // If we have duplicate listings, prefer the direct operator's own route
+        const existingIsDirect = existing.resId.startsWith('lx-') && existing.operator.toLowerCase().includes('laxmi');
+        const currentIsDirect = bus.resId.startsWith('lx-') && bus.operator.toLowerCase().includes('laxmi');
+        if (currentIsDirect && !existingIsDirect) {
+          uniqueBusesMap.set(numResId, bus);
+        } else if (!currentIsDirect && existingIsDirect) {
+          // Keep existing direct one
+        } else if (bus.minFare < existing.minFare) {
+          // Fallback to lowest fare
+          uniqueBusesMap.set(numResId, bus);
+        }
+      }
+    });
+
+    let buses = Array.from(uniqueBusesMap.values());
 
     console.log(`[Search] ${fromName} → ${toName} on ${date}: lxmi=${lxmiBuses.length}, rdlh=${rdlhBuses.length}, raw=${rawBuses.length}, afterFilter=${realBuses.length}`);
     trackEvent('search', { from: fromName, to: toName, date, realCount: realBuses.length, totalCount: buses.length });
